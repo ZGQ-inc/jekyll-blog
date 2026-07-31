@@ -156,11 +156,13 @@ ul, ol { list-style: none; }
   backdrop-filter: blur(24px) saturate(160%);
   -webkit-backdrop-filter: blur(24px) saturate(160%);
   border-right: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 50%, transparent);
+  border-radius: 0 var(--shape-corner-extra-large) var(--shape-corner-extra-large) 0;
   box-shadow: var(--elevation-1);
 
   transition:
     transform var(--motion-duration-medium) var(--motion-easing-emphasized),
-    background-color var(--motion-duration-medium) var(--motion-easing-standard);
+    background-color var(--motion-duration-medium) var(--motion-easing-standard),
+    border-radius var(--motion-duration-medium) var(--motion-easing-standard);
 
   // Decorative gradient blob
   &::before {
@@ -1204,19 +1206,43 @@ ul, ol { list-style: none; }
 // 23. Theme Settings Dialog
 // ----------------------------------------------------------------
 .theme-dialog {
-  background: var(--md-sys-color-surface-container-low);
+  background: color-mix(in srgb, var(--md-sys-color-surface-container-low) 85%, transparent);
+  backdrop-filter: blur(24px) saturate(160%);
+  -webkit-backdrop-filter: blur(24px) saturate(160%);
   border-radius: var(--shape-corner-extra-large);
   padding: 0;
-  border: 1px solid var(--md-sys-color-outline-variant);
+  border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 50%, transparent);
   box-shadow: var(--elevation-3);
   max-width: 400px;
   width: calc(100vw - 48px);
   overflow: hidden;
 
+  // Dialog entrance animation
+  &[open] {
+    animation: dialog-enter var(--motion-duration-medium) var(--motion-easing-emphasized);
+  }
+
   &::backdrop {
     background: rgba(0,0,0,0.4);
     backdrop-filter: blur(4px);
+    animation: backdrop-enter var(--motion-duration-medium) var(--motion-easing-emphasized);
   }
+}
+
+@keyframes dialog-enter {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes backdrop-enter {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 .dialog-header {
@@ -1224,7 +1250,7 @@ ul, ol { list-style: none; }
   display: flex;
   align-items: center;
   gap: 12px;
-  background: var(--md-sys-color-primary-container);
+  background: color-mix(in srgb, var(--md-sys-color-primary-container) 90%, transparent);
   color: var(--md-sys-color-on-primary-container);
 
   .dialog-icon { font-size: 1.5rem; }
@@ -1271,8 +1297,11 @@ ul, ol { list-style: none; }
     border-radius: var(--shape-corner-medium);
     border: 2px solid var(--md-sys-color-outline-variant);
     cursor: pointer;
-    transition: border-color var(--motion-duration-short), background var(--motion-duration-short);
+    transition: border-color var(--motion-duration-short), background var(--motion-duration-short), transform var(--motion-duration-short);
     text-align: center;
+
+    &:hover { background: color-mix(in srgb, var(--md-sys-color-on-surface) 6%, transparent); transform: translateY(-2px); }
+    &:active { transform: scale(0.96); }
 
     .mode-icon { font-size: 1.4rem; color: var(--md-sys-color-on-surface-variant); }
     .mode-label { font-size: 0.78rem; font-weight: 600; color: var(--md-sys-color-on-surface-variant); }
