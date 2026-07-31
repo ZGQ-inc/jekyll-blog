@@ -775,20 +775,41 @@ function initPageTransitions() {
   const isNavigating = sessionStorage.getItem('isNavigating');
   sessionStorage.removeItem('isNavigating');
 
-  if (main && isNavigating) {
-    // Only animate entry if coming from an internal link (avoids initial load flash)
-    main.style.transition = 'none';
-    main.style.opacity = '0';
-    main.style.transform = 'translateY(16px)';
-    main.style.filter = 'blur(2px)';
-    
-    // Use a tiny timeout instead of double rAF which causes white frames
-    setTimeout(() => {
-      main.style.transition = 'opacity 400ms cubic-bezier(0.05,0.7,0.1,1), transform 400ms cubic-bezier(0.05,0.7,0.1,1), filter 400ms';
-      main.style.opacity = '1';
-      main.style.transform = 'translateY(0)';
-      main.style.filter = 'blur(0)';
-    }, 10);
+  if (main) {
+    if (isNavigating) {
+      // Transfer hidden state to inline styles BEFORE removing the class to prevent flash
+      main.style.transition = 'none';
+      main.style.opacity = '0';
+      main.style.transform = 'translateY(16px)';
+      main.style.filter = 'blur(2px)';
+      
+      document.documentElement.classList.remove('is-navigating');
+      
+      // Use double rAF to guarantee a frame render before transitioning
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          main.style.transition = 'opacity 400ms cubic-bezier(0.05,0.7,0.1,1), transform 400ms cubic-bezier(0.05,0.7,0.1,1), filter 400ms';
+          main.style.opacity = '1';
+          main.style.transform = 'translateY(0)';
+          main.style.filter = 'blur(0)';
+        });
+      });
+    } else {
+      document.documentElement.classList.remove('is-navigating');
+    }
+
+    // Handle bfcache: if user clicks "Back" in browser, reset the hidden inline styles
+    window.addEventListener('pageshow', e => {
+      if (e.persisted) {
+        document.documentElement.classList.remove('is-navigating');
+        main.style.transition = 'none';
+        main.style.opacity = '1';
+        main.style.transform = 'none';
+        main.style.filter = 'none';
+      }
+    });
+  } else {
+    document.documentElement.classList.remove('is-navigating');
   }
 
   // Exit animation on navigation

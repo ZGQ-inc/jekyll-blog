@@ -29,6 +29,13 @@
 <!-- Fuse.js for Full-Text Search -->
 <script src="https://cdn.jsdelivr.net/npm/fuse.js@7.0.0/dist/fuse.min.js"></script>
 
+<!-- Prevent transition flash -->
+<script>
+  if (sessionStorage.getItem('isNavigating')) {
+    document.documentElement.classList.add('is-navigating');
+  }
+</script>
+
 <!-- Main Stylesheet -->
 <link rel="stylesheet" href="{{ '/assets/css/style.css' | relative_url }}">
 
