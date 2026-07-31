@@ -47,9 +47,9 @@ nav_links:
 # Social Links
 # ================================================================
 social:
-  github: "ZGQ-inc"           # PLACEHOLDER: your GitHub username
-  telegram: "ZGQinc"         # PLACEHOLDER: your Telegram username
-  telegram_channel: "" # PLACEHOLDER: your Telegram channel
+  github: "ZGQ-inc"
+  telegram: "ZGQinc"
+  telegram_channel: "ZGQinc_blog"
   rss: true
 
 # ================================================================
@@ -57,7 +57,7 @@ social:
 # ================================================================
 comments:
   enabled: true
-  app_id: "PLACEHOLDER_COMMENTS_APP_ID"  # Register at comments.app
+  app_id: "WePGSdzi"
 
 # ================================================================
 # Worker API

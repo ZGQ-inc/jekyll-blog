@@ -180,11 +180,25 @@ async function handleTelegramWebhook(request: Request, env: Env): Promise<Respon
 
   const text = message.text || message.caption || '';
 
-  // Parse /post command
-  // Format: /post ID|标题|摘要|tag1,tag2,tag3
-  const postMatch = text.match(/\/post\s+(.+)/s);
-  if (postMatch) {
-    await handlePostCommand(message, postMatch[1].trim(), env);
+  // Parse /new command
+  const newMatch = text.match(/^\/new\s+(.+)/s) || text.match(/^\/new$/);
+  if (newMatch) {
+    const title = newMatch[1] ? newMatch[1].trim() : '未命名文章';
+    await handleNewCommand(message, title, env);
+    return jsonResponse({ ok: true });
+  }
+
+  // Parse /link command
+  const linkMatch = text.match(/^\/link\s+([a-zA-Z0-9_-]+)(?:\s+(.+))?$/s);
+  if (linkMatch) {
+    await handleLinkCommand(message, linkMatch[1], linkMatch[2] || '', env);
+    return jsonResponse({ ok: true });
+  }
+
+  // Parse /cancel command
+  const cancelMatch = text.match(/^\/cancel\s+([a-zA-Z0-9_-]+)$/s);
+  if (cancelMatch) {
+    await handleCancelCommand(message, cancelMatch[1], env);
     return jsonResponse({ ok: true });
   }
 
@@ -200,117 +214,180 @@ async function handleTelegramWebhook(request: Request, env: Env): Promise<Respon
   return jsonResponse({ ok: true });
 }
 
-async function handlePostCommand(message: TgMessage, args: string, env: Env): Promise<void> {
-  const parts = args.split('|').map(s => s.trim());
-  if (parts.length < 3) {
+async function handleNewCommand(message: TgMessage, title: string, env: Env): Promise<void> {
+  const id = Math.random().toString(36).substring(2, 8); // e.g. 4f9a2b
+  const today = new Date().toISOString().split('T')[0];
+  const slug = `${today}-${id}`;
+  
+  await sendTelegramMessage(env.TELEGRAM_BOT_TOKEN, {
+    chat_id: message.chat.id,
+    text: `⏳ 正在 GitHub 创建草稿，请稍候...`,
+  });
+
+  try {
+    const dateStr = new Date().toISOString().replace('T', ' ').substring(0, 19);
+    const mdContent = [
+      '---',
+      `layout: post`,
+      `title: "${title.replace(/"/g, '\\"')}"`,
+      `id: "${id}"`,
+      `date: ${dateStr}`,
+      `summary: ""`,
+      `tags: []`,
+      `comments: true`,
+      '---',
+      '',
+      '<!-- 请在 VSCode 中编辑此草稿的正文内容 -->',
+      ''
+    ].join('\n');
+
+    await commitToGitHub(env, slug, mdContent);
+
     await sendTelegramMessage(env.TELEGRAM_BOT_TOKEN, {
       chat_id: message.chat.id,
-      text: '❌ 格式错误\\!\n正确格式:\n`/post ID|标题|摘要|tag1,tag2`',
-      parse_mode: 'MarkdownV2'
+      text: `✅ 草稿已生成！\n\n**文件名**: \`${slug}.md\`\n**文章 ID**: \`${id}\`\n\n请在本地 VSCode 拉取代码并编辑该文件。提交发布后，请使用以下命令关联到频道：\n\n\`/link ${id} 你的文章摘要内容\``,
+      parse_mode: 'Markdown'
+    });
+  } catch (err) {
+    await sendTelegramMessage(env.TELEGRAM_BOT_TOKEN, {
+      chat_id: message.chat.id,
+      text: `❌ 草稿创建失败: ${String(err)}`
+    });
+  }
+}
+
+async function fetchPostInfoFromGitHub(id: string, env: Env): Promise<{ title: string; tags: string[] } | null> {
+  try {
+    const [owner, repo] = env.GITHUB_REPO.split('/');
+    const apiUrl = `https://api.github.com/repos/${owner}/${repo}/contents/${env.GITHUB_POSTS_PATH}`;
+    const res = await fetch(apiUrl, {
+      headers: {
+        Authorization: `Bearer ${env.GITHUB_TOKEN}`,
+        Accept: 'application/vnd.github+json',
+        'User-Agent': 'ZGQ-Blog-Worker/1.0'
+      }
+    });
+    if (!res.ok) return null;
+    const files = await res.json() as any[];
+    const file = files.find((f: any) => f.name.endsWith(`-${id}.md`));
+    if (!file) return null;
+
+    const fileRes = await fetch(file.url, {
+      headers: {
+        Authorization: `Bearer ${env.GITHUB_TOKEN}`,
+        Accept: 'application/vnd.github+json',
+        'User-Agent': 'ZGQ-Blog-Worker/1.0'
+      }
+    });
+    if (!fileRes.ok) return null;
+    const fileData = await fileRes.json() as any;
+    const content = decodeURIComponent(escape(atob(fileData.content)));
+    
+    // Parse front matter
+    const titleMatch = content.match(/^title:\s*["']?(.+?)["']?\s*$/m);
+    const title = titleMatch ? titleMatch[1] : '新文章';
+    const tagsMatch = content.match(/^tags:\s*\[(.*?)\]/m);
+    let tags: string[] = [];
+    if (tagsMatch && tagsMatch[1]) {
+      tags = tagsMatch[1].split(',').map(t => t.trim().replace(/["']/g, ''));
+    }
+    return { title, tags };
+  } catch (e) {
+    return null;
+  }
+}
+
+async function handleLinkCommand(message: TgMessage, id: string, summary: string, env: Env): Promise<void> {
+  if (!summary) {
+    await sendTelegramMessage(env.TELEGRAM_BOT_TOKEN, {
+      chat_id: message.chat.id,
+      text: `❌ 请提供摘要内容。格式: \`/link ${id} 这是摘要\``,
+      parse_mode: 'Markdown'
     });
     return;
   }
 
-  const cmd: PostCommand = {
-    id: parts[0],
-    title: parts[1],
-    summary: parts[2],
-    tags: parts[3] ? parts[3].split(',').map(t => t.trim()) : []
-  };
-
-  // Detect media attachment
-  let mediaFileId: string | undefined;
-  let mediaType: PostCommand['mediaType'];
-  let mimeType: string | undefined;
-
-  if (message.photo && message.photo.length > 0) {
-    // Use largest photo
-    const largest = message.photo.sort((a, b) => (b.file_size ?? 0) - (a.file_size ?? 0))[0];
-    mediaFileId = largest.file_id;
-    mediaType = 'photo';
-    mimeType = 'image/jpeg';
-  } else if (message.document) {
-    mediaFileId = message.document.file_id;
-    mediaType = 'document';
-    mimeType = message.document.mime_type;
-  } else if (message.video) {
-    mediaFileId = message.video.file_id;
-    mediaType = 'video';
-    mimeType = message.video.mime_type;
-  }
-
-  cmd.mediaFileId = mediaFileId;
-  cmd.mediaType = mediaType;
-
-  // Notify user: processing
   await sendTelegramMessage(env.TELEGRAM_BOT_TOKEN, {
     chat_id: message.chat.id,
-    text: `⏳ 正在处理文章 *${escapeMdV2(cmd.title)}*\\.\\.\\.`,
-    parse_mode: 'MarkdownV2'
+    text: `⏳ 正在查询文章信息...`,
   });
 
   try {
-    let imageUrl: string | undefined;
-
-    // Step 1: Upload media to R2 if present
-    if (mediaFileId) {
-      imageUrl = await uploadMediaToR2(env, cmd.id, mediaFileId, mimeType);
-    }
-
-    // Step 2: Generate markdown content
-    const today = new Date().toISOString().split('T')[0];
-    const slug = `${today}-${cmd.id.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
-    const mdContent = buildMarkdownFile({
-      id: cmd.id,
-      title: cmd.title,
-      summary: cmd.summary,
-      tags: cmd.tags,
-      image: imageUrl,
-      date: new Date().toISOString().replace('T', ' ').substring(0, 19),
-      slug
-    });
-
-    // Step 3: Commit to GitHub
-    await commitToGitHub(env, slug, mdContent);
-
-    // Step 4: Push to Telegram channel
-    const postUrl = `${env.BLOG_URL}/posts/${slug}/`;
+    const postInfo = await fetchPostInfoFromGitHub(id, env);
+    const title = postInfo ? postInfo.title : '新文章发布';
+    const tags = postInfo ? postInfo.tags : [];
+    
+    const postUrl = `${env.BLOG_URL}/posts/${id}/`;
     const tgResult = await publishToChannel(env, {
-      id: cmd.id,
-      title: cmd.title,
-      summary: cmd.summary,
-      tags: cmd.tags,
+      id,
+      title,
+      summary,
+      tags,
       postUrl
     });
 
-    // Step 5: Save to D1
     if (tgResult) {
       await env.DB.prepare(
         `INSERT OR REPLACE INTO post_tg_map
          (post_id, tg_message_id, tg_channel_id, post_title, post_url, post_slug, published_via)
          VALUES (?, ?, ?, ?, ?, ?, ?)`
       ).bind(
-        cmd.id,
+        id,
         tgResult.message_id,
         env.TELEGRAM_CHANNEL_ID,
-        cmd.title,
+        title,
         postUrl,
-        slug,
-        'telegram'
+        id,
+        'telegram_manual'
       ).run();
+
+      await sendTelegramMessage(env.TELEGRAM_BOT_TOKEN, {
+        chat_id: message.chat.id,
+        text: `✅ 关联成功！已推送到频道。\n\n**文章**: ${title}\n**链接**: ${postUrl}`,
+        parse_mode: 'Markdown'
+      });
+    } else {
+      throw new Error('Failed to send to channel');
+    }
+  } catch (err) {
+    await sendTelegramMessage(env.TELEGRAM_BOT_TOKEN, {
+      chat_id: message.chat.id,
+      text: `❌ 关联失败: ${String(err)}`
+    });
+  }
+}
+
+async function handleCancelCommand(message: TgMessage, id: string, env: Env): Promise<void> {
+  try {
+    const row = await env.DB.prepare(`SELECT tg_message_id FROM post_tg_map WHERE post_id = ?`).bind(id).first();
+    if (!row) {
+      await sendTelegramMessage(env.TELEGRAM_BOT_TOKEN, {
+        chat_id: message.chat.id,
+        text: `⚠️ 找不到 ID 为 \`${id}\` 的关联频道消息。`,
+        parse_mode: 'Markdown'
+      });
+      return;
     }
 
-    await sendTelegramMessage(env.TELEGRAM_BOT_TOKEN, {
-      chat_id: message.chat.id,
-      text: `✅ 文章 *${escapeMdV2(cmd.title)}* 发布成功\\!\n\n📝 GitHub 提交完成\n📢 频道推送完成\n🗄️ D1 记录已写入`,
-      parse_mode: 'MarkdownV2'
+    const tgMessageId = row.tg_message_id as number;
+    const delRes = await callTelegramApi(env.TELEGRAM_BOT_TOKEN, 'deleteMessage', {
+      chat_id: env.TELEGRAM_CHANNEL_ID,
+      message_id: tgMessageId
     });
+
+    if (delRes.ok || (delRes.description && delRes.description.includes('message to delete not found'))) {
+      await env.DB.prepare(`DELETE FROM post_tg_map WHERE post_id = ?`).bind(id).run();
+      await sendTelegramMessage(env.TELEGRAM_BOT_TOKEN, {
+        chat_id: message.chat.id,
+        text: `✅ 已撤销！频道消息已删除，数据库记录已清除。`,
+      });
+    } else {
+      throw new Error(delRes.description || 'Unknown Telegram API error');
+    }
   } catch (err) {
-    console.error('Post command error:', err);
     await sendTelegramMessage(env.TELEGRAM_BOT_TOKEN, {
       chat_id: message.chat.id,
-      text: `❌ 发布失败: ${String(err)}`,
-      parse_mode: undefined
+      text: `❌ 撤销失败: ${String(err)}`
     });
   }
 }
@@ -646,13 +723,9 @@ function buildHelpText(): string {
   return [
     '*ZGQ Blog Bot 使用帮助*',
     '',
-    '发布文章:',
-    '`/post ID|标题|摘要|tag1,tag2`',
-    '',
-    '示例:',
-    '`/post 2026\\-001|我的第一篇文章|这是文章摘要内容|Tech,Jekyll`',
-    '',
-    '可附带媒体文件\\(图片/视频/文档\\)一起发送',
+    '1\\. 创建草稿: `/new [文章标题]`',
+    '2\\. 关联频道: `/link <id> <摘要内容>`',
+    '3\\. 撤销发布: `/cancel <id>`',
   ].join('\n');
 }
 

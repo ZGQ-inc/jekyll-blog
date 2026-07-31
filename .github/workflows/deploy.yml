@@ -54,7 +54,7 @@ jobs:
     name: Notify Telegram Channel
     runs-on: ubuntu-latest
     needs: build-and-deploy
-    if: needs.build-and-deploy.result == 'success'
+    if: false # Disabled: using manual /link in Telegram
 
     steps:
       - name: Checkout repository
