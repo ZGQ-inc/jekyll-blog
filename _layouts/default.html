@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="{{ site.lang | default: 'zh-CN' }}"
+      data-theme="light"
+      data-color="blue">
+<head>
+  {% include head.html %}
+</head>
+<body>
+
+<!-- Reading Progress Bar -->
+<div id="readingProgress" aria-hidden="true"></div>
+
+<!-- App Shell -->
+<div class="app-shell">
+
+  <!-- Sidebar (includes overlay + theme dialog) -->
+  {% include sidebar.html %}
+
+  <!-- Main Content -->
+  <div class="main-content">
+
+    <!-- Mobile Top App Bar -->
+    <header class="top-app-bar" role="banner">
+      <button class="icon-btn" id="menuBtn" aria-label="打开菜单" aria-expanded="false" aria-controls="sidebar">
+        <span class="material-symbols-outlined">menu</span>
+      </button>
+      <span class="app-bar-title">{{ site.title }}</span>
+      <button class="icon-btn" id="themeDialogBtnMobile" aria-label="主题设置" aria-haspopup="dialog">
+        <span class="material-symbols-outlined">palette</span>
+      </button>
+    </header>
+
+    <!-- Page Content -->
+    {{ content }}
+
+    <!-- Footer -->
+    <footer class="site-footer" role="contentinfo">
+      <p>
+        © {{ 'now' | date: "%Y" }} <a href="{{ '/' | relative_url }}">{{ site.title }}</a>
+        · Built with <a href="https://jekyllrb.com" target="_blank" rel="noopener">Jekyll</a>
+        · Hosted on <a href="https://pages.cloudflare.com" target="_blank" rel="noopener">Cloudflare Pages</a>
+      </p>
+    </footer>
+
+  </div><!-- /main-content -->
+</div><!-- /app-shell -->
+
+<!-- Theme Manager & App JS -->
+<script src="{{ '/assets/js/theme.js' | relative_url }}" defer></script>
+
+<!-- Mobile theme button wires to same dialog -->
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var mobileBtn = document.getElementById('themeDialogBtnMobile');
+    if (mobileBtn) {
+      mobileBtn.addEventListener('click', function() {
+        document.getElementById('themeDialog').showModal();
+      });
+    }
+    // Also fix themeDialogBtn to use showModal()
+    var sidebarBtn = document.getElementById('themeDialogBtn');
+    if (sidebarBtn) {
+      sidebarBtn.addEventListener('click', function() {
+        document.getElementById('themeDialog').showModal();
+      });
+    }
+  });
+</script>
+
+</body>
+</html>

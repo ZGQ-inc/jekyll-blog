@@ -1,0 +1,44 @@
+---
+layout: default
+title: 标签
+permalink: /tags/
+---
+
+<main class="page-content" role="main">
+  <div class="page-header">
+    <h1 class="page-title">🏷️ 标签</h1>
+    <p class="page-subtitle">共 {{ site.tags.size }} 个标签</p>
+  </div>
+
+  <!-- Tag Cloud -->
+  <div class="tag-cloud" style="margin-bottom:32px">
+    {% assign sorted_tags = site.tags | sort %}
+    {% for tag in sorted_tags %}
+    {% assign t = tag[0] %}
+    <a href="#{{ t | slugify }}" class="tag-cloud-item">
+      {{ t }}
+      <span class="tag-count">{{ tag[1].size }}</span>
+    </a>
+    {% endfor %}
+  </div>
+
+  <!-- Posts grouped by tag -->
+  {% assign sorted_tags = site.tags | sort %}
+  {% for tag in sorted_tags %}
+  {% assign t = tag[0] %}
+  <section id="{{ t | slugify }}" style="margin-bottom:32px">
+    <div class="archive-year">
+      <div class="year-header">
+        <span class="year-num"># {{ t }}</span>
+        <span class="year-count">{{ tag[1].size }} 篇</span>
+      </div>
+    </div>
+    {% for post in tag[1] %}
+    <a class="archive-post-item" href="{{ post.url | relative_url }}">
+      <span class="post-date-badge">{{ post.date | date: "%m-%d" }}</span>
+      <span class="post-title-link">{{ post.title }}</span>
+    </a>
+    {% endfor %}
+  </section>
+  {% endfor %}
+</main>

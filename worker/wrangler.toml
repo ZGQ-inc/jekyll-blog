@@ -1,0 +1,60 @@
+name            = "blog-worker"
+main            = "src/index.ts"
+compatibility_date = "2024-11-01"
+compatibility_flags = ["nodejs_compat"]
+
+# ================================================================
+# Routes - 绑定到自定义域名
+# ================================================================
+routes = [
+  { pattern = "api.zgqinc.gq/*", zone_name = "zgqinc.gq" }
+]
+
+# ================================================================
+# D1 Database Binding
+# 运行 `npx wrangler d1 create blog-db` 后，将输出的 database_id 填入下方
+# ================================================================
+[[d1_databases]]
+binding      = "DB"
+database_name = "blog-db"
+database_id  = "ce699506-5992-4828-83e8-e7a6cf227e32"
+
+# ================================================================
+# R2 Bucket Binding
+# 免费额度: 10GB 存储 / 每月 100万 A类操作 / 1000万 B类操作
+# 超额控制: Worker 代码限制单文件 ≤ 20MB，见 src/index.ts
+# ================================================================
+[[r2_buckets]]
+binding     = "R2"
+bucket_name = "blog-assets"
+
+# ================================================================
+# Environment Variables (非敏感配置，可明文)
+# ================================================================
+[vars]
+BLOG_URL       = "https://blog.zgqinc.gq"
+ASSETS_URL     = "https://assets.zgqinc.gq"
+GITHUB_REPO    = "PLACEHOLDER_GITHUB_USERNAME/PLACEHOLDER_REPO_NAME"
+GITHUB_BRANCH  = "main"
+GITHUB_POSTS_PATH = "_posts"
+
+# ================================================================
+# Secrets (通过 `wrangler secret put <NAME>` 注入，不在此文件中明文)
+# ================================================================
+# TELEGRAM_BOT_TOKEN    - Telegram Bot Token (from @BotFather)
+# TELEGRAM_CHANNEL_ID   - Target channel ID or @username
+# GITHUB_TOKEN          - GitHub Personal Access Token (repo scope)
+# NOTIFY_SECRET         - Shared secret for /api/notify endpoint
+# WEBHOOK_SECRET        - Telegram Webhook secret token
+
+# ================================================================
+# Staging Environment (可选)
+# ================================================================
+[env.staging]
+name = "blog-worker-staging"
+routes = [
+  { pattern = "api-staging.zgqinc.gq/*", zone_name = "zgqinc.gq" }
+]
+
+[env.staging.vars]
+BLOG_URL = "https://staging.zgqinc.gq"

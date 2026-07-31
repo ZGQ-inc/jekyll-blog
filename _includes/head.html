@@ -1,0 +1,42 @@
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0061A4">
+
+<!-- SEO -->
+{% seo %}
+
+<!-- Canonical -->
+<link rel="canonical" href="{{ page.url | absolute_url }}">
+
+<!-- Fonts: Noto Sans SC + Material Symbols -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&family=Inter:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+
+<!-- Material Web Components -->
+<script type="importmap">
+{
+  "imports": {
+    "@material/web/": "https://esm.run/@material/web/"
+  }
+}
+</script>
+<script type="module">
+  import '@material/web/all.js';
+</script>
+
+<!-- Main Stylesheet -->
+<link rel="stylesheet" href="{{ '/assets/css/main.css' | relative_url }}">
+
+<!-- RSS Feed -->
+{% if site.social.rss %}
+<link rel="alternate" type="application/atom+xml" title="{{ site.title }}" href="{{ '/feed.xml' | relative_url }}">
+{% endif %}
+
+<!-- Open Graph extras -->
+{% if page.image %}
+<meta property="og:image" content="{{ page.image | absolute_url }}">
+{% endif %}
+<meta property="og:site_name" content="{{ site.title }}">
+<meta name="twitter:card" content="summary_large_image">

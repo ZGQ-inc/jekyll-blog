@@ -1,0 +1,4563 @@
+### getMyShortDescription
+
+Source: https://core.telegram.org/bots/api
+
+Use this method to get the current bot short description for the given user language.
+
+```APIDOC
+## getMyShortDescription
+
+### Description
+Use this method to get the current bot short description. Returns BotShortDescription on success.
+
+### Parameters
+- **language_code** (String) - Optional - A two-letter ISO 639-1 language code.
+```
+
+--------------------------------
+
+### getMyDescription
+
+Source: https://core.telegram.org/bots/api
+
+Use this method to get the current bot description for the given user language.
+
+```APIDOC
+## getMyDescription
+
+### Description
+Use this method to get the current bot description. Returns BotDescription on success.
+
+### Parameters
+- **language_code** (String) - Optional - A two-letter ISO 639-1 language code.
+```
+
+--------------------------------
+
+### getMyCommands
+
+Source: https://core.telegram.org/bots/api
+
+Use this method to get the current list of the bot's commands for the given scope and user language.
+
+```APIDOC
+## getMyCommands
+
+### Description
+Use this method to get the current list of the bot's commands. Returns an Array of BotCommand objects.
+
+### Parameters
+- **scope** (BotCommandScope) - Optional - A JSON-serialized object describing the scope of users.
+- **language_code** (String) - Optional - A two-letter ISO 639-1 language code.
+```
+
+--------------------------------
+
+### getBusinessConnection
+
+Source: https://core.telegram.org/bots/api
+
+Gets information about the connection of the bot with a business account.
+
+```APIDOC
+## getBusinessConnection
+
+### Description
+Use this method to get information about the connection of the bot with a business account. Returns a BusinessConnection object on success.
+
+### Parameters
+#### Query Parameters
+- **business_connection_id** (String) - Required - Unique identifier of the business connection
+```
+
+--------------------------------
+
+### getMyDefaultAdministratorRights
+
+Source: https://core.telegram.org/bots/api
+
+Use this method to get the current default administrator rights of the bot.
+
+```APIDOC
+## getMyDefaultAdministratorRights
+
+### Description
+Use this method to get the current default administrator rights of the bot. Returns ChatAdministratorRights on success.
+
+### Parameters
+#### Query Parameters
+- **for_channels** (Boolean) - Optional - Pass True to get default administrator rights of the bot in channels.
+```
+
+--------------------------------
+
+### getManagedBotAccessSettings
+
+Source: https://core.telegram.org/bots/api
+
+Gets the access settings of a managed bot.
+
+```APIDOC
+## getManagedBotAccessSettings
+
+### Description
+Use this method to get the access settings of a managed bot. Returns a BotAccessSettings object on success.
+
+### Parameters
+#### Query Parameters
+- **user_id** (Integer) - Required - User identifier of the managed bot whose access settings will be returned
+```
+
+--------------------------------
+
+### getUserChatBoosts
+
+Source: https://core.telegram.org/bots/api
+
+Gets the list of boosts added to a chat by a user.
+
+```APIDOC
+## getUserChatBoosts
+
+### Description
+Use this method to get the list of boosts added to a chat by a user. Requires administrator rights in the chat. Returns a UserChatBoosts object.
+
+### Parameters
+#### Query Parameters
+- **chat_id** (Integer or String) - Required - Unique identifier for the chat or username of the channel in the format @username
+- **user_id** (Integer) - Required - Unique identifier of the target user
+```
+
+--------------------------------
+
+### getStickerSet
+
+Source: https://core.telegram.org/bots/api
+
+Use this method to get a sticker set. On success, a StickerSet object is returned.
+
+```APIDOC
+## getStickerSet
+
+### Description
+Use this method to get a sticker set. On success, a StickerSet object is returned.
+
+### Parameters
+- **name** (String) - Required - Name of the sticker set
+```
+
+--------------------------------
+
+### getManagedBotToken
+
+Source: https://core.telegram.org/bots/api
+
+Gets the token of a managed bot.
+
+```APIDOC
+## getManagedBotToken
+
+### Description
+Use this method to get the token of a managed bot. Returns the token as String on success.
+
+### Parameters
+#### Query Parameters
+- **user_id** (Integer) - Required - User identifier of the managed bot whose token will be returned
+```
+
+--------------------------------
+
+### getForumTopicIconStickers
+
+Source: https://core.telegram.org/bots/api
+
+Use this method to get custom emoji stickers, which can be used as a forum topic icon by any user.
+
+```APIDOC
+## getForumTopicIconStickers
+
+### Description
+Use this method to get custom emoji stickers, which can be used as a forum topic icon by any user. Requires no parameters. Returns an Array of Sticker objects.
+```
+
+--------------------------------
+
+### getMyName
+
+Source: https://core.telegram.org/bots/api
+
+Use this method to get the current bot name for the given user language.
+
+```APIDOC
+## getMyName
+
+### Description
+Use this method to get the current bot name. Returns BotName on success.
+
+### Parameters
+- **language_code** (String) - Optional - A two-letter ISO 639-1 language code.
+```
+
+--------------------------------
+
+### getChatMember
+
+Source: https://core.telegram.org/bots/api
+
+Use this method to get information about a member of a chat.
+
+```APIDOC
+## getChatMember
+
+### Description
+Use this method to get information about a member of a chat. The method is only guaranteed to work for other users if the bot is an administrator in the chat. Returns a ChatMember object on success.
+
+### Parameters
+#### Query Parameters
+- **chat_id** (Integer or String) - Required - Unique identifier for the target chat or username of the target supergroup or channel in the format @username
+- **user_id** (Integer) - Required - Unique identifier of the target user
+```
+
+--------------------------------
+
+### getChatMemberCount
+
+Source: https://core.telegram.org/bots/api
+
+Use this method to get the number of members in a chat.
+
+```APIDOC
+## getChatMemberCount
+
+### Description
+Use this method to get the number of members in a chat. Returns Int on success.
+
+### Parameters
+#### Query Parameters
+- **chat_id** (Integer or String) - Required - Unique identifier for the target chat or username of the target supergroup or channel in the format @username
+```
+
+--------------------------------
+
+### getGameHighScores
+
+Source: https://core.telegram.org/bots/api
+
+Use this method to get data for high score tables.
+
+```APIDOC
+## getGameHighScores
+
+### Description
+Use this method to get data for high score tables. Will return the score of the specified user and several of their neighbors in a game. Returns an Array of GameHighScore objects.
+
+### Parameters
+- **user_id** (Integer) - Required - Target user id
+- **chat_id** (Integer) - Optional - Required if inline_message_id is not specified. Unique identifier for the target chat.
+- **message_id** (Integer) - Optional - Required if inline_message_id is not specified. Identifier of the sent message.
+- **inline_message_id** (String) - Optional - Required if chat_id and message_id are not specified. Identifier of the inline message.
+```
+
+--------------------------------
+
+### getChatMenuButton
+
+Source: https://core.telegram.org/bots/api
+
+Use this method to get the current value of the bot's menu button in a private chat, or the default menu button.
+
+```APIDOC
+## getChatMenuButton
+
+### Description
+Use this method to get the current value of the bot's menu button in a private chat, or the default menu button. Returns MenuButton on success.
+
+### Parameters
+#### Query Parameters
+- **chat_id** (Integer) - Optional - Unique identifier for the target private chat. If not specified, the bot's default menu button will be returned.
+```
+
+--------------------------------
+
+### getCustomEmojiStickers
+
+Source: https://core.telegram.org/bots/api
+
+Use this method to get information about custom emoji stickers by their identifiers. Returns an Array of Sticker objects.
+
+```APIDOC
+## getCustomEmojiStickers
+
+### Description
+Use this method to get information about custom emoji stickers by their identifiers. Returns an Array of Sticker objects.
+
+### Parameters
+- **custom_emoji_ids** (Array of String) - Required - A JSON-serialized list of custom emoji identifiers
+```
+
+--------------------------------
+
+### getUserPersonalChatMessages
+
+Source: https://core.telegram.org/bots/api
+
+Use this method to get the last messages from the personal chat of a given user.
+
+```APIDOC
+## getUserPersonalChatMessages
+
+### Description
+Use this method to get the last messages from the personal chat (i.e., the chat currently added to their profile) of a given user. On success, an array of Message objects is returned.
+
+### Parameters
+#### Query Parameters
+- **user_id** (Integer) - Required - Unique identifier for the target user
+- **limit** (Integer) - Required - The maximum number of messages to return; 1-20
+```
+
+--------------------------------
+
+### getFile
+
+Source: https://core.telegram.org/bots/api
+
+Retrieves basic information about a file and prepares it for downloading.
+
+```APIDOC
+## getFile
+
+### Description
+Use this method to get basic information about a file and prepare it for downloading. On success, a File object is returned.
+
+### Parameters
+- **file_id** (String) - Required - File identifier to get information about
+```
+
+--------------------------------
+
+### createChatSubscriptionInviteLink
+
+Source: https://core.telegram.org/bots/api
+
+Creates a subscription invite link for a channel chat. Requires can_invite_users administrator rights.
+
+```APIDOC
+## createChatSubscriptionInviteLink
+
+### Description
+Use this method to create a subscription invite link for a channel chat. The bot must have the can_invite_users administrator rights.
+
+### Parameters
+- **chat_id** (Integer or String) - Required - Unique identifier for the target channel chat or username of the target channel in the format @username
+- **name** (String) - Optional - Invite link name; 0-32 characters
+- **subscription_period** (Integer) - Required - The number of seconds the subscription will be active for before the next payment. Currently, it must always be 2592000 (30 days).
+- **subscription_price** (Integer) - Required - The amount of Telegram Stars a user must pay initially and after each subsequent subscription period to be a member of the chat; 1-10000
+
+### Response
+- Returns the new invite link as a ChatInviteLink object.
+```
+
+--------------------------------
+
+### getMe
+
+Source: https://core.telegram.org/bots/api
+
+A simple method for testing your bot's authentication token. Requires no parameters. Returns basic information about the bot in form of a User object.
+
+```APIDOC
+## GET getMe
+
+### Description
+A simple method for testing your bot's authentication token. Requires no parameters. Returns basic information about the bot in form of a User object.
+
+### Method
+GET
+
+### Endpoint
+/bot<token>/getMe
+```
+
+--------------------------------
+
+### answerPreCheckoutQuery
+
+Source: https://core.telegram.org/bots/api
+
+Use this method to respond to pre-checkout queries after the user has confirmed their payment and shipping details.
+
+```APIDOC
+## answerPreCheckoutQuery
+
+### Description
+Use this method to respond to pre-checkout queries. On success, True is returned. The Bot API must receive an answer within 10 seconds after the pre-checkout query was sent.
+
+### Parameters
+- **pre_checkout_query_id** (String) - Required - Unique identifier for the query to be answered
+- **ok** (Boolean) - Required - Specify True if everything is alright and the bot is ready to proceed with the order. Use False if there are any problems.
+```
+
+--------------------------------
+
+### InlineQueryResultAudio
+
+Source: https://core.telegram.org/bots/api
+
+Represents a link to an MP3 audio file.
+
+```APIDOC
+## InlineQueryResultAudio
+
+### Description
+Represents a link to an MP3 audio file. By default, this audio file will be sent by the user.
+
+### Fields
+- **type** (String) - Required - Type of the result, must be audio
+- **id** (String) - Required - Unique identifier for this result, 1-64 bytes
+- **audio_url** (String) - Required - A valid URL for the audio file
+- **title** (String) - Required - Title
+- **caption** (String) - Optional - Caption, 0-1024 characters
+- **parse_mode** (String) - Optional - Mode for parsing entities in the audio caption
+- **caption_entities** (Array of MessageEntity) - Optional - List of special entities that appear in the caption
+- **performer** (String) - Optional - Performer
+- **audio_duration** (Integer) - Optional - Audio duration in seconds
+- **reply_markup** (InlineKeyboardMarkup) - Optional - Inline keyboard attached to the message
+- **input_message_content** (InputMessageContent) - Optional - Content of the message to be sent instead of the audio
+```
+
+--------------------------------
+
+### setMyShortDescription
+
+Source: https://core.telegram.org/bots/api
+
+Use this method to change the bot's short description.
+
+```APIDOC
+## setMyShortDescription
+
+### Description
+Use this method to change the bot's short description. Returns True on success.
+
+### Parameters
+- **short_description** (String) - Optional - New short description (0-120 characters).
+- **language_code** (String) - Optional - A two-letter ISO 639-1 language code.
+```
+
+--------------------------------
+
+### InputStoryContentPhoto
+
+Source: https://core.telegram.org/bots/api
+
+Represents a photo to post as a story.
+
+```APIDOC
+## InputStoryContentPhoto
+
+### Description
+Describes a photo to post as a story.
+
+### Fields
+- **type** (String) - Type of the content, must be _photo_
+- **photo** (String) - The photo to post as a story (1080x1920, max 10 MB).
+```
+
+--------------------------------
+
+### CallbackQuery
+
+Source: https://core.telegram.org/bots/api
+
+Represents an incoming callback query from a callback button in an inline keyboard.
+
+```APIDOC
+## CallbackQuery
+
+### Description
+This object represents an incoming callback query from a callback button in an inline keyboard. Note: It is necessary to react by calling answerCallbackQuery after receiving this object.
+
+### Fields
+- **id** (String) - Unique identifier for this query.
+- **from** (User) - Sender.
+- **message** (MaybeInaccessibleMessage) - Optional. Message sent by the bot with the callback button.
+- **inline_message_id** (String) - Optional. Identifier of the message sent via the bot in inline mode.
+- **chat_instance** (String) - Global identifier for the chat.
+- **data** (String) - Optional. Data associated with the callback button.
+- **game_short_name** (String) - Optional. Short name of a Game.
+```
+
+--------------------------------
+
+### uploadStickerFile
+
+Source: https://core.telegram.org/bots/api
+
+Use this method to upload a file with a sticker for later use in the createNewStickerSet, addStickerToSet, or replaceStickerInSet methods. Returns the uploaded File on success.
+
+```APIDOC
+## uploadStickerFile
+
+### Description
+Use this method to upload a file with a sticker for later use in the createNewStickerSet, addStickerToSet, or replaceStickerInSet methods. Returns the uploaded File on success.
+
+### Parameters
+- **user_id** (Integer) - Required - User identifier of sticker file owner
+- **sticker** (InputFile) - Required - A file with the sticker in .WEBP, .PNG, .TGS, or .WEBM format
+- **sticker_format** (String) - Required - Format of the sticker, must be one of “static”, “animated”, “video”
+```
+
+--------------------------------
+
+### sendSticker
+
+Source: https://core.telegram.org/bots/api
+
+Use this method to send static .WEBP, animated .TGS, or video .WEBM stickers. On success, the sent Message is returned.
+
+```APIDOC
+## sendSticker
+
+### Description
+Use this method to send static .WEBP, animated .TGS, or video .WEBM stickers. On success, the sent Message is returned.
+
+### Parameters
+- **business_connection_id** (String) - Optional - Unique identifier of the business connection on behalf of which the message will be sent
+- **chat_id** (Integer or String) - Required - Unique identifier for the target chat or username of the target bot, supergroup or channel
+- **message_thread_id** (Integer) - Optional - Unique identifier for the target message thread (topic) of a forum
+- **direct_messages_topic_id** (Integer) - Optional - Identifier of the direct messages topic to which the message will be sent
+- **sticker** (InputFile or String) - Required - Sticker to send
+- **emoji** (String) - Optional - Emoji associated with the sticker
+- **disable_notification** (Boolean) - Optional - Sends the message silently
+- **protect_content** (Boolean) - Optional - Protects the contents of the sent message from forwarding and saving
+- **allow_paid_broadcast** (Boolean) - Optional - Pass True to allow up to 1000 messages per second
+- **message_effect_id** (String) - Optional - Unique identifier of the message effect to be added to the message
+- **suggested_post_parameters** (SuggestedPostParameters) - Optional - A JSON-serialized object containing the parameters of the suggested post
+- **reply_parameters** (ReplyParameters) - Optional - Description of the message to reply to
+- **reply_markup** (InlineKeyboardMarkup or ReplyKeyboardMarkup or ReplyKeyboardRemove or ForceReply) - Optional - Additional interface options
+```
+
+--------------------------------
+
+### savePreparedKeyboardButton
+
+Source: https://core.telegram.org/bots/api
+
+Stores a keyboard button that can be used by a user within a Mini App.
+
+```APIDOC
+## savePreparedKeyboardButton
+
+### Description
+Stores a keyboard button that can be used by a user within a Mini App.
+
+### Parameters
+- **user_id** (Integer) - Required - Unique identifier of the target user
+
+### Response
+- Returns a PreparedKeyboardButton object.
+```
+
+--------------------------------
+
+### ForceReply
+
+Source: https://core.telegram.org/bots/api
+
+Displays a reply interface to the user upon receiving a message.
+
+```APIDOC
+## ForceReply
+
+### Description
+Upon receiving a message with this object, Telegram clients will display a reply interface to the user.
+
+### Fields
+- **force_reply** (True) - Shows reply interface to the user.
+- **input_field_placeholder** (String) - Optional. The placeholder to be shown in the input field; 1-64 characters.
+- **selective** (Boolean) - Optional. Use this parameter if you want to force reply from specific users only.
+```
+
+--------------------------------
+
+### postStory
+
+Source: https://core.telegram.org/bots/api
+
+Posts a story on behalf of a managed business account. Requires the can_manage_stories business bot right.
+
+```APIDOC
+## postStory
+
+### Description
+Posts a story on behalf of a managed business account. Requires the can_manage_stories business bot right. Returns Story on success.
+
+### Parameters
+- **business_connection_id** (String) - Required - Unique identifier of the business connection
+- **content** (InputStoryContent) - Required - Content of the story
+- **active_period** (Integer) - Required - Period after which the story is moved to the archive, in seconds
+```
+
+--------------------------------
+
+### sendLivePhoto
+
+Source: https://core.telegram.org/bots/api
+
+Use this method to send live photos. On success, the sent Message is returned.
+
+```APIDOC
+## sendLivePhoto
+
+### Description
+Use this method to send live photos. On success, the sent Message is returned.
+
+### Parameters
+#### Path Parameters
+- **business_connection_id** (String) - Optional - Unique identifier of the business connection on behalf of which the message will be sent
+- **chat_id** (Integer or String) - Required - Unique identifier for the target chat or username of the target channel
+- **message_thread_id** (Integer) - Optional - Unique identifier for the target message thread
+- **direct_messages_topic_id** (Integer) - Optional - Identifier of the direct messages topic
+- **live_photo** (InputFile or String) - Required - Live photo video to send
+- **photo** (InputFile or String) - Required - The static photo to send
+- **caption** (String) - Optional - Video caption
+- **parse_mode** (String) - Optional - Mode for parsing entities in the video caption
+- **caption_entities** (Array of MessageEntity) - Optional - A JSON-serialized list of special entities
+- **show_caption_above_media** (Boolean) - Optional - Pass True if the caption must be shown above the message media
+- **has_spoiler** (Boolean) - Optional - Pass True if the video needs to be covered with a spoiler animation
+- **disable_notification** (Boolean) - Optional - Sends the message silently
+- **protect_content** (Boolean) - Optional - Protects the contents of the sent message from forwarding and saving
+- **allow_paid_broadcast** (Boolean) - Optional - Pass True to allow up to 1000 messages per second
+- **message_effect_id** (String) - Optional - Unique identifier of the message effect
+- **suggested_post_parameters** (SuggestedPostParameters) - Optional - A JSON-serialized object containing the parameters of the suggested post
+- **reply_parameters** (ReplyParameters) - Optional - Description of the message to reply to
+- **reply_markup** (InlineKeyboardMarkup or ReplyKeyboardMarkup or ReplyKeyboardRemove or ForceReply) - Optional - Additional interface options
+```
+
+--------------------------------
+
+### sendDocument
+
+Source: https://core.telegram.org/bots/api
+
+Use this method to send general files. On success, the sent Message is returned.
+
+```APIDOC
+## sendDocument
+
+### Description
+Use this method to send general files. On success, the sent Message is returned. Bots can currently send files of any type of up to 50 MB in size.
+
+### Parameters
+- **business_connection_id** (String) - Optional - Unique identifier of the business connection on behalf of which the message will be sent
+- **chat_id** (Integer or String) - Required - Unique identifier for the target chat or username of the target bot, supergroup or channel
+- **message_thread_id** (Integer) - Optional - Unique identifier for the target message thread (topic) of a forum
+- **direct_messages_topic_id** (Integer) - Optional - Identifier of the direct messages topic to which the message will be sent
+- **document** (InputFile or String) - Required - File to send. Pass a file_id, an HTTP URL, or upload a new one using multipart/form-data.
+```
+
+--------------------------------
+
+### createNewStickerSet
+
+Source: https://core.telegram.org/bots/api
+
+Creates a new sticker set owned by a user. The bot can edit the created set.
+
+```APIDOC
+## createNewStickerSet
+
+### Description
+Use this method to create a new sticker set owned by a user. The bot will be able to edit the sticker set thus created. Returns True on success.
+
+### Parameters
+- **user_id** (Integer) - Required - User identifier of created sticker set owner
+- **name** (String) - Required - Short name of sticker set, to be used in t.me/addstickers/ URLs. 1-64 characters.
+- **title** (String) - Required - Sticker set title, 1-64 characters
+- **stickers** (Array of InputSticker) - Required - A JSON-serialized list of 1-50 initial stickers
+- **sticker_type** (String) - Optional - Type of stickers in the set: regular, mask, or custom_emoji
+- **needs_repainting** (Boolean) - Optional - Pass True if stickers must be repainted based on context
+
+### Response
+- **result** (Boolean) - True on success
+```
+
+--------------------------------
+
+### setMyDescription
+
+Source: https://core.telegram.org/bots/api
+
+Use this method to change the bot's description.
+
+```APIDOC
+## setMyDescription
+
+### Description
+Use this method to change the bot's description. Returns True on success.
+
+### Parameters
+- **description** (String) - Optional - New bot description (0-512 characters).
+- **language_code** (String) - Optional - A two-letter ISO 639-1 language code.
+```
+
+--------------------------------
+
+### addStickerToSet
+
+Source: https://core.telegram.org/bots/api
+
+Adds a new sticker to a set created by the bot.
+
+```APIDOC
+## addStickerToSet
+
+### Description
+Use this method to add a new sticker to a set created by the bot. Returns True on success.
+
+### Parameters
+- **user_id** (Integer) - Required - User identifier of sticker set owner
+- **name** (String) - Required - Sticker set name
+- **sticker** (InputSticker) - Required - A JSON-serialized object with information about the added sticker
+
+### Response
+- **result** (Boolean) - True on success
+```
+
+--------------------------------
+
+### createForumTopic
+
+Source: https://core.telegram.org/bots/api
+
+Use this method to create a topic in a forum supergroup chat or a private chat with a user.
+
+```APIDOC
+## createForumTopic
+
+### Description
+Use this method to create a topic in a forum supergroup chat or a private chat with a user. Returns information about the created topic as a ForumTopic object.
+
+### Parameters
+#### Query Parameters
+- **chat_id** (Integer or String) - Required - Unique identifier for the target chat or username of the target supergroup in the format @username
+- **name** (String) - Required - Topic name, 1-128 characters
+- **icon_color** (Integer) - Optional - Color of the topic icon in RGB format.
+- **icon_custom_emoji_id** (String) - Optional - Unique identifier of the custom emoji shown as the topic icon.
+```
+
+--------------------------------
+
+### close
+
+Source: https://core.telegram.org/bots/api
+
+Closes the bot instance to facilitate moving it between local servers.
+
+```APIDOC
+## close
+
+### Description
+Use this method to close the bot instance before moving it from one local server to another. You need to delete the webhook before calling this method to ensure that the bot isn't launched again after server restart.
+
+### Response
+- **result** (Boolean) - Returns True on success.
+```
+
+--------------------------------
+
+### answerWebAppQuery
+
+Source: https://core.telegram.org/bots/api
+
+Sets the result of an interaction with a Web App and sends a corresponding message.
+
+```APIDOC
+## answerWebAppQuery
+
+### Description
+Use this method to set the result of an interaction with a Web App and send a corresponding message on behalf of the user to the chat from which the query originated.
+
+### Parameters
+- **web_app_query_id** (String) - Required - Unique identifier for the query to be answered
+- **result** (InlineQueryResult) - Required - A JSON-serialized object describing the message to be sent
+
+### Response
+- Returns a SentWebAppMessage object on success.
+```
+
+--------------------------------
+
+### answerShippingQuery
+
+Source: https://core.telegram.org/bots/api
+
+Use this method to reply to shipping queries when an invoice requests a shipping address and is_flexible is set to True.
+
+```APIDOC
+## answerShippingQuery
+
+### Description
+Use this method to reply to shipping queries. On success, True is returned.
+
+### Parameters
+- **shipping_query_id** (String) - Required - Unique identifier for the query to be answered
+- **ok** (Boolean) - Required - Pass True if delivery to the specified address is possible and False if there are any problems
+- **shipping_options** (Array of ShippingOption) - Optional - Required if ok is True. A JSON-serialized array of available shipping options.
+- **error_message** (String) - Optional - Required if ok is False. Error message in human readable form that explains why it is impossible to complete the order.
+```
+
+--------------------------------
+
+### sendGame
+
+Source: https://core.telegram.org/bots/api
+
+Use this method to send a game. On success, the sent Message is returned.
+
+```APIDOC
+## sendGame
+
+### Description
+Use this method to send a game. On success, the sent Message is returned.
+
+### Parameters
+- **business_connection_id** (String) - Optional - Unique identifier of the business connection on behalf of which the message will be sent
+- **chat_id** (Integer or String) - Required - Unique identifier for the target chat or username of the target bot
+- **message_thread_id** (Integer) - Optional - Unique identifier for the target message thread (topic) of a forum
+- **game_short_name** (String) - Required - Short name of the game
+- **disable_notification** (Boolean) - Optional - Sends the message silently
+- **protect_content** (Boolean) - Optional - Protects the contents of the sent message from forwarding and saving
+- **allow_paid_broadcast** (Boolean) - Optional - Allow up to 1000 messages per second for a fee
+- **message_effect_id** (String) - Optional - Unique identifier of the message effect
+- **reply_parameters** (ReplyParameters) - Optional - Description of the message to reply to
+- **reply_markup** (InlineKeyboardMarkup) - Optional - A JSON-serialized object for an inline keyboard
+```
+
+--------------------------------
+
+### InlineQueryResultVideo
+
+Source: https://core.telegram.org/bots/api
+
+Represents a link to a page containing an embedded video player or a video file.
+
+```APIDOC
+## InlineQueryResultVideo
+
+### Description
+Represents a link to a page containing an embedded video player or a video file. By default, this video file will be sent by the user with an optional caption.
+
+### Fields
+- **type** (String) - Required - Type of the result, must be video
+- **id** (String) - Required - Unique identifier for this result, 1-64 bytes
+- **video_url** (String) - Required - A valid URL for the embedded video player or video file
+- **mime_type** (String) - Required - MIME type of the content of the video URL, “text/html” or “video/mp4”
+- **thumbnail_url** (String) - Required - URL of the thumbnail (JPEG only) for the video
+- **title** (String) - Required - Title for the result
+- **caption** (String) - Optional - Caption of the video to be sent, 0-1024 characters
+- **parse_mode** (String) - Optional - Mode for parsing entities in the video caption
+- **caption_entities** (Array of MessageEntity) - Optional - List of special entities that appear in the caption
+- **show_caption_above_media** (Boolean) - Optional - Pass True, if the caption must be shown above the message media
+- **video_width** (Integer) - Optional - Video width
+- **video_height** (Integer) - Optional - Video height
+- **video_duration** (Integer) - Optional - Video duration in seconds
+- **description** (String) - Optional - Short description of the result
+- **reply_markup** (InlineKeyboardMarkup) - Optional - Inline keyboard attached to the message
+- **input_message_content** (InputMessageContent) - Optional - Content of the message to be sent instead of the video
+```
+
+--------------------------------
+
+### setMyCommands
+
+Source: https://core.telegram.org/bots/api
+
+Use this method to change the list of the bot's commands.
+
+```APIDOC
+## setMyCommands
+
+### Description
+Use this method to change the list of the bot's commands. Returns True on success.
+
+### Parameters
+- **commands** (Array of BotCommand) - Required - A JSON-serialized list of bot commands.
+- **scope** (BotCommandScope) - Optional - A JSON-serialized object describing the scope of users.
+- **language_code** (String) - Optional - A two-letter ISO 639-1 language code.
+```
+
+--------------------------------
+
+### answerCallbackQuery
+
+Source: https://core.telegram.org/bots/api
+
+Sends answers to callback queries sent from inline keyboards.
+
+```APIDOC
+## answerCallbackQuery
+
+### Description
+Use this method to send answers to callback queries sent from inline keyboards. The answer will be displayed to the user as a notification at the top of the chat screen or as an alert. On success, True is returned.
+
+### Parameters
+#### Request Body
+- **callback_query_id** (String) - Required - Unique identifier for the query to be answered
+- **text** (String) - Optional - Text of the notification. If not specified, nothing will be shown to the user, 0-200 characters.
+- **show_alert** (Boolean) - Optional - If True, an alert will be shown by the client instead of a notification at the top of the chat screen. Defaults to false.
+- **url** (String) - Optional - URL that will be opened by the user's client.
+- **cache_time** (Integer) - Optional - The maximum amount of time in seconds that the result of the callback query may be cached client-side.
+```
+
+--------------------------------
+
+### createChatInviteLink
+
+Source: https://core.telegram.org/bots/api
+
+Creates an additional invite link for a chat.
+
+```APIDOC
+## createChatInviteLink
+
+### Description
+Use this method to create an additional invite link for a chat.
+
+### Parameters
+#### Path Parameters
+- **chat_id** (Integer or String) - Required - Unique identifier for the target chat or username of the target channel
+- **name** (String) - Optional - Invite link name; 0-32 characters
+- **expire_date** (Integer) - Optional - Point in time (Unix timestamp) when the link will expire
+- **member_limit** (Integer) - Optional - The maximum number of users that can be members of the chat simultaneously
+- **creates_join_request** (Boolean) - Optional - True, if users joining the chat via the link need to be approved by chat administrators.
+```
+
+--------------------------------
+
+### createInvoiceLink
+
+Source: https://core.telegram.org/bots/api
+
+Use this method to create a link for an invoice. Returns the created invoice link as a String on success.
+
+```APIDOC
+## createInvoiceLink
+
+### Description
+Use this method to create a link for an invoice. Returns the created invoice link as a String on success.
+
+### Parameters
+#### Request Body
+- **business_connection_id** (String) - Optional - Unique identifier of the business connection on behalf of which the link will be created. For payments in Telegram Stars only.
+- **title** (String) - Required - Product name, 1-32 characters
+- **description** (String) - Required - Product description, 1-255 characters
+- **payload** (String) - Required - Bot-defined invoice payload, 1-128 bytes. This will not be displayed to the user, use it for your internal processes.
+- **provider_token** (String) - Optional - Payment provider token, obtained via @BotFather. Pass an empty string for payments in Telegram Stars.
+- **currency** (String) - Required - Three-letter ISO 4217 currency code. Pass “XTR” for payments in Telegram Stars.
+- **max_tip_amount** (Integer) - Optional - The maximum accepted amount for tips in the smallest units of the currency.
+- **suggested_tip_amounts** (Array of Integer) - Optional - A JSON-serialized array of suggested amounts of tips in the smallest units of the currency.
+- **start_parameter** (String) - Optional - Unique deep-linking parameter.
+- **provider_data** (String) - Optional - JSON-serialized data about the invoice, which will be shared with the payment provider.
+- **photo_url** (String) - Optional - URL of the product photo for the invoice.
+- **photo_size** (Integer) - Optional - Photo size in bytes.
+- **photo_width** (Integer) - Optional - Photo width.
+- **photo_height** (Integer) - Optional - Photo height.
+- **need_name** (Boolean) - Optional - Pass True if you require the user's full name to complete the order.
+- **need_phone_number** (Boolean) - Optional - Pass True if you require the user's phone number to complete the order.
+- **need_email** (Boolean) - Optional - Pass True if you require the user's email address to complete the order.
+- **need_shipping_address** (Boolean) - Optional - Pass True if you require the user's shipping address to complete the order.
+- **send_phone_number_to_provider** (Boolean) - Optional - Pass True if the user's phone number should be sent to the provider.
+- **send_email_to_provider** (Boolean) - Optional - Pass True if the user's email address should be sent to the provider.
+- **is_flexible** (Boolean) - Optional - Pass True if the final price depends on the shipping method.
+
+### Response
+- **result** (String) - The created invoice link.
+```
+
+--------------------------------
+
+### InlineQueryResultGif
+
+Source: https://core.telegram.org/bots/api
+
+Represents a link to an animated GIF file.
+
+```APIDOC
+## InlineQueryResultGif
+
+### Description
+Represents a link to an animated GIF file. By default, this animated GIF file will be sent by the user with optional caption.
+
+### Fields
+- **type** (String) - Required - Type of the result, must be gif
+- **id** (String) - Required - Unique identifier for this result, 1-64 bytes
+- **gif_url** (String) - Required - A valid URL for the GIF file
+- **gif_width** (Integer) - Optional - Width of the GIF
+- **gif_height** (Integer) - Optional - Height of the GIF
+- **gif_duration** (Integer) - Optional - Duration of the GIF in seconds
+- **thumbnail_url** (String) - Required - URL of the static or animated thumbnail
+- **thumbnail_mime_type** (String) - Optional - MIME type of the thumbnail (image/jpeg, image/gif, or video/mp4)
+- **title** (String) - Optional - Title for the result
+- **caption** (String) - Optional - Caption of the GIF file
+- **parse_mode** (String) - Optional - Mode for parsing entities in the caption
+- **caption_entities** (Array of MessageEntity) - Optional - List of special entities in the caption
+- **show_caption_above_media** (Boolean) - Optional - Pass True if caption is above media
+- **reply_markup** (InlineKeyboardMarkup) - Optional - Inline keyboard attached
+- **input_message_content** (InputMessageContent) - Optional - Content to be sent instead of the GIF
+```
+
+--------------------------------
+
+### sendVideoNote
+
+Source: https://core.telegram.org/bots/api
+
+Use this method to send video messages (rounded square MPEG4 videos of up to 1 minute long). On success, the sent Message is returned.
+
+```APIDOC
+## sendVideoNote
+
+### Description
+Use this method to send video messages. Telegram clients support rounded square MPEG4 videos of up to 1 minute long.
+
+### Parameters
+#### Path Parameters
+- **business_connection_id** (String) - Optional - Unique identifier of the business connection on behalf of which the message will be sent
+- **chat_id** (Integer or String) - Required - Unique identifier for the target chat or username of the target bot, supergroup or channel
+
+### Response
+#### Success Response (200)
+- **Message** (Object) - The sent message object
+```
+
+--------------------------------
+
+### getUserProfileAudios
+
+Source: https://core.telegram.org/bots/api
+
+Retrieves a list of profile audios for a user.
+
+```APIDOC
+## getUserProfileAudios
+
+### Description
+Use this method to get a list of profile audios for a user.
+
+### Response
+#### Success Response (200)
+- **result** (UserProfileAudios) - Returns a UserProfileAudios object
+```
+
+--------------------------------
+
+### answerGuestQuery
+
+Source: https://core.telegram.org/bots/api
+
+Replies to a received guest message.
+
+```APIDOC
+## answerGuestQuery
+
+### Description
+Use this method to reply to a received guest message. On success, a SentGuestMessage object is returned.
+
+### Parameters
+#### Request Body
+- **guest_query_id** (String) - Required - Unique identifier for the query to be answered
+- **result** (InlineQueryResult) - Required - A JSON-serialized object describing the message to be sent
+```
+
+--------------------------------
+
+### promoteChatMember
+
+Source: https://core.telegram.org/bots/api
+
+Promote or demote a user in a supergroup or channel. The bot must be an administrator in the chat with appropriate rights.
+
+```APIDOC
+## promoteChatMember
+
+### Description
+Use this method to promote or demote a user in a supergroup or a channel. The bot must be an administrator in the chat for this to work and must have the appropriate administrator rights. Pass False for all boolean parameters to demote a user.
+
+### Parameters
+- **chat_id** (Integer or String) - Required - Unique identifier for the target chat or username of the target channel in the format @username
+- **user_id** (Integer) - Required - Unique identifier of the target user
+- **is_anonymous** (Boolean) - Optional - Pass True if the administrator's presence in the chat is hidden
+- **can_manage_chat** (Boolean) - Optional - Pass True if the administrator can access the chat event log, get boost list, see hidden supergroup and channel members, report spam messages, ignore slow mode, and send messages to the chat without paying Telegram Stars
+- **can_delete_messages** (Boolean) - Optional - Pass True if the administrator can delete messages of other users
+- **can_manage_video_chats** (Boolean) - Optional - Pass True if the administrator can manage video chats
+- **can_restrict_members** (Boolean) - Optional - Pass True if the administrator can restrict, ban or unban chat members, or access supergroup statistics
+- **can_promote_members** (Boolean) - Optional - Pass True if the administrator can add new administrators with a subset of their own privileges or demote administrators that they have promoted
+- **can_change_info** (Boolean) - Optional - Pass True if the administrator can change chat title, photo and other settings
+- **can_invite_users** (Boolean) - Optional - Pass True if the administrator can invite new users to the chat
+- **can_post_stories** (Boolean) - Optional - Pass True if the administrator can post stories to the chat
+- **can_edit_stories** (Boolean) - Optional - Pass True if the administrator can edit stories posted by other users
+- **can_delete_stories** (Boolean) - Optional - Pass True if the administrator can delete stories posted by other users
+- **can_post_messages** (Boolean) - Optional - Pass True if the administrator can post messages in the channel, approve suggested posts, or access channel statistics
+- **can_edit_messages** (Boolean) - Optional - Pass True if the administrator can edit messages of other users and can pin messages
+- **can_pin_messages** (Boolean) - Optional - Pass True if the administrator can pin messages
+- **can_manage_topics** (Boolean) - Optional - Pass True if the user is allowed to create, rename, close, and reopen forum topics
+- **can_manage_direct_messages** (Boolean) - Optional - Pass True if the administrator can manage direct messages within the channel and decline suggested posts
+- **can_manage_tags** (Boolean) - Optional - Pass True if the administrator can edit the tags of regular members
+
+### Response
+- **Success** (Boolean) - Returns True on success.
+```
+
+--------------------------------
+
+### sendMessageDraft
+
+Source: https://core.telegram.org/bots/api
+
+Streams a partial message to a user as an ephemeral 30-second preview.
+
+```APIDOC
+## sendMessageDraft
+
+### Description
+Use this method to stream a partial message to a user while the message is being generated. Note that the streamed draft is ephemeral and acts as a temporary 30-second preview.
+
+### Parameters
+#### Request Body
+- **chat_id** (Integer) - Required - Unique identifier for the target private chat
+- **message_thread_id** (Integer) - Optional - Unique identifier for the target message thread
+- **draft_id** (Integer) - Required - Unique identifier of the message draft; must be non-zero
+- **text** (String) - Optional - Text of the message to be sent
+- **parse_mode** (String) - Optional - Mode for parsing entities in the message text
+- **entities** (Array of MessageEntity) - Optional - A JSON-serialized list of special entities
+
+### Response
+#### Success Response (200)
+- **result** (Boolean) - Returns True on success
+```
+
+--------------------------------
+
+### sendPaidMedia
+
+Source: https://core.telegram.org/bots/api
+
+Use this method to send paid media. On success, the sent Message is returned.
+
+```APIDOC
+## sendPaidMedia
+
+### Description
+Use this method to send paid media. On success, the sent Message is returned.
+
+### Parameters
+- **business_connection_id** (String) - Optional - Unique identifier of the business connection on behalf of which the message will be sent
+- **chat_id** (Integer or String) - Required - Unique identifier for the target chat or username of the target bot, supergroup or channel in the format @username.
+- **message_thread_id** (Integer) - Optional - Unique identifier for the target message thread (topic) of a forum
+- **direct_messages_topic_id** (Integer) - Optional - Identifier of the direct messages topic to which the message will be sent
+- **star_count** (Integer) - Required - The number of Telegram Stars that must be paid to buy access to the media; 1-25000
+- **media** (Array of InputPaidMedia) - Required - A JSON-serialized array describing the media to be sent; up to 10 items
+- **payload** (String) - Optional - Bot-defined paid media payload, 0-128 bytes
+- **caption** (String) - Optional - Media caption, 0-1024 characters after entities parsing
+- **parse_mode** (String) - Optional - Mode for parsing entities in the media caption
+- **caption_entities** (Array of MessageEntity) - Optional - A JSON-serialized list of special entities that appear in the caption
+- **show_caption_above_media** (Boolean) - Optional - Pass True, if the caption must be shown above the message media
+- **disable_notification** (Boolean) - Optional - Sends the message silently
+- **protect_content** (Boolean) - Optional - Protects the contents of the sent message from forwarding and saving
+```
+
+--------------------------------
+
+### InlineKeyboardMarkup
+
+Source: https://core.telegram.org/bots/api
+
+An object representing an inline keyboard that appears directly attached to the message it belongs to.
+
+```APIDOC
+## InlineKeyboardMarkup
+
+### Description
+This object represents an inline keyboard that appears right next to the message it belongs to.
+
+### Fields
+- **inline_keyboard** (Array of Array of InlineKeyboardButton) - Required - Array of button rows, each represented by an Array of InlineKeyboardButton objects.
+```
+
+--------------------------------
+
+### getWebhookInfo
+
+Source: https://core.telegram.org/bots/api
+
+Retrieves the current status of the webhook. Returns a WebhookInfo object.
+
+```APIDOC
+## getWebhookInfo
+
+### Description
+Use this method to get current webhook status. Requires no parameters. On success, returns a WebhookInfo object. If the bot is using getUpdates, will return an object with the url field empty.
+```
+
+--------------------------------
+
+### getStarTransactions
+
+Source: https://core.telegram.org/bots/api
+
+Retrieves the bot's Telegram Star transactions in chronological order.
+
+```APIDOC
+## getStarTransactions
+
+### Description
+Returns the bot's Telegram Star transactions in chronological order.
+
+### Parameters
+#### Query Parameters
+- **offset** (Integer) - Optional - Number of transactions to skip in the response
+- **limit** (Integer) - Optional - The maximum number of transactions to be retrieved. Values between 1-100 are accepted. Defaults to 100.
+
+### Response
+- **StarTransactions** (object) - On success, returns a StarTransactions object.
+```
+
+--------------------------------
+
+### sendChatJoinRequestWebApp
+
+Source: https://core.telegram.org/bots/api
+
+Processes a chat join request query by showing a Mini App.
+
+```APIDOC
+## sendChatJoinRequestWebApp
+
+### Description
+Use this method to process a received chat join request query by showing a Mini App to the user before deciding the outcome.
+
+### Parameters
+- **chat_join_request_query_id** (String) - Required - Unique identifier of the join request query
+- **web_app_url** (String) - Required - The URL of the Mini App to be opened
+
+### Response
+- Returns True on success.
+```
+
+--------------------------------
+
+### sendVenue
+
+Source: https://core.telegram.org/bots/api
+
+Use this method to send information about a venue. On success, the sent Message is returned.
+
+```APIDOC
+## sendVenue
+
+### Description
+Use this method to send information about a venue. On success, the sent Message is returned.
+
+### Parameters
+#### Request Body
+- **business_connection_id** (String) - Optional - Unique identifier of the business connection on behalf of which the message will be sent
+- **chat_id** (Integer or String) - Required - Unique identifier for the target chat or username of the target bot, supergroup or channel in the format @username
+- **message_thread_id** (Integer) - Optional - Unique identifier for the target message thread (topic) of a forum
+- **direct_messages_topic_id** (Integer) - Optional - Identifier of the direct messages topic to which the message will be sent
+- **latitude** (Float) - Required - Latitude of the venue
+- **longitude** (Float) - Required - Longitude of the venue
+- **title** (String) - Required - Name of the venue
+- **address** (String) - Required - Address of the venue
+- **foursquare_id** (String) - Optional - Foursquare identifier of the venue
+- **foursquare_type** (String) - Optional - Foursquare type of the venue
+- **google_place_id** (String) - Optional - Google Places identifier of the venue
+- **google_place_type** (String) - Optional - Google Places type of the venue
+- **disable_notification** (Boolean) - Optional - Sends the message silently
+- **protect_content** (Boolean) - Optional - Protects the contents of the sent message from forwarding and saving
+- **allow_paid_broadcast** (Boolean) - Optional - Pass True to allow up to 1000 messages per second
+- **message_effect_id** (String) - Optional - Unique identifier of the message effect
+- **suggested_post_parameters** (SuggestedPostParameters) - Optional - JSON-serialized object containing parameters of the suggested post
+- **reply_parameters** (ReplyParameters) - Optional - Description of the message to reply to
+- **reply_markup** (InlineKeyboardMarkup or ReplyKeyboardMarkup or ReplyKeyboardRemove or ForceReply) - Optional - Additional interface options
+```
+
+--------------------------------
+
+### setWebhook
+
+Source: https://core.telegram.org/bots/api
+
+Use this method to specify a URL and receive incoming updates via an outgoing webhook.
+
+```APIDOC
+## setWebhook
+
+### Description
+Use this method to specify a URL and receive incoming updates via an outgoing webhook. Returns True on success.
+
+### Parameters
+#### Query Parameters
+- **url** (String) - Required - HTTPS URL to send updates to.
+- **certificate** (InputFile) - Optional - Upload your public key certificate.
+- **ip_address** (String) - Optional - The fixed IP address for webhook requests.
+- **max_connections** (Integer) - Optional - Maximum allowed number of simultaneous HTTPS connections (1-100).
+- **allowed_updates** (Array of String) - Optional - A JSON-serialized list of the update types you want your bot to receive.
+- **drop_pending_updates** (Boolean) - Optional - Pass True to drop all pending updates.
+- **secret_token** (String) - Optional - A secret token to be sent in a header in every webhook request.
+```
+
+--------------------------------
+
+### InputProfilePhotoAnimated
+
+Source: https://core.telegram.org/bots/api
+
+Represents an animated profile photo in .MPEG4 format.
+
+```APIDOC
+## InputProfilePhotoAnimated
+
+### Description
+An animated profile photo in the MPEG4 format.
+
+### Fields
+- **type** (String) - Type of the profile photo, must be _animated_
+- **animation** (String) - The animated profile photo.
+- **main_frame_timestamp** (Float) - Optional. Timestamp in seconds of the frame used as the static photo.
+```
+
+--------------------------------
+
+### editChatSubscriptionInviteLink
+
+Source: https://core.telegram.org/bots/api
+
+Edits a subscription invite link created by the bot. Requires can_invite_users administrator rights.
+
+```APIDOC
+## editChatSubscriptionInviteLink
+
+### Description
+Use this method to edit a subscription invite link created by the bot. The bot must have the can_invite_users administrator rights.
+
+### Parameters
+- **chat_id** (Integer or String) - Required - Unique identifier for the target chat or username of the target channel in the format @username
+- **invite_link** (String) - Required - The invite link to edit
+- **name** (String) - Optional - Invite link name; 0-32 characters
+
+### Response
+- Returns the edited invite link as a ChatInviteLink object.
+```
+
+--------------------------------
+
+### InlineQueryResultPhoto
+
+Source: https://core.telegram.org/bots/api
+
+Represents a link to a photo. By default, this photo will be sent by the user with optional caption.
+
+```APIDOC
+## InlineQueryResultPhoto
+
+### Description
+Represents a link to a photo. By default, this photo will be sent by the user with optional caption. Alternatively, you can use input_message_content to send a message with the specified content instead of the photo.
+
+### Fields
+- **type** (String) - Required - Type of the result, must be photo
+- **id** (String) - Required - Unique identifier for this result, 1-64 bytes
+- **photo_url** (String) - Required - A valid URL of the photo. Photo must be in JPEG format. Photo size must not exceed 5MB.
+- **thumbnail_url** (String) - Required - URL of the thumbnail for the photo
+- **photo_width** (Integer) - Optional - Width of the photo
+- **photo_height** (Integer) - Optional - Height of the photo
+- **title** (String) - Optional - Title for the result
+- **description** (String) - Optional - Short description of the result
+- **caption** (String) - Optional - Caption of the photo to be sent, 0-1024 characters after entities parsing
+- **parse_mode** (String) - Optional - Mode for parsing entities in the photo caption.
+- **caption_entities** (Array of MessageEntity) - Optional - List of special entities that appear in the caption
+- **show_caption_above_media** (Boolean) - Optional - Pass True, if the caption must be shown above the message media
+- **reply_markup** (InlineKeyboardMarkup) - Optional - Inline keyboard attached to the message
+- **input_message_content** (InputMessageContent) - Optional - Content of the message to be sent instead of the photo
+```
+
+--------------------------------
+
+### InputProfilePhotoStatic
+
+Source: https://core.telegram.org/bots/api
+
+Represents a static profile photo in .JPG format.
+
+```APIDOC
+## InputProfilePhotoStatic
+
+### Description
+A static profile photo in the .JPG format.
+
+### Fields
+- **type** (String) - Type of the profile photo, must be _static_
+- **photo** (String) - The static profile photo.
+```
+
+--------------------------------
+
+### setStickerPositionInSet
+
+Source: https://core.telegram.org/bots/api
+
+Moves a sticker in a set created by the bot to a specific position.
+
+```APIDOC
+## setStickerPositionInSet
+
+### Description
+Use this method to move a sticker in a set created by the bot to a specific position. Returns True on success.
+
+### Parameters
+- **sticker** (String) - Required - File identifier of the sticker
+- **position** (Integer) - Required - New sticker position in the set, zero-based
+
+### Response
+- **result** (Boolean) - True on success
+```
+
+--------------------------------
+
+### sendChecklist
+
+Source: https://core.telegram.org/bots/api
+
+Use this method to send a checklist on behalf of a connected business account. On success, the sent Message is returned.
+
+```APIDOC
+## sendChecklist
+
+### Description
+Use this method to send a checklist on behalf of a connected business account. On success, the sent Message is returned.
+
+### Parameters
+- **business_connection_id** (String) - Required - Unique identifier of the business connection on behalf of which the message will be sent
+- **chat_id** (Integer or String) - Required - Unique identifier for the target chat or username of the target bot in the format @username
+- **checklist** (InputChecklist) - Required - A JSON-serialized object for the checklist to send
+- **disable_notification** (Boolean) - Optional - Sends the message silently. Users will receive a notification with no sound.
+- **protect_content** (Boolean) - Optional - Protects the contents of the sent message from forwarding and saving
+- **message_effect_id** (String) - Optional - Unique identifier of the message effect to be added to the message
+- **reply_parameters** (ReplyParameters) - Optional - A JSON-serialized object for description of the message to reply to
+- **reply_markup** (InlineKeyboardMarkup) - Optional - A JSON-serialized object for an inline keyboard
+```
+
+--------------------------------
+
+### sendPhoto
+
+Source: https://core.telegram.org/bots/api
+
+Use this method to send photos. On success, the sent Message is returned.
+
+```APIDOC
+## sendPhoto
+
+### Description
+Use this method to send photos. On success, the sent Message is returned.
+
+### Parameters
+#### Request Body
+- **business_connection_id** (String) - Optional - Unique identifier of the business connection on behalf of which the message will be sent.
+- **chat_id** (Integer or String) - Required - Unique identifier for the target chat or username of the target bot, supergroup or channel.
+- **message_thread_id** (Integer) - Optional - Unique identifier for the target message thread (topic) of a forum.
+- **direct_messages_topic_id** (Integer) - Optional - Identifier of the direct messages topic to which the message will be sent.
+- **photo** (InputFile or String) - Required - Photo to send.
+- **caption** (String) - Optional - Photo caption.
+- **parse_mode** (String) - Optional - Mode for parsing entities in the photo caption.
+- **caption_entities** (Array of MessageEntity) - Optional - A JSON-serialized list of special entities that appear in the caption.
+- **show_caption_above_media** (Boolean) - Optional - Pass True if the caption must be shown above the message media.
+- **has_spoiler** (Boolean) - Optional - Pass True if the photo needs to be covered with a spoiler animation.
+- **disable_notification** (Boolean) - Optional - Sends the message silently.
+- **protect_content** (Boolean) - Optional - Protects the contents of the sent message from forwarding and saving.
+```
+
+--------------------------------
+
+### InlineQueryResultVoice
+
+Source: https://core.telegram.org/bots/api
+
+Represents a link to a voice recording in an .OGG container encoded with OPUS.
+
+```APIDOC
+## InlineQueryResultVoice
+
+### Description
+Represents a link to a voice recording in an .OGG container encoded with OPUS. By default, this voice recording will be sent by the user.
+
+### Fields
+- **type** (String) - Required - Type of the result, must be voice
+- **id** (String) - Required - Unique identifier for this result, 1-64 bytes
+- **voice_url** (String) - Required - A valid URL for the voice recording
+- **title** (String) - Required - Recording title
+- **caption** (String) - Optional - Caption, 0-1024 characters
+- **parse_mode** (String) - Optional - Mode for parsing entities in the voice message caption
+- **caption_entities** (Array of MessageEntity) - Optional - List of special entities that appear in the caption
+- **voice_duration** (Integer) - Optional - Recording duration in seconds
+- **reply_markup** (InlineKeyboardMarkup) - Optional - Inline keyboard attached to the message
+- **input_message_content** (InputMessageContent) - Optional - Content of the message to be sent instead of the voice recording
+```
+
+--------------------------------
+
+### sendRichMessageDraft
+
+Source: https://core.telegram.org/bots/api
+
+Use this method to stream a partial rich message to a user while the message is being generated. This is an ephemeral 30-second preview.
+
+```APIDOC
+## sendRichMessageDraft
+
+### Description
+Use this method to stream a partial rich message to a user while the message is being generated. Returns True on success.
+
+### Parameters
+- **chat_id** (Integer) - Required - Unique identifier for the target private chat.
+- **message_thread_id** (Integer) - Optional - Unique identifier for the target message thread.
+- **draft_id** (Integer) - Required - Unique identifier of the message draft.
+- **rich_message** (InputRichMessage) - Required - The partial message to be streamed.
+```
+
+--------------------------------
+
+### setStickerSetTitle
+
+Source: https://core.telegram.org/bots/api
+
+Sets the title of a created sticker set.
+
+```APIDOC
+## setStickerSetTitle
+
+### Description
+Use this method to set the title of a created sticker set. Returns True on success.
+
+### Parameters
+- **name** (String) - Required - Sticker set name
+- **title** (String) - Required - Sticker set title, 1-64 characters
+
+### Response
+- **result** (Boolean) - True on success
+```
+
+--------------------------------
+
+### verifyUser
+
+Source: https://core.telegram.org/bots/api
+
+Verifies a user on behalf of the organization represented by the bot.
+
+```APIDOC
+## verifyUser
+
+### Description
+Verifies a user on behalf of the organization which is represented by the bot. Returns True on success.
+
+### Parameters
+- **user_id** (Integer) - Required - Unique identifier of the target user
+- **custom_description** (String) - Optional - Custom description for the verification; 0-70 characters.
+```
+
+--------------------------------
+
+### sendAudio
+
+Source: https://core.telegram.org/bots/api
+
+Use this method to send audio files, if you want Telegram clients to display them in the music player. On success, the sent Message is returned.
+
+```APIDOC
+## sendAudio
+
+### Description
+Use this method to send audio files, if you want Telegram clients to display them in the music player. Your audio must be in the .MP3 or .M4A format. On success, the sent Message is returned.
+```
+
+--------------------------------
+
+### getChat
+
+Source: https://core.telegram.org/bots/api
+
+Retrieves up-to-date information about a chat.
+
+```APIDOC
+## getChat
+
+### Description
+Use this method to get up-to-date information about the chat. Returns a ChatFullInfo object on success.
+
+### Parameters
+#### Query Parameters
+- **chat_id** (Integer or String) - Required - Unique identifier for the target chat or username of the target supergroup or channel in the format @username
+
+### Response
+#### Success Response (200)
+- **result** (ChatFullInfo) - Returns a ChatFullInfo object on success.
+```
+
+--------------------------------
+
+### sendMediaGroup
+
+Source: https://core.telegram.org/bots/api
+
+Use this method to send a group of photos, live photos, videos, documents or audios as an album. On success, an array of Message objects that were sent is returned.
+
+```APIDOC
+## sendMediaGroup
+
+### Description
+Use this method to send a group of photos, live photos, videos, documents or audios as an album. Documents and audio files can be only grouped in an album with messages of the same type.
+
+### Parameters
+- **business_connection_id** (String) - Optional - Unique identifier of the business connection on behalf of which the message will be sent
+- **chat_id** (Integer or String) - Required - Unique identifier for the target chat or username of the target bot, supergroup or channel
+- **message_thread_id** (Integer) - Optional - Unique identifier for the target message thread (topic) of a forum
+- **direct_messages_topic_id** (Integer) - Optional - Identifier of the direct messages topic to which the messages will be sent
+- **media** (Array) - Required - A JSON-serialized array describing messages to be sent, must include 2-10 items
+- **disable_notification** (Boolean) - Optional - Sends messages silently
+- **protect_content** (Boolean) - Optional - Protects the contents of the sent messages from forwarding and saving
+- **allow_paid_broadcast** (Boolean) - Optional - Pass True to allow up to 1000 messages per second for a fee
+- **message_effect_id** (String) - Optional - Unique identifier of the message effect to be added
+- **reply_parameters** (ReplyParameters) - Optional - Description of the message to reply to
+
+### Response
+- **Success Response (200)** - Array of Message objects
+```
+
+--------------------------------
+
+### InlineQueryResultMpeg4Gif
+
+Source: https://core.telegram.org/bots/api
+
+Represents a link to a video animation (H.264/MPEG-4 AVC video without sound).
+
+```APIDOC
+## InlineQueryResultMpeg4Gif
+
+### Description
+Represents a link to a video animation (H.264/MPEG-4 AVC video without sound). By default, this animated MPEG-4 file will be sent by the user with optional caption.
+
+### Fields
+- **type** (String) - Required - Type of the result, must be mpeg4_gif
+- **id** (String) - Required - Unique identifier for this result, 1-64 bytes
+- **mpeg4_url** (String) - Required - A valid URL for the MPEG4 file
+- **mpeg4_width** (Integer) - Optional - Video width
+- **mpeg4_height** (Integer) - Optional - Video height
+- **mpeg4_duration** (Integer) - Optional - Video duration in seconds
+- **thumbnail_url** (String) - Required - URL of the thumbnail
+- **thumbnail_mime_type** (String) - Optional - MIME type of the thumbnail
+- **title** (String) - Optional - Title for the result
+- **caption** (String) - Optional - Caption of the MPEG-4 file
+- **parse_mode** (String) - Optional - Mode for parsing entities in the caption
+- **caption_entities** (Array of MessageEntity) - Optional - List of special entities in the caption
+- **show_caption_above_media** (Boolean) - Optional - Pass True if caption is above media
+```
+
+--------------------------------
+
+### setChatPhoto
+
+Source: https://core.telegram.org/bots/api
+
+Sets a new profile photo for the chat.
+
+```APIDOC
+## setChatPhoto
+
+### Description
+Use this method to set a new profile photo for the chat. The bot must be an administrator in the chat.
+
+### Parameters
+- **chat_id** (Integer or String) - Required - Unique identifier for the target chat or username of the target channel in the format @username
+- **photo** (InputFile) - Required - New chat photo, uploaded using multipart/form-data
+
+### Response
+- Returns True on success.
+```
+
+--------------------------------
+
+### sendAnimation
+
+Source: https://core.telegram.org/bots/api
+
+Use this method to send animation files (GIF or H.264/MPEG-4 AVC video without sound). On success, the sent Message is returned.
+
+```APIDOC
+## sendAnimation
+
+### Description
+Use this method to send animation files (GIF or H.264/MPEG-4 AVC video without sound). On success, the sent Message is returned.
+
+### Parameters
+#### Request Body
+- **business_connection_id** (String) - Optional - Unique identifier of the business connection on behalf of which the message will be sent
+- **chat_id** (Integer or String) - Required - Unique identifier for the target chat or username of the target bot, supergroup or channel
+- **message_thread_id** (Integer) - Optional - Unique identifier for the target message thread (topic) of a forum
+- **direct_messages_topic_id** (Integer) - Optional - Identifier of the direct messages topic to which the message will be sent
+- **animation** (InputFile or String) - Required - Animation to send
+- **duration** (Integer) - Optional - Duration of sent animation in seconds
+- **width** (Integer) - Optional - Animation width
+- **height** (Integer) - Optional - Animation height
+- **thumbnail** (InputFile or String) - Optional - Thumbnail of the file sent
+- **caption** (String) - Optional - Animation caption
+- **parse_mode** (String) - Optional - Mode for parsing entities in the animation caption
+- **caption_entities** (Array of MessageEntity) - Optional - A JSON-serialized list of special entities that appear in the caption
+- **show_caption_above_media** (Boolean) - Optional - Pass True, if the caption must be shown above the message media
+- **has_spoiler** (Boolean) - Optional - Pass True if the animation needs to be covered with a spoiler animation
+- **disable_notification** (Boolean) - Optional - Sends the message silently.
+```
+
+--------------------------------
+
+### Markdown Formatting Features
+
+Source: https://core.telegram.org/bots/api
+
+Use these HTML tags for formatting features that lack native Markdown syntax.
+
+```html
+<u>underlined text</u>, <ins>underlined text</ins>
+<sub>subscript text</sub>
+<sup>superscript text</sup>
+<a name="chapter-1"></a>
+<aside>Pull quote<cite>The Author</cite></aside>
+<details open><summary>Title</summary>Content</details>
+<tg-map lat="41.9" long="12.5" zoom="14"/>
+<tg-collage><img src="https://telegram.org/example/photo.jpg"/><figcaption>Caption<cite>The Author</cite></figcaption></tg-collage>
+<tg-slideshow><img src="https://telegram.org/example/photo.jpg"/><video src="https://telegram.org/example/video.mp4"/><figcaption>Slideshow caption<cite>The Author</cite></figcaption></tg-slideshow>
+```
+
+--------------------------------
+
+### answerInlineQuery
+
+Source: https://core.telegram.org/bots/api
+
+Use this method to send answers to an inline query. On success, True is returned. No more than 50 results per query are allowed.
+
+```APIDOC
+## answerInlineQuery
+
+### Description
+Use this method to send answers to an inline query. On success, True is returned. No more than 50 results per query are allowed.
+
+### Parameters
+#### Request Body
+- **inline_query_id** (String) - Required - Unique identifier for the answered query
+- **results** (Array of InlineQueryResult) - Required - A JSON-serialized array of results for the inline query
+- **cache_time** (Integer) - Optional - The maximum amount of time in seconds that the result of the inline query may be cached on the server. Defaults to 300.
+- **is_personal** (Boolean) - Optional - Pass True if results may be cached on the server side only for the user that sent the query.
+- **next_offset** (String) - Optional - Pass the offset that a client should send in the next query with the same text to receive more results.
+- **button** (InlineQueryResultsButton) - Optional - A JSON-serialized object describing a button to be shown above inline query results
+
+### Response
+#### Success Response (200)
+- **result** (Boolean) - Returns True on success
+```
+
+--------------------------------
+
+### getUserGifts
+
+Source: https://core.telegram.org/bots/api
+
+Returns the gifts owned and hosted by a user.
+
+```APIDOC
+## getUserGifts
+
+### Description
+Returns the gifts owned and hosted by a user. Returns OwnedGifts on success.
+
+### Parameters
+- **user_id** (Integer) - Required - Unique identifier of the user
+- **exclude_unlimited** (Boolean) - Optional - Pass True to exclude gifts that can be purchased an unlimited number of times
+- **exclude_limited_upgradable** (Boolean) - Optional - Pass True to exclude gifts that can be purchased a limited number of times and can be upgraded to unique
+- **exclude_limited_non_upgradable** (Boolean) - Optional - Pass True to exclude gifts that can be purchased a limited number of times and can't be upgraded to unique
+- **exclude_from_blockchain** (Boolean) - Optional - Pass True to exclude gifts that were assigned from the TON blockchain
+- **exclude_unique** (Boolean) - Optional - Pass True to exclude unique gifts
+```
+
+--------------------------------
+
+### sendInvoice
+
+Source: https://core.telegram.org/bots/api
+
+Use this method to send invoices. On success, the sent Message is returned.
+
+```APIDOC
+## sendInvoice
+
+### Description
+Use this method to send invoices. On success, the sent Message is returned.
+
+### Parameters
+- **chat_id** (Integer or String) - Required - Unique identifier for the target chat or username of the target bot, supergroup or channel in the format @username
+- **message_thread_id** (Integer) - Optional - Unique identifier for the target message thread (topic) of a forum
+- **direct_messages_topic_id** (Integer) - Optional - Identifier of the direct messages topic to which the message will be sent
+- **title** (String) - Required - Product name, 1-32 characters
+- **description** (String) - Required - Product description, 1-255 characters
+- **payload** (String) - Required - Bot-defined invoice payload, 1-128 bytes
+- **provider_token** (String) - Optional - Payment provider token, obtained via @BotFather. Pass an empty string for payments in Telegram Stars.
+- **currency** (String) - Required - Three-letter ISO 4217 currency code. Pass “XTR” for payments in Telegram Stars.
+- **prices** (Array of LabeledPrice) - Required - Price breakdown, a JSON-serialized list of components.
+```
+
+--------------------------------
+
+### upgradeGift
+
+Source: https://core.telegram.org/bots/api
+
+Upgrades a given regular gift to a unique gift. Requires the can_transfer_and_upgrade_gifts business bot right.
+
+```APIDOC
+## upgradeGift
+
+### Description
+Upgrades a given regular gift to a unique gift. Requires the can_transfer_and_upgrade_gifts business bot right. Additionally requires the can_transfer_stars business bot right if the upgrade is paid. Returns True on success.
+
+### Parameters
+- **business_connection_id** (String) - Required - Unique identifier of the business connection
+- **owned_gift_id** (String) - Required - Unique identifier of the regular gift that should be upgraded
+- **keep_original_details** (Boolean) - Optional - Pass True to keep the original gift text, sender and receiver
+- **star_count** (Integer) - Optional - The amount of Telegram Stars that will be paid for the upgrade
+```
+
+--------------------------------
+
+### Rich Markdown Formatting Syntax
+
+Source: https://core.telegram.org/bots/api
+
+Use this syntax within the markdown field to apply rich text formatting to bot messages.
+
+```markdown
+**bold text**
+__bold text__
+*italic text*
+_italic text_
+~~strikethrough text~~
+`inline fixed-width code`
+==marked text==
+||spoiler||
+```
+
+--------------------------------
+
+### approveChatJoinRequest
+
+Source: https://core.telegram.org/bots/api
+
+Approves a chat join request.
+
+```APIDOC
+## approveChatJoinRequest
+
+### Description
+Use this method to approve a chat join request. The bot must be an administrator in the chat and have the can_invite_users administrator right.
+
+### Parameters
+- **chat_id** (Integer or String) - Required - Unique identifier for the target chat or username of the target channel in the format @username
+- **user_id** (Integer) - Required - Unique identifier of the target user
+
+### Response
+- Returns True on success.
+```
+
+--------------------------------
+
+### savePreparedInlineMessage
+
+Source: https://core.telegram.org/bots/api
+
+Stores a message that can be sent by a user of a Mini App.
+
+```APIDOC
+## savePreparedInlineMessage
+
+### Description
+Stores a message that can be sent by a user of a Mini App.
+
+### Parameters
+- **user_id** (Integer) - Required - Unique identifier of the target user
+- **result** (InlineQueryResult) - Required - A JSON-serialized object describing the message to be sent
+- **allow_user_chats** (Boolean) - Optional - Pass True if the message can be sent to private chats with users
+- **allow_bot_chats** (Boolean) - Optional - Pass True if the message can be sent to private chats with bots
+- **allow_group_chats** (Boolean) - Optional - Pass True if the message can be sent to group and supergroup chats
+- **allow_channel_chats** (Boolean) - Optional - Pass True if the message can be sent to channel chats
+
+### Response
+- Returns a PreparedInlineMessage object.
+```
+
+--------------------------------
+
+### setMyName
+
+Source: https://core.telegram.org/bots/api
+
+Use this method to change the bot's name.
+
+```APIDOC
+## setMyName
+
+### Description
+Use this method to change the bot's name. Returns True on success.
+
+### Parameters
+- **name** (String) - Optional - New bot name (0-64 characters).
+- **language_code** (String) - Optional - A two-letter ISO 639-1 language code.
+```
+
+--------------------------------
+
+### setChatTitle
+
+Source: https://core.telegram.org/bots/api
+
+Changes the title of a chat.
+
+```APIDOC
+## setChatTitle
+
+### Description
+Use this method to change the title of a chat. Titles can't be changed for private chats. The bot must be an administrator in the chat for this to work and must have the appropriate administrator rights. Returns True on success.
+
+### Parameters
+#### Query Parameters
+- **chat_id** (Integer or String) - Required - Unique identifier for the target chat or username of the target channel in the format @username
+- **title** (String) - Required - New chat title, 1-128 characters
+
+### Response
+#### Success Response (200)
+- **result** (Boolean) - Returns True on success.
+```
+
+--------------------------------
+
+### answerChatJoinRequestQuery
+
+Source: https://core.telegram.org/bots/api
+
+Processes a received chat join request query.
+
+```APIDOC
+## answerChatJoinRequestQuery
+
+### Description
+Use this method to process a received chat join request query.
+
+### Parameters
+- **chat_join_request_query_id** (String) - Required - Unique identifier of the join request query
+- **result** (String) - Required - Result of the query. Must be either “approve”, “decline”, or “queue”.
+
+### Response
+- Returns True on success.
+```
+
+--------------------------------
+
+### exportChatInviteLink
+
+Source: https://core.telegram.org/bots/api
+
+Generates a new primary invite link for a chat, revoking the previous one.
+
+```APIDOC
+## exportChatInviteLink
+
+### Description
+Use this method to generate a new primary invite link for a chat; any previously generated primary link is revoked.
+
+### Parameters
+#### Path Parameters
+- **chat_id** (Integer or String) - Required - Unique identifier for the target chat or username of the target channel
+
+### Response
+- **Success** (String) - Returns the new invite link.
+```
+
+--------------------------------
+
+### repostStory
+
+Source: https://core.telegram.org/bots/api
+
+Reposts a story on behalf of a business account from another business account. Requires the can_manage_stories business bot right.
+
+```APIDOC
+## repostStory
+
+### Description
+Reposts a story on behalf of a business account from another business account. Both business accounts must be managed by the same bot.
+
+### Parameters
+- **business_connection_id** (String) - Required - Unique identifier of the business connection
+- **from_chat_id** (Integer) - Required - Unique identifier of the chat which posted the story that should be reposted
+- **from_story_id** (Integer) - Required - Unique identifier of the story that should be reposted
+- **active_period** (Integer) - Required - Period after which the story is moved to the archive, in seconds
+- **post_to_chat_page** (Boolean) - Optional - Pass True to keep the story accessible after it expires
+- **protect_content** (Boolean) - Optional - Pass True if the content of the story must be protected from forwarding and screenshotting
+
+### Response
+- Returns Story object on success.
+```
+
+--------------------------------
+
+### InputPaidMediaVideo
+
+Source: https://core.telegram.org/bots/api
+
+Represents a video used as paid media.
+
+```APIDOC
+## InputPaidMediaVideo
+
+### Description
+The paid media to send is a video.
+
+### Fields
+- **type** (String) - Type of the media, must be _video_
+- **media** (String) - File to send.
+- **thumbnail** (String) - Optional. Thumbnail of the file.
+- **cover** (String) - Optional. Cover for the video.
+- **start_timestamp** (Integer) - Optional. Start timestamp for the video.
+- **width** (Integer) - Optional. Video width.
+- **height** (Integer) - Optional. Video height.
+- **duration** (Integer) - Optional. Video duration in seconds.
+- **supports_streaming** (Boolean) - Optional. Pass _True_ if the video is suitable for streaming.
+```
+
+--------------------------------
+
+### convertGiftToStars
+
+Source: https://core.telegram.org/bots/api
+
+Converts a given regular gift to Telegram Stars. Requires the can_convert_gifts_to_stars business bot right. Returns True on success.
+
+```APIDOC
+## convertGiftToStars
+
+### Description
+Converts a given regular gift to Telegram Stars. Requires the can_convert_gifts_to_stars business bot right. Returns True on success.
+
+### Parameters
+- **business_connection_id** (String) - Required - Unique identifier of the business connection
+- **owned_gift_id** (String) - Required - Unique identifier of the regular gift that should be converted to Telegram Stars
+```
+
+--------------------------------
+
+### sendVoice
+
+Source: https://core.telegram.org/bots/api
+
+Use this method to send audio files, if you want Telegram clients to display the file as a playable voice message. On success, the sent Message is returned.
+
+```APIDOC
+## sendVoice
+
+### Description
+Use this method to send audio files, if you want Telegram clients to display the file as a playable voice message. Bots can currently send voice messages of up to 50 MB in size.
+
+### Parameters
+#### Path Parameters
+- **business_connection_id** (String) - Optional - Unique identifier of the business connection on behalf of which the message will be sent
+- **chat_id** (Integer or String) - Required - Unique identifier for the target chat or username of the target bot, supergroup or channel
+- **message_thread_id** (Integer) - Optional - Unique identifier for the target message thread (topic) of a forum
+- **direct_messages_topic_id** (Integer) - Optional - Identifier of the direct messages topic to which the message will be sent
+- **voice** (InputFile or String) - Required - Audio file to send
+- **caption** (String) - Optional - Voice message caption, 0-1024 characters
+- **parse_mode** (String) - Optional - Mode for parsing entities in the voice message caption
+- **caption_entities** (Array of MessageEntity) - Optional - List of special entities that appear in the caption
+- **duration** (Integer) - Optional - Duration of the voice message in seconds
+- **disable_notification** (Boolean) - Optional - Sends the message silently
+- **protect_content** (Boolean) - Optional - Protects the contents of the sent message from forwarding and saving
+- **allow_paid_broadcast** (Boolean) - Optional - Pass True to allow up to 1000 messages per second for a fee
+- **message_effect_id** (String) - Optional - Unique identifier of the message effect to be added to the message
+- **suggested_post_parameters** (SuggestedPostParameters) - Optional - Parameters of the suggested post to send
+- **reply_parameters** (ReplyParameters) - Optional - Description of the message to reply to
+- **reply_markup** (InlineKeyboardMarkup or ReplyKeyboardMarkup or ReplyKeyboardRemove or ForceReply) - Optional - Additional interface options
+
+### Response
+#### Success Response (200)
+- **Message** (Object) - The sent message object
+```
+
+--------------------------------
+
+### reopenGeneralForumTopic
+
+Source: https://core.telegram.org/bots/api
+
+Reopens a closed 'General' topic in a forum supergroup chat.
+
+```APIDOC
+## reopenGeneralForumTopic
+
+### Description
+Use this method to reopen a closed 'General' topic in a forum supergroup chat. The bot must be an administrator in the chat for this to work and must have the can_manage_topics administrator rights. The topic will be automatically unhidden if it was hidden. Returns True on success.
+
+### Parameters
+- **chat_id** (Integer or String) - Yes - Unique identifier for the target chat or username of the target supergroup in the format @username
+```
+
+--------------------------------
+
+### forwardMessage
+
+Source: https://core.telegram.org/bots/api
+
+Use this method to forward messages of any kind. Service messages and messages with protected content can't be forwarded. On success, the sent Message is returned.
+
+```APIDOC
+## forwardMessage
+
+### Description
+Use this method to forward messages of any kind. Service messages and messages with protected content can't be forwarded. On success, the sent Message is returned.
+
+### Parameters
+#### Request Body
+- **chat_id** (Integer or String) - Required - Unique identifier for the target chat or username of the target bot, supergroup or channel in the format @username
+- **message_thread_id** (Integer) - Optional - Unique identifier for the target message thread (topic) of a forum; for forum supergroups and private chats of bots with forum topic mode enabled only
+- **direct_messages_topic_id** (Integer) - Optional - Identifier of the direct messages topic to which the message will be forwarded; required if the message is forwarded to a direct messages chat
+- **from_chat_id** (Integer or String) - Required - Unique identifier for the chat where the original message was sent (or username of the target bot, supergroup or channel in the format @username)
+- **video_start_timestamp** (Integer) - Optional - New start timestamp for the forwarded video in the message
+- **disable_notification** (Boolean) - Optional - Sends the message silently. Users will receive a notification with no sound.
+- **protect_content** (Boolean) - Optional - Protects the contents of the forwarded message from forwarding and saving
+```
+
+--------------------------------
+
+### sendContact
+
+Source: https://core.telegram.org/bots/api
+
+Use this method to send phone contacts. On success, the sent Message is returned.
+
+```APIDOC
+## sendContact
+
+### Description
+Use this method to send phone contacts. On success, the sent Message is returned.
+
+### Parameters
+#### Request Body
+- **business_connection_id** (String) - Optional - Unique identifier of the business connection on behalf of which the message will be sent
+- **chat_id** (Integer or String) - Required - Unique identifier for the target chat or username of the target bot, supergroup or channel in the format @username
+- **message_thread_id** (Integer) - Optional - Unique identifier for the target message thread (topic) of a forum
+- **direct_messages_topic_id** (Integer) - Optional - Identifier of the direct messages topic to which the message will be sent
+- **phone_number** (String) - Required - Contact's phone number
+- **first_name** (String) - Required - Contact's first name
+- **last_name** (String) - Optional - Contact's last name
+- **vcard** (String) - Optional - Additional data about the contact in the form of a vCard
+- **disable_notification** (Boolean) - Optional - Sends the message silently
+- **protect_content** (Boolean) - Optional - Protects the contents of the sent message from forwarding and saving
+```
+
+--------------------------------
+
+### setStickerKeywords
+
+Source: https://core.telegram.org/bots/api
+
+Changes search keywords assigned to a regular or custom emoji sticker.
+
+```APIDOC
+## setStickerKeywords
+
+### Description
+Use this method to change search keywords assigned to a regular or custom emoji sticker. Returns True on success.
+
+### Parameters
+- **sticker** (String) - Required - File identifier of the sticker
+- **keywords** (Array of String) - Optional - A JSON-serialized list of 0-20 search keywords
+
+### Response
+- **result** (Boolean) - True on success
+```
+
+--------------------------------
+
+### pinChatMessage
+
+Source: https://core.telegram.org/bots/api
+
+Pins a message in a chat.
+
+```APIDOC
+## pinChatMessage
+
+### Description
+Use this method to add a message to the list of pinned messages in a chat. Returns True on success.
+
+### Parameters
+#### Query Parameters
+- **business_connection_id** (String) - Optional - Unique identifier of the business connection on behalf of which the message will be pinned
+- **chat_id** (Integer or String) - Required - Unique identifier for the target chat or username of the target channel in the format @username
+- **message_id** (Integer) - Required - Identifier of a message to pin
+- **disable_notification** (Boolean) - Optional - Pass True if it is not necessary to send a notification to all chat members about the new pinned message.
+
+### Response
+#### Success Response (200)
+- **result** (Boolean) - Returns True on success.
+```
+
+--------------------------------
+
+### sendRichMessage
+
+Source: https://core.telegram.org/bots/api
+
+Use this method to send rich messages. If the message contains a block with a media element, then the bot must have the right to send the media to the chat. On success, the sent Message is returned.
+
+```APIDOC
+## sendRichMessage
+
+### Description
+Use this method to send rich messages. On success, the sent Message is returned.
+
+### Parameters
+- **business_connection_id** (String) - Optional - Unique identifier of the business connection.
+- **chat_id** (Integer or String) - Required - Unique identifier for the target chat or username.
+- **message_thread_id** (Integer) - Optional - Unique identifier for the target message thread.
+- **direct_messages_topic_id** (Integer) - Optional - Identifier of the direct messages topic.
+- **rich_message** (InputRichMessage) - Required - The message to be sent.
+- **disable_notification** (Boolean) - Optional - Sends the message silently.
+- **protect_content** (Boolean) - Optional - Protects the contents from forwarding and saving.
+- **allow_paid_broadcast** (Boolean) - Optional - Allows higher broadcasting limits for a fee.
+- **message_effect_id** (String) - Optional - Unique identifier of the message effect.
+- **suggested_post_parameters** (SuggestedPostParameters) - Optional - Parameters of the suggested post.
+- **reply_parameters** (ReplyParameters) - Optional - Description of the message to reply to.
+- **reply_markup** (InlineKeyboardMarkup or ReplyKeyboardMarkup or ReplyKeyboardRemove or ForceReply) - Optional - Additional interface options.
+```
+
+--------------------------------
+
+### setMyDefaultAdministratorRights
+
+Source: https://core.telegram.org/bots/api
+
+Use this method to change the default administrator rights requested by the bot when it's added as an administrator to groups or channels.
+
+```APIDOC
+## setMyDefaultAdministratorRights
+
+### Description
+Use this method to change the default administrator rights requested by the bot when it's added as an administrator to groups or channels. Returns True on success.
+
+### Parameters
+#### Query Parameters
+- **rights** (ChatAdministratorRights) - Optional - A JSON-serialized object describing new default administrator rights.
+- **for_channels** (Boolean) - Optional - Pass True to change the default administrator rights of the bot in channels.
+```
+
+--------------------------------
+
+### sendLocation
+
+Source: https://core.telegram.org/bots/api
+
+Use this method to send a point on the map. On success, the sent Message is returned.
+
+```APIDOC
+## sendLocation
+
+### Description
+Use this method to send a point on the map.
+
+### Parameters
+- **business_connection_id** (String) - Optional - Unique identifier of the business connection on behalf of which the message will be sent
+- **chat_id** (Integer or String) - Required - Unique identifier for the target chat or username of the target bot, supergroup or channel
+- **message_thread_id** (Integer) - Optional - Unique identifier for the target message thread (topic) of a forum
+- **direct_messages_topic_id** (Integer) - Optional - Identifier of the direct messages topic to which the message will be sent
+- **latitude** (Float) - Required - Latitude of the location
+- **longitude** (Float) - Required - Longitude of the location
+- **horizontal_accuracy** (Float) - Optional - The radius of uncertainty for the location, measured in meters
+- **live_period** (Integer) - Optional - Period in seconds during which the location will be updated
+- **heading** (Integer) - Optional - For live locations, a direction in which the user is moving, in degrees
+- **proximity_alert_radius** (Integer) - Optional - For live locations, a maximum distance for proximity alerts
+- **disable_notification** (Boolean) - Optional - Sends the message silently
+- **protect_content** (Boolean) - Optional - Protects the contents of the sent message from forwarding and saving
+- **allow_paid_broadcast** (Boolean) - Optional - Pass True to allow up to 1000 messages per second for a fee
+
+### Response
+- **Success Response (200)** - Message object
+```
+
+--------------------------------
+
+### refundStarPayment
+
+Source: https://core.telegram.org/bots/api
+
+Refunds a successful payment in Telegram Stars.
+
+```APIDOC
+## refundStarPayment
+
+### Description
+Refunds a successful payment in Telegram Stars.
+
+### Parameters
+#### Request Body
+- **user_id** (Integer) - Yes - Identifier of the user whose payment will be refunded
+- **telegram_payment_charge_id** (String) - Yes - Telegram payment identifier
+
+### Response
+- **result** (Boolean) - Returns True on success.
+```
+
+--------------------------------
+
+### CopyTextButton
+
+Source: https://core.telegram.org/bots/api
+
+Represents an inline keyboard button that copies specified text to the clipboard.
+
+```APIDOC
+## CopyTextButton
+
+### Description
+This object represents an inline keyboard button that copies specified text to the clipboard.
+
+### Fields
+- **text** (String) - The text to be copied to the clipboard; 1-256 characters.
+```
+
+--------------------------------
+
+### getChatAdministrators
+
+Source: https://core.telegram.org/bots/api
+
+Retrieves a list of administrators in a chat.
+
+```APIDOC
+## getChatAdministrators
+
+### Description
+Use this method to get a list of administrators in a chat. Returns an Array of ChatMember objects.
+
+### Parameters
+#### Query Parameters
+- **chat_id** (Integer or String) - Required - Unique identifier for the target chat or username of the target supergroup or channel in the format @username
+
+### Response
+#### Success Response (200)
+- **result** (Array) - Returns an Array of ChatMember objects.
+```
+
+--------------------------------
+
+### reopenForumTopic
+
+Source: https://core.telegram.org/bots/api
+
+Reopens a closed topic in a forum supergroup chat.
+
+```APIDOC
+## reopenForumTopic
+
+### Description
+Use this method to reopen a closed topic in a forum supergroup chat. The bot must be an administrator in the chat for this to work and must have the can_manage_topics administrator rights, unless it is the creator of the topic. Returns True on success.
+
+### Parameters
+- **chat_id** (Integer or String) - Yes - Unique identifier for the target chat or username of the target supergroup in the format @username
+- **message_thread_id** (Integer) - Yes - Unique identifier for the target message thread of the forum topic
+```
+
+--------------------------------
+
+### sendVideo
+
+Source: https://core.telegram.org/bots/api
+
+Use this method to send video files. Telegram clients support MPEG4 videos. On success, the sent Message is returned.
+
+```APIDOC
+## sendVideo
+
+### Description
+Use this method to send video files. Telegram clients support MPEG4 videos (other formats may be sent as Document). On success, the sent Message is returned.
+
+### Parameters
+#### Required Parameters
+- **chat_id** (Integer or String) - Yes - Unique identifier for the target chat or username of the target bot, supergroup or channel.
+- **video** (InputFile or String) - Yes - Video to send. Pass a file_id, an HTTP URL, or upload a new video using multipart/form-data.
+
+#### Optional Parameters
+- **business_connection_id** (String) - Optional - Unique identifier of the business connection on behalf of which the message will be sent.
+- **message_thread_id** (Integer) - Optional - Unique identifier for the target message thread (topic) of a forum.
+- **direct_messages_topic_id** (Integer) - Optional - Identifier of the direct messages topic to which the message will be sent.
+- **duration** (Integer) - Optional - Duration of sent video in seconds.
+- **width** (Integer) - Optional - Video width.
+- **height** (Integer) - Optional - Video height.
+- **thumbnail** (InputFile or String) - Optional - Thumbnail of the file sent.
+- **cover** (InputFile or String) - Optional - Cover for the video in the message.
+- **start_timestamp** (Integer) - Optional - Start timestamp for the video in the message.
+- **caption** (String) - Optional - Document caption.
+- **parse_mode** (String) - Optional - Mode for parsing entities in the document caption.
+- **caption_entities** (Array of MessageEntity) - Optional - A JSON-serialized list of special entities that appear in the caption.
+- **disable_content_type_detection** (Boolean) - Optional - Disables automatic server-side content type detection.
+- **disable_notification** (Boolean) - Optional - Sends the message silently.
+- **protect_content** (Boolean) - Optional - Protects the contents of the sent message from forwarding and saving.
+- **allow_paid_broadcast** (Boolean) - Optional - Allows up to 1000 messages per second for a fee.
+- **message_effect_id** (String) - Optional - Unique identifier of the message effect to be added to the message.
+- **suggested_post_parameters** (SuggestedPostParameters) - Optional - A JSON-serialized object containing the parameters of the suggested post.
+- **reply_parameters** (ReplyParameters) - Optional - Description of the message to reply to.
+- **reply_markup** (InlineKeyboardMarkup or ReplyKeyboardMarkup or ReplyKeyboardRemove or ForceReply) - Optional - Additional interface options.
+```
+
+--------------------------------
+
+### HTML Formatting Tags
+
+Source: https://core.telegram.org/bots/api
+
+Supported HTML tags for message formatting. Ensure all special characters like <, >, and & are escaped when not part of a tag.
+
+```html
+<b>bold</b>, <strong>bold</strong>
+<i>italic</i>, <em>italic</em>
+<u>underline</u>, <ins>underline</ins>
+<s>strikethrough</s>, <strike>strikethrough</strike>, <del>strikethrough</del>
+<span class="tg-spoiler">spoiler</span>, <tg-spoiler>spoiler</tg-spoiler>
+<b>bold <i>italic bold <s>italic bold strikethrough <span class="tg-spoiler">italic bold strikethrough spoiler</span></s> <u>underline italic bold</u></i> bold</b>
+<a href="http://www.example.com/">inline URL</a>
+<a href="tg://user?id=123456789">inline mention of a user</a>
+<tg-emoji emoji-id="5368324170671202286">
+```
+
+--------------------------------
+
+### Markdown Formatting Syntax
+
+Source: https://core.telegram.org/bots/api
+
+Legacy Markdown syntax for message formatting. Note that entities cannot be nested and specific features like underline or spoiler are not supported.
+
+```markdown
+*bold text*
+_italic text_
+[inline URL](http://www.example.com/)
+[inline mention of a user](tg://user?id=123456789)
+`inline fixed-width code`
+```
+
+```text
+pre-formatted fixed-width code block
+```
+
+```python
+pre-formatted fixed-width code block written in the Python programming language
+```
+
+--------------------------------
+
+### getMyStarBalance
+
+Source: https://core.telegram.org/bots/api
+
+Retrieves the current Telegram Stars balance of the bot.
+
+```APIDOC
+## getMyStarBalance
+
+### Description
+A method to get the current Telegram Stars balance of the bot. Requires no parameters.
+
+### Response
+- **StarAmount** (object) - On success, returns a StarAmount object.
+```
+
+--------------------------------
+
+### setChatMenuButton
+
+Source: https://core.telegram.org/bots/api
+
+Use this method to change the bot's menu button in a private chat, or the default menu button.
+
+```APIDOC
+## setChatMenuButton
+
+### Description
+Use this method to change the bot's menu button in a private chat, or the default menu button. Returns True on success.
+
+### Parameters
+#### Query Parameters
+- **chat_id** (Integer) - Optional - Unique identifier for the target private chat. If not specified, the bot's default menu button will be changed.
+- **menu_button** (MenuButton) - Optional - A JSON-serialized object for the bot's new menu button. Defaults to MenuButtonDefault.
+```
+
+--------------------------------
+
+### ReplyKeyboardRemove
+
+Source: https://core.telegram.org/bots/api
+
+An object used to instruct Telegram clients to remove the current custom keyboard and display the default keyboard.
+
+```APIDOC
+## ReplyKeyboardRemove
+
+### Description
+Upon receiving a message with this object, Telegram clients will remove the current custom keyboard and display the default letter-keyboard.
+
+### Fields
+- **remove_keyboard** (True) - Required - Requests clients to remove the custom keyboard.
+- **selective** (Boolean) - Optional - Use this parameter if you want to remove the keyboard for specific users only.
+```
+
+--------------------------------
+
+### verifyChat
+
+Source: https://core.telegram.org/bots/api
+
+Verifies a chat on behalf of the organization represented by the bot.
+
+```APIDOC
+## verifyChat
+
+### Description
+Verifies a chat on behalf of the organization which is represented by the bot. Returns True on success.
+
+### Parameters
+- **chat_id** (Integer or String) - Required - Unique identifier for the target chat or username of the target bot, supergroup or channel.
+- **custom_description** (String) - Optional - Custom description for the verification; 0-70 characters.
+```
+
+--------------------------------
+
+### deleteStickerFromSet
+
+Source: https://core.telegram.org/bots/api
+
+Deletes a sticker from a set created by the bot.
+
+```APIDOC
+## deleteStickerFromSet
+
+### Description
+Use this method to delete a sticker from a set created by the bot. Returns True on success.
+
+### Parameters
+- **sticker** (String) - Required - File identifier of the sticker
+
+### Response
+- **result** (Boolean) - True on success
+```
+
+--------------------------------
+
+### InputPaidMediaPhoto
+
+Source: https://core.telegram.org/bots/api
+
+Represents a photo used as paid media.
+
+```APIDOC
+## InputPaidMediaPhoto
+
+### Description
+The paid media to send is a photo.
+
+### Fields
+- **type** (String) - Type of the media, must be _photo_
+- **media** (String) - File to send. Pass a file_id, an HTTP URL, or "attach://<file_attach_name>".
+```
+
+--------------------------------
+
+### MarkdownV2 Formatting Syntax
+
+Source: https://core.telegram.org/bots/api
+
+Use MarkdownV2 by setting the parse_mode field to 'MarkdownV2'. Note that special characters must be escaped according to the API rules.
+
+```markdown
+*bold \*text*
+_italic \*text_
+__underline__
+~strikethrough~
+||spoiler||
+*bold _italic bold ~italic bold strikethrough ||italic bold strikethrough spoiler||~ __underline italic bold___ bold*
+[inline URL](http://www.example.com/)
+[inline mention of a user](tg://user?id=123456789)
+![
+```
+
+--------------------------------
+
+### logOut
+
+Source: https://core.telegram.org/bots/api
+
+Logs out the bot from the cloud Bot API server to allow local execution.
+
+```APIDOC
+## logOut
+
+### Description
+Use this method to log out from the cloud Bot API server before launching the bot locally. You must log out the bot before running it locally, otherwise there is no guarantee that the bot will receive updates.
+
+### Response
+- **result** (Boolean) - Returns True on success.
+```
+
+--------------------------------
+
+### SwitchInlineQueryChosenChat
+
+Source: https://core.telegram.org/bots/api
+
+Represents an inline button that switches the current user to inline mode in a chosen chat.
+
+```APIDOC
+## SwitchInlineQueryChosenChat
+
+### Description
+This object represents an inline button that switches the current user to inline mode in a chosen chat, with an optional default inline query.
+
+### Fields
+- **query** (String) - Optional. The default inline query to be inserted in the input field.
+- **allow_user_chats** (Boolean) - Optional. True, if private chats with users can be chosen.
+- **allow_bot_chats** (Boolean) - Optional. True, if private chats with bots can be chosen.
+- **allow_group_chats** (Boolean) - Optional. True, if group and supergroup chats can be chosen.
+- **allow_channel_chats** (Boolean) - Optional. True, if channel chats can be chosen.
+```
+
+--------------------------------
+
+### getAvailableGifts
+
+Source: https://core.telegram.org/bots/api
+
+Returns the list of gifts that can be sent by the bot to users and channel chats.
+
+```APIDOC
+## getAvailableGifts
+
+### Description
+Returns the list of gifts that can be sent by the bot to users and channel chats. Returns a Gifts object.
+```
+
+--------------------------------
+
+### copyMessages
+
+Source: https://core.telegram.org/bots/api
+
+Use this method to copy messages of any kind. Service messages, paid media, giveaway messages, and invoices cannot be copied.
+
+```APIDOC
+## copyMessages
+
+### Description
+Use this method to copy messages of any kind. If some of the specified messages can't be found or copied, they are skipped. On success, an array of MessageId of the sent messages is returned.
+
+### Parameters
+#### Request Body
+- **chat_id** (Integer or String) - Required - Unique identifier for the target chat or username of the target bot, supergroup or channel.
+- **message_thread_id** (Integer) - Optional - Unique identifier for the target message thread (topic) of a forum.
+- **direct_messages_topic_id** (Integer) - Optional - Identifier of the direct messages topic to which the messages will be sent.
+- **from_chat_id** (Integer or String) - Required - Unique identifier for the chat where the original messages were sent.
+- **message_ids** (Array of Integer) - Required - A JSON-serialized list of 1-100 identifiers of messages in the chat from_chat_id to copy.
+- **disable_notification** (Boolean) - Optional - Sends the messages silently.
+- **protect_content** (Boolean) - Optional - Protects the contents of the sent messages from forwarding and saving.
+- **remove_caption** (Boolean) - Optional - Pass True to copy the messages without their captions.
+```
+
+--------------------------------
+
+### deleteMyCommands
+
+Source: https://core.telegram.org/bots/api
+
+Use this method to delete the list of the bot's commands for the given scope and user language.
+
+```APIDOC
+## deleteMyCommands
+
+### Description
+Use this method to delete the list of the bot's commands for the given scope and user language. Returns True on success.
+
+### Parameters
+- **scope** (BotCommandScope) - Optional - A JSON-serialized object describing the scope of users.
+- **language_code** (String) - Optional - A two-letter ISO 639-1 language code.
+```
+
+--------------------------------
+
+### getUserProfilePhotos
+
+Source: https://core.telegram.org/bots/api
+
+Retrieves a list of profile pictures for a user.
+
+```APIDOC
+## getUserProfilePhotos
+
+### Description
+Use this method to get a list of profile pictures for a user.
+
+### Parameters
+#### Request Body
+- **user_id** (Integer) - Required - Unique identifier of the target user
+- **offset** (Integer) - Optional - Sequential number of the first photo to be returned
+- **limit** (Integer) - Optional - Limits the number of photos to be retrieved
+
+### Response
+#### Success Response (200)
+- **result** (UserProfilePhotos) - Returns a UserProfilePhotos object
+```
+
+--------------------------------
+
+### setStickerSetThumbnail
+
+Source: https://core.telegram.org/bots/api
+
+Sets the thumbnail of a regular or mask sticker set.
+
+```APIDOC
+## setStickerSetThumbnail
+
+### Description
+Use this method to set the thumbnail of a regular or mask sticker set. Returns True on success.
+
+### Response
+- **result** (Boolean) - True on success
+```
+
+--------------------------------
+
+### approveSuggestedPost
+
+Source: https://core.telegram.org/bots/api
+
+Use this method to approve a suggested post in a direct messages chat. The bot must have the 'can_post_messages' administrator right in the corresponding channel chat.
+
+```APIDOC
+## approveSuggestedPost
+
+### Description
+Approves a suggested post in a direct messages chat. Returns True on success.
+
+### Parameters
+- **chat_id** (Integer) - Required - Unique identifier for the target direct messages chat
+- **message_id** (Integer) - Required - Identifier of a suggested post message to approve
+- **send_date** (Integer) - Optional - Point in time (Unix timestamp) when the post is expected to be published
+```
+
+--------------------------------
+
+### sendChatAction
+
+Source: https://core.telegram.org/bots/api
+
+Notifies the user that the bot is performing a specific action.
+
+```APIDOC
+## sendChatAction
+
+### Description
+Use this method when you need to tell the user that something is happening on the bot's side. The status is set for 5 seconds or less.
+
+### Parameters
+#### Request Body
+- **business_connection_id** (String) - Optional - Unique identifier of the business connection
+- **chat_id** (Integer or String) - Required - Unique identifier for the target chat
+- **message_thread_id** (Integer) - Optional - Unique identifier for the target message thread
+- **action** (String) - Required - Type of action to broadcast
+
+### Response
+#### Success Response (200)
+- **result** (Boolean) - Returns True on success
+```
+
+--------------------------------
+
+### getBusinessAccountStarBalance
+
+Source: https://core.telegram.org/bots/api
+
+Returns the amount of Telegram Stars owned by a managed business account. Requires the can_view_gifts_and_stars business bot right.
+
+```APIDOC
+## getBusinessAccountStarBalance
+
+### Description
+Returns the amount of Telegram Stars owned by a managed business account. Requires the can_view_gifts_and_stars business bot right. Returns StarAmount on success.
+
+### Parameters
+- **business_connection_id** (String) - Required - Unique identifier of the business connection
+```
+
+--------------------------------
+
+### declineChatJoinRequest
+
+Source: https://core.telegram.org/bots/api
+
+Declines a chat join request.
+
+```APIDOC
+## declineChatJoinRequest
+
+### Description
+Use this method to decline a chat join request. The bot must be an administrator in the chat and have the can_invite_users administrator right.
+
+### Parameters
+- **chat_id** (Integer or String) - Required - Unique identifier for the target chat or username of the target channel in the format @username
+- **user_id** (Integer) - Required - Unique identifier of the target user
+
+### Response
+- Returns True on success.
+```
+
+--------------------------------
+
+### getUpdates
+
+Source: https://core.telegram.org/bots/api
+
+Use this method to receive incoming updates using long polling. Returns an Array of Update objects.
+
+```APIDOC
+## getUpdates
+
+### Description
+Use this method to receive incoming updates using long polling. Returns an Array of Update objects.
+
+### Parameters
+#### Query Parameters
+- **offset** (Integer) - Optional - Identifier of the first update to be returned.
+- **limit** (Integer) - Optional - Limits the number of updates to be retrieved (1-100).
+- **timeout** (Integer) - Optional - Timeout in seconds for long polling.
+- **allowed_updates** (Array of String) - Optional - A JSON-serialized list of the update types you want your bot to receive.
+```
+
+--------------------------------
+
+### deleteWebhook
+
+Source: https://core.telegram.org/bots/api
+
+Removes the current webhook integration to allow switching back to getUpdates. Returns True on success.
+
+```APIDOC
+## deleteWebhook
+
+### Description
+Use this method to remove webhook integration if you decide to switch back to getUpdates. Returns True on success.
+
+### Parameters
+#### Query Parameters
+- **drop_pending_updates** (Boolean) - Optional - Pass True to drop all pending updates
+```
+
+--------------------------------
+
+### sendGift
+
+Source: https://core.telegram.org/bots/api
+
+Sends a gift to the given user or channel chat.
+
+```APIDOC
+## sendGift
+
+### Description
+Sends a gift to the given user or channel chat. Returns True on success.
+
+### Parameters
+#### Query Parameters
+- **user_id** (Integer) - Optional - Required if chat_id is not specified.
+- **chat_id** (Integer or String) - Optional - Required if user_id is not specified.
+- **gift_id** (String) - Yes - Identifier of the gift.
+- **pay_for_upgrade** (Boolean) - Optional - Pass True to pay for the gift upgrade.
+- **text** (String) - Optional - Text shown with the gift.
+- **text_parse_mode** (String) - Optional - Mode for parsing entities.
+- **text_entities** (Array of MessageEntity) - Optional - List of special entities.
+```
+
+--------------------------------
+
+### replaceStickerInSet
+
+Source: https://core.telegram.org/bots/api
+
+Replaces an existing sticker in a sticker set with a new one.
+
+```APIDOC
+## replaceStickerInSet
+
+### Description
+Use this method to replace an existing sticker in a sticker set with a new one. Returns True on success.
+
+### Parameters
+- **user_id** (Integer) - Required - User identifier of the sticker set owner
+- **name** (String) - Required - Sticker set name
+- **old_sticker** (String) - Required - File identifier of the replaced sticker
+- **sticker** (InputSticker) - Required - A JSON-serialized object with information about the added sticker
+
+### Response
+- **result** (Boolean) - True on success
+```
+
+--------------------------------
+
+### leaveChat
+
+Source: https://core.telegram.org/bots/api
+
+Instructs the bot to leave a group, supergroup, or channel.
+
+```APIDOC
+## leaveChat
+
+### Description
+Use this method for your bot to leave a group, supergroup or channel. Returns True on success.
+
+### Parameters
+#### Query Parameters
+- **chat_id** (Integer or String) - Required - Unique identifier for the target chat or username of the target supergroup or channel in the format @username
+
+### Response
+#### Success Response (200)
+- **result** (Boolean) - Returns True on success.
+```
+
+--------------------------------
+
+### setChatAdministratorCustomTitle
+
+Source: https://core.telegram.org/bots/api
+
+Set a custom title for an administrator in a supergroup promoted by the bot.
+
+```APIDOC
+## setChatAdministratorCustomTitle
+
+### Description
+Use this method to set a custom title for an administrator in a supergroup promoted by the bot.
+
+### Parameters
+- **chat_id** (Integer or String) - Required - Unique identifier for the target chat or username of the target supergroup in the format @username
+- **user_id** (Integer) - Required - Unique identifier of the target user
+- **custom_title** (String) - Required - New custom title for the administrator; 0-16 characters, emoji are not allowed
+
+### Response
+- **Success** (Boolean) - Returns True on success.
+```
+
+--------------------------------
+
+### setChatStickerSet
+
+Source: https://core.telegram.org/bots/api
+
+Use this method to set a new group sticker set for a supergroup.
+
+```APIDOC
+## setChatStickerSet
+
+### Description
+Use this method to set a new group sticker set for a supergroup. The bot must be an administrator in the chat for this to work and must have the appropriate administrator rights. Returns True on success.
+
+### Parameters
+#### Query Parameters
+- **chat_id** (Integer or String) - Required - Unique identifier for the target chat or username of the target supergroup in the format @username
+- **sticker_set_name** (String) - Required - Name of the sticker set to be set as the group sticker set
+```
+
+--------------------------------
+
+### setChatPermissions
+
+Source: https://core.telegram.org/bots/api
+
+Sets default chat permissions for all members in a group or supergroup.
+
+```APIDOC
+## setChatPermissions
+
+### Description
+Use this method to set default chat permissions for all members. The bot must be an administrator with can_restrict_members rights.
+
+### Parameters
+#### Path Parameters
+- **chat_id** (Integer or String) - Required - Unique identifier for the target chat or username of the target supergroup
+- **permissions** (ChatPermissions) - Required - A JSON-serialized object for new default chat permissions
+- **use_independent_chat_permissions** (Boolean) - Optional - Pass True if chat permissions are set independently.
+```
+
+--------------------------------
+
+### setManagedBotAccessSettings
+
+Source: https://core.telegram.org/bots/api
+
+Changes the access settings of a managed bot.
+
+```APIDOC
+## setManagedBotAccessSettings
+
+### Description
+Use this method to change the access settings of a managed bot. Returns True on success.
+
+### Parameters
+#### Request Body
+- **user_id** (Integer) - Required - User identifier of the managed bot whose access settings will be changed
+- **is_access_restricted** (Boolean) - Required - Pass True, if only selected users can access the bot. The bot's owner can always access it.
+```
+
+--------------------------------
+
+### setMyProfilePhoto
+
+Source: https://core.telegram.org/bots/api
+
+Changes the profile photo of the bot.
+
+```APIDOC
+## setMyProfilePhoto
+
+### Description
+Changes the profile photo of the bot. Returns True on success.
+
+### Parameters
+- **photo** (InputProfilePhoto) - Required - The new profile photo to set.
+```
+
+--------------------------------
+
+### getBusinessAccountGifts
+
+Source: https://core.telegram.org/bots/api
+
+Returns the gifts received and owned by a managed business account. Requires the can_view_gifts_and_stars business bot right.
+
+```APIDOC
+## getBusinessAccountGifts
+
+### Description
+Returns the gifts received and owned by a managed business account. Requires the can_view_gifts_and_stars business bot right. Returns OwnedGifts on success.
+
+### Parameters
+- **business_connection_id** (String) - Required - Unique identifier of the business connection
+- **exclude_unsaved** (Boolean) - Optional - Pass True to exclude gifts that aren't saved to the account's profile page
+- **exclude_saved** (Boolean) - Optional - Pass True to exclude gifts that are saved to the account's profile page
+- **exclude_unlimited** (Boolean) - Optional - Pass True to exclude gifts that can be purchased an unlimited number of times
+- **exclude_limited_upgradable** (Boolean) - Optional - Pass True to exclude gifts that can be purchased a limited number of times and can be upgraded to unique
+- **exclude_limited_non_upgradable** (Boolean) - Optional - Pass True to exclude gifts that can be purchased a limited number of times and can't be upgraded to unique
+- **exclude_unique** (Boolean) - Optional - Pass True to exclude unique gifts
+- **exclude_from_blockchain** (Boolean) - Optional - Pass True to exclude gifts that were assigned from the TON blockchain
+- **sort_by_price** (Boolean) - Optional - Pass True to sort results by gift price instead of send date
+- **offset** (String) - Optional - Offset of the first entry to return
+- **limit** (Integer) - Optional - The maximum number of gifts to be returned; 1-100
+```
+
+--------------------------------
+
+### setGameScore
+
+Source: https://core.telegram.org/bots/api
+
+Use this method to set the score of the specified user in a game message.
+
+```APIDOC
+## setGameScore
+
+### Description
+Use this method to set the score of the specified user in a game message. On success, if the message is not an inline message, the Message is returned, otherwise True is returned.
+
+### Parameters
+- **user_id** (Integer) - Required - User identifier
+- **score** (Integer) - Required - New score, must be non-negative
+- **force** (Boolean) - Optional - Pass True if the high score is allowed to decrease
+- **disable_edit_message** (Boolean) - Optional - Pass True if the game message should not be automatically edited
+- **chat_id** (Integer) - Optional - Required if inline_message_id is not specified. Unique identifier for the target chat.
+- **message_id** (Integer) - Optional - Required if inline_message_id is not specified. Identifier of the sent message.
+- **inline_message_id** (String) - Optional - Required if chat_id and message_id are not specified. Identifier of the inline message.
+```
+
+--------------------------------
+
+### deleteStickerSet
+
+Source: https://core.telegram.org/bots/api
+
+Use this method to delete a sticker set that was created by the bot. Returns True on success.
+
+```APIDOC
+## deleteStickerSet
+
+### Description
+Use this method to delete a sticker set that was created by the bot. Returns True on success.
+
+### Parameters
+#### Request Body
+- **name** (String) - Required - Sticker set name
+```
+
+--------------------------------
+
+### giftPremiumSubscription
+
+Source: https://core.telegram.org/bots/api
+
+Gifts a Telegram Premium subscription to the given user.
+
+```APIDOC
+## giftPremiumSubscription
+
+### Description
+Gifts a Telegram Premium subscription to the given user. Returns True on success.
+
+### Parameters
+#### Query Parameters
+- **user_id** (Integer) - Yes - Target user ID.
+- **month_count** (Integer) - Yes - Number of months (3, 6, or 12).
+- **star_count** (Integer) - Yes - Number of Telegram Stars to pay.
+- **text** (String) - Optional - Text shown with the subscription.
+- **text_parse_mode** (String) - Optional - Mode for parsing entities.
+```
+
+--------------------------------
+
+### setChatDescription
+
+Source: https://core.telegram.org/bots/api
+
+Changes the description of a group, supergroup, or channel.
+
+```APIDOC
+## setChatDescription
+
+### Description
+Use this method to change the description of a group, a supergroup or a channel. The bot must be an administrator in the chat for this to work and must have the appropriate administrator rights. Returns True on success.
+
+### Parameters
+#### Query Parameters
+- **chat_id** (Integer or String) - Required - Unique identifier for the target chat or username of the target channel in the format @username
+- **description** (String) - Optional - New chat description, 0-255 characters
+
+### Response
+#### Success Response (200)
+- **result** (Boolean) - Returns True on success.
+```
+
+--------------------------------
+
+### editUserStarSubscription
+
+Source: https://core.telegram.org/bots/api
+
+Allows the bot to cancel or re-enable extension of a subscription paid in Telegram Stars.
+
+```APIDOC
+## editUserStarSubscription
+
+### Description
+Allows the bot to cancel or re-enable extension of a subscription paid in Telegram Stars.
+
+### Parameters
+#### Request Body
+- **user_id** (Integer) - Yes - Identifier of the user whose subscription will be edited
+- **telegram_payment_charge_id** (String) - Yes - Telegram payment identifier for the subscription
+- **is_canceled** (Boolean) - Yes - Pass True to cancel extension of the user subscription; Pass False to allow the user to re-enable a subscription.
+
+### Response
+- **result** (Boolean) - Returns True on success.
+```
+
+--------------------------------
+
+### setBusinessAccountName
+
+Source: https://core.telegram.org/bots/api
+
+Changes the first and last name of a managed business account.
+
+```APIDOC
+## setBusinessAccountName
+
+### Description
+Changes the first and last name of a managed business account. Requires the can_change_name business bot right. Returns True on success.
+
+### Parameters
+- **business_connection_id** (String) - Required - Unique identifier of the business connection
+- **first_name** (String) - Required - New first name
+- **last_name** (String) - Optional - New last name
+```
+
+--------------------------------
+
+### Rich HTML Formatting Tags
+
+Source: https://core.telegram.org/bots/api
+
+Supported HTML tags for the rich message mode, passed via the html field.
+
+```html
+<a name="chapter-0"></a>
+<b>bold text</b>, <strong>bold text</strong>
+<i>italic text</i>, <em>italic text</em>
+<u>underlined text</u>, <ins>underlined text</ins>
+<s>strikethrough text</s>, <strike>strikethrough text</strike>, <del>strikethrough text</del>
+<code>inline fixed-width code</code>
+<mark>marked text</mark>
+<sub>subscript text</sub>
+<sup>superscript text</sup>
+<tg-spoiler>spoiler</tg-spoiler>
+
+<a href="#note-1">Reference</a>
+<a href="https://t.me/">inline URL</a>
+<a href="mailto:user@example.com">inline e-mail</a>
+<a href="tel:+123456789">inline phone number</a>
+<a href="tg://user?id=123456789">inline mention of a user</a>
+<a href="#chapter-1">in-document link</a>
+<a name="chapter-1"></a>
+
+<tg-reference name="note-1">Referenced text</tg-reference>
+<tg-emoji emoji-id="5368324170671202286">
+```
+
+--------------------------------
+
+### unpinAllGeneralForumTopicMessages
+
+Source: https://core.telegram.org/bots/api
+
+Clears the list of pinned messages in a General forum topic. Requires administrator rights with can_pin_messages.
+
+```APIDOC
+## unpinAllGeneralForumTopicMessages
+
+### Description
+Use this method to clear the list of pinned messages in a General forum topic. The bot must be an administrator in the chat for this to work and must have the can_pin_messages administrator right in the supergroup. Returns True on success.
+
+### Parameters
+#### Query Parameters
+- **chat_id** (Integer or String) - Required - Unique identifier for the target chat or username of the target supergroup in the format @username
+```
+
+--------------------------------
+
+### editMessageMedia
+
+Source: https://core.telegram.org/bots/api
+
+Edits animation, audio, document, live photo, photo, or video messages, or replaces text/rich messages with media.
+
+```APIDOC
+## editMessageMedia
+
+### Description
+Use this method to edit animation, audio, document, live photo, photo, or video messages, or to replace a text or a rich message with a media.
+
+### Parameters
+#### Optional Parameters
+- **business_connection_id** (String) - Optional - Unique identifier of the business connection on behalf of which the message to be edited was sent
+- **chat_id** (Integer or String) - Optional - Required if inline_message_id is not specified. Unique identifier for the target chat or username of the target bot.
+- **message_id** (Integer) - Optional - Required if inline_message_id is not specified. Identifier of the message to edit.
+- **inline_message_id** (String) - Optional - Required if chat_id and message_id are not specified. Identifier of the inline message.
+- **reply_markup** (InlineKeyboardMarkup) - Optional - A JSON-serialized object for a new inline keyboard
+
+#### Required Parameters
+- **media** (InputMedia) - Required - A JSON-serialized object for a new media content of the message
+```
+
+--------------------------------
+
+### copyMessage
+
+Source: https://core.telegram.org/bots/api
+
+Copies messages of any kind. This method is analogous to forwardMessage, but the copied message does not have a link to the original message.
+
+```APIDOC
+## copyMessage
+
+### Description
+Use this method to copy messages of any kind. The copied message doesn't have a link to the original message.
+
+### Parameters
+- **chat_id** (Integer or String) - Required - Unique identifier for the target chat or username of the target bot, supergroup or channel.
+- **message_thread_id** (Integer) - Optional - Unique identifier for the target message thread (topic) of a forum.
+- **direct_messages_topic_id** (Integer) - Optional - Identifier of the direct messages topic to which the message will be sent.
+- **from_chat_id** (Integer or String) - Required - Unique identifier for the chat where the original message was sent.
+- **message_id** (Integer) - Required - Message identifier in the chat specified in from_chat_id.
+- **video_start_timestamp** (Integer) - Optional - New start timestamp for the copied video.
+- **caption** (String) - Optional - New caption for media.
+- **parse_mode** (String) - Optional - Mode for parsing entities in the new caption.
+- **caption_entities** (Array of MessageEntity) - Optional - A JSON-serialized list of special entities that appear in the new caption.
+- **show_caption_above_media** (Boolean) - Optional - Pass True if the caption must be shown above the message media.
+- **disable_notification** (Boolean) - Optional - Sends the message silently.
+- **protect_content** (Boolean) - Optional - Protects the contents of the sent message from forwarding and saving.
+- **allow_paid_broadcast** (Boolean) - Optional - Pass True to allow up to 1000 messages per second for a fee.
+- **message_effect_id** (String) - Optional - Unique identifier of the message effect to be added to the message.
+
+### Response
+- **MessageId** (Object) - Returns the MessageId of the sent message on success.
+```
+
+--------------------------------
+
+### setBusinessAccountGiftSettings
+
+Source: https://core.telegram.org/bots/api
+
+Changes the privacy settings pertaining to incoming gifts in a managed business account. Requires the can_change_gift_settings business bot right.
+
+```APIDOC
+## setBusinessAccountGiftSettings
+
+### Description
+Changes the privacy settings pertaining to incoming gifts in a managed business account. Requires the can_change_gift_settings business bot right. Returns True on success.
+
+### Parameters
+- **business_connection_id** (String) - Required - Unique identifier of the business connection
+- **show_gift_button** (Boolean) - Required - Pass True, if a button for sending a gift to the user or by the business account must always be shown in the input field
+- **accepted_gift_types** (AcceptedGiftTypes) - Required - Types of gifts accepted by the business account
+```
+
+--------------------------------
+
+### setBusinessAccountBio
+
+Source: https://core.telegram.org/bots/api
+
+Changes the bio of a managed business account.
+
+```APIDOC
+## setBusinessAccountBio
+
+### Description
+Changes the bio of a managed business account. Requires the can_change_bio business bot right. Returns True on success.
+
+### Parameters
+- **business_connection_id** (String) - Required - Unique identifier of the business connection
+- **bio** (String) - Optional - New bio
+```
+
+--------------------------------
+
+### getChatGifts
+
+Source: https://core.telegram.org/bots/api
+
+Returns the gifts owned by a chat. Returns OwnedGifts on success.
+
+```APIDOC
+## getChatGifts
+
+### Description
+Returns the gifts owned by a chat. Returns OwnedGifts on success.
+
+### Parameters
+#### Query Parameters
+- **chat_id** (Integer or String) - Required - Unique identifier for the target chat or username of the target channel in the format @username
+- **exclude_unsaved** (Boolean) - Optional - Pass True to exclude gifts that aren't saved to the chat's profile page.
+- **exclude_saved** (Boolean) - Optional - Pass True to exclude gifts that are saved to the chat's profile page.
+- **exclude_unlimited** (Boolean) - Optional - Pass True to exclude gifts that can be purchased an unlimited number of times
+- **exclude_limited_upgradable** (Boolean) - Optional - Pass True to exclude gifts that can be purchased a limited number of times and can be upgraded to unique
+- **exclude_limited_non_upgradable** (Boolean) - Optional - Pass True to exclude gifts that can be purchased a limited number of times and can't be upgraded to unique
+- **exclude_from_blockchain** (Boolean) - Optional - Pass True to exclude gifts that were assigned from the TON blockchain
+- **exclude_unique** (Boolean) - Optional - Pass True to exclude unique gifts
+- **sort_by_price** (Boolean) - Optional - Pass True to sort results by gift price instead of send date.
+- **offset** (String) - Optional - Offset of the first entry to return.
+- **limit** (Integer) - Optional - The maximum number of gifts to be returned; 1-100.
+```
+
+--------------------------------
+
+### setChatMemberTag
+
+Source: https://core.telegram.org/bots/api
+
+Set a tag for a regular member in a group or a supergroup.
+
+```APIDOC
+## setChatMemberTag
+
+### Description
+Use this method to set a tag for a regular member in a group or a supergroup. The bot must be an administrator in the chat for this to work and must have the can_manage_tags administrator right.
+
+### Parameters
+- **chat_id** (Integer or String) - Required - Unique identifier for the target chat or username of the target supergroup in the format @username
+- **user_id** (Integer) - Required - Unique identifier of the target user
+- **tag** (String) - Optional - New tag for the member; 0-16 characters, emoji are not allowed
+
+### Response
+- **Success** (Boolean) - Returns True on success.
+```
+
+--------------------------------
+
+### unpinAllForumTopicMessages
+
+Source: https://core.telegram.org/bots/api
+
+Clears the list of pinned messages in a forum topic.
+
+```APIDOC
+## unpinAllForumTopicMessages
+
+### Description
+Use this method to clear the list of pinned messages in a forum topic in a forum supergroup chat or a private chat with a user. In the case of a supergroup chat the bot must be an administrator in the chat for this to work and must have the can_pin_messages administrator right in the supergroup. Returns True on success.
+
+### Parameters
+- **chat_id** (Integer or String) - Yes - Unique identifier for the target chat or username of the target supergroup in the format @username
+- **message_thread_id** (Integer) - Yes - Unique identifier for the target message thread of the forum topic
+```
+
+--------------------------------
+
+### closeForumTopic
+
+Source: https://core.telegram.org/bots/api
+
+Closes an open topic in a forum supergroup chat.
+
+```APIDOC
+## closeForumTopic
+
+### Description
+Use this method to close an open topic in a forum supergroup chat. The bot must be an administrator in the chat for this to work and must have the can_manage_topics administrator rights, unless it is the creator of the topic. Returns True on success.
+
+### Parameters
+- **chat_id** (Integer or String) - Yes - Unique identifier for the target chat or username of the target supergroup in the format @username
+- **message_thread_id** (Integer) - Yes - Unique identifier for the target message thread of the forum topic
+```
+
+--------------------------------
+
+### sendPoll
+
+Source: https://core.telegram.org/bots/api
+
+Use this method to send a native poll. On success, the sent Message is returned.
+
+```APIDOC
+## sendPoll
+
+### Description
+Use this method to send a native poll. On success, the sent Message is returned.
+
+### Parameters
+#### Query Parameters
+- **business_connection_id** (String) - Optional - Unique identifier of the business connection on behalf of which the message will be sent
+- **chat_id** (Integer or String) - Required - Unique identifier for the target chat or username of the target bot, supergroup or channel
+- **message_thread_id** (Integer) - Optional - Unique identifier for the target message thread (topic) of a forum
+- **question** (String) - Required - Poll question, 1-300 characters
+- **question_parse_mode** (String) - Optional - Mode for parsing entities in the question
+- **question_entities** (Array of MessageEntity) - Optional - A JSON-serialized list of special entities that appear in the poll question
+- **options** (Array of InputPollOption) - Required - A JSON-serialized list of 1-12 answer options
+- **is_anonymous** (Boolean) - Optional - True, if the poll needs to be anonymous
+- **type** (String) - Optional - Poll type, “quiz” or “regular”
+- **allows_multiple_answers** (Boolean) - Optional - Pass True, if the poll allows multiple answers
+- **allows_revoting** (Boolean) - Optional - Pass True, if the poll allows to change chosen answer options
+- **shuffle_options** (Boolean) - Optional - Pass True, if the poll options must be shown in random order
+- **allow_adding_options** (Boolean) - Optional - Pass True, if answer options can be added to the poll after creation
+- **hide_results_until_closes** (Boolean) - Optional - Pass True, if poll results must be shown only after the poll closes
+- **members_only** (Boolean) - Optional - Pass True, if voting is limited to users who have been members of the chat for more than 24 hours
+- **country_codes** (Array of String) - Optional - A JSON-serialized list of 0-12 two-letter ISO 3166-1 alpha-2 country codes
+- **correct_option_ids** (Array of Integer) - Optional - A JSON-serialized list of 0-based identifiers of the correct answer options
+- **explanation** (String) - Optional - Text that is shown when a user chooses an incorrect answer
+- **explanation_parse_mode** (String) - Optional - Mode for parsing entities in the explanation
+- **explanation_entities** (Array of MessageEntity) - Optional - A JSON-serialized list of special entities that appear in the poll explanation
+- **explanation_media** (InputPollMedia) - Optional - Media added to the quiz explanation
+- **open_period** (Integer) - Optional - Amount of time in seconds the poll will be active after creation
+- **close_date** (Integer) - Optional - Point in time (Unix timestamp) when the poll will be automatically closed
+
+### Response
+#### Success Response (200)
+- **result** (Message) - The sent Message object
+```
+
+--------------------------------
+
+### sendDice
+
+Source: https://core.telegram.org/bots/api
+
+Use this method to send an animated emoji that will display a random value. On success, the sent Message is returned.
+
+```APIDOC
+## sendDice
+
+### Description
+Use this method to send an animated emoji that will display a random value. On success, the sent Message is returned.
+
+### Parameters
+- **business_connection_id** (String) - Optional - Unique identifier of the business connection on behalf of which the message will be sent
+- **chat_id** (Integer or String) - Required - Unique identifier for the target chat or username of the target bot, supergroup or channel in the format @username
+- **message_thread_id** (Integer) - Optional - Unique identifier for the target message thread (topic) of a forum
+- **direct_messages_topic_id** (Integer) - Optional - Identifier of the direct messages topic to which the message will be sent
+- **emoji** (String) - Optional - Emoji on which the dice throw animation is based
+- **disable_notification** (Boolean) - Optional - Sends the message silently.
+- **protect_content** (Boolean) - Optional - Protects the contents of the sent message from forwarding
+- **allow_paid_broadcast** (Boolean) - Optional - Pass True to allow up to 1000 messages per second for a fee
+- **message_effect_id** (String) - Optional - Unique identifier of the message effect to be added to the message
+- **suggested_post_parameters** (SuggestedPostParameters) - Optional - A JSON-serialized object containing the parameters of the suggested post
+- **reply_parameters** (ReplyParameters) - Optional - Description of the message to reply to
+```
+
+--------------------------------
+
+### Rich Message Thinking Tag
+
+Source: https://core.telegram.org/bots/api
+
+The thinking tag is available for use within the sendRichMessageDraft method.
+
+```html
+<tg-thinking>Thinking...</tg-thinking>
+```
+
+--------------------------------
+
+### transferBusinessAccountStars
+
+Source: https://core.telegram.org/bots/api
+
+Transfers Telegram Stars from the business account balance to the bot's balance. Requires the can_transfer_stars business bot right.
+
+```APIDOC
+## transferBusinessAccountStars
+
+### Description
+Transfers Telegram Stars from the business account balance to the bot's balance. Requires the can_transfer_stars business bot right. Returns True on success.
+
+### Parameters
+- **business_connection_id** (String) - Required - Unique identifier of the business connection
+- **star_count** (Integer) - Required - Number of Telegram Stars to transfer; 1-10000
+```
+
+--------------------------------
+
+### closeGeneralForumTopic
+
+Source: https://core.telegram.org/bots/api
+
+Closes an open 'General' topic in a forum supergroup chat.
+
+```APIDOC
+## closeGeneralForumTopic
+
+### Description
+Use this method to close an open 'General' topic in a forum supergroup chat. The bot must be an administrator in the chat for this to work and must have the can_manage_topics administrator rights. Returns True on success.
+
+### Parameters
+- **chat_id** (Integer or String) - Yes - Unique identifier for the target chat or username of the target supergroup in the format @username
+```
+
+--------------------------------
+
+### readBusinessMessage
+
+Source: https://core.telegram.org/bots/api
+
+Marks an incoming message as read on behalf of a business account.
+
+```APIDOC
+## readBusinessMessage
+
+### Description
+Marks incoming message as read on behalf of a business account. Requires the can_read_messages business bot right. Returns True on success.
+
+### Parameters
+- **business_connection_id** (String) - Required - Unique identifier of the business connection
+- **chat_id** (Integer) - Required - Unique identifier of the chat
+- **message_id** (Integer) - Required - Unique identifier of the message
+```
+
+--------------------------------
+
+### sendMessage
+
+Source: https://core.telegram.org/bots/api
+
+Sends a text message to a specific chat.
+
+```APIDOC
+## sendMessage
+
+### Description
+Use this method to send text messages. On success, the sent Message is returned.
+
+### Parameters
+- **business_connection_id** (String) - Optional - Unique identifier of the business connection
+- **chat_id** (Integer or String) - Required - Unique identifier for the target chat
+- **message_thread_id** (Integer) - Optional - Unique identifier for the target message thread
+- **direct_messages_topic_id** (Integer) - Optional - Identifier of the direct messages topic
+- **text** (String) - Required - Text of the message to be sent
+- **parse_mode** (String) - Optional - Mode for parsing entities
+- **entities** (Array of MessageEntity) - Optional - List of special entities
+- **link_preview_options** (LinkPreviewOptions) - Optional - Link preview generation options
+- **disable_notification** (Boolean) - Optional - Sends the message silently
+- **protect_content** (Boolean) - Optional - Protects the contents from forwarding
+- **allow_paid_broadcast** (Boolean) - Optional - Allows ignoring broadcasting limits for a fee
+- **message_effect_id** (String) - Optional - Unique identifier of the message effect
+- **suggested_post_parameters** (SuggestedPostParameters) - Optional - Parameters of the suggested post
+- **reply_parameters** (ReplyParameters) - Optional - Description of the message to reply to
+- **reply_markup** (InlineKeyboardMarkup or ReplyKeyboardMarkup or ReplyKeyboardRemove or ForceReply) - Optional - Additional interface options
+
+### Response
+- **result** (Message) - The sent message object.
+```
+
+--------------------------------
+
+### hideGeneralForumTopic
+
+Source: https://core.telegram.org/bots/api
+
+Hides the 'General' topic in a forum supergroup chat.
+
+```APIDOC
+## hideGeneralForumTopic
+
+### Description
+Use this method to hide the 'General' topic in a forum supergroup chat. The bot must be an administrator in the chat for this to work and must have the can_manage_topics administrator rights. The topic will be automatically closed if it was open. Returns True on success.
+
+### Parameters
+- **chat_id** (Integer or String) - Yes - Unique identifier for the target chat or username of the target supergroup in the format @username
+```
+
+--------------------------------
+
+### forwardMessages
+
+Source: https://core.telegram.org/bots/api
+
+Forwards multiple messages of any kind from one chat to another. Service messages and messages with protected content cannot be forwarded.
+
+```APIDOC
+## forwardMessages
+
+### Description
+Use this method to forward multiple messages of any kind. If some of the specified messages can't be found or forwarded, they are skipped.
+
+### Parameters
+- **chat_id** (Integer or String) - Required - Unique identifier for the target chat or username of the target bot, supergroup or channel.
+- **message_thread_id** (Integer) - Optional - Unique identifier for the target message thread (topic) of a forum.
+- **direct_messages_topic_id** (Integer) - Optional - Identifier of the direct messages topic to which the messages will be forwarded.
+- **from_chat_id** (Integer or String) - Required - Unique identifier for the chat where the original messages were sent.
+- **message_ids** (Array of Integer) - Required - A JSON-serialized list of 1-100 identifiers of messages in the chat from_chat_id to forward.
+- **disable_notification** (Boolean) - Optional - Sends the messages silently.
+- **protect_content** (Boolean) - Optional - Protects the contents of the forwarded messages from forwarding and saving.
+
+### Response
+- **MessageId[]** (Array) - On success, an array of MessageId of the sent messages is returned.
+```
+
+--------------------------------
+
+### setBusinessAccountProfilePhoto
+
+Source: https://core.telegram.org/bots/api
+
+Changes the profile photo of a managed business account.
+
+```APIDOC
+## setBusinessAccountProfilePhoto
+
+### Description
+Changes the profile photo of a managed business account. Requires the can_edit_profile_photo business bot right. Returns True on success.
+
+### Parameters
+- **business_connection_id** (String) - Required - Unique identifier of the business connection
+```
+
+--------------------------------
+
+### setCustomEmojiStickerSetThumbnail
+
+Source: https://core.telegram.org/bots/api
+
+Use this method to set the thumbnail of a custom emoji sticker set. Returns True on success.
+
+```APIDOC
+## setCustomEmojiStickerSetThumbnail
+
+### Description
+Use this method to set the thumbnail of a custom emoji sticker set. Returns True on success.
+
+### Parameters
+#### Request Body
+- **name** (String) - Required - Sticker set name
+- **custom_emoji_id** (String) - Optional - Custom emoji identifier of a sticker from the sticker set; pass an empty string to drop the thumbnail and use the first sticker as the thumbnail
+```
+
+--------------------------------
+
+### setStickerEmojiList
+
+Source: https://core.telegram.org/bots/api
+
+Changes the list of emoji assigned to a regular or custom emoji sticker.
+
+```APIDOC
+## setStickerEmojiList
+
+### Description
+Use this method to change the list of emoji assigned to a regular or custom emoji sticker. Returns True on success.
+
+### Parameters
+- **sticker** (String) - Required - File identifier of the sticker
+- **emoji_list** (Array of String) - Required - A JSON-serialized list of 1-20 emoji
+
+### Response
+- **result** (Boolean) - True on success
+```
+
+--------------------------------
+
+### setMessageReaction
+
+Source: https://core.telegram.org/bots/api
+
+Changes the chosen reactions on a message.
+
+```APIDOC
+## setMessageReaction
+
+### Description
+Use this method to change the chosen reactions on a message. Service messages of some types can't be reacted to.
+
+### Parameters
+#### Request Body
+- **chat_id** (Integer or String) - Required - Unique identifier for the target chat
+- **message_id** (Integer) - Required - Identifier of the target message
+- **reaction** (Array of ReactionType) - Optional - A JSON-serialized list of reaction types
+- **is_big** (Boolean) - Optional - Pass True to set the reaction with a big animation
+
+### Response
+#### Success Response (200)
+- **result** (Boolean) - Returns True on success
+```
+
+--------------------------------
+
+### deleteStory
+
+Source: https://core.telegram.org/bots/api
+
+Deletes a story previously posted by the bot on behalf of a managed business account.
+
+```APIDOC
+## deleteStory
+
+### Description
+Deletes a story previously posted by the bot on behalf of a managed business account. Requires the can_manage_stories business bot right.
+
+### Parameters
+- **business_connection_id** (String) - Required - Unique identifier of the business connection
+- **story_id** (Integer) - Required - Unique identifier of the story to delete
+
+### Response
+- Returns True on success.
+```
+
+--------------------------------
+
+### editMessageText
+
+Source: https://core.telegram.org/bots/api
+
+Use this method to edit text, rich, and game messages. On success, if the edited message is not an inline message, the edited Message is returned, otherwise True is returned.
+
+```APIDOC
+## editMessageText
+
+### Description
+Use this method to edit text, rich and game messages. On success, if the edited message is not an inline message, the edited Message is returned, otherwise True is returned.
+
+### Parameters
+- **business_connection_id** (String) - Optional - Unique identifier of the business connection on behalf of which the message to be edited was sent
+- **chat_id** (Integer or String) - Optional - Required if inline_message_id is not specified. Unique identifier for the target chat or username of the target bot, supergroup or channel.
+- **message_id** (Integer) - Optional - Required if inline_message_id is not specified. Identifier of the message to edit.
+- **inline_message_id** (String) - Optional - Required if chat_id and message_id are not specified. Identifier of the inline message.
+- **text** (String) - Optional - New text of the message, 1-4096 characters after entity parsing; required if rich_message isn't specified
+- **parse_mode** (String) - Optional - Mode for parsing entities in the message text.
+- **entities** (Array of MessageEntity) - Optional - A JSON-serialized list of special entities that appear in message text.
+- **link_preview_options** (LinkPreviewOptions) - Optional - Link preview generation options for the message
+- **rich_message** (InputRichMessage) - Optional - New rich content of the message; required if text isn't specified
+- **reply_markup** (InlineKeyboardMarkup) - Optional - A JSON-serialized object for an inline keyboard
+```
+
+--------------------------------
+
+### declineSuggestedPost
+
+Source: https://core.telegram.org/bots/api
+
+Use this method to decline a suggested post in a direct messages chat. The bot must have the 'can_manage_direct_messages' administrator right in the corresponding channel chat.
+
+```APIDOC
+## declineSuggestedPost
+
+### Description
+Declines a suggested post in a direct messages chat. Returns True on success.
+
+### Parameters
+- **chat_id** (Integer) - Required - Unique identifier for the target direct messages chat
+- **message_id** (Integer) - Required - Identifier of a suggested post message to decline
+- **comment** (String) - Optional - Comment for the creator of the suggested post; 0-128 characters
+```
+
+--------------------------------
+
+### setBusinessAccountUsername
+
+Source: https://core.telegram.org/bots/api
+
+Changes the username of a managed business account.
+
+```APIDOC
+## setBusinessAccountUsername
+
+### Description
+Changes the username of a managed business account. Requires the can_change_username business bot right. Returns True on success.
+
+### Parameters
+- **business_connection_id** (String) - Required - Unique identifier of the business connection
+- **username** (String) - Optional - New username
+```
+
+--------------------------------
+
+### editChatInviteLink
+
+Source: https://core.telegram.org/bots/api
+
+Edits a non-primary invite link created by the bot.
+
+```APIDOC
+## editChatInviteLink
+
+### Description
+Use this method to edit a non-primary invite link created by the bot.
+
+### Parameters
+#### Path Parameters
+- **chat_id** (Integer or String) - Required - Unique identifier for the target chat or username of the target channel
+- **invite_link** (String) - Required - The invite link to edit
+- **name** (String) - Optional - Invite link name; 0-32 characters
+- **expire_date** (Integer) - Optional - Point in time (Unix timestamp) when the link will expire
+- **member_limit** (Integer) - Optional - The maximum number of users that can be members of the chat simultaneously
+```
+
+--------------------------------
+
+### transferGift
+
+Source: https://core.telegram.org/bots/api
+
+Transfers an owned unique gift to another user. Requires the can_transfer_and_upgrade_gifts business bot right.
+
+```APIDOC
+## transferGift
+
+### Description
+Transfers an owned unique gift to another user. Requires the can_transfer_and_upgrade_gifts business bot right. Requires can_transfer_stars business bot right if the transfer is paid. Returns True on success.
+
+### Parameters
+- **business_connection_id** (String) - Required - Unique identifier of the business connection
+- **owned_gift_id** (String) - Required - Unique identifier of the regular gift that should be transferred
+- **new_owner_chat_id** (Integer) - Required - Unique identifier of the chat which will own the gift.
+- **star_count** (Integer) - Optional - The amount of Telegram Stars that will be paid for the transfer
+```
+
+--------------------------------
+
+### replaceManagedBotToken
+
+Source: https://core.telegram.org/bots/api
+
+Revokes the current token of a managed bot and generates a new one.
+
+```APIDOC
+## replaceManagedBotToken
+
+### Description
+Use this method to revoke the current token of a managed bot and generate a new one. Returns the new token as String on success.
+
+### Parameters
+#### Query Parameters
+- **user_id** (Integer) - Required - User identifier of the managed bot whose token will be replaced
+```
+
+--------------------------------
+
+### setStickerMaskPosition
+
+Source: https://core.telegram.org/bots/api
+
+Changes the mask position of a mask sticker.
+
+```APIDOC
+## setStickerMaskPosition
+
+### Description
+Use this method to change the mask position of a mask sticker. Returns True on success.
+
+### Parameters
+- **sticker** (String) - Required - File identifier of the sticker
+- **mask_position** (MaskPosition) - Optional - A JSON-serialized object with the position
+
+### Response
+- **result** (Boolean) - True on success
+```
+
+--------------------------------
+
+### editForumTopic
+
+Source: https://core.telegram.org/bots/api
+
+Use this method to edit name and icon of a topic in a forum supergroup chat or a private chat with a user.
+
+```APIDOC
+## editForumTopic
+
+### Description
+Use this method to edit name and icon of a topic in a forum supergroup chat or a private chat with a user. Returns True on success.
+
+### Parameters
+#### Query Parameters
+- **chat_id** (Integer or String) - Required - Unique identifier for the target chat or username of the target supergroup in the format @username
+- **message_thread_id** (Integer) - Required - Unique identifier for the target message thread of the forum topic
+- **name** (String) - Optional - New topic name, 0-128 characters.
+```
+
+--------------------------------
+
+### restrictChatMember
+
+Source: https://core.telegram.org/bots/api
+
+Restricts a user in a supergroup.
+
+```APIDOC
+## restrictChatMember
+
+### Description
+Use this method to restrict a user in a supergroup. Returns True on success.
+
+### Parameters
+- **chat_id** (Integer or String) - Required - Unique identifier for the target chat or username of the target supergroup
+- **user_id** (Integer) - Required - Unique identifier of the target user
+- **permissions** (ChatPermissions) - Required - A JSON-serialized object for new user permissions
+- **use_independent_chat_permissions** (Boolean) - Optional - Pass True if chat permissions are set independently.
+```
+
+--------------------------------
+
+### unpinAllChatMessages
+
+Source: https://core.telegram.org/bots/api
+
+Clears the list of pinned messages in a chat.
+
+```APIDOC
+## unpinAllChatMessages
+
+### Description
+Use this method to clear the list of pinned messages in a chat. Returns True on success.
+
+### Parameters
+#### Query Parameters
+- **chat_id** (Integer or String) - Required - Unique identifier for the target chat or username of the target channel in the format @username
+
+### Response
+#### Success Response (200)
+- **result** (Boolean) - Returns True on success.
+```
+
+--------------------------------
+
+### unbanChatMember
+
+Source: https://core.telegram.org/bots/api
+
+Unbans a previously banned user in a supergroup or channel.
+
+```APIDOC
+## unbanChatMember
+
+### Description
+Use this method to unban a previously banned user in a supergroup or channel. Returns True on success.
+
+### Parameters
+- **chat_id** (Integer or String) - Required - Unique identifier for the target group or username of the target supergroup or channel
+- **user_id** (Integer) - Required - Unique identifier of the target user
+- **only_if_banned** (Boolean) - Optional - Do nothing if the user is not banned
+```
+
+--------------------------------
+
+### editStory
+
+Source: https://core.telegram.org/bots/api
+
+Edits a story previously posted by the bot on behalf of a managed business account.
+
+```APIDOC
+## editStory
+
+### Description
+Edits a story previously posted by the bot on behalf of a managed business account. Requires the can_manage_stories business bot right.
+
+### Parameters
+- **business_connection_id** (String) - Required - Unique identifier of the business connection
+- **story_id** (Integer) - Required - Unique identifier of the story to edit
+- **content** (InputStoryContent) - Required - Content of the story
+- **caption** (String) - Optional - Caption of the story
+- **parse_mode** (String) - Optional - Mode for parsing entities
+- **caption_entities** (Array of MessageEntity) - Optional - List of special entities
+- **areas** (Array of StoryArea) - Optional - List of clickable areas
+
+### Response
+- Returns Story object on success.
+```
+
+--------------------------------
+
+### deleteChatPhoto
+
+Source: https://core.telegram.org/bots/api
+
+Deletes the photo of a chat. Requires the bot to be an administrator with appropriate rights.
+
+```APIDOC
+## deleteChatPhoto
+
+### Description
+Use this method to delete a chat photo. Photos can't be changed for private chats. The bot must be an administrator in the chat for this to work and must have the appropriate administrator rights. Returns True on success.
+
+### Parameters
+#### Query Parameters
+- **chat_id** (Integer or String) - Required - Unique identifier for the target chat or username of the target channel in the format @username
+
+### Response
+#### Success Response (200)
+- **result** (Boolean) - Returns True on success.
+```
+
+--------------------------------
+
+### editMessageReplyMarkup
+
+Source: https://core.telegram.org/bots/api
+
+Use this method to edit only the reply markup of messages. On success, if the edited message is not an inline message, the edited Message is returned, otherwise True is returned.
+
+```APIDOC
+## editMessageReplyMarkup
+
+### Description
+Use this method to edit only the reply markup of messages. Note that business messages that were not sent by the bot and do not contain an inline keyboard can only be edited within 48 hours from the time they were sent.
+
+### Parameters
+- **business_connection_id** (String) - Optional - Unique identifier of the business connection on behalf of which the message to be edited was sent
+- **chat_id** (Integer or String) - Optional - Required if inline_message_id is not specified. Unique identifier for the target chat or username of the target bot, supergroup or channel.
+- **message_id** (Integer) - Optional - Required if inline_message_id is not specified. Identifier of the message to edit.
+- **inline_message_id** (String) - Optional - Required if chat_id and message_id are not specified. Identifier of the inline message.
+- **reply_markup** (InlineKeyboardMarkup) - Optional - A JSON-serialized object for an inline keyboard
+```
+
+--------------------------------
+
+### banChatMember
+
+Source: https://core.telegram.org/bots/api
+
+Bans a user in a group, supergroup, or channel.
+
+```APIDOC
+## banChatMember
+
+### Description
+Use this method to ban a user in a group, a supergroup or a channel. Returns True on success.
+
+### Parameters
+- **chat_id** (Integer or String) - Required - Unique identifier for the target group or username of the target supergroup or channel
+- **user_id** (Integer) - Required - Unique identifier of the target user
+- **until_date** (Integer) - Optional - Date when the user will be unbanned; Unix time.
+- **revoke_messages** (Boolean) - Optional - Pass True to delete all messages from the chat for the user that is being removed.
+```
+
+--------------------------------
+
+### deleteForumTopic
+
+Source: https://core.telegram.org/bots/api
+
+Deletes a forum topic along with all its messages.
+
+```APIDOC
+## deleteForumTopic
+
+### Description
+Use this method to delete a forum topic along with all its messages in a forum supergroup chat or a private chat with a user. In the case of a supergroup chat the bot must be an administrator in the chat for this to work and must have the can_delete_messages administrator rights. Returns True on success.
+
+### Parameters
+- **chat_id** (Integer or String) - Yes - Unique identifier for the target chat or username of the target supergroup in the format @username
+- **message_thread_id** (Integer) - Yes - Unique identifier for the target message thread of the forum topic
+```
+
+--------------------------------
+
+### stopPoll
+
+Source: https://core.telegram.org/bots/api
+
+Use this method to stop a poll which was sent by the bot. On success, the stopped Poll is returned.
+
+```APIDOC
+## stopPoll
+
+### Description
+Use this method to stop a poll which was sent by the bot.
+
+### Parameters
+- **business_connection_id** (String) - Optional - Unique identifier of the business connection on behalf of which the message to be edited was sent
+- **chat_id** (Integer or String) - Required - Unique identifier for the target chat or username of the target bot, supergroup or channel
+- **message_id** (Integer) - Required - Identifier of the original message with the poll
+- **reply_markup** (InlineKeyboardMarkup) - Optional - A JSON-serialized object for a new message inline keyboard
+```
+
+--------------------------------
+
+### removeUserVerification
+
+Source: https://core.telegram.org/bots/api
+
+Removes verification from a user.
+
+```APIDOC
+## removeUserVerification
+
+### Description
+Removes verification from a user who is currently verified on behalf of the organization represented by the bot. Returns True on success.
+
+### Parameters
+- **user_id** (Integer) - Required - Unique identifier of the target user
+```
+
+--------------------------------
+
+### editGeneralForumTopic
+
+Source: https://core.telegram.org/bots/api
+
+Edits the name of the 'General' topic in a forum supergroup chat.
+
+```APIDOC
+## editGeneralForumTopic
+
+### Description
+Use this method to edit the name of the 'General' topic in a forum supergroup chat. The bot must be an administrator in the chat for this to work and must have the can_manage_topics administrator rights. Returns True on success.
+
+### Parameters
+- **chat_id** (Integer or String) - Yes - Unique identifier for the target chat or username of the target supergroup in the format @username
+- **name** (String) - Yes - New topic name, 1-128 characters
+```
+
+--------------------------------
+
+### editMessageLiveLocation
+
+Source: https://core.telegram.org/bots/api
+
+Edits live location messages until the live_period expires or editing is disabled.
+
+```APIDOC
+## editMessageLiveLocation
+
+### Description
+Use this method to edit live location messages. A location can be edited until its live_period expires or editing is explicitly disabled.
+
+### Parameters
+#### Optional Parameters
+- **business_connection_id** (String) - Optional - Unique identifier of the business connection on behalf of which the message to be edited was sent
+- **chat_id** (Integer or String) - Optional - Required if inline_message_id is not specified.
+- **message_id** (Integer) - Optional - Required if inline_message_id is not specified.
+- **inline_message_id** (String) - Optional - Required if chat_id and message_id are not specified.
+- **live_period** (Integer) - Optional - New period in seconds during which the location can be updated.
+- **horizontal_accuracy** (Float) - Optional - The radius of uncertainty for the location, measured in meters; 0-1500.
+- **heading** (Integer) - Optional - Direction in which the user is moving, in degrees. Must be between 1 and 360.
+- **proximity_alert_radius** (Integer) - Optional - The maximum distance for proximity alerts, in meters. Must be between 1 and 100000.
+- **reply_markup** (InlineKeyboardMarkup) - Optional - A JSON-serialized object for a new inline keyboard
+
+#### Required Parameters
+- **latitude** (Float) - Required - Latitude of new location
+- **longitude** (Float) - Required - Longitude of new location
+```
+
+--------------------------------
+
+### revokeChatInviteLink
+
+Source: https://core.telegram.org/bots/api
+
+Revokes an invite link created by the bot.
+
+```APIDOC
+## revokeChatInviteLink
+
+### Description
+Use this method to revoke an invite link created by the bot. The bot must be an administrator in the chat.
+
+### Parameters
+- **chat_id** (Integer or String) - Required - Unique identifier of the target chat or username of the target channel in the format @username
+- **invite_link** (String) - Required - The invite link to revoke
+
+### Response
+- Returns the revoked invite link as ChatInviteLink object.
+```
+
+--------------------------------
+
+### setUserEmojiStatus
+
+Source: https://core.telegram.org/bots/api
+
+Changes the emoji status for a given user that previously allowed the bot to manage their emoji status. Returns True on success.
+
+```APIDOC
+## setUserEmojiStatus
+
+### Description
+Changes the emoji status for a given user that previously allowed the bot to manage their emoji status via the Mini App method requestEmojiStatusAccess. Returns True on success.
+
+### Parameters
+- **user_id** (Integer) - Required - Unique identifier of the target user
+- **emoji_status_custom_emoji_id** (String) - Optional - Custom emoji identifier of the emoji status to set. Pass an empty string to remove the status.
+- **emoji_status_expiration_date** (Integer) - Optional - Expiration date of the emoji status, if any
+```
+
+--------------------------------
+
+### setPassportDataErrors
+
+Source: https://core.telegram.org/bots/api
+
+Informs a user that some of the Telegram Passport elements they provided contains errors. The user will not be able to re-submit their Passport until the errors are fixed.
+
+```APIDOC
+## setPassportDataErrors
+
+### Description
+Informs a user that some of the Telegram Passport elements they provided contains errors. The user will not be able to re-submit their Passport to you until the errors are fixed.
+
+### Parameters
+- **user_id** (Integer) - Required - User identifier
+- **errors** (Array of PassportElementError) - Required - A JSON-serialized array describing the errors
+
+### Response
+- **result** (Boolean) - Returns True on success.
+```
+
+--------------------------------
+
+### deleteMessages
+
+Source: https://core.telegram.org/bots/api
+
+Deletes multiple messages simultaneously in a chat.
+
+```APIDOC
+## deleteMessages
+
+### Description
+Use this method to delete multiple messages simultaneously. If some of the specified messages can't be found, they are skipped. Returns True on success.
+
+### Parameters
+#### Request Body
+- **chat_id** (Integer or String) - Required - Unique identifier for the target chat or username of the target bot, supergroup or channel in the format @username
+- **message_ids** (Array of Integer) - Required - A JSON-serialized list of 1-100 identifiers of messages to delete.
+```
+
+--------------------------------
+
+### stopMessageLiveLocation
+
+Source: https://core.telegram.org/bots/api
+
+Stops updating a live location message before the live_period expires.
+
+```APIDOC
+## stopMessageLiveLocation
+
+### Description
+Use this method to stop updating a live location message before live_period expires.
+
+### Parameters
+#### Optional Parameters
+- **business_connection_id** (String) - Optional - Unique identifier of the business connection on behalf of which the message to be edited was sent
+- **chat_id** (Integer or String) - Optional - Required if inline_message_id is not specified.
+- **message_id** (Integer) - Optional - Required if inline_message_id is not specified.
+- **inline_message_id** (String) - Optional - Required if chat_id and message_id are not specified.
+- **reply_markup** (InlineKeyboardMarkup) - Optional - A JSON-serialized object for a new inline keyboard
+```
+
+--------------------------------
+
+### removeBusinessAccountProfilePhoto
+
+Source: https://core.telegram.org/bots/api
+
+Removes the current profile photo of a managed business account. Requires the can_edit_profile_photo business bot right.
+
+```APIDOC
+## removeBusinessAccountProfilePhoto
+
+### Description
+Removes the current profile photo of a managed business account. Requires the can_edit_profile_photo business bot right. Returns True on success.
+
+### Parameters
+- **business_connection_id** (String) - Required - Unique identifier of the business connection
+- **is_public** (Boolean) - Optional - Pass True to remove the public photo, which is visible even if the main photo is hidden by the business account's privacy settings.
+```
+
+--------------------------------
+
+### deleteChatStickerSet
+
+Source: https://core.telegram.org/bots/api
+
+Use this method to delete a group sticker set from a supergroup.
+
+```APIDOC
+## deleteChatStickerSet
+
+### Description
+Use this method to delete a group sticker set from a supergroup. The bot must be an administrator in the chat for this to work and must have the appropriate administrator rights. Returns True on success.
+
+### Parameters
+#### Query Parameters
+- **chat_id** (Integer or String) - Required - Unique identifier for the target chat or username of the target supergroup in the format @username
+```
+
+--------------------------------
+
+### deleteBusinessMessages
+
+Source: https://core.telegram.org/bots/api
+
+Deletes messages on behalf of a business account.
+
+```APIDOC
+## deleteBusinessMessages
+
+### Description
+Delete messages on behalf of a business account. Requires specific business bot rights. Returns True on success.
+
+### Parameters
+- **business_connection_id** (String) - Required - Unique identifier of the business connection
+- **message_ids** (Array of Integer) - Required - List of 1-100 identifiers of messages to delete.
+```
+
+--------------------------------
+
+### deleteMessage
+
+Source: https://core.telegram.org/bots/api
+
+Use this method to delete a message, including service messages, with specific limitations.
+
+```APIDOC
+## deleteMessage
+
+### Description
+Deletes a message. Returns True on success.
+
+### Parameters
+- **chat_id** (Integer or String) - Required - Unique identifier for the target chat or username of the target bot, supergroup or channel
+- **message_id** (Integer) - Required - Identifier of the message to delete
+```
+
+--------------------------------
+
+### unbanChatSenderChat
+
+Source: https://core.telegram.org/bots/api
+
+Unbans a previously banned channel chat in a supergroup or channel.
+
+```APIDOC
+## unbanChatSenderChat
+
+### Description
+Use this method to unban a previously banned channel chat in a supergroup or channel.
+
+### Parameters
+#### Path Parameters
+- **chat_id** (Integer or String) - Required - Unique identifier for the target chat or username of the target channel
+- **sender_chat_id** (Integer) - Required - Unique identifier of the target sender chat
+
+### Response
+- **Success** (Boolean) - Returns True on success.
+```
+
+--------------------------------
+
+### unpinChatMessage
+
+Source: https://core.telegram.org/bots/api
+
+Removes a message from the list of pinned messages in a chat.
+
+```APIDOC
+## unpinChatMessage
+
+### Description
+Use this method to remove a message from the list of pinned messages in a chat. Returns True on success.
+
+### Parameters
+#### Query Parameters
+- **business_connection_id** (String) - Optional - Unique identifier of the business connection on behalf of which the message will be unpinned
+- **chat_id** (Integer or String) - Required - Unique identifier for the target chat or username of the target channel in the format @username
+- **message_id** (Integer) - Optional - Identifier of the message to unpin. Required if business_connection_id is specified.
+
+### Response
+#### Success Response (200)
+- **result** (Boolean) - Returns True on success.
+```
+
+--------------------------------
+
+### editMessageCaption
+
+Source: https://core.telegram.org/bots/api
+
+Use this method to edit captions of messages. On success, if the edited message is not an inline message, the edited Message is returned, otherwise True is returned.
+
+```APIDOC
+## editMessageCaption
+
+### Description
+Use this method to edit captions of messages. On success, if the edited message is not an inline message, the edited Message is returned, otherwise True is returned.
+
+### Parameters
+- **business_connection_id** (String) - Optional - Unique identifier of the business connection on behalf of which the message to be edited was sent
+- **chat_id** (Integer or String) - Optional - Required if inline_message_id is not specified. Unique identifier for the target chat or username of the target bot, supergroup or channel.
+- **message_id** (Integer) - Optional - Required if inline_message_id is not specified. Identifier of the message to edit.
+- **inline_message_id** (String) - Optional - Required if chat_id and message_id are not specified. Identifier of the inline message.
+- **caption** (String) - Optional - New caption of the message, 0-1024 characters after entities parsing
+- **parse_mode** (String) - Optional - Mode for parsing entities in the message caption.
+- **caption_entities** (Array of MessageEntity) - Optional - A JSON-serialized list of special entities that appear in the caption.
+- **show_caption_above_media** (Boolean) - Optional - Pass True, if the caption must be shown above the message media.
+- **reply_markup** (InlineKeyboardMarkup) - Optional - A JSON-serialized object for an inline keyboard
+```
+
+--------------------------------
+
+### banChatSenderChat
+
+Source: https://core.telegram.org/bots/api
+
+Bans a channel chat in a supergroup or channel. The bot must be an administrator with appropriate rights.
+
+```APIDOC
+## banChatSenderChat
+
+### Description
+Use this method to ban a channel chat in a supergroup or a channel. Until the chat is unbanned, the owner of the banned chat won't be able to send messages on behalf of any of their channels.
+
+### Parameters
+#### Path Parameters
+- **chat_id** (Integer or String) - Required - Unique identifier for the target chat or username of the target channel
+- **sender_chat_id** (Integer) - Required - Unique identifier of the target sender chat
+
+### Response
+- **Success** (Boolean) - Returns True on success.
+```
+
+--------------------------------
+
+### deleteAllMessageReactions
+
+Source: https://core.telegram.org/bots/api
+
+Removes up to 10000 recent reactions in a group or supergroup.
+
+```APIDOC
+## deleteAllMessageReactions
+
+### Description
+Use this method to remove up to 10000 recent reactions in a group or a supergroup chat added by a given user or chat. The bot must have the 'can_delete_messages' administrator right in the chat. Returns True on success.
+
+### Parameters
+#### Request Body
+- **chat_id** (Integer or String) - Required - Unique identifier for the target chat or username of the target supergroup in the format @username
+- **user_id** (Integer) - Optional - Identifier of the user whose reactions will be removed
+- **actor_chat_id** (Integer) - Optional - Identifier of the chat whose reactions will be removed
+```
+
+--------------------------------
+
+### removeChatVerification
+
+Source: https://core.telegram.org/bots/api
+
+Removes verification from a chat.
+
+```APIDOC
+## removeChatVerification
+
+### Description
+Removes verification from a chat that is currently verified on behalf of the organization represented by the bot. Returns True on success.
+
+### Parameters
+- **chat_id** (Integer or String) - Required - Unique identifier for the target chat or username of the target bot or channel.
+```
+
+--------------------------------
+
+### deleteMessageReaction
+
+Source: https://core.telegram.org/bots/api
+
+Removes a reaction from a message in a group or supergroup.
+
+```APIDOC
+## deleteMessageReaction
+
+### Description
+Use this method to remove a reaction from a message in a group or a supergroup chat. The bot must have the 'can_delete_messages' administrator right in the chat. Returns True on success.
+
+### Parameters
+#### Request Body
+- **chat_id** (Integer or String) - Required - Unique identifier for the target chat or username of the target supergroup in the format @username
+- **message_id** (Integer) - Required - Identifier of the target message
+- **user_id** (Integer) - Optional - Identifier of the user whose reaction will be removed
+- **actor_chat_id** (Integer) - Optional - Identifier of the chat whose reaction will be removed
+```
+
+=== COMPLETE CONTENT === This response contains all available snippets from this library. No additional content exists. Do not make further requests.

@@ -1,0 +1,110 @@
+# ================================================================
+# Site Settings
+# ================================================================
+title: "ZGQ's Blog"
+description: "记录技术、生活与思考 · A developer's digital garden"
+url: "https://blog.zgqinc.gq"
+baseurl: ""
+lang: "zh-CN"
+timezone: Asia/Shanghai
+
+# Author
+author:
+  name: "ZGQ"
+  bio: "test"
+  avatar: "/assets/images/avatar.jpg"
+
+# ================================================================
+# Navigation
+# ================================================================
+nav_links:
+  - title: "首页"
+    url: "/"
+    icon: "home"
+  - title: "文章"
+    url: "/posts/"
+    icon: "article"
+  - title: "标签"
+    url: "/tags/"
+    icon: "label"
+  - title: "分类"
+    url: "/categories/"
+    icon: "folder"
+  - title: "归档"
+    url: "/archives/"
+    icon: "inventory_2"
+  - title: "动态"
+    url: "/updates/"
+    icon: "dynamic_feed"
+  - title: "友链"
+    url: "/links/"
+    icon: "link"
+  - title: "关于"
+    url: "/about/"
+    icon: "info"
+
+# ================================================================
+# Social Links
+# ================================================================
+social:
+  github: "ZGQ-inc"           # PLACEHOLDER: your GitHub username
+  telegram: "ZGQinc"         # PLACEHOLDER: your Telegram username
+  telegram_channel: "" # PLACEHOLDER: your Telegram channel
+  rss: true
+
+# ================================================================
+# Comments (comments.app)
+# ================================================================
+comments:
+  enabled: true
+  app_id: "PLACEHOLDER_COMMENTS_APP_ID"  # Register at comments.app
+
+# ================================================================
+# Worker API
+# ================================================================
+worker_api_url: "https://api.zgqinc.gq"
+
+# ================================================================
+# Build & Markdown
+# ================================================================
+markdown: kramdown
+highlighter: rouge
+
+kramdown:
+  input: GFM
+  hard_wrap: false
+  syntax_highlighter: rouge
+  syntax_highlighter_opts:
+    block:
+      line_numbers: true
+
+# Permalink style
+permalink: /posts/:slug/
+
+# Pagination (requires jekyll-paginate)
+paginate: 10
+paginate_path: "/page/:num/"
+
+# ================================================================
+# Plugins
+# ================================================================
+plugins:
+  - jekyll-feed
+  - jekyll-sitemap
+  - jekyll-seo-tag
+  - jekyll-paginate
+
+# ================================================================
+# Exclude from build
+# ================================================================
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - "*.gem"
+  - vendor/
+  - worker/
+  - scripts/
+  - .env.example
+  - README.md
+  - .github/
+  - node_modules/

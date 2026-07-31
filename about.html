@@ -1,0 +1,110 @@
+---
+layout: default
+title: 关于
+permalink: /about/
+---
+
+<main class="page-content" role="main">
+  <div class="page-header">
+    <h1 class="page-title">👤 关于我</h1>
+    <p class="page-subtitle">Hello, World!</p>
+  </div>
+
+  <!-- Profile Card -->
+  <div class="about-section">
+    <div style="display:flex;align-items:center;gap:20px;flex-wrap:wrap">
+      <div style="position:relative">
+        {% if site.author.avatar %}
+        <img src="{{ site.author.avatar | relative_url }}" alt="{{ site.author.name }}"
+             style="width:96px;height:96px;border-radius:50%;object-fit:cover;border:3px solid var(--md-sys-color-primary)">
+        {% else %}
+        <div style="width:96px;height:96px;border-radius:50%;background:var(--md-sys-color-primary-container);display:flex;align-items:center;justify-content:center;font-size:3rem;font-weight:900;color:var(--md-sys-color-primary);border:3px solid var(--md-sys-color-primary)">
+          {{ site.author.name | slice: 0 }}
+        </div>
+        {% endif %}
+      </div>
+      <div>
+        <h2 style="font-size:1.5rem;font-weight:800;color:var(--md-sys-color-on-surface);margin-bottom:4px">{{ site.author.name }}</h2>
+        <p style="color:var(--md-sys-color-on-surface-variant);margin-bottom:12px">{{ site.author.bio }}</p>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          {% if site.social.github %}
+          <a class="action-btn btn-tonal" href="https://github.com/{{ site.social.github }}" target="_blank" rel="noopener">
+            GitHub
+          </a>
+          {% endif %}
+          {% if site.social.telegram %}
+          <a class="action-btn btn-tonal" href="https://t.me/{{ site.social.telegram }}" target="_blank" rel="noopener">
+            Telegram
+          </a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- About content sections -->
+  <div class="about-section">
+    <h2 class="about-section-title">
+      <span class="material-symbols-outlined">info</span>
+      关于本站
+    </h2>
+    <div class="article-content">
+      <p>这是一个由 <strong>Jekyll</strong> 驱动、托管在 <strong>Cloudflare Pages</strong> 上的个人博客。</p>
+      <p>技术栈：</p>
+      <ul>
+        <li>前端：Jekyll + Material Design 3 + Glassmorphism</li>
+        <li>托管：Cloudflare Pages（CDN + HTTPS）</li>
+        <li>后端：Cloudflare Worker + D1 + R2</li>
+        <li>自动化：GitHub Actions + Telegram Bot</li>
+      </ul>
+      <p>博客与 Telegram 频道双向联动，文章发布后自动推送摘要至频道，也支持在 Telegram 中直接发布文章。</p>
+    </div>
+  </div>
+
+  <div class="about-section">
+    <h2 class="about-section-title">
+      <span class="material-symbols-outlined">contact_mail</span>
+      联系我
+    </h2>
+    <p style="font-size:0.9rem;color:var(--md-sys-color-on-surface-variant);line-height:1.7">
+      欢迎通过以下方式联系：
+    </p>
+    <div style="display:flex;gap:12px;margin-top:12px;flex-wrap:wrap">
+      {% if site.social.telegram %}
+      <a class="action-btn btn-filled" href="https://t.me/{{ site.social.telegram }}" target="_blank" rel="noopener">
+        <span class="material-symbols-outlined">send</span>
+        Telegram
+      </a>
+      {% endif %}
+      {% if site.author.email %}
+      <a class="action-btn btn-outlined" href="mailto:{{ site.author.email }}">
+        <span class="material-symbols-outlined">mail</span>
+        邮件
+      </a>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Site stats -->
+  <div class="about-section">
+    <h2 class="about-section-title">
+      <span class="material-symbols-outlined">bar_chart</span>
+      站点统计
+    </h2>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:12px">
+      <div style="background:var(--md-sys-color-primary-container);color:var(--md-sys-color-on-primary-container);border-radius:var(--shape-corner-large);padding:16px;text-align:center">
+        <div style="font-size:2rem;font-weight:800">{{ site.posts.size }}</div>
+        <div style="font-size:0.8rem;margin-top:4px">文章</div>
+      </div>
+      <div style="background:var(--md-sys-color-secondary-container);color:var(--md-sys-color-on-secondary-container);border-radius:var(--shape-corner-large);padding:16px;text-align:center">
+        <div style="font-size:2rem;font-weight:800">{{ site.tags.size }}</div>
+        <div style="font-size:0.8rem;margin-top:4px">标签</div>
+      </div>
+      <div style="background:var(--md-sys-color-tertiary-container);color:var(--md-sys-color-on-tertiary-container);border-radius:var(--shape-corner-large);padding:16px;text-align:center">
+        <div style="font-size:2rem;font-weight:800">{{ site.categories.size }}</div>
+        <div style="font-size:0.8rem;margin-top:4px">分类</div>
+      </div>
+    </div>
+  </div>
+
+</main>

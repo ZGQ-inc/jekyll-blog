@@ -1,0 +1,19 @@
+{
+  "name": "blog-worker",
+  "version": "1.0.0",
+  "description": "Cloudflare Worker for ZGQ Blog - TG Webhook + API Gateway",
+  "private": true,
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "deploy:staging": "wrangler deploy --env staging",
+    "db:init": "wrangler d1 execute blog-db --file=./schema.sql",
+    "db:init:local": "wrangler d1 execute blog-db --local --file=./schema.sql",
+    "type-check": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20241022.0",
+    "typescript": "^5.5.4",
+    "wrangler": "^3.80.0"
+  }
+}

@@ -1,0 +1,38 @@
+---
+layout: default
+title: 动态
+permalink: /updates/
+---
+
+<main class="page-content" role="main">
+  <div class="page-header">
+    <h1 class="page-title">⚡ 动态</h1>
+    <p class="page-subtitle">随想、短记与碎碎念</p>
+  </div>
+
+  <div class="timeline" id="timeline">
+    <!--
+      动态条目示例格式（此文件手动维护，或由 Worker 自动添加）:
+      在此处按时间倒序添加 .timeline-item 条目
+    -->
+
+    <div class="timeline-item">
+      <div class="timeline-card">
+        <div class="timeline-date">{{ 'now' | date: "%Y年%m月%d日" }}</div>
+        <div class="timeline-content">
+          <p>🎉 博客正式上线！基于 Jekyll + Cloudflare Pages + Telegram Bot 构建的全栈联动博客系统已部署完成。</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="timeline-card">
+        <div class="timeline-date">置顶</div>
+        <div class="timeline-content">
+          <p>💡 <strong>关于动态页面</strong>：此页面记录生活碎片和随想。你可以直接在此 HTML 文件中添加 <code>.timeline-item</code> 条目，也可以通过 Telegram Bot 的 <code>/update</code> 指令自动推送。</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</main>

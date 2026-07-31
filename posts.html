@@ -1,0 +1,79 @@
+---
+layout: default
+title: 文章列表
+permalink: /posts/
+---
+
+<main class="page-content" role="main">
+  <div class="page-header">
+    <h1 class="page-title">📝 所有文章</h1>
+    <p class="page-subtitle">共 {{ site.posts.size }} 篇 · 按时间倒序</p>
+  </div>
+
+  <div class="filter-bar">
+    <div class="search-field">
+      <span class="material-symbols-outlined search-icon">search</span>
+      <input type="text" id="searchInput" placeholder="搜索文章…" aria-label="搜索">
+    </div>
+    <div class="view-toggle" role="group">
+      <button data-view="grid" class="active">
+        <span class="material-symbols-outlined">grid_view</span>
+      </button>
+      <button data-view="list">
+        <span class="material-symbols-outlined">view_list</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="gallery-container grid-mode" id="postGallery">
+    {% for post in site.posts %}
+    <a class="post-card animate-fade-in-up"
+       href="{{ post.url | relative_url }}"
+       data-title="{{ post.title | downcase }}"
+       data-tags="{{ post.tags | join: ',' | downcase }}">
+
+      <div class="card-thumb-wrapper">
+        {% if post.image %}
+        <img class="card-thumb" src="{{ post.image }}" alt="{{ post.title }}" loading="lazy">
+        {% else %}
+        <div class="card-no-image">
+          <span class="material-symbols-outlined">article</span>
+        </div>
+        {% endif %}
+        {% if post.tags.size > 0 %}
+        <span class="card-tag-badge">{{ post.tags.first }}</span>
+        {% endif %}
+      </div>
+
+      <div class="card-body">
+        <h2 class="card-title">{{ post.title }}</h2>
+        {% if post.summary %}
+        <p class="card-summary">{{ post.summary }}</p>
+        {% endif %}
+        <div class="card-meta">
+          <span class="meta-item">
+            <span class="material-symbols-outlined">calendar_month</span>
+            {{ post.date | date: "%Y-%m-%d" }}
+          </span>
+        </div>
+        {% if post.tags.size > 0 %}
+        <div class="card-tags">
+          {% for tag in post.tags limit:3 %}
+          <span class="chip chip-tonal">{{ tag }}</span>
+          {% endfor %}
+        </div>
+        {% endif %}
+      </div>
+    </a>
+    {% endfor %}
+  </div>
+</main>
+
+<script>
+document.getElementById('searchInput')?.addEventListener('input', function(e) {
+  var q = e.target.value.toLowerCase();
+  document.querySelectorAll('.post-card').forEach(function(c) {
+    c.style.display = (!q || c.dataset.title.includes(q) || c.dataset.tags.includes(q)) ? '' : 'none';
+  });
+});
+</script>

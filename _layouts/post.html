@@ -1,0 +1,197 @@
+---
+layout: default
+---
+
+{% assign post = page %}
+
+<!-- Post Hero Image or Gradient Header -->
+{% if post.image %}
+<div class="post-hero">
+  <img class="hero-image" src="{{ post.image }}" alt="{{ post.title }}" loading="eager">
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    {% if post.tags.size > 0 %}
+    <div class="hero-tags">
+      {% for tag in post.tags limit:3 %}
+      <span class="chip chip-tonal" style="background:rgba(255,255,255,.2);color:#fff;backdrop-filter:blur(4px)">
+        {{ tag }}
+      </span>
+      {% endfor %}
+    </div>
+    {% endif %}
+    <h1 class="hero-title">{{ post.title }}</h1>
+    <div class="hero-meta">
+      <span>
+        <span class="material-symbols-outlined">calendar_month</span>
+        {{ post.date | date: "%Y年%m月%d日" }}
+      </span>
+      <span>
+        <span class="material-symbols-outlined">person</span>
+        {{ site.author.name }}
+      </span>
+      {% assign words = post.content | number_of_words %}
+      <span>
+        <span class="material-symbols-outlined">schedule</span>
+        约 {{ words | divided_by: 300 | plus: 1 }} 分钟阅读
+      </span>
+    </div>
+  </div>
+</div>
+{% else %}
+<div class="post-hero-no-image">
+  <div>
+    {% if post.tags.size > 0 %}
+    <div style="display:flex;gap:6px;margin-bottom:10px">
+      {% for tag in post.tags limit:3 %}
+      <span class="chip chip-primary">{{ tag }}</span>
+      {% endfor %}
+    </div>
+    {% endif %}
+    <h1 class="hero-title">{{ post.title }}</h1>
+  </div>
+</div>
+{% endif %}
+
+<!-- Post Content -->
+<article class="page-content" itemscope itemtype="http://schema.org/BlogPosting">
+  <meta itemprop="headline" content="{{ post.title | escape }}">
+  <meta itemprop="datePublished" content="{{ post.date | date_to_xmlschema }}">
+  {% if post.image %}
+  <meta itemprop="image" content="{{ post.image | absolute_url }}">
+  {% endif %}
+
+  <!-- Post meta bar (under hero, no image case) -->
+  {% unless post.image %}
+  <div class="card-meta" style="margin-bottom:16px">
+    <span class="meta-item">
+      <span class="material-symbols-outlined">calendar_month</span>
+      {{ post.date | date: "%Y年%m月%d日" }}
+    </span>
+    <span class="meta-item">
+      <span class="material-symbols-outlined">person</span>
+      {{ site.author.name }}
+    </span>
+    {% assign words = post.content | number_of_words %}
+    <span class="meta-item">
+      <span class="material-symbols-outlined">schedule</span>
+      约 {{ words | divided_by: 300 | plus: 1 }} 分钟阅读
+    </span>
+  </div>
+  {% endunless %}
+
+  <!-- Article body -->
+  <div class="article-content" itemprop="articleBody">
+    {{ content }}
+  </div>
+
+  <!-- Tags row -->
+  {% if post.tags.size > 0 %}
+  <div class="card-tags" style="padding-top:16px;border-top:2px solid var(--md-sys-color-surface-container-high)">
+    <span class="material-symbols-outlined" style="font-size:1rem;color:var(--md-sys-color-on-surface-variant);margin-right:4px">label</span>
+    {% for tag in post.tags %}
+    <a href="{{ '/tags/' | relative_url }}#{{ tag | slugify }}" class="chip chip-tonal">
+      {{ tag }}
+    </a>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <!-- Post Actions: Share + Prev/Next -->
+  <div class="post-actions">
+    <a class="action-btn btn-outlined"
+       href="https://t.me/share/url?url={{ post.url | absolute_url | url_encode }}&text={{ post.title | url_encode }}"
+       target="_blank" rel="noopener">
+      <span class="material-symbols-outlined">share</span>
+      分享到 Telegram
+    </a>
+    <button class="action-btn btn-outlined" onclick="navigator.clipboard.writeText(window.location.href).then(()=>alert('链接已复制！'))">
+      <span class="material-symbols-outlined">link</span>
+      复制链接
+    </button>
+  </div>
+
+  <!-- Prev / Next navigation -->
+  <div style="display:flex;gap:12px;margin:20px 0;flex-wrap:wrap">
+    {% if page.previous.url %}
+    <a href="{{ page.previous.url | relative_url }}" class="action-btn btn-tonal" style="flex:1;min-width:140px;justify-content:flex-start">
+      <span class="material-symbols-outlined">arrow_back</span>
+      <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ page.previous.title }}</span>
+    </a>
+    {% endif %}
+    {% if page.next.url %}
+    <a href="{{ page.next.url | relative_url }}" class="action-btn btn-tonal" style="flex:1;min-width:140px;justify-content:flex-end">
+      <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ page.next.title }}</span>
+      <span class="material-symbols-outlined">arrow_forward</span>
+    </a>
+    {% endif %}
+  </div>
+
+  <!-- Telegram Channel Discussion Button -->
+  {% if post.comments != false %}
+  <div class="tg-discuss-card" id="tgDiscussCard">
+    <div class="tg-icon">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
+        <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
+      </svg>
+    </div>
+    <div class="tg-text">
+      <h4>前往 Telegram 频道参与讨论</h4>
+      <p>在频道帖子下评论，与其他读者互动</p>
+    </div>
+    <a class="action-btn btn-filled" id="tgDiscussBtn"
+       href="#" target="_blank" rel="noopener"
+       style="flex-shrink:0">
+      <span class="material-symbols-outlined">open_in_new</span>
+      打开
+    </a>
+  </div>
+
+  <!-- Fetch TG message ID and update link -->
+  <script>
+  (function() {
+    var postId = {{ post.id | jsonify }};
+    var apiUrl = {{ site.worker_api_url | jsonify }};
+    var channelName = {{ site.social.telegram_channel | jsonify }};
+    var btn = document.getElementById('tgDiscussBtn');
+    var card = document.getElementById('tgDiscussCard');
+
+    if (!postId || !apiUrl || !btn) return;
+
+    fetch(apiUrl + '/api/posts/' + encodeURIComponent(postId) + '/tg')
+      .then(function(r) { return r.ok ? r.json() : null; })
+      .then(function(data) {
+        if (data && data.tg_post_url) {
+          btn.href = data.tg_post_url;
+        } else if (channelName) {
+          // Fallback to channel root
+          btn.href = 'https://t.me/' + channelName;
+        } else {
+          card.style.display = 'none';
+        }
+      })
+      .catch(function() {
+        if (channelName) {
+          btn.href = 'https://t.me/' + channelName;
+        }
+      });
+  })();
+  </script>
+  {% endif %}
+
+  <!-- Comments (comments.app) -->
+  {% if post.comments != false and site.comments.enabled %}
+  <div class="comments-section">
+    <h3 class="comments-title">
+      <span class="material-symbols-outlined">chat_bubble</span>
+      评论
+    </h3>
+    <script src="https://comments.app/js/widget.js?3"
+            data-comments-app-website="{{ site.comments.app_id }}"
+            data-limit="10"
+            data-color="{{ 'var(--md-sys-color-primary)' }}"
+            data-page-id="{{ post.id }}">
+    </script>
+  </div>
+  {% endif %}
+
+</article>

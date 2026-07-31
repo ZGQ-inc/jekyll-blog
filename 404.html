@@ -1,0 +1,27 @@
+---
+layout: default
+title: 页面不存在
+permalink: /404.html
+---
+
+<main class="page-content" role="main" style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;text-align:center">
+  <div style="font-size:6rem;line-height:1;margin-bottom:16px;animation:fadeInUp 0.4s ease both">404</div>
+
+  <h1 style="font-size:1.5rem;font-weight:800;color:var(--md-sys-color-on-surface);margin-bottom:8px">
+    页面走丢了
+  </h1>
+  <p style="color:var(--md-sys-color-on-surface-variant);margin-bottom:28px;max-width:300px;font-size:0.9rem">
+    你访问的页面不存在，可能已被删除或链接有误。
+  </p>
+
+  <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center">
+    <a class="action-btn btn-filled" href="{{ '/' | relative_url }}">
+      <span class="material-symbols-outlined">home</span>
+      回到首页
+    </a>
+    <button class="action-btn btn-outlined" onclick="history.back()">
+      <span class="material-symbols-outlined">arrow_back</span>
+      返回上页
+    </button>
+  </div>
+</main>
