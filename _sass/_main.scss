@@ -1438,6 +1438,7 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
   box-shadow: var(--md-sys-elevation-1);
   transition: box-shadow 200ms ease, background-color 200ms ease;
   flex: 1;
+  min-width: 0;
 
   &:focus-within {
     box-shadow: var(--md-sys-elevation-3);
