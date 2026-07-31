@@ -741,7 +741,7 @@ function initThemeDialog() {
 
   dialog.querySelector('.theme-dialog-scrim')?.addEventListener('click', closeThemeDialog);
 
-  document.querySelectorAll('#themeDialogBtn, #themeDialogBtnMobile').forEach(btn => {
+  document.querySelectorAll('#themeDialogBtn').forEach(btn => {
     btn?.addEventListener('click', openThemeDialog);
   });
 

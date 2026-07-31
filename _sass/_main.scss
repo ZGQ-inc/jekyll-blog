@@ -482,7 +482,8 @@ ul, ol { list-style: none; }
   flex-shrink: 0;
 }
 
-.sidebar-close-btn { display: none; }
+// Hidden on desktop — !important overrides .icon-btn { display:flex } which is declared later
+.sidebar-close-btn { display: none !important; }
 
 // Theme pill button (MD3 Suggestion chip style)
 .theme-config-btn {
@@ -2304,7 +2305,7 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
     }
   }
 
-  .sidebar-close-btn { display: flex; }
+  .sidebar-close-btn { display: flex !important; }
 
   .top-app-bar { display: flex; }
 
