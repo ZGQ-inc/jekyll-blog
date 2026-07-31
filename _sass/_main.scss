@@ -905,12 +905,16 @@ ul, ol { list-style: none; }
   padding: 24px;
   pointer-events: none;
   opacity: 0;
-  // Container fade
-  transition: opacity var(--dur-medium2) var(--motion-standard);
+  visibility: hidden;
+  // Container fade out
+  transition: opacity var(--dur-medium2) var(--motion-standard), visibility 0s linear var(--dur-medium2);
 
   &.open {
     pointer-events: all;
     opacity: 1;
+    visibility: visible;
+    // Container fade in
+    transition: opacity var(--dur-medium2) var(--motion-standard), visibility 0s linear;
 
     // Scrim blur fades IN with the container
     .theme-dialog-scrim {
@@ -934,8 +938,11 @@ ul, ol { list-style: none; }
   backdrop-filter: blur(0px) saturate(100%);
   -webkit-backdrop-filter: blur(0px) saturate(100%);
   z-index: -1;
-  // Smooth blur/bg transition — use same duration as container
-  transition: all var(--dur-medium3) var(--motion-standard);
+  // Smooth blur/bg transition
+  transition: 
+    backdrop-filter var(--dur-medium3) var(--motion-standard),
+    -webkit-backdrop-filter var(--dur-medium3) var(--motion-standard),
+    background var(--dur-medium2) var(--motion-standard);
 }
 
 .theme-dialog-surface {

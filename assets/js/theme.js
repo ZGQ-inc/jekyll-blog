@@ -753,21 +753,13 @@ function initThemeDialog() {
     const { color, mode } = window.themeManager.currentSettings;
     syncModeButtons(mode);
     syncSwatches(color);
-    dialog.style.display = 'flex';
-    // Force a reflow to ensure display: flex is applied before adding .open
-    dialog.offsetHeight; 
-    setTimeout(() => {
-      dialog.classList.add('open');
-    }, 10);
+    dialog.classList.add('open');
     document.body.style.overflow = 'hidden';
   }
 
   function closeThemeDialog() {
     dialog.classList.remove('open');
     document.body.style.overflow = '';
-    setTimeout(() => {
-      if (!dialog.classList.contains('open')) dialog.style.display = '';
-    }, 320);
   }
 
   window.openThemeDialog  = openThemeDialog;
