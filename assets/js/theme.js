@@ -485,8 +485,9 @@ class ThemeManager {
   }
 
   init() {
-    // Apply on load
-    this.applyTheme();
+    // applyTheme() is now called immediately on instantiation
+    // to prevent FOUC, so we don't need to call it here unless we want to ensure
+    // dialogs are synced, but it's already done.
 
     // Listen for system preference changes
     this.mediaQuery.addEventListener('change', () => {
@@ -667,6 +668,8 @@ function initViewToggle() {
 // ================================================================
 
 window.themeManager = new ThemeManager();
+// Apply theme immediately to prevent FOUC
+window.themeManager.applyTheme();
 
 document.addEventListener('DOMContentLoaded', () => {
   window.themeManager.init();
