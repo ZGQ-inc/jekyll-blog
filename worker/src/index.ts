@@ -362,9 +362,16 @@ async function handleLinkCommand(message: TgMessage, id: string, providedSummary
         'telegram_manual'
       ).run();
 
+      let channelLink = '';
+      if (env.TELEGRAM_CHANNEL_ID.startsWith('@')) {
+        channelLink = `\n**频道**: https://t.me/${env.TELEGRAM_CHANNEL_ID.substring(1)}/${tgResult.message_id}`;
+      } else if (env.TELEGRAM_CHANNEL_ID.startsWith('-100')) {
+        channelLink = `\n**频道**: https://t.me/c/${env.TELEGRAM_CHANNEL_ID.substring(4)}/${tgResult.message_id}`;
+      }
+
       await sendTelegramMessage(env.TELEGRAM_BOT_TOKEN, {
         chat_id: message.chat.id,
-        text: `✅ 关联成功！已推送到频道。\n\n**文章**: ${title}\n**链接**: ${postUrl}`,
+        text: `✅ 关联成功！已推送到频道。\n\n**文章**: ${title}\n**博客**: ${postUrl}${channelLink}`,
         parse_mode: 'Markdown'
       });
     } else {
