@@ -41,7 +41,7 @@ layout: default
 <div class="post-hero-no-image">
   <div>
     {% if post.tags.size > 0 %}
-    <div style="display:flex;gap:6px;margin-bottom:10px">
+    <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px">
       {% for tag in post.tags limit:3 %}
       <span class="chip chip-primary">{{ tag }}</span>
       {% endfor %}

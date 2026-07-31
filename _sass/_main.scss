@@ -1778,6 +1778,8 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
   font-size: 1.0625rem;
   line-height: 1.75;
   color: var(--md-sys-color-on-surface);
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 
   h2, h3, h4 {
     font-weight: 700;
@@ -1859,7 +1861,9 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
   }
 
   table {
+    display: block;
     width: 100%;
+    overflow-x: auto;
     border-collapse: collapse;
     margin: 1.5em 0;
     font-size: 0.9375rem;
@@ -2444,7 +2448,7 @@ md-navigation-drawer {
 // ================================================================
 .links-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(280px, 100%), 1fr));
   gap: 16px;
   margin: 24px 0;
 }
