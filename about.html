@@ -4,6 +4,31 @@ title: 关于
 permalink: /about/
 ---
 
+<style>
+  .about-section {
+    background: var(--md-sys-color-surface-container-low);
+    border-radius: var(--shape-large);
+    padding: 24px;
+    margin-bottom: 24px;
+    box-shadow: var(--elev-1);
+    border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 30%, transparent);
+  }
+  .about-section-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--md-sys-color-on-surface);
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 50%, transparent);
+  }
+  .about-section-title .material-symbols-outlined {
+    color: var(--md-sys-color-primary);
+  }
+</style>
+
 <main class="page-content" role="main">
   <div class="page-header">
     <h1 class="page-title">👤 关于我</h1>
@@ -85,26 +110,6 @@ permalink: /about/
     </div>
   </div>
 
-  <!-- Site stats -->
-  <div class="about-section">
-    <h2 class="about-section-title">
-      <span class="material-symbols-outlined">bar_chart</span>
-      站点统计
-    </h2>
-    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:12px">
-      <div style="background:var(--md-sys-color-primary-container);color:var(--md-sys-color-on-primary-container);border-radius:var(--shape-corner-large);padding:16px;text-align:center">
-        <div style="font-size:2rem;font-weight:800">{{ site.posts.size }}</div>
-        <div style="font-size:0.8rem;margin-top:4px">文章</div>
-      </div>
-      <div style="background:var(--md-sys-color-secondary-container);color:var(--md-sys-color-on-secondary-container);border-radius:var(--shape-corner-large);padding:16px;text-align:center">
-        <div style="font-size:2rem;font-weight:800">{{ site.tags.size }}</div>
-        <div style="font-size:0.8rem;margin-top:4px">标签</div>
-      </div>
-      <div style="background:var(--md-sys-color-tertiary-container);color:var(--md-sys-color-on-tertiary-container);border-radius:var(--shape-corner-large);padding:16px;text-align:center">
-        <div style="font-size:2rem;font-weight:800">{{ site.categories.size }}</div>
-        <div style="font-size:0.8rem;margin-top:4px">分类</div>
-      </div>
-    </div>
-  </div>
+
 
 </main>
