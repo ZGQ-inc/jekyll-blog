@@ -960,3 +960,28 @@ document.addEventListener('DOMContentLoaded', () => {
   initBackToTop();
 });
 
+// Toast Notification System
+window.showToast = function(msg) {
+  let toast = document.getElementById('md-toast');
+  if (!toast) {
+    toast = document.createElement('div');
+    toast.id = 'md-toast';
+    toast.className = 'md-toast';
+    document.body.appendChild(toast);
+  }
+  
+  // Reset animation state
+  toast.classList.remove('show');
+  void toast.offsetWidth; // Trigger reflow
+  
+  toast.textContent = msg;
+  toast.classList.add('show');
+  
+  if (toast.hideTimeout) {
+    clearTimeout(toast.hideTimeout);
+  }
+  
+  toast.hideTimeout = setTimeout(() => {
+    toast.classList.remove('show');
+  }, 2500);
+};

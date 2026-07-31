@@ -2735,3 +2735,41 @@ md-navigation-drawer {
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
+
+// ================================================================
+// §23. Toast Notification (Glassmorphism Snackbar)
+// ================================================================
+.md-toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px) scale(0.95);
+  background: color-mix(in srgb, var(--md-sys-color-inverse-surface) 75%, transparent);
+  color: var(--md-sys-color-inverse-on-surface);
+  padding: 12px 24px;
+  border-radius: var(--shape-full);
+  font-size: 0.875rem;
+  font-weight: 500;
+  z-index: 9999;
+  opacity: 0;
+  pointer-events: none;
+  box-shadow: var(--elev-3);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  transition: all var(--dur-medium2) var(--motion-standard);
+  border: 1px solid color-mix(in srgb, var(--md-sys-color-outline) 20%, transparent);
+  text-align: center;
+  white-space: nowrap;
+  
+  &.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0) scale(1);
+  }
+}
+
+// Adjust for mobile so it doesn't overlap FAB
+@media (max-width: 768px) {
+  .md-toast {
+    bottom: 88px; /* Above the FAB */
+  }
+}
