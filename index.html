@@ -95,11 +95,11 @@ permalink: /
 
         {% if post.tags.size > 0 %}
         <div class="card-tags">
-          {% for tag in post.tags limit:3 %}
-          <span class="chip chip-tonal">{{ tag }}</span>
+          {% for tag in post.tags %}
+          <span class="chip chip-tonal {% if forloop.index > 3 %}extra-tag{% endif %}">{{ tag }}</span>
           {% endfor %}
           {% if post.tags.size > 3 %}
-          <span class="chip chip-outlined">+{{ post.tags.size | minus: 3 }}</span>
+          <span class="chip chip-outlined more-tags-badge">+{{ post.tags.size | minus: 3 }}</span>
           {% endif %}
         </div>
         {% endif %}

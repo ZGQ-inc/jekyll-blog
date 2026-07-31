@@ -1511,12 +1511,16 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 16px;
+
+    .extra-tag { display: none; }
   }
 
   &.list-mode {
     display: flex;
     flex-direction: column;
     gap: 12px;
+
+    .more-tags-badge { display: none; }
 
     .post-card {
       flex-direction: row;
