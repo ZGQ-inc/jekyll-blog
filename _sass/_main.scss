@@ -1422,7 +1422,8 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
   gap: 12px;
   align-items: center;
   margin-bottom: 20px;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+  width: 100%;
 }
 
 // Android Search Bar
@@ -2419,8 +2420,14 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
   }
 
   .gallery-container.list-mode .post-card {
-    flex-direction: column;
-    .card-thumb-wrapper { width: 100%; border-radius: var(--shape-large) var(--shape-large) 0 0; }
+    flex-direction: row;
+    .card-thumb-wrapper { 
+      width: 100px; 
+      min-height: 80px;
+      border-radius: var(--shape-large) 0 0 var(--shape-large); 
+    }
+    .card-body { padding: 12px; }
+    .post-title { font-size: 1.1rem; }
   }
 
   .post-hero { height: 240px; }
@@ -2429,8 +2436,7 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
   .hero-title { font-size: 1.375rem !important; }
   .hero-content { padding: 20px 16px; }
 
-  .filter-bar { flex-direction: column; align-items: stretch; }
-  .view-toggle { align-self: flex-end; }
+  /* filter-bar inline on mobile */
 
   .article-content { font-size: 1rem; }
 
