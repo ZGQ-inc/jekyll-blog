@@ -2299,13 +2299,13 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
 
     &::before, &::after { display: none; }
 
-    &:hover, &.expanded {
+    &.expanded {
       width: 320px;
       box-shadow: var(--elev-3);
     }
   }
 
-  .sidebar:not(:hover):not(.expanded) {
+  .sidebar:not(.expanded) {
     
     .theme-config-btn .btn-label,
     .profile-bio,
