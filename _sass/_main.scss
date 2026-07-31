@@ -1076,23 +1076,6 @@ ul, ol { list-style: none; }
     background: color-mix(in srgb, var(--md-sys-color-primary-container) 50%, transparent);
     color: var(--md-sys-color-on-primary-container);
     box-shadow: var(--elev-1);
-
-    &::after {
-      content: '✓';
-      position: absolute;
-      top: 4px;
-      right: 4px;
-      width: 16px;
-      height: 16px;
-      border-radius: 50%;
-      background: var(--md-sys-color-primary);
-      color: var(--md-sys-color-on-primary);
-      font-size: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 900;
-    }
   }
 
   &:active { transform: scale(0.95); }

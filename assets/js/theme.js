@@ -463,11 +463,8 @@ class ThemeManager {
     return this.mediaQuery.matches;
   }
 
-  applyTheme(color = this.currentSettings.color, mode = this.currentSettings.mode) {
-    this.currentSettings = { color, mode };
-    this.saveSettings();
-
-    const isDark = this.getEffectiveDark();
+  previewTheme(color, mode) {
+    const isDark = (mode === 'dark') || (mode === 'light' ? false : this.mediaQuery.matches);
     const palette = THEMES[color]?.[isDark ? 'dark' : 'light'] ?? THEMES.blue.light;
     const root = document.documentElement;
 
@@ -476,11 +473,17 @@ class ThemeManager {
 
     Object.entries(palette).forEach(([k, v]) => root.style.setProperty(k, v));
 
-    // Update Material Web color scheme meta
     const meta = document.querySelector('meta[name="theme-color"]');
     if (meta) meta.setAttribute('content', palette['--md-sys-color-primary'] ?? '#0061A4');
+  }
 
+  applyTheme(color = this.currentSettings.color, mode = this.currentSettings.mode) {
+    this.currentSettings = { color, mode };
+    this.saveSettings();
+    this.previewTheme(color, mode);
+    
     // Notify Material Web elements
+    const isDark = this.getEffectiveDark();
     document.dispatchEvent(new CustomEvent('themechange', { detail: { color, mode, isDark } }));
   }
 
@@ -714,6 +717,10 @@ function initThemeDialog() {
     btn.addEventListener('click', () => {
       window.themeManager._pendingMode = btn.dataset.mode;
       syncModeButtons(btn.dataset.mode);
+      window.themeManager.previewTheme(
+        window.themeManager._pendingColor ?? window.themeManager.currentSettings.color,
+        window.themeManager._pendingMode
+      );
     });
   });
 
@@ -721,6 +728,10 @@ function initThemeDialog() {
     el.addEventListener('click', () => {
       window.themeManager._pendingColor = el.dataset.color;
       syncSwatches(el.dataset.color);
+      window.themeManager.previewTheme(
+        window.themeManager._pendingColor,
+        window.themeManager._pendingMode ?? window.themeManager.currentSettings.mode
+      );
     });
   });
 
@@ -733,20 +744,26 @@ function initThemeDialog() {
     closeThemeDialog();
   });
 
-  document.getElementById('themeCancelBtn')?.addEventListener('click', () => {
+  function revertTheme() {
     window.themeManager._pendingColor = null;
     window.themeManager._pendingMode  = null;
+    window.themeManager.previewTheme(
+      window.themeManager.currentSettings.color,
+      window.themeManager.currentSettings.mode
+    );
     closeThemeDialog();
-  });
+  }
 
-  dialog.querySelector('.theme-dialog-scrim')?.addEventListener('click', closeThemeDialog);
+  document.getElementById('themeCancelBtn')?.addEventListener('click', revertTheme);
+  document.getElementById('themeCancelBtnX')?.addEventListener('click', revertTheme);
+  dialog.querySelector('.theme-dialog-scrim')?.addEventListener('click', revertTheme);
 
   document.querySelectorAll('#themeDialogBtn').forEach(btn => {
     btn?.addEventListener('click', openThemeDialog);
   });
 
   document.addEventListener('keydown', e => {
-    if (e.key === 'Escape' && dialog.classList.contains('open')) closeThemeDialog();
+    if (e.key === 'Escape' && dialog.classList.contains('open')) revertTheme();
   });
 
   function openThemeDialog() {
