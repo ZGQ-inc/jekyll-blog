@@ -2,7 +2,7 @@
 # Site Settings
 # ================================================================
 title: "ZGQ's Blog"
-description: "记录技术、生活与思考 · A developer's digital garden"
+description: "博客原型。"
 url: "https://blog.zgqinc.gq"
 baseurl: ""
 lang: "zh-CN"
@@ -10,9 +10,9 @@ timezone: Asia/Shanghai
 
 # Author
 author:
-  name: "ZGQ"
-  bio: "test"
-  avatar: "/assets/images/avatar.jpg"
+  name: "ZGQ Inc."
+  bio: "博客原型。"
+  avatar: "/assets/images/avatar.png"
 
 # ================================================================
 # Navigation
