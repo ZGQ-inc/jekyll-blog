@@ -28,13 +28,19 @@ permalink: /about/
         <h2 style="font-size:1.5rem;font-weight:800;color:var(--md-sys-color-on-surface);margin-bottom:4px">{{ site.author.name }}</h2>
         <p style="color:var(--md-sys-color-on-surface-variant);margin-bottom:12px">{{ site.author.bio }}</p>
         <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <a class="action-btn btn-tonal" href="https://domain.zgqinc.gq" target="_blank" rel="noopener">
+            <span class="material-symbols-outlined" style="font-size:18px">explore</span>
+            导航
+          </a>
           {% if site.social.github %}
           <a class="action-btn btn-tonal" href="https://github.com/{{ site.social.github }}" target="_blank" rel="noopener">
+            <span class="material-symbols-outlined" style="font-size:18px">code</span>
             GitHub
           </a>
           {% endif %}
           {% if site.social.telegram %}
           <a class="action-btn btn-tonal" href="https://t.me/{{ site.social.telegram }}" target="_blank" rel="noopener">
+            <span class="material-symbols-outlined" style="font-size:18px">send</span>
             Telegram
           </a>
           {% endif %}
@@ -71,6 +77,10 @@ permalink: /about/
       欢迎通过以下方式联系：
     </p>
     <div style="display:flex;gap:12px;margin-top:12px;flex-wrap:wrap">
+      <a class="action-btn btn-filled" href="https://domain.zgqinc.gq" target="_blank" rel="noopener">
+        <span class="material-symbols-outlined">explore</span>
+        导航页
+      </a>
       {% if site.social.telegram %}
       <a class="action-btn btn-filled" href="https://t.me/{{ site.social.telegram }}" target="_blank" rel="noopener">
         <span class="material-symbols-outlined">send</span>
