@@ -131,11 +131,12 @@
   padding: 0;
   -webkit-tap-highlight-color: transparent;
   outline-color: var(--md-sys-color-primary);
-  scrollbar-width: none; // Firefox hide scrollbar
 }
 
-// Hide WebKit scrollbars globally
-::-webkit-scrollbar {
+// Hide WebKit scrollbars ONLY for the main viewport
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  display: none;
   width: 0;
   height: 0;
   background: transparent;
@@ -144,6 +145,7 @@
 html {
   scroll-behavior: smooth;
   overflow-x: hidden;
+  scrollbar-width: none; // Firefox hide main scrollbar
 }
 
 html, body {
@@ -2600,10 +2602,17 @@ md-navigation-drawer {
 }
 
 .back-to-top {
-  bottom: 24px;
-  right: 24px;
-  background: var(--md-sys-color-primary-container);
+  bottom: 32px;
+  right: 32px;
+  width: 64px;
+  height: 64px;
+  border-radius: var(--shape-xl);
+  
+  background: color-mix(in srgb, var(--md-sys-color-primary-container) 70%, transparent);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
   color: var(--md-sys-color-on-primary-container);
+  
   opacity: 0;
   pointer-events: none;
   transform: translateY(20px) scale(0.9);
@@ -2614,8 +2623,24 @@ md-navigation-drawer {
     transform: translateY(0) scale(1);
   }
 
+  .material-symbols-outlined {
+    font-size: 28px;
+  }
+
+  @media (max-width: 1100px) {
+    bottom: 24px;
+    right: 24px;
+    width: 56px;
+    height: 56px;
+    border-radius: var(--shape-large);
+    .material-symbols-outlined { font-size: 24px; }
+  }
+
   @media (max-width: 768px) {
     bottom: 16px;
     right: 16px;
+    width: 48px;
+    height: 48px;
+    .material-symbols-outlined { font-size: 20px; }
   }
 }
