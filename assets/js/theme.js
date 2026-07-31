@@ -592,6 +592,7 @@ function initSidebar() {
   const overlay = document.getElementById('sidebarOverlay');
   const menuBtn = document.getElementById('menuBtn');
   const closeBtn = document.getElementById('sidebarCloseBtn');
+  const expandBtn = document.getElementById('navRailExpandBtn');
 
   const open = () => {
     sidebar?.classList.add('open');
@@ -607,6 +608,14 @@ function initSidebar() {
   menuBtn?.addEventListener('click', open);
   closeBtn?.addEventListener('click', close);
   overlay?.addEventListener('click', close);
+
+  expandBtn?.addEventListener('click', () => {
+    sidebar?.classList.toggle('expanded');
+    const icon = expandBtn.querySelector('.material-symbols-outlined');
+    if (icon) {
+      icon.textContent = sidebar?.classList.contains('expanded') ? 'menu_open' : 'menu';
+    }
+  });
 }
 
 // ================================================================

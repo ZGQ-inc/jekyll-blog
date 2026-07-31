@@ -397,7 +397,8 @@ ul, ol { list-style: none; }
   z-index: 300;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  overflow-y: auto;
+  overflow-x: hidden;
 
   // MD3 Drawer surface: surface-container-low with elevation
   background-color: color-mix(
@@ -2282,6 +2283,13 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
 @media (max-width: 1100px) and (min-width: 769px) {
   :root { --nav-drawer-width: var(--nav-rail-width); }
 
+  .nav-rail-expand-btn {
+    display: flex !important;
+    margin-bottom: 8px;
+    width: 48px;
+    height: 48px;
+  }
+
   .sidebar {
     width: var(--nav-rail-width);
     border-radius: 0 var(--shape-xl) var(--shape-xl) 0;
@@ -2291,13 +2299,17 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
 
     &::before, &::after { display: none; }
 
-    &:hover {
+    &:hover, &.expanded {
       width: 320px;
       box-shadow: var(--elev-3);
     }
   }
 
-  .sidebar:not(:hover) {
+  .sidebar:not(:hover):not(.expanded) {
+    .nav-rail-expand-btn {
+      .material-symbols-outlined::before { content: 'menu'; }
+    }
+    
     .theme-config-btn .btn-label,
     .profile-bio,
     .profile-stats,
@@ -2307,7 +2319,7 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
     .social-links,
     .sidebar-footer { display: none; }
 
-    .sidebar-top-bar { justify-content: center; padding: 12px 4px; }
+    .sidebar-top-bar { flex-direction: column; align-items: center; justify-content: center; padding: 12px 4px; }
 
     .profile-section {
       padding: 8px 8px 4px;
