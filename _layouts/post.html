@@ -149,7 +149,7 @@ layout: default
   <!-- Fetch TG message ID and update link & comments -->
   <script>
   document.addEventListener('DOMContentLoaded', function() {
-    var postId = {{ post.id | jsonify }};
+    var postId = {{ post.slug | jsonify }};
     var apiUrl = {{ site.worker_api_url | jsonify }};
     var channelName = {{ site.social.telegram_channel | jsonify }};
     var btn = document.getElementById('tgDiscussBtn');
