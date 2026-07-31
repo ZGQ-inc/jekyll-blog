@@ -146,7 +146,7 @@ layout: default
     </a>
   </div>
 
-  <!-- Fetch TG message ID and update link -->
+  <!-- Fetch TG message ID and update link & comments -->
   <script>
   (function() {
     var postId = {{ post.id | jsonify }};
@@ -154,6 +154,7 @@ layout: default
     var channelName = {{ site.social.telegram_channel | jsonify }};
     var btn = document.getElementById('tgDiscussBtn');
     var card = document.getElementById('tgDiscussCard');
+    var commentsContainer = document.getElementById('tg-comments-container');
 
     if (!postId || !apiUrl || !btn) return;
 
@@ -161,10 +162,29 @@ layout: default
       .then(function(r) { return r.ok ? r.json() : null; })
       .then(function(data) {
         if (data && data.tg_post_url) {
+          // Update discuss button
           btn.href = data.tg_post_url;
+          
+          // Load Native Telegram Discussion Widget
+          if (commentsContainer && data.tg_message_id && data.tg_channel_id) {
+            var cleanChannel = data.tg_channel_id.replace('@', '');
+            var script = document.createElement('script');
+            script.async = true;
+            script.src = "https://telegram.org/js/telegram-widget.js?22";
+            script.setAttribute('data-telegram-discussion', cleanChannel + '/' + data.tg_message_id);
+            script.setAttribute('data-comments-limit', '10');
+            // Auto dark mode detection
+            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+              script.setAttribute('data-dark', '1');
+            }
+            commentsContainer.appendChild(script);
+          }
         } else if (channelName) {
           // Fallback to channel root
           btn.href = 'https://t.me/' + channelName;
+          if (commentsContainer) {
+            commentsContainer.innerHTML = '<p style="text-align:center;color:var(--md-sys-color-on-surface-variant);padding:20px;">本文尚未关联 Telegram 频道讨论。请等待作者推送。</p>';
+          }
         } else {
           card.style.display = 'none';
         }
@@ -178,19 +198,14 @@ layout: default
   </script>
   {% endif %}
 
-  <!-- Comments (comments.app) -->
-  {% if post.comments != false and site.comments.enabled %}
-  <div class="comments-section">
-    <h3 class="comments-title">
-      <span class="material-symbols-outlined">chat_bubble</span>
-      评论
+  <!-- Native Telegram Comments -->
+  {% if post.comments != false %}
+  <div class="comments-section" style="margin-top: 40px;">
+    <h3 class="comments-title" style="display:flex;align-items:center;gap:8px;margin-bottom:16px;">
+      <span class="material-symbols-outlined">forum</span>
+      频道评论区
     </h3>
-    <script src="https://comments.app/js/widget.js?3"
-            data-comments-app-website="{{ site.comments.app_id }}"
-            data-limit="10"
-            data-color="{{ 'var(--md-sys-color-primary)' }}"
-            data-page-id="{{ post.id }}">
-    </script>
+    <div id="tg-comments-container" style="min-height: 150px;"></div>
   </div>
   {% endif %}
 
