@@ -473,9 +473,13 @@ ul, ol { list-style: none; }
   background: rgba(0, 0, 0, 0.5);
   z-index: 199;
   opacity: 0;
+  pointer-events: none;
   transition: opacity var(--motion-duration-medium) var(--motion-easing-standard);
 
-  &.active { opacity: 1; }
+  &.active { 
+    opacity: 1; 
+    pointer-events: auto; 
+  }
 }
 
 // ----------------------------------------------------------------

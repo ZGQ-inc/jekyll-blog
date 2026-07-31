@@ -532,14 +532,14 @@ class ThemeManager {
       );
       this._pendingColor = null;
       this._pendingMode = null;
-      dialog.open = false;
+      dialog.close();
     });
 
     // Cancel button
     document.getElementById('themeCancelBtn')?.addEventListener('click', () => {
       this._pendingColor = null;
       this._pendingMode = null;
-      dialog.open = false;
+      dialog.close();
     });
 
     // Open button
@@ -553,7 +553,7 @@ class ThemeManager {
       dialog.querySelectorAll('[data-color]').forEach(el => {
         el.classList.toggle('selected', el.dataset.color === this.currentSettings.color);
       });
-      dialog.open = true;
+      dialog.showModal();
     });
   }
 
