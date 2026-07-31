@@ -1687,6 +1687,9 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
 .post-hero {
   position: relative;
   height: min(420px, 50vw);
+  max-width: 1100px;
+  margin: 0 auto;
+  border-radius: 0 0 var(--shape-extra-large) var(--shape-extra-large);
   overflow: hidden;
 
   .hero-image {
@@ -1762,6 +1765,9 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
   padding: 48px 32px 36px;
   display: flex;
   align-items: flex-end;
+  max-width: 1100px;
+  margin: 0 auto;
+  border-radius: 0 0 var(--shape-extra-large) var(--shape-extra-large);
   animation: page-enter var(--dur-long1) var(--motion-emphasized-decel) both;
 
   .hero-title {
@@ -2271,41 +2277,50 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
   .sidebar {
     width: var(--nav-rail-width);
     border-radius: 0 var(--shape-xl) var(--shape-xl) 0;
+    transition: width var(--dur-medium2) var(--motion-standard), box-shadow var(--dur-medium2) var(--motion-standard);
+    overflow-y: auto;
+    overflow-x: hidden;
 
     &::before, &::after { display: none; }
+
+    &:hover {
+      width: 320px;
+      box-shadow: var(--elev-3);
+    }
   }
 
-  .sidebar-top-bar { justify-content: center; padding: 12px 4px; }
+  .sidebar:not(:hover) {
+    .theme-config-btn .btn-label,
+    .profile-bio,
+    .profile-stats,
+    .sidebar-divider:not(:first-of-type),
+    .nav-label,
+    .nav-badge,
+    .social-links,
+    .sidebar-footer { display: none; }
 
-  .theme-config-btn .btn-label,
-  .profile-bio,
-  .profile-stats,
-  .sidebar-divider:not(:first-of-type),
-  .nav-label,
-  .nav-badge,
-  .social-links,
-  .sidebar-footer { display: none; }
+    .sidebar-top-bar { justify-content: center; padding: 12px 4px; }
 
-  .profile-section {
-    padding: 8px 8px 4px;
+    .profile-section {
+      padding: 8px 8px 4px;
+      .avatar { width: 48px; height: 48px; }
+      .profile-name { display: none; }
+    }
 
-    .avatar { width: 48px; height: 48px; }
-    .profile-name { display: none; }
-  }
+    .avatar-wrapper { margin-bottom: 0; }
 
-  .avatar-wrapper { margin-bottom: 0; }
+    .sidebar-nav { padding: 4px 4px; }
 
-  .sidebar-nav { padding: 4px 4px; }
+    .nav-item {
+      height: 56px;
+      width: 56px;
+      padding: 0;
+      justify-content: center;
+      border-radius: var(--shape-large);
 
-  .nav-item {
-    height: 56px;
-    width: 56px;
-    padding: 0;
-    justify-content: center;
-    border-radius: var(--shape-large);
-
-    .material-symbols-outlined { font-size: 24px; }
-    &:hover { transform: none; }
+      .material-symbols-outlined { margin: 0; font-size: 24px; }
+      &:hover { transform: none; }
+    }
   }
 
   .main-content { margin-left: var(--nav-rail-width); }
