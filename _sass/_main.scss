@@ -904,17 +904,14 @@ ul, ol { list-style: none; }
   justify-content: center;
   padding: 24px;
   pointer-events: none;
-  opacity: 0;
   visibility: hidden;
-  // Container fade out
-  transition: opacity var(--dur-medium2) var(--motion-standard), visibility 0s linear var(--dur-medium2);
+  // Hold visibility during child exit animations
+  transition: visibility 0s linear var(--dur-medium3);
 
   &.open {
     pointer-events: all;
-    opacity: 1;
     visibility: visible;
-    // Container fade in
-    transition: opacity var(--dur-medium2) var(--motion-standard), visibility 0s linear;
+    transition: visibility 0s linear;
 
     // Scrim blur fades IN via opacity
     .theme-dialog-scrim {
