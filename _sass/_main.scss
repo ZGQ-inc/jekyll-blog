@@ -2306,9 +2306,6 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
   }
 
   .sidebar:not(:hover):not(.expanded) {
-    .nav-rail-expand-btn {
-      .material-symbols-outlined::before { content: 'menu'; }
-    }
     
     .theme-config-btn .btn-label,
     .profile-bio,
