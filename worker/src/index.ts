@@ -266,7 +266,7 @@ async function handleNewCommand(message: TgMessage, title: string, env: Env): Pr
   }
 }
 
-async function fetchPostInfoFromGitHub(id: string, env: Env): Promise<{ title: string; tags: string[] } | null> {
+async function fetchPostInfoFromGitHub(id: string, env: Env): Promise<{ title: string; tags: string[]; summary: string } | null> {
   try {
     const [owner, repo] = env.GITHUB_REPO.split('/');
     const apiUrl = `https://api.github.com/repos/${owner}/${repo}/contents/${env.GITHUB_POSTS_PATH}`;
@@ -301,22 +301,21 @@ async function fetchPostInfoFromGitHub(id: string, env: Env): Promise<{ title: s
     if (tagsMatch && tagsMatch[1]) {
       tags = tagsMatch[1].split(',').map(t => t.trim().replace(/["']/g, ''));
     }
-    return { title, tags };
+    const summaryMatch = content.match(/^summary:\s*(.+)$/m);
+    let summary = '';
+    if (summaryMatch) {
+      summary = summaryMatch[1].trim();
+      if ((summary.startsWith('"') && summary.endsWith('"')) || (summary.startsWith("'") && summary.endsWith("'"))) {
+        summary = summary.substring(1, summary.length - 1);
+      }
+    }
+    return { title, tags, summary };
   } catch (e) {
     return null;
   }
 }
 
-async function handleLinkCommand(message: TgMessage, id: string, summary: string, env: Env): Promise<void> {
-  if (!summary) {
-    await sendTelegramMessage(env.TELEGRAM_BOT_TOKEN, {
-      chat_id: message.chat.id,
-      text: `❌ 请提供摘要内容。格式: \`/link ${id} 这是摘要\``,
-      parse_mode: 'Markdown'
-    });
-    return;
-  }
-
+async function handleLinkCommand(message: TgMessage, id: string, providedSummary: string, env: Env): Promise<void> {
   await sendTelegramMessage(env.TELEGRAM_BOT_TOKEN, {
     chat_id: message.chat.id,
     text: `⏳ 正在查询文章信息...`,
@@ -326,6 +325,20 @@ async function handleLinkCommand(message: TgMessage, id: string, summary: string
     const postInfo = await fetchPostInfoFromGitHub(id, env);
     const title = postInfo ? postInfo.title : '新文章发布';
     const tags = postInfo ? postInfo.tags : [];
+    let summary = providedSummary.trim();
+
+    if (!summary && postInfo && postInfo.summary) {
+      summary = postInfo.summary;
+    }
+
+    if (!summary) {
+      await sendTelegramMessage(env.TELEGRAM_BOT_TOKEN, {
+        chat_id: message.chat.id,
+        text: `❌ 请提供摘要内容。文章头部也未找到 summary 字段。格式: \`/link ${id} 这是摘要\``,
+        parse_mode: 'Markdown'
+      });
+      return;
+    }
     
     const postUrl = `${env.BLOG_URL}/posts/${id}/`;
     const tgResult = await publishToChannel(env, {
