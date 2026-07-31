@@ -407,28 +407,10 @@ ul, ol { list-style: none; }
   z-index: 300;
   display: flex;
   flex-direction: column;
-  overflow-y: auto;
-  overflow-x: hidden;
+  overflow: hidden;
   
-  // Custom MD3 scrollbar for sidebar
-  scrollbar-width: thin;
-  scrollbar-color: color-mix(in srgb, var(--md-sys-color-on-surface-variant) 40%, transparent) transparent;
-  
-  &::-webkit-scrollbar {
-    width: 4px;
-    height: 4px;
-  }
-  &::-webkit-scrollbar-track {
-    background: transparent;
-  }
-  &::-webkit-scrollbar-thumb {
-    background: color-mix(in srgb, var(--md-sys-color-on-surface-variant) 30%, transparent);
-    border-radius: 4px;
-    
-    &:hover {
-      background: color-mix(in srgb, var(--md-sys-color-on-surface-variant) 50%, transparent);
-    }
-  }
+  scrollbar-width: none;
+  &::-webkit-scrollbar { display: none; }
 
   // MD3 Drawer surface: surface-container-low with elevation
   background-color: color-mix(
@@ -499,13 +481,37 @@ ul, ol { list-style: none; }
   overflow-y: auto;
   overflow-x: hidden;
   overscroll-behavior: contain;
+  scrollbar-width: none;
+  &::-webkit-scrollbar { display: none; }
+}
 
-  // Thin custom scrollbar inside drawer
-  &::-webkit-scrollbar { width: 3px; }
-  &::-webkit-scrollbar-thumb {
-    background: color-mix(in srgb, var(--md-sys-color-outline-variant) 60%, transparent);
-    border-radius: var(--shape-full);
+// Custom MD3 Sidebar Scrollbar (DOM-based)
+.md3-sidebar-scrollbar {
+  position: absolute;
+  top: 0;
+  right: 2px;
+  bottom: 0;
+  width: 4px;
+  z-index: 10;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity var(--dur-medium2);
+
+  &.visible {
+    opacity: 1;
   }
+}
+
+.md3-scrollbar-thumb {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 100%;
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--md-sys-color-on-surface-variant) 40%, transparent);
+  transition: background var(--dur-short4);
+  
+  // No hover state if pointer-events is none on parent, but good to have if we enable dragging later
 }
 
 // ── Sidebar Top Bar ───────────────────────────────────────────

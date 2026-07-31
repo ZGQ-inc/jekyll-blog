@@ -616,6 +616,43 @@ function initSidebar() {
       icon.textContent = sidebar?.classList.contains('expanded') ? 'menu_open' : 'menu';
     }
   });
+
+  // Custom DOM Scrollbar logic
+  const scrollContainer = document.getElementById('sidebarScroll');
+  const scrollbar = document.getElementById('sidebarScrollbar');
+  const thumb = document.getElementById('sidebarScrollbarThumb');
+
+  if (scrollContainer && scrollbar && thumb) {
+    const updateScrollbar = () => {
+      const scrollHeight = scrollContainer.scrollHeight;
+      const clientHeight = scrollContainer.clientHeight;
+      const scrollTop = scrollContainer.scrollTop;
+
+      if (scrollHeight > clientHeight) {
+        scrollbar.classList.add('visible');
+        
+        // Calculate thumb height proportionally, minimum 30px
+        const ratio = clientHeight / scrollHeight;
+        const thumbHeight = Math.max(30, clientHeight * ratio);
+        thumb.style.height = `${thumbHeight}px`;
+
+        // Calculate thumb position
+        const scrollRatio = scrollTop / (scrollHeight - clientHeight);
+        const maxThumbTop = clientHeight - thumbHeight;
+        const thumbTop = scrollRatio * maxThumbTop;
+        
+        thumb.style.transform = `translateY(${thumbTop}px)`;
+      } else {
+        scrollbar.classList.remove('visible');
+      }
+    };
+
+    scrollContainer.addEventListener('scroll', updateScrollbar, { passive: true });
+    window.addEventListener('resize', updateScrollbar, { passive: true });
+
+    // Initial update, slightly delayed to allow layout to settle
+    setTimeout(updateScrollbar, 150);
+  }
 }
 
 // ================================================================
