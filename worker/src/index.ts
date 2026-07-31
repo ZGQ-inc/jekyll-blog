@@ -502,14 +502,10 @@ async function publishToChannel(
     '',
     summary.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'),
     '',
+    `📖 <a href="${postUrl}">阅读完整文章</a>`,
+    '',
     tagsLine
   ].join('\n');
-
-  const inlineKeyboard = {
-    inline_keyboard: [[
-      { text: '📖 阅读完整文章', url: postUrl }
-    ]]
-  };
 
   // If image provided, send photo with caption; otherwise text message
   if (image) {
@@ -517,8 +513,7 @@ async function publishToChannel(
       chat_id: chatId,
       photo: image,
       caption: text,
-      parse_mode: 'HTML',
-      reply_markup: inlineKeyboard
+      parse_mode: 'HTML'
     });
     if (result.ok) return { message_id: result.result.message_id as number };
     // Fallback to text if photo fails
@@ -529,8 +524,7 @@ async function publishToChannel(
     chat_id: chatId,
     text,
     parse_mode: 'HTML',
-    link_preview_options: { is_disabled: false, url: postUrl },
-    reply_markup: inlineKeyboard
+    link_preview_options: { is_disabled: false, url: postUrl }
   });
 
   if (!result.ok) {
