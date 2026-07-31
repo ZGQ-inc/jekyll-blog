@@ -243,6 +243,8 @@ async function handleNewCommand(message: TgMessage, title: string, env: Env): Pr
       `id: "${id}"`,
       `date: ${dateStr}`,
       `summary: ""`,
+      `image: ""`,
+      `categories: []`,
       `tags: []`,
       `comments: true`,
       '---',
