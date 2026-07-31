@@ -326,7 +326,7 @@ async function handleLinkCommand(message: TgMessage, id: string, summary: string
       postUrl
     });
 
-    if (tgResult) {
+    if (tgResult && tgResult.message_id) {
       await env.DB.prepare(
         `INSERT OR REPLACE INTO post_tg_map
          (post_id, tg_message_id, tg_channel_id, post_title, post_url, post_slug, published_via)
@@ -347,7 +347,7 @@ async function handleLinkCommand(message: TgMessage, id: string, summary: string
         parse_mode: 'Markdown'
       });
     } else {
-      throw new Error('Failed to send to channel');
+      throw new Error(`Failed to send to channel: ${tgResult?.error || 'Unknown error'}`);
     }
   } catch (err) {
     await sendTelegramMessage(env.TELEGRAM_BOT_TOKEN, {
@@ -483,8 +483,13 @@ async function handleGetPostTg(postId: string, env: Env): Promise<Response> {
 async function publishToChannel(
   env: Env,
   opts: { id: string; title: string; summary: string; tags: string[]; postUrl: string; image?: string }
-): Promise<{ message_id: number } | null> {
+): Promise<{ message_id: number; error?: string } | null> {
   const { id, title, summary, tags, postUrl, image } = opts;
+
+  let chatId = env.TELEGRAM_CHANNEL_ID;
+  if (!chatId.startsWith('@') && !chatId.startsWith('-')) {
+    chatId = '@' + chatId;
+  }
 
   // Build MarkdownV2 text
   // Format tag ID: 2026-001 → #ID_2026_001
@@ -509,19 +514,19 @@ async function publishToChannel(
   // If image provided, send photo with caption; otherwise text message
   if (image) {
     const result = await callTelegramApi(env.TELEGRAM_BOT_TOKEN, 'sendPhoto', {
-      chat_id: env.TELEGRAM_CHANNEL_ID,
+      chat_id: chatId,
       photo: image,
       caption: text,
       parse_mode: 'MarkdownV2',
       reply_markup: inlineKeyboard
     });
-    if (result.ok) return { message_id: result.result.message_id };
+    if (result.ok) return { message_id: result.result.message_id as number };
     // Fallback to text if photo fails
     console.warn('sendPhoto failed, falling back to text:', result.description);
   }
 
   const result = await callTelegramApi(env.TELEGRAM_BOT_TOKEN, 'sendMessage', {
-    chat_id: env.TELEGRAM_CHANNEL_ID,
+    chat_id: chatId,
     text,
     parse_mode: 'MarkdownV2',
     link_preview_options: { is_disabled: false, url: postUrl },
@@ -530,10 +535,10 @@ async function publishToChannel(
 
   if (!result.ok) {
     console.error('sendMessage failed:', result);
-    return null;
+    return { message_id: 0, error: result.description || 'API Error' };
   }
 
-  return { message_id: result.result.message_id };
+  return { message_id: result.result.message_id as number };
 }
 
 async function sendTelegramMessage(
