@@ -1,86 +1,128 @@
 ---
 layout: post
-title: "Jekyll + Cloudflare + Telegram 博客系统上线了！"
-id: "2026-001"
+title: "Jekyll + Cloudflare + Telegram"
+id: "001"
 date: 2026-07-31 10:00:00 +0800
-summary: "记录本博客的搭建过程：Jekyll SSG + Cloudflare Pages/Worker/D1/R2 + Telegram Bot 全自动联动，实现 Git Push 即发布、TG Bot 直接写稿的双向工作流。"
-tags: [Tech, Jekyll, Cloudflare, Telegram, Serverless]
+summary: "Jekyll SSG + Cloudflare Pages/Worker/D1/R2 + Telegram Bot"
+tags: [Jekyll, Cloudflare, Telegram, Serverless]
 comments: true
 ---
 
-## 为什么做这个？
+## layout: post
 
-一直想要一个真正「属于自己」的博客，不依赖任何第三方平台，数据完全掌控在手里。同时，作为一个重度 Telegram 用户，希望能在 TG 频道里也能看到博客更新，甚至直接在 Telegram 里发文章。
+title: "Jekyll 完整 Markup 与 Markdown 语法展示"
+date: 2026-08-01 10:00:00 +0800
+categories: [教程, Jekyll]
+tags: [markdown, jekyll, kramdown, demo]
+toc: true
+这篇文章展示了 Jekyll（基于 kramdown 解析器）所支持的绝大多数 markup 语法，用于测试主题样式或作为撰写文章的参考规范。
 
-于是就有了这套系统。
+## 1. 基础排版 (Text Formatting)
 
-## 技术架构
+这是普通的段落文本。你可以在段落中使用 **粗体文本**、*斜体文本*、***粗斜体***，或者删除线~~被划掉的内容~~。
+还可以使用 标记代码 (inline code)，或者添加脚注来补充说明^1。
 
-### 前端
+## 2. 标题层级 (Headings)
 
-- **Jekyll**：静态网站生成器，Markdown 写作，Git 管理
-- **Material Design 3**：Google 最新设计规范，完整 Monet 色彩系统
-- **Glassmorphism**：毛玻璃效果侧边栏 + 顶部导航
-- **Cloudflare Pages**：全球 CDN 托管，秒级部署
+### 三级标题 (H3)
 
-### 后端
+#### 四级标题 (H4)
 
-- **Cloudflare Worker**：TypeScript 编写，处理所有 API 请求
-- **Cloudflare D1**：SQLite 兼容的 Serverless 数据库，存储文章与 TG 消息的映射
-- **Cloudflare R2**：对象存储，保存 Telegram 上传的媒体文件
+##### 五级标题 (H5)
 
-### 自动化
+###### 六级标题 (H6)
 
-```yaml
-# 发布流程 (Git Push → Telegram)
-Push to GitHub
-  → GitHub Actions: Jekyll Build
-  → Cloudflare Pages: 静态部署
-  → Worker /api/notify: 推送 TG 频道
-  → D1: 记录 post_id ↔ message_id
+> **技巧**：Jekyll 支持通过 {: #custom-id} 显式为标题自定义 ID。
+> {: #custom-heading-section}
+
+## 3. 列表 (Lists)
+
+### 无序列表
+
+ * 顶级列表项 A
+   * 二级列表项 A1
+   * 二级列表项 A2
+ * 顶级列表项 B
+ * 顶级列表项 C
+
+### 有序列表
+
+ 1. 第一步：准备 Jekyll 环境
+ 2. 第二步：编写 Markdown 文件
+ 3. 第三步：运行 jekyll serve 构建
+
+### 任务列表 (Task Lists)
+
+ * [x] 完成 Jekyll 配置文件设置
+ * [x] 撰写示例 Markdown 文章
+ * [ ] 部署到 GitHub Pages
+
+## 4. 引用与块级元素 (Blockquotes)
+
+> 这是一个单行块级引用 (Blockquote)。
+> > 这是一个嵌套的引用块。
+> > 可以在这里提供出处或引申信息。
+
+## 5. 代码高亮 (Code Blocks)
+
+Jekyll 支持通过标准的 Markdown 语法高亮代码块：
+
+```javascript
+// JavaScript 示例
+function greet(name) {
+    console.log(`Hello, ${name}! Welcome to Jekyll.`);
+}
+
+greet('Developer');
+
 ```
+同时，Jekyll 原生支持 Liquid 的 highlight 标签：
 
-## 双向发布工作流
+{% highlight python %}
 
-### 方式一：VS Code + Git Push（标准流程）
+# Python 示例
 
-1. 在 `_posts/` 目录下创建 Markdown 文件
-2. Front Matter 填写 `id`, `summary`, `tags`
-3. `git push` 触发 GitHub Actions
-4. Actions 自动部署 + 推送 TG 摘要
+def calculate_factorial(n):
+if n == 0:
+return 1
+return n * calculate_factorial(n - 1)
+print(f"Factorial of 5: {calculate_factorial(5)}")
+{% endhighlight %}
 
-### 方式二：Telegram Bot 直发
+## 6. 表格 (Tables)
 
-```
-/post 2026-002|文章标题|这是摘要|Tag1,Tag2
-```
+| 过滤器/属性 | 说明 | 示例输入 | 示例输出 |
+|---|---|---|---|
+| date_to_string | 日期转为字符串 | site.time | 01 Aug 2026 |
+| upcase | 字符转大写 | "hello" | HELLO |
+| size | 获取数组或字符串长度 | page.tags | 4 |
 
-Bot 会自动：
-- 如果附带图片/文件 → 上传到 R2
-- 生成 Markdown 文件 → 提交到 GitHub
-- 推送摘要到 TG 频道
-- 写入 D1 数据库
+## 7. 链接与媒体 (Links & Media)
 
-## 主题系统
+ * 访问 Jekyll 官网{: target="_blank" rel="noopener"} *(含扩展属性)*
+ * 跳转到本文的特殊标题 *(内部锚点)*
 
-支持 **6 种 Monet 色彩方案** + 亮/暗/跟随系统三种模式：
+### 图片展示
 
-| 方案 | 主色 |
-|------|------|
-| 🔵 海洋蓝 | #0061A4 |
-| 💜 紫色梦境 | #6750A4 |
-| 🌿 森林绿意 | #006E2C |
-| 🍊 秋日橙光 | #9D4000 |
-| 🌹 玫瑰红 | #B3261E |
-| 🩵 青色清风 | #006A6A |
+## 8. Jekyll 特有扩展 (kramdown & Liquid)
 
-点击右上角调色板图标即可切换，设置持久化到 localStorage。
+### 属性列表 (Attribute Lists)
 
-## 接下来
+你可以直接给下一个元素添加 CSS 类名或内联样式：
+这是一个带有自定义 CSS 类和背景样式的段落。
+{: .callout-warning style="padding: 10px; border-left: 4px solid #f0ad4e;"}
 
-- [ ] 搜索功能优化（algolia 或 pagefind）
-- [ ] 文章阅读量统计（D1 + Worker）
-- [ ] 更多 Telegram Bot 指令
-- [ ] RSS to TG 频道自动转发
+### 定义列表 (Definition Lists)
 
-欢迎在 Telegram 频道留言交流！
+Jekyll / Liquid
+: 基于 Ruby 的静态网站生成器。
+kramdown
+: Jekyll 默认使用的 Markdown 解析引擎，支持丰富的扩展语法。
+
+### 数学公式 (LaTeX)
+
+### Liquid 变量调用示例
+
+ * **本篇文章标题**：{{ page.title }}
+ * **文章发布时间**：{{ page.date | date: "%Y年%m月%d日" }}
+ * **标签数量**：{{ page.tags | size }} 个
