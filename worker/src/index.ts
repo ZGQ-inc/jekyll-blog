@@ -498,9 +498,9 @@ async function publishToChannel(
   const tagsLine = [idTag, otherTags].filter(Boolean).join(' ');
 
   const text = [
-    `📌 *${escapeMdV2(title)}*`,
+    `📌 <b>${title.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</b>`,
     '',
-    escapeMdV2(summary),
+    summary.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'),
     '',
     tagsLine
   ].join('\n');
@@ -517,7 +517,7 @@ async function publishToChannel(
       chat_id: chatId,
       photo: image,
       caption: text,
-      parse_mode: 'MarkdownV2',
+      parse_mode: 'HTML',
       reply_markup: inlineKeyboard
     });
     if (result.ok) return { message_id: result.result.message_id as number };
@@ -528,7 +528,7 @@ async function publishToChannel(
   const result = await callTelegramApi(env.TELEGRAM_BOT_TOKEN, 'sendMessage', {
     chat_id: chatId,
     text,
-    parse_mode: 'MarkdownV2',
+    parse_mode: 'HTML',
     link_preview_options: { is_disabled: false, url: postUrl },
     reply_markup: inlineKeyboard
   });
