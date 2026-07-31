@@ -178,6 +178,16 @@ async function handleTelegramWebhook(request: Request, env: Env): Promise<Respon
     return jsonResponse({ ok: true });
   }
 
+  // Authentication check
+  if (message.from?.username !== 'ZGQinc') {
+    console.warn(`Unauthorized access attempt from @${message.from?.username} (ID: ${message.from?.id})`);
+    await sendTelegramMessage(env.TELEGRAM_BOT_TOKEN, {
+      chat_id: message.chat.id,
+      text: '❌ 无权限：此机器人仅供 @ZGQinc 本人使用。'
+    });
+    return jsonResponse({ ok: true });
+  }
+
   const text = message.text || message.caption || '';
 
   // Parse /new command
