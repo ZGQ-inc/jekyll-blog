@@ -6,9 +6,7 @@ compatibility_flags = ["nodejs_compat"]
 # ================================================================
 # Routes - 绑定到自定义域名
 # ================================================================
-routes = [
-  { pattern = "api.zgqinc.gq/*", zone_name = "zgqinc.gq" }
-]
+custom_domains = ["api.zgqinc.gq"]
 
 # ================================================================
 # D1 Database Binding
@@ -52,9 +50,7 @@ GITHUB_POSTS_PATH = "_posts"
 # ================================================================
 [env.staging]
 name = "blog-worker-staging"
-routes = [
-  { pattern = "api-staging.zgqinc.gq/*", zone_name = "zgqinc.gq" }
-]
+custom_domains = ["api-staging.zgqinc.gq"]
 
 [env.staging.vars]
 BLOG_URL = "https://staging.zgqinc.gq"
