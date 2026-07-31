@@ -654,13 +654,184 @@ function initViewToggle() {
     btn.classList.toggle('active', btn.dataset.view === savedView);
     btn.addEventListener('click', () => {
       const view = btn.dataset.view;
-      gallery.className = `gallery-container ${view}-mode`;
-      localStorage.setItem('zgq-view', view);
-      document.querySelectorAll('[data-view]').forEach(b => {
-        b.classList.toggle('active', b.dataset.view === view);
-      });
+      // MD3 Fade-through transition for grid/list switch
+      gallery.style.opacity = '0';
+      gallery.style.transform = 'scale(0.97)';
+      gallery.style.transition = 'opacity 150ms cubic-bezier(0.3,0,1,1), transform 150ms cubic-bezier(0.3,0,1,1)';
+      setTimeout(() => {
+        gallery.className = `gallery-container ${view}-mode`;
+        gallery.style.opacity = '1';
+        gallery.style.transform = 'scale(1)';
+        gallery.style.transition = 'opacity 200ms cubic-bezier(0.05,0.7,0.1,1), transform 200ms cubic-bezier(0.05,0.7,0.1,1)';
+        localStorage.setItem('zgq-view', view);
+        document.querySelectorAll('[data-view]').forEach(b => {
+          b.classList.toggle('active', b.dataset.view === view);
+        });
+      }, 160);
     });
   });
+}
+
+// ================================================================
+// Top App Bar — Scroll elevation (MD3 spec: +2dp on scroll)
+// ================================================================
+
+function initTopAppBar() {
+  const bar = document.querySelector('.top-app-bar');
+  if (!bar) return;
+
+  window.addEventListener('scroll', () => {
+    bar.classList.toggle('scrolled', window.scrollY > 8);
+  }, { passive: true });
+}
+
+// ================================================================
+// Theme Dialog — MD3 compliant open/close with animations
+// ================================================================
+
+function initThemeDialog() {
+  const dialog = document.getElementById('themeDialog');
+  if (!dialog) return;
+
+  function syncModeButtons(mode) {
+    dialog.querySelectorAll('.mode-btn[data-mode]').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.mode === mode);
+    });
+  }
+
+  function syncSwatches(color) {
+    dialog.querySelectorAll('.color-swatch[data-color]').forEach(el => {
+      el.classList.toggle('selected', el.dataset.color === color);
+    });
+  }
+
+  // Init with current
+  const { color, mode } = window.themeManager.currentSettings;
+  syncModeButtons(mode);
+  syncSwatches(color);
+
+  dialog.querySelectorAll('.mode-btn[data-mode]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      window.themeManager._pendingMode = btn.dataset.mode;
+      syncModeButtons(btn.dataset.mode);
+    });
+  });
+
+  dialog.querySelectorAll('.color-swatch[data-color]').forEach(el => {
+    el.addEventListener('click', () => {
+      window.themeManager._pendingColor = el.dataset.color;
+      syncSwatches(el.dataset.color);
+    });
+  });
+
+  document.getElementById('themeApplyBtn')?.addEventListener('click', () => {
+    const c = window.themeManager._pendingColor ?? window.themeManager.currentSettings.color;
+    const m = window.themeManager._pendingMode  ?? window.themeManager.currentSettings.mode;
+    window.themeManager.applyTheme(c, m);
+    window.themeManager._pendingColor = null;
+    window.themeManager._pendingMode  = null;
+    closeThemeDialog();
+  });
+
+  document.getElementById('themeCancelBtn')?.addEventListener('click', () => {
+    window.themeManager._pendingColor = null;
+    window.themeManager._pendingMode  = null;
+    closeThemeDialog();
+  });
+
+  dialog.querySelector('.theme-dialog-scrim')?.addEventListener('click', closeThemeDialog);
+
+  document.querySelectorAll('#themeDialogBtn, #themeDialogBtnMobile').forEach(btn => {
+    btn?.addEventListener('click', openThemeDialog);
+  });
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && dialog.classList.contains('open')) closeThemeDialog();
+  });
+
+  function openThemeDialog() {
+    const { color, mode } = window.themeManager.currentSettings;
+    syncModeButtons(mode);
+    syncSwatches(color);
+    dialog.style.display = 'flex';
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => dialog.classList.add('open'));
+    });
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeThemeDialog() {
+    dialog.classList.remove('open');
+    document.body.style.overflow = '';
+    setTimeout(() => {
+      if (!dialog.classList.contains('open')) dialog.style.display = '';
+    }, 320);
+  }
+
+  window.openThemeDialog  = openThemeDialog;
+  window.closeThemeDialog = closeThemeDialog;
+}
+
+// ================================================================
+// Page Transition — MD3 Shared Axis Z (forward navigation)
+// ================================================================
+
+function initPageTransitions() {
+  // On page load, trigger entry animation
+  const main = document.querySelector('.main-content');
+  if (main) {
+    main.style.opacity = '0';
+    main.style.transform = 'translateY(16px)';
+    main.style.filter = 'blur(2px)';
+    main.style.transition = 'none';
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        main.style.transition = 'opacity 400ms cubic-bezier(0.05,0.7,0.1,1), transform 400ms cubic-bezier(0.05,0.7,0.1,1), filter 400ms';
+        main.style.opacity = '1';
+        main.style.transform = 'translateY(0)';
+        main.style.filter = 'blur(0)';
+      });
+    });
+  }
+
+  // Exit animation on navigation
+  document.addEventListener('click', e => {
+    const link = e.target.closest('a[href]');
+    if (!link) return;
+    const href = link.getAttribute('href');
+    if (!href || href.startsWith('#') || href.startsWith('mailto')
+      || link.hasAttribute('target') || e.ctrlKey || e.metaKey || e.shiftKey) return;
+
+    try {
+      const url = new URL(href, window.location.origin);
+      if (url.origin !== window.location.origin) return;
+    } catch { return; }
+
+    e.preventDefault();
+
+    if (main) {
+      main.style.transition = 'opacity 120ms cubic-bezier(0.3,0,1,1), transform 120ms cubic-bezier(0.3,0,1,1), filter 120ms';
+      main.style.opacity = '0';
+      main.style.transform = 'translateY(8px) scale(0.99)';
+      main.style.filter = 'blur(1px)';
+    }
+
+    setTimeout(() => { window.location.href = href; }, 125);
+  });
+}
+
+// ================================================================
+// Ripple Pointer Position Tracking
+// ================================================================
+
+function initRipples() {
+  document.addEventListener('pointerdown', e => {
+    const el = e.target.closest('.nav-item, .post-card, .social-btn, .color-swatch');
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    el.style.setProperty('--ripple-x', `${((e.clientX - rect.left) / rect.width * 100).toFixed(1)}%`);
+    el.style.setProperty('--ripple-y', `${((e.clientY - rect.top)  / rect.height * 100).toFixed(1)}%`);
+  }, { passive: true });
 }
 
 // ================================================================
@@ -677,4 +848,9 @@ document.addEventListener('DOMContentLoaded', () => {
   initReadingProgress();
   initActiveNav();
   initViewToggle();
+  initTopAppBar();
+  initThemeDialog();
+  initPageTransitions();
+  initRipples();
 });
+

@@ -110,98 +110,94 @@
 </aside>
 
 <!-- ============================
-     Theme Settings Dialog
+     Theme Settings Dialog (MD3 Glass)
      ============================ -->
-<dialog class="theme-dialog" id="themeDialog" aria-labelledby="themeDialogTitle">
+<div class="theme-dialog" id="themeDialog" role="dialog" aria-modal="true"
+     aria-labelledby="themeDialogTitle" style="display:none">
 
-  <div class="dialog-header">
-    <span class="material-symbols-outlined dialog-icon" aria-hidden="true">palette</span>
-    <h2 class="dialog-title" id="themeDialogTitle">主题与外观</h2>
-    <button class="dialog-close-btn" id="themeCancelBtn" aria-label="关闭">
-      <span class="material-symbols-outlined">close</span>
-    </button>
-  </div>
+  <!-- Scrim (click to close) -->
+  <div class="theme-dialog-scrim" aria-hidden="true"></div>
 
-  <div class="dialog-body">
+  <!-- Glass Surface -->
+  <div class="theme-dialog-surface">
 
-    <!-- Mode selector -->
-    <div>
-      <p class="dialog-section-label">外观模式</p>
-      <div class="mode-selector">
-        <div class="mode-option">
-          <input type="radio" name="themeMode" id="mode-system" data-mode="system" checked>
-          <label for="mode-system">
-            <span class="material-symbols-outlined mode-icon">brightness_auto</span>
-            <span class="mode-label">跟随系统</span>
-          </label>
-        </div>
-        <div class="mode-option">
-          <input type="radio" name="themeMode" id="mode-light" data-mode="light">
-          <label for="mode-light">
-            <span class="material-symbols-outlined mode-icon">light_mode</span>
-            <span class="mode-label">亮色</span>
-          </label>
-        </div>
-        <div class="mode-option">
-          <input type="radio" name="themeMode" id="mode-dark" data-mode="dark">
-          <label for="mode-dark">
-            <span class="material-symbols-outlined mode-icon">dark_mode</span>
-            <span class="mode-label">暗色</span>
-          </label>
-        </div>
-      </div>
+    <!-- Title -->
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px">
+      <span class="material-symbols-outlined"
+            style="color:var(--md-sys-color-primary);font-size:22px">palette</span>
+      <h2 class="theme-dialog-title" id="themeDialogTitle">主题与外观</h2>
+      <button class="icon-btn" id="themeCancelBtnX" aria-label="关闭"
+              style="margin-left:auto;width:36px;height:36px"
+              onclick="window.closeThemeDialog&&window.closeThemeDialog()">
+        <span class="material-symbols-outlined" style="font-size:20px">close</span>
+      </button>
     </div>
 
-    <!-- Color presets (Monet) -->
-    <div>
-      <p class="dialog-section-label">主题色彩</p>
-      <div class="color-grid">
-        <button class="color-swatch selected" data-color="blue" aria-label="海洋蓝">
-          <div class="swatch-dot" style="background:#0061A4"></div>
-          <span class="swatch-name">海洋蓝</span>
-        </button>
-        <button class="color-swatch" data-color="purple" aria-label="紫色梦境">
-          <div class="swatch-dot" style="background:#6750A4"></div>
-          <span class="swatch-name">紫色梦境</span>
-        </button>
-        <button class="color-swatch" data-color="green" aria-label="森林绿意">
-          <div class="swatch-dot" style="background:#006E2C"></div>
-          <span class="swatch-name">森林绿意</span>
-        </button>
-        <button class="color-swatch" data-color="orange" aria-label="秋日橙光">
-          <div class="swatch-dot" style="background:#9D4000"></div>
-          <span class="swatch-name">秋日橙光</span>
-        </button>
-        <button class="color-swatch" data-color="rose" aria-label="玫瑰红">
-          <div class="swatch-dot" style="background:#B3261E"></div>
-          <span class="swatch-name">玫瑰红</span>
-        </button>
-        <button class="color-swatch" data-color="teal" aria-label="青色清风">
-          <div class="swatch-dot" style="background:#006A6A"></div>
-          <span class="swatch-name">青色清风</span>
-        </button>
-      </div>
+    <p class="theme-dialog-subtitle">自定义您的外观偏好，随时切换 Monet 主题色与显示模式</p>
+
+    <!-- Mode Selector -->
+    <p style="font-size:0.8125rem;font-weight:600;color:var(--md-sys-color-on-surface-variant);
+              letter-spacing:0.04em;text-transform:uppercase;margin-bottom:10px">显示模式</p>
+    <div class="mode-selector">
+      <button class="mode-btn" data-mode="light">
+        <span class="material-symbols-outlined">light_mode</span>亮色
+      </button>
+      <button class="mode-btn active" data-mode="system">
+        <span class="material-symbols-outlined">brightness_auto</span>自动
+      </button>
+      <button class="mode-btn" data-mode="dark">
+        <span class="material-symbols-outlined">dark_mode</span>暗色
+      </button>
     </div>
 
-    <!-- Preview -->
-    <div class="theme-preview" id="themePreview"
-         style="background:var(--md-sys-color-primary-container);color:var(--md-sys-color-on-primary-container)">
-      <p class="preview-label">预览</p>
-      <div class="preview-swatches">
-        <div class="preview-swatch" style="background:var(--md-sys-color-primary)"></div>
-        <div class="preview-swatch" style="background:var(--md-sys-color-secondary)"></div>
-        <div class="preview-swatch" style="background:var(--md-sys-color-tertiary)"></div>
-      </div>
+    <!-- Color Swatches -->
+    <p style="font-size:0.8125rem;font-weight:600;color:var(--md-sys-color-on-surface-variant);
+              letter-spacing:0.04em;text-transform:uppercase;margin-bottom:10px">主题色彩</p>
+    <div class="color-swatches">
+      <button class="color-swatch selected" data-color="blue">
+        <div class="swatch-dot" style="background:#0061A4"></div>
+        <span>海洋蓝</span>
+      </button>
+      <button class="color-swatch" data-color="purple">
+        <div class="swatch-dot" style="background:#6750A4"></div>
+        <span>紫色梦境</span>
+      </button>
+      <button class="color-swatch" data-color="green">
+        <div class="swatch-dot" style="background:#006E2C"></div>
+        <span>森林绿意</span>
+      </button>
+      <button class="color-swatch" data-color="orange">
+        <div class="swatch-dot" style="background:#9D4000"></div>
+        <span>秋日橙光</span>
+      </button>
+      <button class="color-swatch" data-color="rose">
+        <div class="swatch-dot" style="background:#B3261E"></div>
+        <span>玫瑰红</span>
+      </button>
+      <button class="color-swatch" data-color="teal">
+        <div class="swatch-dot" style="background:#006A6A"></div>
+        <span>青色清风</span>
+      </button>
     </div>
-  </div>
 
-  <div class="dialog-actions">
-    <button class="action-btn btn-outlined" id="themeCancelBtn2" onclick="document.getElementById('themeDialog').close()">
-      取消
-    </button>
-    <button class="action-btn btn-filled" id="themeApplyBtn">
-      <span class="material-symbols-outlined">check</span>
-      应用
-    </button>
+    <!-- Color palette preview strip -->
+    <div style="display:flex;gap:6px;height:28px;border-radius:var(--shape-medium);
+                overflow:hidden;margin-bottom:24px;border:1px solid
+                color-mix(in srgb,var(--md-sys-color-outline-variant) 40%,transparent)">
+      <div style="flex:1;background:var(--md-sys-color-primary);transition:background .3s"></div>
+      <div style="flex:1;background:var(--md-sys-color-secondary);transition:background .3s"></div>
+      <div style="flex:1;background:var(--md-sys-color-tertiary);transition:background .3s"></div>
+      <div style="flex:1;background:var(--md-sys-color-primary-container);transition:background .3s"></div>
+    </div>
+
+    <!-- Actions -->
+    <div class="theme-dialog-actions">
+      <button class="btn-text" id="themeCancelBtn">取消</button>
+      <button class="btn-filled" id="themeApplyBtn">
+        <span class="material-symbols-outlined" style="font-size:18px">check</span>
+        应用
+      </button>
+    </div>
+
   </div>
-</dialog>
+</div>

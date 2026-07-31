@@ -46,26 +46,7 @@
   </div><!-- /main-content -->
 </div><!-- /app-shell -->
 
-<!-- Theme Manager & App JS -->
-
-<!-- Mobile theme button wires to same dialog -->
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    var mobileBtn = document.getElementById('themeDialogBtnMobile');
-    if (mobileBtn) {
-      mobileBtn.addEventListener('click', function() {
-        document.getElementById('themeDialog').showModal();
-      });
-    }
-    // Also fix themeDialogBtn to use showModal()
-    var sidebarBtn = document.getElementById('themeDialogBtn');
-    if (sidebarBtn) {
-      sidebarBtn.addEventListener('click', function() {
-        document.getElementById('themeDialog').showModal();
-      });
-    }
-  });
-</script>
 
 </body>
 </html>
+
