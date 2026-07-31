@@ -887,6 +887,29 @@ window.themeManager = new ThemeManager();
 // Apply theme immediately to prevent FOUC
 window.themeManager.applyTheme();
 
+// ================================================================
+// Back to Top FAB
+// ================================================================
+function initBackToTop() {
+  const btn = document.getElementById('backToTopBtn');
+  if (!btn) return;
+
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 300) {
+      btn.classList.add('visible');
+    } else {
+      btn.classList.remove('visible');
+    }
+  }, { passive: true });
+
+  btn.addEventListener('click', () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   window.themeManager.init();
   initSidebar();
@@ -897,5 +920,6 @@ document.addEventListener('DOMContentLoaded', () => {
   initThemeDialog();
   initPageTransitions();
   initRipples();
+  initBackToTop();
 });
 

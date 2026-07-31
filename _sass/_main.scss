@@ -131,6 +131,14 @@
   padding: 0;
   -webkit-tap-highlight-color: transparent;
   outline-color: var(--md-sys-color-primary);
+  scrollbar-width: none; // Firefox hide scrollbar
+}
+
+// Hide WebKit scrollbars globally
+::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  background: transparent;
 }
 
 html {
@@ -399,6 +407,26 @@ ul, ol { list-style: none; }
   flex-direction: column;
   overflow-y: auto;
   overflow-x: hidden;
+  
+  // Custom MD3 scrollbar for sidebar
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--md-sys-color-on-surface-variant) 40%, transparent) transparent;
+  
+  &::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: color-mix(in srgb, var(--md-sys-color-on-surface-variant) 30%, transparent);
+    border-radius: 4px;
+    
+    &:hover {
+      background: color-mix(in srgb, var(--md-sys-color-on-surface-variant) 50%, transparent);
+    }
+  }
 
   // MD3 Drawer surface: surface-container-low with elevation
   background-color: color-mix(
@@ -2542,4 +2570,52 @@ md-navigation-drawer {
   -webkit-box-orient: vertical;
   overflow: hidden;
   line-height: 1.4;
+}
+
+// ================================================================
+// §28. FAB & Back to Top
+// ================================================================
+.fab {
+  @include ripple-surface;
+  position: fixed;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: var(--shape-large);
+  border: none;
+  cursor: pointer;
+  box-shadow: var(--elev-3);
+  transition: box-shadow var(--dur-short4), transform var(--dur-medium2) var(--motion-emphasized-decel), opacity var(--dur-medium2) var(--motion-standard);
+  
+  &:hover {
+    box-shadow: var(--elev-4);
+  }
+  
+  &:active {
+    box-shadow: var(--elev-2);
+  }
+}
+
+.back-to-top {
+  bottom: 24px;
+  right: 24px;
+  background: var(--md-sys-color-primary-container);
+  color: var(--md-sys-color-on-primary-container);
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(20px) scale(0.9);
+  
+  &.visible {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0) scale(1);
+  }
+
+  @media (max-width: 768px) {
+    bottom: 16px;
+    right: 16px;
+  }
 }
