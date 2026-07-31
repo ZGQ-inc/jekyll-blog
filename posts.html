@@ -11,10 +11,9 @@ permalink: /posts/
   </div>
 
   <div class="filter-bar">
-    <div class="search-field md3-textfield">
+    <div class="android-search-bar">
       <span class="material-symbols-outlined search-icon">search</span>
-      <input type="text" id="searchInput" placeholder=" " aria-label="搜索">
-      <label for="searchInput">搜索文章…</label>
+      <input type="text" id="searchInput" placeholder="搜索文章、标签、正文…" aria-label="搜索文章">
     </div>
     <div class="view-toggle" role="group">
       <button data-view="grid" class="active">
@@ -71,10 +70,6 @@ permalink: /posts/
 </main>
 
 <script>
-document.getElementById('searchInput')?.addEventListener('input', function(e) {
-  var q = e.target.value.toLowerCase();
-  document.querySelectorAll('.post-card').forEach(function(c) {
-    c.style.display = (!q || c.dataset.title.includes(q) || c.dataset.tags.includes(q)) ? '' : 'none';
-  });
-});
+  window.activeTag = null; // No tag filter on this page
 </script>
+<script src="{{ '/assets/js/search.js' | relative_url }}"></script>

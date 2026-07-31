@@ -935,10 +935,7 @@ ul, ol { list-style: none; }
   -webkit-backdrop-filter: blur(0px) saturate(100%);
   z-index: -1;
   // Smooth blur/bg transition — use same duration as container
-  transition:
-    backdrop-filter var(--dur-medium3) var(--motion-standard),
-    -webkit-backdrop-filter var(--dur-medium3) var(--motion-standard),
-    background var(--dur-medium2) var(--motion-standard);
+  transition: all var(--dur-medium3) var(--motion-standard);
 }
 
 .theme-dialog-surface {
@@ -2452,4 +2449,68 @@ md-navigation-drawer {
   .o, .ow { color: var(--md-sys-color-on-surface-variant); }
   .na { color: #FF9800; }
   .nt { color: var(--md-sys-color-tertiary); }
+}
+
+// ================================================================
+// §31. Friend Links (links.html)
+// ================================================================
+.links-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+  margin: 24px 0;
+}
+
+.friend-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  background-color: var(--md-sys-color-surface-container);
+  border-radius: var(--shape-large);
+  text-decoration: none;
+  transition: all var(--dur-medium2) var(--motion-standard);
+  border: 1px solid transparent;
+
+  &:hover {
+    background-color: var(--md-sys-color-surface-container-high);
+    transform: translateY(-2px);
+    box-shadow: var(--md-sys-elevation-2);
+    border-color: color-mix(in srgb, var(--md-sys-color-outline-variant) 50%, transparent);
+  }
+}
+
+.friend-avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  box-shadow: var(--md-sys-elevation-1);
+}
+
+.friend-info {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.friend-name {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--md-sys-color-on-surface);
+  margin-bottom: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.friend-desc {
+  font-size: 0.85rem;
+  color: var(--md-sys-color-on-surface-variant);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  line-height: 1.4;
 }
