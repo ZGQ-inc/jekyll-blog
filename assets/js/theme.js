@@ -754,9 +754,11 @@ function initThemeDialog() {
     syncModeButtons(mode);
     syncSwatches(color);
     dialog.style.display = 'flex';
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => dialog.classList.add('open'));
-    });
+    // Force a reflow to ensure display: flex is applied before adding .open
+    dialog.offsetHeight; 
+    setTimeout(() => {
+      dialog.classList.add('open');
+    }, 10);
     document.body.style.overflow = 'hidden';
   }
 
@@ -777,21 +779,24 @@ function initThemeDialog() {
 // ================================================================
 
 function initPageTransitions() {
-  // On page load, trigger entry animation
   const main = document.querySelector('.main-content');
-  if (main) {
+  const isNavigating = sessionStorage.getItem('isNavigating');
+  sessionStorage.removeItem('isNavigating');
+
+  if (main && isNavigating) {
+    // Only animate entry if coming from an internal link (avoids initial load flash)
+    main.style.transition = 'none';
     main.style.opacity = '0';
     main.style.transform = 'translateY(16px)';
     main.style.filter = 'blur(2px)';
-    main.style.transition = 'none';
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        main.style.transition = 'opacity 400ms cubic-bezier(0.05,0.7,0.1,1), transform 400ms cubic-bezier(0.05,0.7,0.1,1), filter 400ms';
-        main.style.opacity = '1';
-        main.style.transform = 'translateY(0)';
-        main.style.filter = 'blur(0)';
-      });
-    });
+    
+    // Use a tiny timeout instead of double rAF which causes white frames
+    setTimeout(() => {
+      main.style.transition = 'opacity 400ms cubic-bezier(0.05,0.7,0.1,1), transform 400ms cubic-bezier(0.05,0.7,0.1,1), filter 400ms';
+      main.style.opacity = '1';
+      main.style.transform = 'translateY(0)';
+      main.style.filter = 'blur(0)';
+    }, 10);
   }
 
   // Exit animation on navigation
@@ -816,6 +821,7 @@ function initPageTransitions() {
       main.style.filter = 'blur(1px)';
     }
 
+    sessionStorage.setItem('isNavigating', 'true');
     setTimeout(() => { window.location.href = href; }, 125);
   });
 }

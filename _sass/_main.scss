@@ -905,35 +905,40 @@ ul, ol { list-style: none; }
   padding: 24px;
   pointer-events: none;
   opacity: 0;
-  transition:
-    opacity var(--dur-medium2) var(--motion-standard);
+  // Container fade
+  transition: opacity var(--dur-medium2) var(--motion-standard);
 
-  &[open],
   &.open {
     pointer-events: all;
     opacity: 1;
+
+    // Scrim blur fades IN with the container
+    .theme-dialog-scrim {
+      backdrop-filter: blur(8px) saturate(130%);
+      -webkit-backdrop-filter: blur(8px) saturate(130%);
+      background: color-mix(in srgb, var(--md-sys-color-scrim) 42%, transparent);
+    }
 
     .theme-dialog-surface {
       transform: scale(1) translateY(0);
       opacity: 1;
     }
   }
-
-  // Scrim (accessible, click-to-close)
-  &::backdrop {
-    background: color-mix(in srgb, var(--md-sys-color-scrim) 40%, transparent);
-    backdrop-filter: blur(4px);
-    animation: scrim-in var(--dur-medium2) var(--motion-standard) forwards;
-  }
 }
 
 .theme-dialog-scrim {
   position: absolute;
   inset: 0;
-  background: color-mix(in srgb, var(--md-sys-color-scrim) 40%, transparent);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
+  // Start unblurred; transition applied when .open is added
+  background: color-mix(in srgb, var(--md-sys-color-scrim) 0%, transparent);
+  backdrop-filter: blur(0px) saturate(100%);
+  -webkit-backdrop-filter: blur(0px) saturate(100%);
   z-index: -1;
+  // Smooth blur/bg transition — use same duration as container
+  transition:
+    backdrop-filter var(--dur-medium3) var(--motion-standard),
+    -webkit-backdrop-filter var(--dur-medium3) var(--motion-standard),
+    background var(--dur-medium2) var(--motion-standard);
 }
 
 .theme-dialog-surface {
@@ -948,15 +953,15 @@ ul, ol { list-style: none; }
   border-radius: var(--shape-xl);
   padding: 24px;
   width: 100%;
-  max-width: 380px;
+  max-width: 400px;
   box-shadow: var(--elev-3);
   border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 40%, transparent);
 
-  transform: scale(0.9) translateY(20px);
+  transform: scale(0.88) translateY(24px);
   opacity: 0;
   transition:
-    transform var(--dur-medium3) var(--motion-emphasized-decel),
-    opacity var(--dur-medium2) var(--motion-standard);
+    transform var(--dur-medium4) var(--motion-emphasized-decel),
+    opacity var(--dur-medium3) var(--motion-standard);
 }
 
 .theme-dialog-title {
@@ -1400,6 +1405,45 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
   align-items: center;
   margin-bottom: 20px;
   flex-wrap: wrap;
+}
+
+// Android Search Bar
+.android-search-bar {
+  display: flex;
+  align-items: center;
+  background-color: var(--md-sys-color-surface-container-high);
+  border-radius: 28px;
+  height: 56px;
+  padding: 0 16px;
+  gap: 12px;
+  box-shadow: var(--md-sys-elevation-1);
+  transition: box-shadow 200ms ease, background-color 200ms ease;
+  flex: 1;
+
+  &:focus-within {
+    box-shadow: var(--md-sys-elevation-3);
+    background-color: var(--md-sys-color-surface-container-highest);
+  }
+
+  .search-icon {
+    color: var(--md-sys-color-on-surface-variant);
+    font-size: 24px;
+  }
+
+  input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--md-sys-color-on-surface);
+    font-size: 1rem;
+    font-family: inherit;
+
+    &::placeholder {
+      color: var(--md-sys-color-on-surface-variant);
+      opacity: 0.8;
+    }
+  }
 }
 
 // View toggle (MD3 Icon button group)
