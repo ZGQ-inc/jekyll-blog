@@ -2309,6 +2309,98 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
     }
   }
 
+  // File Download Card
+  .file-download-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px;
+    margin: 1.5em 0;
+    text-decoration: none !important;
+    background-color: var(--md-sys-color-surface-container);
+    border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 50%, transparent);
+    border-radius: var(--shape-large);
+    transition: all var(--dur-short4) var(--motion-standard);
+    color: inherit;
+    box-shadow: var(--elev-1);
+
+    &:hover {
+      background-color: var(--md-sys-color-surface-container-highest);
+      border-color: var(--md-sys-color-outline-variant);
+      box-shadow: var(--elev-2);
+      transform: translateY(-2px);
+      
+      .icon-btn-mock {
+        background-color: var(--md-sys-color-primary-container);
+        color: var(--md-sys-color-on-primary-container);
+      }
+    }
+
+    &:active {
+      transform: translateY(0);
+      box-shadow: var(--elev-1);
+    }
+
+    .file-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background-color: color-mix(in srgb, var(--md-sys-color-primary) 12%, transparent);
+      color: var(--md-sys-color-primary);
+      flex-shrink: 0;
+
+      .material-symbols-outlined {
+        font-size: 28px;
+      }
+    }
+
+    .file-info {
+      flex: 1;
+      min-width: 0; // Truncate text properly
+      
+      .file-name {
+        font-weight: 600;
+        font-size: 1.05em;
+        color: var(--md-sys-color-on-surface);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      
+      .file-meta {
+        font-size: 0.85em;
+        color: var(--md-sys-color-on-surface-variant);
+        margin-top: 4px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        
+        .separator {
+          opacity: 0.5;
+        }
+      }
+    }
+
+    .file-action {
+      flex-shrink: 0;
+      
+      .icon-btn-mock {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background-color: transparent;
+        color: var(--md-sys-color-primary);
+        transition: all var(--dur-short4) var(--motion-standard);
+      }
+    }
+  }
+
   hr {
     border: none;
     height: 1px;

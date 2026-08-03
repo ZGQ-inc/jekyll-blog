@@ -1,0 +1,18 @@
+<a href="{{ include.url }}" class="file-download-card" {% if include.download != false %}download{% endif %} target="_blank" rel="noopener">
+  <div class="file-icon">
+    <span class="material-symbols-outlined">{{ include.icon | default: 'description' }}</span>
+  </div>
+  <div class="file-info">
+    <div class="file-name">{{ include.name }}</div>
+    <div class="file-meta">
+      {% if include.size %}<span class="file-size">{{ include.size }}</span>{% endif %}
+      {% if include.size and include.date %}<span class="separator">•</span>{% endif %}
+      {% if include.date %}<span class="file-date">{{ include.date }}</span>{% endif %}
+    </div>
+  </div>
+  <div class="file-action">
+    <div class="icon-btn-mock" aria-hidden="true">
+      <span class="material-symbols-outlined">download</span>
+    </div>
+  </div>
+</a>
