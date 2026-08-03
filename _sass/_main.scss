@@ -3473,6 +3473,12 @@ md-navigation-drawer {
   }
 
   @media (max-width: 1024px) {
+    padding: 8px 4px;
+    .material-symbols-outlined { font-size: 18px; }
+    .btn-text { font-size: 0.7rem; }
+  }
+
+  @media (max-width: 768px) {
     display: none !important;
   }
 }

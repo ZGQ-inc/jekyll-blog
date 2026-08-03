@@ -119,11 +119,11 @@ document.addEventListener('DOMContentLoaded', () => {
   // 3. TOC Drawer Toggle Logic
   function openToc() {
     tocDrawer.classList.add('open');
-    if (tocOverlay) tocOverlay.classList.add('visible');
     if (pcTocBtn) pcTocBtn.classList.add('drawer-open');
     
-    // Lock body scroll only if the screen is small (where overlay applies)
-    if (window.innerWidth < 1025) {
+    // Only show overlay and lock body scroll on small screens
+    if (window.innerWidth <= 1024) {
+      if (tocOverlay) tocOverlay.classList.add('visible');
       document.body.style.overflow = 'hidden';
     }
   }
