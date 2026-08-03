@@ -50,10 +50,16 @@
 
 <!-- Mermaid.js for Markdown Diagrams (Lazy Loaded) -->
 <script type="module">
-  const mermaidBlocks = document.querySelectorAll('.language-mermaid');
-  if (mermaidBlocks.length > 0) {
-    mermaidBlocks.forEach((block) => {
-      const codeEl = block.querySelector('code');
+  // Find mermaid code blocks. Kramdown/Rouge might put the class on the wrapper div or the code element itself.
+  // We look for any element with class containing 'language-mermaid' or a code element with 'mermaid' in its class.
+  const mermaidElements = document.querySelectorAll('.language-mermaid, code.language-mermaid, code[data-lang="mermaid"]');
+  
+  if (mermaidElements.length > 0) {
+    let replacedCount = 0;
+    
+    mermaidElements.forEach((el) => {
+      // If el is the wrapper div, find the code element inside it
+      const codeEl = el.tagName === 'CODE' ? el : el.querySelector('code');
       if (!codeEl) return;
       
       const mermaidCode = codeEl.textContent;
@@ -63,19 +69,34 @@
       newContainer.style.textAlign = 'center';
       newContainer.style.margin = '1.5em 0';
       
-      block.parentNode.replaceChild(newContainer, block);
+      // Find the outermost wrapper to replace (usually <div class="highlighter-rouge">)
+      let targetToReplace = el;
+      if (codeEl.parentElement && codeEl.parentElement.tagName === 'PRE') {
+        targetToReplace = codeEl.parentElement;
+        if (targetToReplace.parentElement && targetToReplace.parentElement.classList.contains('highlighter-rouge')) {
+          targetToReplace = targetToReplace.parentElement;
+        }
+      }
+      
+      // Ensure we don't replace the same thing twice if querySelectorAll returned both the wrapper and the code
+      if (targetToReplace.parentNode) {
+        targetToReplace.parentNode.replaceChild(newContainer, targetToReplace);
+        replacedCount++;
+      }
     });
 
-    import('https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs').then((module) => {
-      const mermaid = module.default;
-      const rootTheme = document.documentElement.getAttribute('data-theme') || 'light';
-      mermaid.initialize({
-        startOnLoad: false,
-        theme: rootTheme === 'dark' ? 'dark' : 'default',
-        fontFamily: '"Inter", "Noto Sans SC", sans-serif'
-      });
-      mermaid.run();
-    });
+    if (replacedCount > 0) {
+      import('https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs').then((module) => {
+        const mermaid = module.default;
+        const rootTheme = document.documentElement.getAttribute('data-theme') || 'light';
+        mermaid.initialize({
+          startOnLoad: false,
+          theme: rootTheme === 'dark' ? 'dark' : 'default',
+          fontFamily: '"Inter", "Noto Sans SC", sans-serif'
+        });
+        mermaid.run();
+      }).catch(err => console.error("Mermaid loading failed:", err));
+    }
   }
 </script>
 
