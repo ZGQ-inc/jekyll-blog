@@ -2843,3 +2843,31 @@ md-navigation-drawer {
     bottom: 88px; /* Above the FAB */
   }
 }
+
+// ================================================================
+// §10. Fluent Design Hover Reveal
+// ================================================================
+.fluent-glow {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  pointer-events: none;
+  border-radius: inherit;
+  padding: 1.5px;
+  background: radial-gradient(
+    600px circle at var(--mouse-x, -1000px) var(--mouse-y, -1000px),
+    color-mix(in srgb, var(--md-sys-color-primary) 80%, rgba(255,255,255,0.8)),
+    transparent 40%
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+  opacity: 0;
+  transition: opacity var(--dur-medium2) var(--motion-standard);
+}
+
+.gallery-container:hover .fluent-glow,
+.links-grid:hover .fluent-glow,
+.timeline:hover .fluent-glow {
+  opacity: 1;
+}
