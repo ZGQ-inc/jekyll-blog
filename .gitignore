@@ -49,3 +49,12 @@ temp/
 .dev.vars*
 !.dev.vars.example
 !.env.example
+
+# Test and scratch files
+test*.css
+test*.css.map
+test*.scss
+frosted-glass.html
+
+# Nested wrangler caches
+**/.wrangler/
