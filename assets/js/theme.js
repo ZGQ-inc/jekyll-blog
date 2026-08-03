@@ -908,7 +908,7 @@ function initPageTransitions() {
 
 function initRipples() {
   document.addEventListener('pointerdown', e => {
-    const el = e.target.closest('.nav-item, .post-card, .social-btn, .color-swatch, .page-btn, #themeDialogBtn, #backToTopBtn, .btn');
+    const el = e.target.closest('.nav-item, .post-card, .social-btn, .color-swatch, .page-btn, #themeDialogBtn, #backToTopBtn, .btn, .action-btn, .mode-btn');
     if (!el) return;
     const rect = el.getBoundingClientRect();
     el.style.setProperty('--ripple-x', `${((e.clientX - rect.left) / rect.width * 100).toFixed(1)}%`);
@@ -917,7 +917,7 @@ function initRipples() {
 
   // Fluent Design Background Reveal for buttons
   document.addEventListener('pointermove', e => {
-    const el = e.target.closest('.nav-item, .social-btn, .color-swatch, .page-btn, #themeDialogBtn, #backToTopBtn, .btn');
+    const el = e.target.closest('.nav-item, .social-btn, .color-swatch, .page-btn, #themeDialogBtn, #backToTopBtn, .btn, .action-btn, .mode-btn, .android-search-bar');
     if (!el) return;
     
     let glow = el.querySelector('.fluent-bg-glow');
