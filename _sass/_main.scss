@@ -1943,31 +1943,100 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
 
     .color-swatch {
       display: inline-block;
-      width: 12px;
-      height: 12px;
-      border-radius: 50%; // Circular swatch
+      box-sizing: border-box;
+      aspect-ratio: 1 / 1;
+      border-radius: 50%; // Perfect circle
       border: 1px solid color-mix(in srgb, var(--md-sys-color-outline) 20%, transparent);
       flex-shrink: 0;
       box-shadow: inset 0 0 0 1px rgba(0,0,0,0.05);
+      vertical-align: text-bottom;
+      margin-right: 2px;
     }
   }
 
   kbd {
-    display: inline-block;
-    padding: 0.15em 0.5em;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 0.2em 0.5em;
     font-family: 'JetBrains Mono', 'Fira Code', monospace;
     font-size: 0.85em;
     font-weight: 600;
     line-height: 1.2;
     color: var(--md-sys-color-on-surface);
-    background-color: var(--md-sys-color-surface-container-highest);
+    background-color: var(--md-sys-color-surface-container);
+    border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 80%, transparent);
+    border-radius: 6px;
+    box-shadow: 
+      inset 0 -2px 0 color-mix(in srgb, var(--md-sys-color-outline-variant) 40%, transparent),
+      0 1px 2px rgba(0,0,0,0.05);
+    vertical-align: middle;
+    margin: 0 2px;
+    
+    .material-symbols-outlined {
+      font-size: 1.2em;
+    }
+  }
+
+  // Details & Summary (Collapsible)
+  details {
+    background: var(--md-sys-color-surface-container-low);
     border: 1px solid var(--md-sys-color-outline-variant);
-    border-bottom-color: var(--md-sys-color-outline);
-    border-bottom-width: 2px;
-    border-radius: var(--shape-small);
-    box-shadow: inset 0 -1px 0 rgba(0,0,0,0.05);
-    margin: 0 0.2em;
-    vertical-align: text-bottom;
+    border-radius: var(--shape-medium);
+    margin: 1.5em 0;
+    padding: 0.5em 1em;
+    transition: background-color var(--dur-short4) var(--motion-standard);
+    
+    &[open] {
+      background: var(--md-sys-color-surface-container);
+      padding-bottom: 1em;
+      
+      summary {
+        margin-bottom: 0.5em;
+        border-bottom: 1px solid var(--md-sys-color-outline-variant);
+        padding-bottom: 0.5em;
+      }
+
+      // Add a fade-in and slide-down animation to the content
+      & > *:not(summary) {
+        animation: details-show 0.3s cubic-bezier(0.2, 0, 0, 1);
+      }
+    }
+  }
+
+  @keyframes details-show {
+    0% {
+      opacity: 0;
+      transform: translateY(-8px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  summary {
+    font-weight: 600;
+    cursor: pointer;
+    color: var(--md-sys-color-on-surface);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    outline: none;
+    border-radius: var(--shape-extra-small);
+    transition: color var(--dur-short4) var(--motion-standard);
+    
+    &:hover {
+      color: var(--md-sys-color-primary);
+    }
+    
+    // Custom arrow using MD symbols or generic CSS triangle
+    &::marker {
+      display: none; // hide default marker if possible
+    }
+    &::-webkit-details-marker {
+      display: none;
+    }
   }
 
   abbr[title] {
