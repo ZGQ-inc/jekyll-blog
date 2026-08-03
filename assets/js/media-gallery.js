@@ -185,6 +185,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let translateX = 0;
   let translateY = 0;
   let isDragging = false;
+  let isPanDragging = false;
   let startX = 0;
   let startY = 0;
 
@@ -229,6 +230,10 @@ document.addEventListener('DOMContentLoaded', () => {
   
   // Click on empty space to close
   lightbox.querySelector('.lightbox-content-container').addEventListener('click', (e) => {
+    // Prevent closing if we were dragging or if we clicked directly on the media
+    if (isPanDragging) return;
+    if (e.target.tagName === 'IMG' || e.target.tagName === 'VIDEO') return;
+    
     const wrapper = lightbox.querySelector('.lightbox-content-wrapper');
     if (e.target === e.currentTarget || e.target === wrapper) {
       closeLightbox();
@@ -255,6 +260,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   container.addEventListener('mousedown', (e) => {
     isDragging = true;
+    isPanDragging = false;
     startX = e.clientX - translateX;
     startY = e.clientY - translateY;
     container.style.cursor = 'grabbing';
@@ -262,14 +268,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
   window.addEventListener('mousemove', (e) => {
     if (!isDragging) return;
-    translateX = e.clientX - startX;
-    translateY = e.clientY - startY;
+    const newX = e.clientX - startX;
+    const newY = e.clientY - startY;
+    if (Math.abs(newX - translateX) > 5 || Math.abs(newY - translateY) > 5) {
+      isPanDragging = true;
+    }
+    translateX = newX;
+    translateY = newY;
     updateTransform();
   });
 
   window.addEventListener('mouseup', () => {
     isDragging = false;
     container.style.cursor = 'default';
+    setTimeout(() => { isPanDragging = false; }, 0);
   });
 
   // Touch support for panning and pinch-to-zoom
@@ -279,6 +291,7 @@ document.addEventListener('DOMContentLoaded', () => {
   container.addEventListener('touchstart', (e) => {
     if (e.touches.length === 1) {
       isDragging = true;
+      isPanDragging = false;
       startX = e.touches[0].clientX - translateX;
       startY = e.touches[0].clientY - translateY;
     } else if (e.touches.length === 2) {
@@ -294,11 +307,17 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!lightbox.classList.contains('open')) return;
     
     if (e.touches.length === 1 && isDragging) {
-      translateX = e.touches[0].clientX - startX;
-      translateY = e.touches[0].clientY - startY;
+      const newX = e.touches[0].clientX - startX;
+      const newY = e.touches[0].clientY - startY;
+      if (Math.abs(newX - translateX) > 5 || Math.abs(newY - translateY) > 5) {
+        isPanDragging = true;
+      }
+      translateX = newX;
+      translateY = newY;
       updateTransform();
     } else if (e.touches.length === 2 && initialPinchDistance) {
       e.preventDefault(); // Prevent native page zoom
+      isPanDragging = true;
       const dx = e.touches[0].clientX - e.touches[1].clientX;
       const dy = e.touches[0].clientY - e.touches[1].clientY;
       const currentDistance = Math.sqrt(dx * dx + dy * dy);
@@ -309,11 +328,10 @@ document.addEventListener('DOMContentLoaded', () => {
   }, { passive: false });
 
   window.addEventListener('touchend', (e) => {
-    if (e.touches.length < 2) {
-      initialPinchDistance = null;
-    }
     if (e.touches.length === 0) {
       isDragging = false;
+      initialPinchDistance = null;
+      setTimeout(() => { isPanDragging = false; }, 0);
     }
   });
 
