@@ -2890,8 +2890,3 @@ md-navigation-drawer {
 :hover > .fluent-bg-glow {
   opacity: 1;
 }
-
-// Adjust glow radius for large cards
-.post-card, .link-card, .timeline-card {
-  --fluent-radius: 400px;
-}
