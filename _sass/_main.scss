@@ -872,6 +872,8 @@ ul, ol { list-style: none; }
   backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
   -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
   border-bottom: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 30%, transparent);
+  transform: translateZ(0); // Fix mobile Chrome bug requiring refresh for blur
+  -webkit-transform: translateZ(0);
 
   transition:
     box-shadow var(--dur-short4) var(--motion-standard),
@@ -1424,6 +1426,8 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
   margin-bottom: 20px;
   flex-wrap: nowrap;
   width: 100%;
+  transform: translateZ(0); // Fix mobile blur
+  -webkit-transform: translateZ(0);
 }
 
 // Android Search Bar
@@ -1740,6 +1744,7 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
   margin: 0 auto;
   border-radius: 0 0 var(--shape-xl) var(--shape-xl);
   overflow: hidden;
+  isolation: isolate; // Fix Chrome backdrop-filter bug for child tags
 
   .hero-image {
     width: 100%;
@@ -1818,6 +1823,7 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
   max-width: 1100px;
   margin: 0 auto;
   border-radius: 0 0 var(--shape-xl) var(--shape-xl);
+  isolation: isolate;
   animation: page-enter var(--dur-long1) var(--motion-emphasized-decel) both;
 
   .hero-title {
