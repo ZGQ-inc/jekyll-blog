@@ -1995,9 +1995,10 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
       padding-bottom: 1em;
       
       summary {
-        margin-bottom: 0.5em;
-        border-bottom: 1px solid var(--md-sys-color-outline-variant);
-        padding-bottom: 0.5em;
+        margin-bottom: 1em;
+        border-bottom: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 50%, transparent);
+        border-bottom-left-radius: 0;
+        border-bottom-right-radius: 0;
       }
 
       // Add a fade-in and slide-down animation to the content
@@ -2026,20 +2027,23 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
     align-items: center;
     gap: 8px;
     outline: none;
-    border-radius: var(--shape-extra-small);
-    transition: color var(--dur-short4) var(--motion-standard);
-    list-style: none; // Hide default marker
+    border-radius: var(--shape-medium); // Match details border radius
+    transition: background-color var(--dur-short4) var(--motion-standard), color var(--dur-short4) var(--motion-standard);
+    list-style: none !important; // Hide default marker
+    margin: -0.5em -1em;
+    padding: 0.75em 1em;
     
     &:hover {
+      background-color: var(--md-sys-color-surface-container-high);
       color: var(--md-sys-color-primary);
     }
     
     // Hide default marker for webkit and standard
     &::marker {
-      display: none;
+      content: none;
     }
     &::-webkit-details-marker {
-      display: none;
+      display: none !important;
     }
   }
 
