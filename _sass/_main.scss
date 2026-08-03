@@ -2177,6 +2177,82 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
     p:last-child { margin-bottom: 0; }
   }
 
+  // Details & Summary (Expansion Panels)
+  details {
+    margin: 1.5em 0;
+    border: 1px solid var(--md-sys-color-outline-variant);
+    border-radius: var(--shape-large);
+    background-color: var(--md-sys-color-surface-container);
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+    summary {
+      padding: 16px 20px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      color: var(--md-sys-color-on-surface);
+      background-color: transparent;
+      transition: background-color 0.2s ease;
+      user-select: none;
+      list-style: none; // Hides default arrow in standard browsers
+
+      &::-webkit-details-marker {
+        display: none; // Hides default arrow in Safari/Chrome
+      }
+
+      &::before {
+        content: '\e5cf'; // material symbol expand_more
+        font-family: 'Material Symbols Outlined';
+        font-weight: normal;
+        font-style: normal;
+        font-size: 24px;
+        line-height: 1;
+        letter-spacing: normal;
+        text-transform: none;
+        display: inline-block;
+        white-space: nowrap;
+        word-wrap: normal;
+        direction: ltr;
+        -webkit-font-smoothing: antialiased;
+        margin-right: 12px;
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        color: var(--md-sys-color-on-surface-variant);
+      }
+
+      &:hover {
+        background-color: var(--md-sys-color-surface-container-highest);
+      }
+    }
+
+    &[open] {
+      border-color: var(--md-sys-color-outline);
+      background-color: var(--md-sys-color-surface-container-low);
+      
+      summary {
+        border-bottom: 1px solid var(--md-sys-color-outline-variant);
+        &::before {
+          transform: rotate(180deg);
+        }
+      }
+    }
+
+    // Content padding
+    & > :not(summary) {
+      padding-left: 20px;
+      padding-right: 20px;
+    }
+    
+    // Add breathing room to the first and last children of the content area
+    & > :not(summary):first-of-type {
+      margin-top: 16px;
+    }
+    & > :not(summary):last-child {
+      margin-bottom: 16px;
+    }
+  }
+
   hr {
     border: none;
     height: 1px;
