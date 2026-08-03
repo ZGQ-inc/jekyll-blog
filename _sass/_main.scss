@@ -171,6 +171,13 @@ a {
 img { max-width: 100%; height: auto; display: block; }
 ul, ol { list-style: none; }
 
+// Global fix for Material Symbols Outlined baseline shift
+.material-symbols-outlined {
+  vertical-align: middle;
+  position: relative;
+  top: -1px;
+}
+
 
 // ================================================================
 // §3. MD3 Custom Scrollbar
@@ -362,6 +369,7 @@ ul, ol { list-style: none; }
 .app-shell {
   display: flex;
   min-height: 100dvh;
+  align-items: flex-start;
 }
 
 .main-content {
@@ -371,6 +379,7 @@ ul, ol { list-style: none; }
   transition: margin-left var(--dur-medium2) var(--motion-emphasized);
   display: flex;
   flex-direction: column;
+  justify-content: flex-start;
 }
 
 
@@ -548,7 +557,11 @@ ul, ol { list-style: none; }
     box-shadow var(--dur-short4),
     transform var(--dur-short3) var(--motion-emphasized);
 
-  .material-symbols-outlined { font-size: 18px; line-height: 1; }
+  .material-symbols-outlined { 
+    font-size: 18px; 
+    line-height: 1; 
+    transform: translateY(-1px); 
+  }
 
   &:hover {
     background: color-mix(in srgb, var(--md-sys-color-primary-container) 70%, transparent);
@@ -1526,6 +1539,7 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
   padding: 24px 24px 48px;
   max-width: 1100px;
   margin: 0 auto;
+  margin-top: 0 !important;
   animation: page-enter var(--dur-long1) var(--motion-emphasized-decel) both;
 }
 
@@ -1883,6 +1897,8 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
       margin-right: 10px;
       vertical-align: middle;
       flex-shrink: 0;
+      position: relative;
+      top: -2px;
     }
   }
 
