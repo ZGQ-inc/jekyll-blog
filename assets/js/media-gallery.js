@@ -156,6 +156,23 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
+  // 3.5 Catch all remaining standalone media (e.g. images with text/captions)
+  document.querySelectorAll('.article-content img, .article-content video').forEach(media => {
+    // Skip if already processed
+    if (media.dataset.lightboxIndex !== undefined) return;
+    // Skip if it's inside a custom link wrapper
+    if (media.closest('a')) return;
+    
+    media.style.cursor = 'zoom-in';
+    media.dataset.lightboxIndex = allMediaArray.length;
+    allMediaArray.push(media);
+    
+    media.addEventListener('click', (e) => {
+      e.preventDefault();
+      openLightbox(parseInt(media.dataset.lightboxIndex));
+    });
+  });
+
   // 4. Lightbox DOM & Logic
   if (allMediaArray.length === 0) return;
 
