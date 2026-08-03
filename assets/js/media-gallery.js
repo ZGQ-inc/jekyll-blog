@@ -264,24 +264,49 @@ document.addEventListener('DOMContentLoaded', () => {
     container.style.cursor = 'default';
   });
 
-  // Touch support for panning
+  // Touch support for panning and pinch-to-zoom
+  let initialPinchDistance = null;
+  let initialScale = 1;
+
   container.addEventListener('touchstart', (e) => {
     if (e.touches.length === 1) {
       isDragging = true;
       startX = e.touches[0].clientX - translateX;
       startY = e.touches[0].clientY - translateY;
+    } else if (e.touches.length === 2) {
+      isDragging = false;
+      const dx = e.touches[0].clientX - e.touches[1].clientX;
+      const dy = e.touches[0].clientY - e.touches[1].clientY;
+      initialPinchDistance = Math.sqrt(dx * dx + dy * dy);
+      initialScale = scale;
     }
   });
 
   window.addEventListener('touchmove', (e) => {
-    if (!isDragging || e.touches.length !== 1) return;
-    translateX = e.touches[0].clientX - startX;
-    translateY = e.touches[0].clientY - startY;
-    updateTransform();
+    if (!lightbox.classList.contains('open')) return;
+    
+    if (e.touches.length === 1 && isDragging) {
+      translateX = e.touches[0].clientX - startX;
+      translateY = e.touches[0].clientY - startY;
+      updateTransform();
+    } else if (e.touches.length === 2 && initialPinchDistance) {
+      e.preventDefault(); // Prevent native page zoom
+      const dx = e.touches[0].clientX - e.touches[1].clientX;
+      const dy = e.touches[0].clientY - e.touches[1].clientY;
+      const currentDistance = Math.sqrt(dx * dx + dy * dy);
+      const pinchRatio = currentDistance / initialPinchDistance;
+      scale = Math.max(0.2, Math.min(5, initialScale * pinchRatio));
+      updateTransform();
+    }
   }, { passive: false });
 
-  window.addEventListener('touchend', () => {
-    isDragging = false;
+  window.addEventListener('touchend', (e) => {
+    if (e.touches.length < 2) {
+      initialPinchDistance = null;
+    }
+    if (e.touches.length === 0) {
+      isDragging = false;
+    }
   });
 
   // Keyboard navigation

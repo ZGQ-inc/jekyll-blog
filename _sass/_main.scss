@@ -3722,6 +3722,7 @@ md-navigation-drawer {
   opacity: 0;
   visibility: hidden;
   transition: opacity 0.3s ease, visibility 0.3s ease;
+  touch-action: none; // Prevent native page zoom and scroll on mobile
 
   &.open {
     opacity: 1;
