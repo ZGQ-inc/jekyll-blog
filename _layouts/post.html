@@ -136,7 +136,7 @@ layout: default
     </div>
     <div class="tg-text">
       <h4>前往 Telegram 频道参与讨论</h4>
-      <p>在频道帖子下评论，与其他读者互动</p>
+      <p>在频道帖子下评论</p>
     </div>
     <a class="action-btn btn-filled" id="tgDiscussBtn"
        href="#" target="_blank" rel="noopener"
@@ -197,7 +197,7 @@ layout: default
           // Fallback to channel root
           btn.href = 'https://t.me/' + channelName;
           if (commentsContainer) {
-            commentsContainer.innerHTML = '<p style="text-align:center;color:var(--md-sys-color-on-surface-variant);padding:20px;">本文尚未关联 Telegram 频道讨论。请等待作者推送。</p>';
+            commentsContainer.innerHTML = '<p style="text-align:center;color:var(--md-sys-color-on-surface-variant);padding:20px;">本文尚未关联 Telegram 频道讨论。请等待推送。</p>';
           }
         } else {
           card.style.display = 'none';
@@ -217,7 +217,7 @@ layout: default
   <div class="comments-section" style="margin-top: 40px;">
     <h3 class="comments-title" style="display:flex;align-items:center;gap:8px;margin-bottom:16px;">
       <span class="material-symbols-outlined">forum</span>
-      频道评论区
+      评论区
     </h3>
     <div id="tg-comments-container" style="min-height: 150px;"></div>
   </div>
