@@ -1738,7 +1738,7 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
   height: min(420px, 50vw);
   max-width: 1100px;
   margin: 0 auto;
-  border-radius: 0 0 var(--shape-extra-large) var(--shape-extra-large);
+  border-radius: 0 0 var(--shape-xl) var(--shape-xl);
   overflow: hidden;
 
   .hero-image {
@@ -1817,7 +1817,7 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
   width: 100%;
   max-width: 1100px;
   margin: 0 auto;
-  border-radius: 0 0 var(--shape-extra-large) var(--shape-extra-large);
+  border-radius: 0 0 var(--shape-xl) var(--shape-xl);
   animation: page-enter var(--dur-long1) var(--motion-emphasized-decel) both;
 
   .hero-title {
