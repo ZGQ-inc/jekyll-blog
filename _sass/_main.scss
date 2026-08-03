@@ -1943,6 +1943,9 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
 
     .color-swatch {
       display: inline-block;
+      width: 14px;
+      height: 14px;
+      padding: 0 !important;
       box-sizing: border-box;
       aspect-ratio: 1 / 1;
       border-radius: 50%; // Perfect circle
@@ -1950,7 +1953,7 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
       flex-shrink: 0;
       box-shadow: inset 0 0 0 1px rgba(0,0,0,0.05);
       vertical-align: text-bottom;
-      margin-right: 2px;
+      margin-right: 4px;
     }
   }
 
@@ -2025,14 +2028,15 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
     outline: none;
     border-radius: var(--shape-extra-small);
     transition: color var(--dur-short4) var(--motion-standard);
+    list-style: none; // Hide default marker
     
     &:hover {
       color: var(--md-sys-color-primary);
     }
     
-    // Custom arrow using MD symbols or generic CSS triangle
+    // Hide default marker for webkit and standard
     &::marker {
-      display: none; // hide default marker if possible
+      display: none;
     }
     &::-webkit-details-marker {
       display: none;

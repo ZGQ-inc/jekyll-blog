@@ -2,28 +2,47 @@ document.addEventListener('DOMContentLoaded', () => {
   // 1. KBD Special Icons
   const kbdElements = document.querySelectorAll('kbd');
   kbdElements.forEach(kbd => {
-    // Skip if it already has an icon
+    // Skip if it already has a generated icon
     if (kbd.querySelector('.material-symbols-outlined')) return;
 
-    const text = kbd.innerText.trim().toLowerCase();
+    let text = kbd.innerText.trim();
+    let originalText = text;
     let icon = '';
     
-    // Map common keys to Material Symbols
-    if (text === 'shift') icon = 'shift';
-    else if (text === 'win' || text === 'windows') icon = 'grid_view';
-    else if (text === 'cmd' || text === 'command') icon = 'keyboard_command_key';
-    else if (text === 'alt' || text === 'option') icon = 'keyboard_option_key';
-    else if (text === 'ctrl' || text === 'control') icon = 'keyboard_control_key';
-    else if (text === 'enter' || text === 'return') icon = 'keyboard_return';
-    else if (text === 'capslock' || text === 'caps') icon = 'keyboard_capslock';
-    else if (text === 'tab') icon = 'keyboard_tab';
-    else if (text === 'backspace') icon = 'backspace';
-    else if (text === 'esc' || text === 'escape') icon = 'close'; 
-    else if (text === 'up' || text === 'arrowup') icon = 'arrow_upward';
-    else if (text === 'down' || text === 'arrowdown') icon = 'arrow_downward';
-    else if (text === 'left' || text === 'arrowleft') icon = 'arrow_back';
-    else if (text === 'right' || text === 'arrowright') icon = 'arrow_forward';
-    else if (text === 'space') icon = 'space_bar';
+    // Check for explicit known unicode symbols often used for keys, strip them
+    if (text.includes('⌘')) { text = text.replace(/⌘/g, '').trim(); icon = 'grid_view'; kbd.innerText = text || 'Win'; }
+    if (text.includes('⇧')) { text = text.replace(/⇧/g, '').trim(); icon = 'shift'; kbd.innerText = text || 'Shift'; }
+    if (text.includes('⎋')) { text = text.replace(/⎋/g, '').trim(); icon = 'close'; kbd.innerText = text || 'Esc'; }
+    if (text.includes('^')) { text = text.replace(/\^/g, '').trim(); icon = 'keyboard_control_key'; kbd.innerText = text || 'Ctrl'; }
+    if (text.includes('⌥')) { text = text.replace(/⌥/g, '').trim(); icon = 'keyboard_option_key'; kbd.innerText = text || 'Alt'; }
+    if (text.includes('×') || text.includes('x')) { 
+      if (text.toLowerCase() === 'x esc' || text.toLowerCase() === '× esc') {
+        text = 'Esc'; kbd.innerText = text; icon = 'close';
+      }
+    }
+
+    let lowerText = text.toLowerCase();
+    
+    // Map common keys to Material Symbols if icon not already found
+    if (!icon) {
+      if (lowerText === 'shift') icon = 'shift';
+      else if (lowerText === 'win' || lowerText === 'windows' || lowerText === 'cmd' || lowerText === 'command') {
+        icon = 'grid_view';
+        if (lowerText === 'cmd' || lowerText === 'command') kbd.innerText = 'Win';
+      }
+      else if (lowerText === 'alt' || lowerText === 'option') icon = 'keyboard_option_key';
+      else if (lowerText === 'ctrl' || lowerText === 'control') icon = 'keyboard_control_key';
+      else if (lowerText === 'enter' || lowerText === 'return') icon = 'keyboard_return';
+      else if (lowerText === 'capslock' || lowerText === 'caps') icon = 'keyboard_capslock';
+      else if (lowerText === 'tab') icon = 'keyboard_tab';
+      else if (lowerText === 'backspace') icon = 'backspace';
+      else if (lowerText === 'esc' || lowerText === 'escape') icon = 'close'; 
+      else if (lowerText === 'up' || lowerText === 'arrowup') icon = 'arrow_upward';
+      else if (lowerText === 'down' || lowerText === 'arrowdown') icon = 'arrow_downward';
+      else if (lowerText === 'left' || lowerText === 'arrowleft') icon = 'arrow_back';
+      else if (lowerText === 'right' || lowerText === 'arrowright') icon = 'arrow_forward';
+      else if (lowerText === 'space') icon = 'space_bar';
+    }
 
     if (icon) {
       const iconSpan = document.createElement('span');
