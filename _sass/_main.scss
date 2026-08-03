@@ -2283,6 +2283,12 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
     background-color: var(--md-sys-color-surface-container);
     position: relative;
     z-index: 1; // Create stacking context
+
+    img {
+      border-radius: 0;
+      margin: 0;
+      box-shadow: none;
+    }
   }
 
   hr {

@@ -73,10 +73,10 @@ async function initSTL() {
   if (blocks.length === 0) return;
 
   try {
-    // Dynamic import Three.js + STLLoader + OrbitControls
-    const THREE = await import('https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.module.js');
-    const { STLLoader } = await import('https://cdn.jsdelivr.net/npm/three@0.158.0/examples/jsm/loaders/STLLoader.js');
-    const { OrbitControls } = await import('https://cdn.jsdelivr.net/npm/three@0.158.0/examples/jsm/controls/OrbitControls.js');
+    // Dynamic import Three.js + STLLoader + OrbitControls using esm.sh to automatically resolve bare module specifiers
+    const THREE = await import('https://esm.sh/three@0.158.0');
+    const { STLLoader } = await import('https://esm.sh/three@0.158.0/examples/jsm/loaders/STLLoader.js');
+    const { OrbitControls } = await import('https://esm.sh/three@0.158.0/examples/jsm/controls/OrbitControls.js');
 
     const loader = new STLLoader();
 
