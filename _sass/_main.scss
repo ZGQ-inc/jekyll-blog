@@ -1929,11 +1929,60 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
     border-radius: var(--shape-xs);
   }
 
-  pre {
+  // Kramdown / Rouge Code Blocks
+  .highlighter-rouge, figure.highlight {
     background: var(--md-sys-color-surface-container-high);
     border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 50%, transparent);
     border-radius: var(--shape-medium);
-    padding: 20px;
+    margin: 1.5em 0;
+    overflow-x: auto;
+    font-size: 0.9rem;
+    line-height: 1.6;
+
+    pre {
+      background: transparent;
+      border: none;
+      margin: 0;
+      padding: 16px 20px;
+      border-radius: 0;
+    }
+
+    code {
+      background: none;
+      padding: 0;
+      color: inherit;
+    }
+
+    table.rouge-table {
+      margin: 0;
+      border: none;
+      width: 100%;
+      display: table;
+      
+      td { padding: 0; border: none; }
+      
+      .rouge-gutter {
+        width: 1%;
+        border-right: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 40%, transparent);
+        color: color-mix(in srgb, var(--md-sys-color-on-surface-variant) 60%, transparent);
+        text-align: right;
+        user-select: none;
+        
+        pre { padding: 16px 16px 16px 20px; }
+      }
+      
+      .rouge-code {
+        pre { padding: 16px 20px 16px 16px; }
+      }
+    }
+  }
+
+  // Fallback for raw pre tags without highlighter
+  > pre {
+    background: var(--md-sys-color-surface-container-high);
+    border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 50%, transparent);
+    border-radius: var(--shape-medium);
+    padding: 16px 20px;
     overflow-x: auto;
     margin: 1.5em 0;
     font-size: 0.9rem;
@@ -1944,12 +1993,14 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
 
   blockquote {
     border-left: 4px solid var(--md-sys-color-primary);
-    padding: 12px 20px;
+    padding: 16px 20px;
     margin: 1.5em 0;
     background: color-mix(in srgb, var(--md-sys-color-primary-container) 30%, transparent);
     border-radius: 0 var(--shape-medium) var(--shape-medium) 0;
     color: var(--md-sys-color-on-surface-variant);
     font-style: italic;
+    
+    p:last-child { margin-bottom: 0; }
   }
 
   img {
@@ -1965,6 +2016,60 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
     li { margin-bottom: 0.4em; }
   }
 
+  li.task-list-item {
+    list-style-type: none;
+    margin-left: -1.5em;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+
+    input[type="checkbox"] {
+      appearance: none;
+      width: 18px;
+      height: 18px;
+      margin-top: 4px;
+      border: 2px solid var(--md-sys-color-outline);
+      border-radius: 2px;
+      display: inline-grid;
+      place-content: center;
+      transition: all var(--dur-short4);
+
+      &::before {
+        content: "";
+        width: 10px;
+        height: 10px;
+        transform: scale(0);
+        transition: 120ms transform ease-in-out;
+        box-shadow: inset 1em 1em var(--md-sys-color-on-primary);
+        background-color: var(--md-sys-color-on-primary);
+        transform-origin: center;
+        clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+      }
+
+      &:checked {
+        background-color: var(--md-sys-color-primary);
+        border-color: var(--md-sys-color-primary);
+        &::before { transform: scale(1); }
+      }
+    }
+  }
+
+  dl {
+    margin: 1.5em 0;
+    dt {
+      font-weight: 700;
+      color: var(--md-sys-color-on-surface);
+      margin-top: 1em;
+    }
+    dd {
+      margin-left: 1.5em;
+      margin-bottom: 0.5em;
+      color: var(--md-sys-color-on-surface-variant);
+      border-left: 2px solid var(--md-sys-color-outline-variant);
+      padding-left: 12px;
+    }
+  }
+
   table {
     display: block;
     width: 100%;
@@ -1972,21 +2077,47 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
     border-collapse: collapse;
     margin: 1.5em 0;
     font-size: 0.9375rem;
+    border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 50%, transparent);
+    border-radius: var(--shape-medium);
 
     th {
       background: var(--md-sys-color-surface-container-high);
       color: var(--md-sys-color-on-surface);
-      padding: 10px 16px;
+      padding: 12px 16px;
       font-weight: 700;
-      text-align: left;
+      border-bottom: 2px solid var(--md-sys-color-outline-variant);
     }
 
     td {
-      padding: 10px 16px;
-      border-bottom: 1px solid var(--md-sys-color-outline-variant);
+      padding: 12px 16px;
+      border-bottom: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 50%, transparent);
     }
 
+    tr:last-child td { border-bottom: none; }
+
     tr:hover td {
+      background: color-mix(in srgb, var(--md-sys-color-surface-container) 50%, transparent);
+    }
+  }
+
+  .footnotes {
+    margin-top: 3em;
+    padding-top: 1.5em;
+    border-top: 1px solid var(--md-sys-color-outline-variant);
+    font-size: 0.875rem;
+    color: var(--md-sys-color-on-surface-variant);
+
+    ol { padding-left: 1.5em; }
+    li { margin-bottom: 0.5em; }
+    
+    // Footnote return link
+    a.reversefootnote {
+      font-family: monospace;
+      text-decoration: none;
+      margin-left: 4px;
+      color: var(--md-sys-color-primary);
+    }
+  }
       background: color-mix(in srgb, var(--md-sys-color-surface-container) 50%, transparent);
     }
   }
