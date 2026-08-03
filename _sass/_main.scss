@@ -3389,7 +3389,14 @@ md-navigation-drawer {
   right: 0;
   bottom: 0;
   width: 300px;
-  background-color: var(--md-sys-color-surface-container);
+  background-color: color-mix(
+    in srgb,
+    var(--md-sys-color-surface-container-low) calc(var(--glass-opacity-light) * 100%),
+    transparent
+  );
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border-radius: var(--shape-large) 0 0 var(--shape-large);
   box-shadow: -4px 0 16px rgba(0,0,0,0.1);
   z-index: 2000;
   transform: translateX(100%);
@@ -3404,20 +3411,69 @@ md-navigation-drawer {
     transform: translateX(0);
   }
 
-  // Pinned mode for VERY wide screens (e.g. 1650px+)
-  // We can always display it on the right without overlapping the main centered content
-  @media (min-width: 1650px) {
-    transform: translateX(0); // Always visible
-    background-color: transparent;
-    box-shadow: none;
-    border-left: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 50%, transparent);
-    width: 260px;
-    padding-top: 80px; // account for top app bar + margin
+  // On PC, make it act like a sliding card vertically centered
+  @media (min-width: 1025px) {
+    top: 50%;
+    bottom: auto;
+    max-height: 80vh;
+    border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 40%, transparent);
+    border-right: none;
+    transform: translate(100%, -50%);
     
-    // Hide the close button in pinned mode
-    #tocCloseBtn {
-      display: none !important;
+    &.open {
+      transform: translate(0, -50%);
     }
+  }
+}
+
+.pc-toc-btn {
+  position: fixed;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 1998; // Below overlay so it gets dimmed if overlay active
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 12px 6px;
+  background-color: color-mix(in srgb, var(--md-sys-color-primary-container) 85%, transparent);
+  color: var(--md-sys-color-on-primary-container);
+  border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 40%, transparent);
+  border-right: none;
+  border-radius: var(--shape-large) 0 0 var(--shape-large);
+  box-shadow: -2px 0 8px rgba(0,0,0,0.1);
+  cursor: pointer;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  transition: transform var(--dur-medium4) var(--motion-standard),
+              background-color var(--dur-short4) var(--motion-standard),
+              right var(--dur-medium4) var(--motion-emphasized-decel);
+
+  &:hover {
+    background-color: var(--md-sys-color-primary-container);
+    box-shadow: -4px 0 12px rgba(0,0,0,0.15);
+  }
+  
+  // Hide the button itself if the drawer is open (optional, but looks better)
+  &.drawer-open {
+    transform: translate(100%, -50%);
+  }
+
+  .material-symbols-outlined {
+    font-size: 20px;
+  }
+  
+  .btn-text {
+    font-size: 0.8rem;
+    writing-mode: vertical-lr; // vertical text
+    letter-spacing: 0.2em;
+    font-weight: 600;
+  }
+
+  @media (max-width: 1024px) {
+    display: none !important;
   }
 }
 
@@ -3442,7 +3498,7 @@ md-navigation-drawer {
 
 .toc-content {
   overflow-y: auto;
-  flex: 1; // Take remaining space
+  flex: 1;
   padding-right: 8px;
   scrollbar-width: thin;
   scrollbar-color: var(--md-sys-color-outline-variant) transparent;

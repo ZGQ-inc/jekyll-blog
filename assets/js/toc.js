@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const tocDrawer = document.getElementById('tocDrawer');
   const tocOverlay = document.getElementById('tocOverlay');
   const topTocBtn = document.getElementById('topTocBtn');
+  const pcTocBtn = document.getElementById('pcTocBtn');
   const tocCloseBtn = document.getElementById('tocCloseBtn');
 
   if (!articleContent || !tocContent || !tocDrawer) return;
@@ -13,6 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
   
   if (headings.length === 0) {
     if (topTocBtn) topTocBtn.style.display = 'none';
+    if (pcTocBtn) pcTocBtn.style.display = 'none';
     return;
   }
 
@@ -42,7 +44,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       
       // Close drawer on small screens if clicking a link
-      if (window.innerWidth < 1650) {
+      if (window.innerWidth < 1025) {
         closeToc();
       }
     });
@@ -53,11 +55,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (!hasValidItems) {
     if (topTocBtn) topTocBtn.style.display = 'none';
+    if (pcTocBtn) pcTocBtn.style.display = 'none';
     return;
   }
 
   // Show the TOC button since we have valid items
   if (topTocBtn) topTocBtn.style.display = 'inline-flex';
+  if (pcTocBtn) pcTocBtn.style.display = 'flex';
   
   tocContent.appendChild(tocList);
 
@@ -116,8 +120,10 @@ document.addEventListener('DOMContentLoaded', () => {
   function openToc() {
     tocDrawer.classList.add('open');
     if (tocOverlay) tocOverlay.classList.add('visible');
+    if (pcTocBtn) pcTocBtn.classList.add('drawer-open');
+    
     // Lock body scroll only if the screen is small (where overlay applies)
-    if (window.innerWidth < 1650) {
+    if (window.innerWidth < 1025) {
       document.body.style.overflow = 'hidden';
     }
   }
@@ -125,11 +131,22 @@ document.addEventListener('DOMContentLoaded', () => {
   function closeToc() {
     tocDrawer.classList.remove('open');
     if (tocOverlay) tocOverlay.classList.remove('visible');
+    if (pcTocBtn) pcTocBtn.classList.remove('drawer-open');
     document.body.style.overflow = '';
   }
 
   if (topTocBtn) {
     topTocBtn.addEventListener('click', () => {
+      if (tocDrawer.classList.contains('open')) {
+        closeToc();
+      } else {
+        openToc();
+      }
+    });
+  }
+
+  if (pcTocBtn) {
+    pcTocBtn.addEventListener('click', () => {
       if (tocDrawer.classList.contains('open')) {
         closeToc();
       } else {
@@ -148,7 +165,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Handle window resize logic for body scroll
   window.addEventListener('resize', () => {
-    if (window.innerWidth >= 1650) {
+    if (window.innerWidth >= 1025) {
       document.body.style.overflow = '';
       if (tocOverlay) tocOverlay.classList.remove('visible');
     } else {
