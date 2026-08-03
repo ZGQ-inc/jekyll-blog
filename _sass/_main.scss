@@ -1991,8 +1991,8 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
     background: var(--md-sys-color-surface-container-high);
     border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 50%, transparent);
     border-radius: var(--shape-medium);
-    margin: 1.5em 0;
-    font-size: 0.9rem;
+    margin: 1.2em 0;
+    font-size: 0.85rem;
     line-height: 1.6;
     position: relative;
     overflow: hidden; // Keep border radius intact
@@ -2056,7 +2056,7 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
       background: transparent;
       border: none;
       margin: 0;
-      padding: 16px 20px;
+      padding: 12px 16px;
       border-radius: 0;
       min-width: fit-content;
     }
@@ -2082,11 +2082,11 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
         text-align: right;
         user-select: none;
         
-        pre { padding: 16px 16px 16px 20px; }
+        pre { padding: 12px 12px 12px 16px; }
       }
       
       .rouge-code {
-        pre { padding: 16px 20px 16px 16px; }
+        pre { padding: 12px 16px 12px 12px; }
       }
     }
   }

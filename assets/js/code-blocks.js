@@ -57,9 +57,23 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // 4. Attach Copy Event
     copyBtn.addEventListener('click', () => {
-      const codeEl = block.querySelector('code');
-      if (codeEl) {
-        const textToCopy = codeEl.innerText;
+      let textToCopy = '';
+      
+      // If rouge generates a table with line numbers, extract only the code part
+      const rougeCodeCells = block.querySelectorAll('.rouge-code');
+      if (rougeCodeCells.length > 0) {
+        textToCopy = Array.from(rougeCodeCells).map(cell => cell.innerText).join('\n');
+      } else {
+        const codeEl = block.querySelector('code');
+        if (codeEl) {
+          textToCopy = codeEl.innerText;
+        }
+      }
+      
+      if (textToCopy) {
+        // Strip trailing newlines common in innerText
+        textToCopy = textToCopy.replace(/\n$/, '');
+        
         navigator.clipboard.writeText(textToCopy).then(() => {
           if (window.showToast) {
             window.showToast('代码已复制！');
