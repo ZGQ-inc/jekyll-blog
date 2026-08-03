@@ -87,7 +87,7 @@ layout: default
   <!-- Tags row -->
   {% if post.tags.size > 0 %}
   <div class="card-tags" style="padding-top:16px;border-top:2px solid var(--md-sys-color-surface-container-high)">
-    <span class="material-symbols-outlined" style="font-size:1rem;color:var(--md-sys-color-on-surface-variant);margin-right:4px">label</span>
+    <span class="material-symbols-outlined" style="font-size:1.2rem;color:var(--md-sys-color-on-surface-variant);margin-right:4px">label</span>
     {% for tag in post.tags %}
     <a href="{{ '/tags/' | relative_url }}#{{ tag | slugify }}" class="chip chip-tonal">
       {{ tag }}
