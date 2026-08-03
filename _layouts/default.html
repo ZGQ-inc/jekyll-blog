@@ -26,6 +26,10 @@
         <span class="material-symbols-outlined">menu</span>
       </button>
       <span class="app-bar-title">{{ site.title }}</span>
+      <div style="flex: 1;"></div>
+      <button class="icon-btn" id="topTocBtn" aria-label="目录" title="目录" style="display: none;">
+        <span class="material-symbols-outlined">menu_open</span>
+      </button>
     </header>
 
     <!-- Page Content -->
@@ -41,6 +45,24 @@
     </footer>
 
   </div><!-- /main-content -->
+
+  <!-- TOC Overlay -->
+  <div class="toc-overlay" id="tocOverlay" aria-hidden="true"></div>
+
+  <!-- Right Sidebar TOC Drawer -->
+  <aside class="toc-drawer" id="tocDrawer">
+    <div class="toc-header">
+      <span class="material-symbols-outlined">format_list_bulleted</span>
+      <span class="toc-title">目录</span>
+      <button class="icon-btn" id="tocCloseBtn" style="margin-left:auto" aria-label="关闭目录">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+    <div class="toc-content" id="tocContent">
+      <!-- JS dynamically injects TOC here -->
+    </div>
+  </aside>
+
 </div><!-- /app-shell -->
 
 <!-- Back to Top FAB -->

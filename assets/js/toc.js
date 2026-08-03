@@ -1,18 +1,18 @@
 document.addEventListener('DOMContentLoaded', () => {
   const articleContent = document.querySelector('.article-content');
   const tocContent = document.getElementById('tocContent');
-  const tocSidebar = document.getElementById('tocSidebar');
-  const toggleBtns = document.querySelectorAll('.toc-toggle-btn');
-  const postLayout = document.querySelector('.post-layout-container');
+  const tocDrawer = document.getElementById('tocDrawer');
+  const tocOverlay = document.getElementById('tocOverlay');
+  const topTocBtn = document.getElementById('topTocBtn');
+  const tocCloseBtn = document.getElementById('tocCloseBtn');
 
-  if (!articleContent || !tocContent || !tocSidebar) return;
+  if (!articleContent || !tocContent || !tocDrawer) return;
 
   // 1. Generate TOC
   const headings = Array.from(articleContent.querySelectorAll('h2, h3'));
   
   if (headings.length === 0) {
-    tocSidebar.style.display = 'none';
-    toggleBtns.forEach(btn => btn.style.display = 'none');
+    if (topTocBtn) topTocBtn.style.display = 'none';
     return;
   }
 
@@ -32,13 +32,18 @@ document.addEventListener('DOMContentLoaded', () => {
     link.textContent = heading.innerText.trim();
     link.className = 'toc-link';
     
-    // Smooth scroll
+    // Smooth scroll and close drawer on mobile/click
     link.addEventListener('click', (e) => {
       e.preventDefault();
       history.pushState(null, null, link.hash);
       const target = document.getElementById(heading.id);
       if (target) {
         target.scrollIntoView({ behavior: 'smooth' });
+      }
+      
+      // Close drawer on small screens if clicking a link
+      if (window.innerWidth < 1650) {
+        closeToc();
       }
     });
 
@@ -47,11 +52,13 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   if (!hasValidItems) {
-    tocSidebar.style.display = 'none';
-    toggleBtns.forEach(btn => btn.style.display = 'none');
+    if (topTocBtn) topTocBtn.style.display = 'none';
     return;
   }
 
+  // Show the TOC button since we have valid items
+  if (topTocBtn) topTocBtn.style.display = 'inline-flex';
+  
   tocContent.appendChild(tocList);
 
   // 2. ScrollSpy using IntersectionObserver
@@ -73,12 +80,9 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
 
-    // Determine the active heading (highest in the viewport)
     if (visibleHeadings.length > 0) {
       activeId = visibleHeadings[0];
     } else {
-      // If scrolling up past a heading, active might be the one above it
-      // For a robust scrollspy, we need a slightly different logic
       entries.forEach(entry => {
         if (!entry.isIntersecting && entry.boundingClientRect.top < 0) {
           activeId = entry.target.id;
@@ -91,7 +95,7 @@ document.addEventListener('DOMContentLoaded', () => {
         link.classList.remove('active');
         if (link.getAttribute('href') === `#${activeId}`) {
           link.classList.add('active');
-          // Scroll the TOC itself if needed
+          // Auto scroll TOC
           const listItem = link.parentElement;
           if (listItem.offsetTop > tocContent.scrollTop + tocContent.clientHeight || listItem.offsetTop < tocContent.scrollTop) {
             tocContent.scrollTo({
@@ -108,29 +112,50 @@ document.addEventListener('DOMContentLoaded', () => {
     if (h.id) observer.observe(h);
   });
 
-  // 3. TOC Toggle Logic
-  const TOC_PREF_KEY = 'md3_toc_hidden';
-  
-  function setTocState(isHidden) {
-    if (isHidden) {
-      postLayout.classList.add('toc-hidden');
-      toggleBtns.forEach(btn => btn.classList.add('inactive'));
-      localStorage.setItem(TOC_PREF_KEY, 'true');
-    } else {
-      postLayout.classList.remove('toc-hidden');
-      toggleBtns.forEach(btn => btn.classList.remove('inactive'));
-      localStorage.setItem(TOC_PREF_KEY, 'false');
+  // 3. TOC Drawer Toggle Logic
+  function openToc() {
+    tocDrawer.classList.add('open');
+    if (tocOverlay) tocOverlay.classList.add('visible');
+    // Lock body scroll only if the screen is small (where overlay applies)
+    if (window.innerWidth < 1650) {
+      document.body.style.overflow = 'hidden';
     }
   }
 
-  // Load initial state
-  const isHiddenInit = localStorage.getItem(TOC_PREF_KEY) === 'true';
-  setTocState(isHiddenInit);
+  function closeToc() {
+    tocDrawer.classList.remove('open');
+    if (tocOverlay) tocOverlay.classList.remove('visible');
+    document.body.style.overflow = '';
+  }
 
-  toggleBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-      const currentlyHidden = postLayout.classList.contains('toc-hidden');
-      setTocState(!currentlyHidden);
+  if (topTocBtn) {
+    topTocBtn.addEventListener('click', () => {
+      if (tocDrawer.classList.contains('open')) {
+        closeToc();
+      } else {
+        openToc();
+      }
     });
+  }
+
+  if (tocCloseBtn) {
+    tocCloseBtn.addEventListener('click', closeToc);
+  }
+
+  if (tocOverlay) {
+    tocOverlay.addEventListener('click', closeToc);
+  }
+
+  // Handle window resize logic for body scroll
+  window.addEventListener('resize', () => {
+    if (window.innerWidth >= 1650) {
+      document.body.style.overflow = '';
+      if (tocOverlay) tocOverlay.classList.remove('visible');
+    } else {
+      if (tocDrawer.classList.contains('open')) {
+        document.body.style.overflow = 'hidden';
+        if (tocOverlay) tocOverlay.classList.add('visible');
+      }
+    }
   });
 });

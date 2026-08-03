@@ -62,9 +62,6 @@ layout: default
 </div>
 {% endif %}
 
-<!-- Post Layout Container (Article + TOC) -->
-<div class="post-layout-container">
-
 <!-- Post Content -->
 <article class="page-content" itemscope itemtype="http://schema.org/BlogPosting">
   <meta itemprop="headline" content="{{ post.title | escape }}">
@@ -237,21 +234,6 @@ layout: default
   {% endif %}
 
 </article>
-
-<!-- Right Sidebar for TOC -->
-<aside class="toc-sidebar" id="tocSidebar">
-  <div class="toc-sidebar-inner">
-    <div class="toc-header">
-      <span class="material-symbols-outlined">format_list_bulleted</span>
-      <span class="toc-title">目录</span>
-    </div>
-    <div class="toc-content" id="tocContent">
-      <!-- JS dynamically injects TOC here -->
-    </div>
-  </div>
-</aside>
-
-</div> <!-- /.post-layout-container -->
 
 <!-- TOC JS -->
 <script src="{{ '/assets/js/toc.js' | relative_url }}"></script>

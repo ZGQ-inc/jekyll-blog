@@ -3363,50 +3363,62 @@ md-navigation-drawer {
 }
 
 // ==========================================
-// Right Sidebar TOC (Table of Contents)
+// Right Sidebar TOC Drawer
 // ==========================================
 
-.post-layout-container {
-  display: flex;
-  align-items: flex-start;
-  gap: 32px;
-  position: relative;
-  
-  .page-content {
-    flex: 1;
-    min-width: 0;
-    transition: max-width var(--dur-medium4) var(--motion-standard);
-  }
+.toc-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: var(--md-sys-color-scrim);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 1999;
+  transition: opacity var(--dur-medium4) var(--motion-standard);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
 
-  &.toc-hidden {
-    .toc-sidebar {
-      display: none;
-    }
-    .page-content {
-      max-width: 100%;
-    }
+  &.visible {
+    opacity: 0.32;
+    pointer-events: auto;
   }
 }
 
-.toc-sidebar {
-  flex-shrink: 0;
-  width: 260px;
-  position: sticky;
-  top: 100px; // Offset from top app bar + margin
-  max-height: calc(100vh - 120px);
-  padding-left: 16px;
-  border-left: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 50%, transparent);
-  
-  // Hide on mobile or small screens
-  @media (max-width: 1024px) {
-    display: none;
-  }
-}
-
-.toc-sidebar-inner {
+.toc-drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 300px;
+  background-color: var(--md-sys-color-surface-container);
+  box-shadow: -4px 0 16px rgba(0,0,0,0.1);
+  z-index: 2000;
+  transform: translateX(100%);
+  transition: transform var(--dur-medium4) var(--motion-emphasized-decel),
+              background-color var(--dur-medium2) var(--motion-standard);
   display: flex;
   flex-direction: column;
-  height: 100%;
+  padding: 16px;
+  padding-top: max(16px, env(safe-area-inset-top));
+
+  &.open {
+    transform: translateX(0);
+  }
+
+  // Pinned mode for VERY wide screens (e.g. 1650px+)
+  // We can always display it on the right without overlapping the main centered content
+  @media (min-width: 1650px) {
+    transform: translateX(0); // Always visible
+    background-color: transparent;
+    box-shadow: none;
+    border-left: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 50%, transparent);
+    width: 260px;
+    padding-top: 80px; // account for top app bar + margin
+    
+    // Hide the close button in pinned mode
+    #tocCloseBtn {
+      display: none !important;
+    }
+  }
 }
 
 .toc-header {
@@ -3414,23 +3426,34 @@ md-navigation-drawer {
   align-items: center;
   gap: 8px;
   margin-bottom: 16px;
-  color: var(--md-sys-color-on-surface-variant);
+  color: var(--md-sys-color-on-surface);
   
   .material-symbols-outlined {
     font-size: 20px;
+    color: var(--md-sys-color-primary);
   }
   
   .toc-title {
     font-weight: 600;
-    font-size: 0.9rem;
+    font-size: 1rem;
     letter-spacing: 0.05em;
   }
 }
 
 .toc-content {
   overflow-y: auto;
-  scrollbar-width: none; // Firefox
-  &::-webkit-scrollbar { display: none; }
+  flex: 1; // Take remaining space
+  padding-right: 8px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--md-sys-color-outline-variant) transparent;
+  
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: var(--md-sys-color-outline-variant);
+    border-radius: 4px;
+  }
 }
 
 .toc-list {
@@ -3448,7 +3471,7 @@ md-navigation-drawer {
   
   .toc-link {
     display: block;
-    padding: 6px 12px;
+    padding: 8px 12px;
     color: var(--md-sys-color-on-surface-variant);
     font-size: 0.85rem;
     line-height: 1.4;
@@ -3468,32 +3491,5 @@ md-navigation-drawer {
       background-color: var(--md-sys-color-primary-container);
       border-left-color: var(--md-sys-color-primary);
     }
-  }
-}
-
-// TOC Toggle Button Styling
-.toc-toggle-btn {
-  background-color: var(--md-sys-color-surface-container);
-  color: var(--md-sys-color-primary);
-  box-shadow: var(--elev-1);
-  transition: all var(--dur-short4) var(--motion-standard);
-  
-  &:hover {
-    background-color: var(--md-sys-color-primary-container);
-    box-shadow: var(--elev-2);
-  }
-  
-  &.inactive {
-    color: var(--md-sys-color-on-surface-variant);
-    background-color: transparent;
-    box-shadow: none;
-    .material-symbols-outlined::before {
-      content: 'menu';
-    }
-  }
-
-  // Hide on screens where TOC is hidden anyway
-  @media (max-width: 1024px) {
-    display: none;
   }
 }
