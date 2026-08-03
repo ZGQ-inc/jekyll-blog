@@ -207,6 +207,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const clone = media.cloneNode(true);
     clone.removeAttribute('width');
     clone.removeAttribute('height');
+    clone.draggable = false;
     if (clone.tagName === 'VIDEO') clone.controls = true;
     contentWrapper.appendChild(clone);
     
