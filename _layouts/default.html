@@ -48,57 +48,8 @@
   <span class="material-symbols-outlined">arrow_upward</span>
 </button>
 
-<!-- Mermaid.js for Markdown Diagrams (Lazy Loaded) -->
-<script type="module">
-  // Find mermaid code blocks. Kramdown/Rouge might put the class on the wrapper div or the code element itself.
-  // We look for any element with class containing 'language-mermaid' or a code element with 'mermaid' in its class.
-  const mermaidElements = document.querySelectorAll('.language-mermaid, code.language-mermaid, code[data-lang="mermaid"]');
-  
-  if (mermaidElements.length > 0) {
-    let replacedCount = 0;
-    
-    mermaidElements.forEach((el) => {
-      // If el is the wrapper div, find the code element inside it
-      const codeEl = el.tagName === 'CODE' ? el : el.querySelector('code');
-      if (!codeEl) return;
-      
-      const mermaidCode = codeEl.textContent;
-      const newContainer = document.createElement('div');
-      newContainer.className = 'mermaid';
-      newContainer.textContent = mermaidCode;
-      newContainer.style.textAlign = 'center';
-      newContainer.style.margin = '1.5em 0';
-      
-      // Find the outermost wrapper to replace (usually <div class="highlighter-rouge">)
-      let targetToReplace = el;
-      if (codeEl.parentElement && codeEl.parentElement.tagName === 'PRE') {
-        targetToReplace = codeEl.parentElement;
-        if (targetToReplace.parentElement && targetToReplace.parentElement.classList.contains('highlighter-rouge')) {
-          targetToReplace = targetToReplace.parentElement;
-        }
-      }
-      
-      // Ensure we don't replace the same thing twice if querySelectorAll returned both the wrapper and the code
-      if (targetToReplace.parentNode) {
-        targetToReplace.parentNode.replaceChild(newContainer, targetToReplace);
-        replacedCount++;
-      }
-    });
-
-    if (replacedCount > 0) {
-      import('https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs').then((module) => {
-        const mermaid = module.default;
-        const rootTheme = document.documentElement.getAttribute('data-theme') || 'light';
-        mermaid.initialize({
-          startOnLoad: false,
-          theme: rootTheme === 'dark' ? 'dark' : 'default',
-          fontFamily: '"Inter", "Noto Sans SC", sans-serif'
-        });
-        mermaid.run();
-      }).catch(err => console.error("Mermaid loading failed:", err));
-    }
-  }
-</script>
+<!-- Markdown Lazy Renderers (Mermaid, STL, GeoJSON) -->
+<script type="module" src="{{ '/assets/js/renderers.js' | relative_url }}"></script>
 
 <!-- Color Swatches for Inline Code -->
 <script>

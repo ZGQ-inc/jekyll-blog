@@ -2272,6 +2272,19 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
     }
   }
 
+  // 3D & Map Renderers
+  .stl-viewer, .geojson-map {
+    width: 100%;
+    height: 400px;
+    margin: 1.5em 0;
+    border: 1px solid var(--md-sys-color-outline-variant);
+    border-radius: var(--shape-large);
+    overflow: hidden;
+    background-color: var(--md-sys-color-surface-container);
+    position: relative;
+    z-index: 1; // Create stacking context
+  }
+
   hr {
     border: none;
     height: 1px;
