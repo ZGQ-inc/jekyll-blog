@@ -321,7 +321,7 @@ ul, ol { list-style: none; }
     border-radius: inherit;
   }
 
-  &:hover::after { opacity: 1; }
+  // Hover state is now handled dynamically by Fluent Background Reveal
   &:active::after {
     opacity: 1;
     background: radial-gradient(
