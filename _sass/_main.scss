@@ -144,6 +144,7 @@ body::-webkit-scrollbar {
 
 html {
   scroll-behavior: smooth;
+  scroll-padding-top: 80px; // Prevent anchors from being hidden under top app bar
   scrollbar-width: none; // Firefox hide main scrollbar
 }
 
@@ -1967,6 +1968,22 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
     box-shadow: inset 0 -1px 0 rgba(0,0,0,0.05);
     margin: 0 0.2em;
     vertical-align: text-bottom;
+  }
+
+  abbr[title] {
+    text-decoration: underline dotted;
+    text-decoration-color: var(--md-sys-color-primary);
+    text-underline-offset: 3px;
+    cursor: help;
+    color: var(--md-sys-color-primary);
+    font-weight: 500;
+    transition: color var(--dur-short4) var(--motion-standard);
+
+    &:hover {
+      color: var(--md-sys-color-on-primary-container);
+      background-color: var(--md-sys-color-primary-container);
+      border-radius: var(--shape-extra-small);
+    }
   }
 
   // Kramdown / Rouge Code Blocks
