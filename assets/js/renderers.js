@@ -44,6 +44,7 @@ async function initMermaid() {
   blocks.forEach(({ wrapper, codeText }) => {
     const newContainer = document.createElement('div');
     newContainer.className = 'mermaid';
+    newContainer.setAttribute('data-mermaid-src', codeText);
     newContainer.textContent = codeText;
     newContainer.style.textAlign = 'center';
     newContainer.style.margin = '1.5em 0';
@@ -53,34 +54,52 @@ async function initMermaid() {
   try {
     const module = await import('https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs');
     const mermaid = module.default;
-    const computedStyles = getComputedStyle(document.documentElement);
-    const primary = computedStyles.getPropertyValue('--md-sys-color-primary').trim() || '#6750A4';
-    const primaryContainer = computedStyles.getPropertyValue('--md-sys-color-primary-container').trim() || '#EADDFF';
-    const onPrimaryContainer = computedStyles.getPropertyValue('--md-sys-color-on-primary-container').trim() || '#21005D';
-    const surface = computedStyles.getPropertyValue('--md-sys-color-surface').trim() || '#FEF7FF';
-    const surfaceContainer = computedStyles.getPropertyValue('--md-sys-color-surface-container').trim() || '#F3EDF7';
-    const onSurface = computedStyles.getPropertyValue('--md-sys-color-on-surface').trim() || '#1D1B20';
-    const outline = computedStyles.getPropertyValue('--md-sys-color-outline-variant').trim() || '#CAC4D0';
+    
+    const renderMermaid = async () => {
+      const computedStyles = getComputedStyle(document.documentElement);
+      const primary = computedStyles.getPropertyValue('--md-sys-color-primary').trim() || '#6750A4';
+      const primaryContainer = computedStyles.getPropertyValue('--md-sys-color-primary-container').trim() || '#EADDFF';
+      const onPrimaryContainer = computedStyles.getPropertyValue('--md-sys-color-on-primary-container').trim() || '#21005D';
+      const surface = computedStyles.getPropertyValue('--md-sys-color-surface').trim() || '#FEF7FF';
+      const surfaceContainer = computedStyles.getPropertyValue('--md-sys-color-surface-container').trim() || '#F3EDF7';
+      const onSurface = computedStyles.getPropertyValue('--md-sys-color-on-surface').trim() || '#1D1B20';
+      const outline = computedStyles.getPropertyValue('--md-sys-color-outline-variant').trim() || '#CAC4D0';
 
-    mermaid.initialize({
-      startOnLoad: false,
-      theme: 'base',
-      themeVariables: {
-        fontFamily: '"Inter", "Noto Sans SC", sans-serif',
-        primaryColor: primaryContainer,
-        primaryTextColor: onPrimaryContainer,
-        primaryBorderColor: outline,
-        lineColor: primary,
-        textColor: onSurface,
-        mainBkg: surfaceContainer,
-        nodeBorder: outline,
-        clusterBkg: surface,
-        clusterBorder: outline,
-        titleColor: onSurface,
-        edgeLabelBackground: surface
-      }
+      mermaid.initialize({
+        startOnLoad: false,
+        theme: 'base',
+        themeVariables: {
+          fontFamily: '"Inter", "Noto Sans SC", sans-serif',
+          primaryColor: primaryContainer,
+          primaryTextColor: onPrimaryContainer,
+          primaryBorderColor: outline,
+          lineColor: primary,
+          textColor: onSurface,
+          mainBkg: surfaceContainer,
+          nodeBorder: outline,
+          clusterBkg: surface,
+          clusterBorder: outline,
+          titleColor: onSurface,
+          edgeLabelBackground: surface
+        }
+      });
+
+      // Reset content and re-render
+      const mermaidDivs = document.querySelectorAll('.mermaid');
+      mermaidDivs.forEach(div => {
+        div.removeAttribute('data-processed');
+        div.innerHTML = div.getAttribute('data-mermaid-src');
+      });
+      await mermaid.run({ querySelector: '.mermaid' });
+    };
+
+    await renderMermaid();
+
+    document.addEventListener('themechange', () => {
+      // Small delay to ensure CSS variables have updated
+      setTimeout(renderMermaid, 50);
     });
-    mermaid.run();
+
   } catch (err) {
     console.error("Mermaid loading failed:", err);
   }
@@ -166,6 +185,18 @@ async function initSTL() {
         camera.position.z = cameraZ;
 
         scene.add(mesh);
+        
+        // Listen for theme changes to dynamically update STL colors
+        document.addEventListener('themechange', () => {
+          setTimeout(() => {
+            const newStyles = getComputedStyle(document.documentElement);
+            const newSurface = newStyles.getPropertyValue('--md-sys-color-surface-container').trim() || '#f3f4f9';
+            const newPrimary = newStyles.getPropertyValue('--md-sys-color-primary').trim() || '#0061A4';
+            
+            scene.background.set(newSurface);
+            material.color.set(newPrimary);
+          }, 50);
+        });
         
         // Animation Loop
         const animate = function () {
