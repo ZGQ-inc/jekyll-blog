@@ -39,11 +39,6 @@
 <!-- Main Stylesheet -->
 <link rel="stylesheet" href="{{ '/assets/css/style.css' | relative_url }}">
 
-<!-- RSS Feed -->
-{% if site.social.rss %}
-<link rel="alternate" type="application/atom+xml" title="{{ site.title }}" href="{{ '/feed.xml' | relative_url }}">
-{% endif %}
-
 <!-- Open Graph extras -->
 {% if page.image %}
 <meta property="og:image" content="{{ page.image | absolute_url }}">
