@@ -171,11 +171,10 @@ a {
 img { max-width: 100%; height: auto; display: block; }
 ul, ol { list-style: none; }
 
-// Global fix for Material Symbols Outlined baseline shift
 .material-symbols-outlined {
   vertical-align: middle;
   position: relative;
-  top: -0.2px;
+  top: -0.5px;
 }
 
 
@@ -1746,6 +1745,7 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
 .card-tags {
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
   gap: 6px;
   margin-top: 4px;
 }
@@ -1901,7 +1901,7 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
       vertical-align: middle;
       flex-shrink: 0;
       position: relative;
-      top: -2px;
+      top: -1px;
     }
   }
 
