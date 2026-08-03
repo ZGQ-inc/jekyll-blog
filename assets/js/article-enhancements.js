@@ -52,30 +52,4 @@ document.addEventListener('DOMContentLoaded', () => {
       kbd.insertBefore(iconSpan, kbd.firstChild);
     }
   });
-  
-  // 2. Summary details arrows
-  const summaries = document.querySelectorAll('details summary');
-  summaries.forEach(summary => {
-    if (!summary.querySelector('.summary-arrow')) {
-      const arrow = document.createElement('span');
-      arrow.className = 'material-symbols-outlined summary-arrow';
-      arrow.textContent = 'arrow_right';
-      arrow.style.transition = 'transform 0.3s ease';
-      
-      // Update arrow rotation based on details state
-      const details = summary.parentElement;
-      if (details.open) {
-        arrow.style.transform = 'rotate(90deg)';
-      }
-      
-      summary.insertBefore(arrow, summary.firstChild);
-      
-      summary.addEventListener('click', () => {
-        // Details state changes after the click event, so we use setTimeout
-        setTimeout(() => {
-          arrow.style.transform = details.open ? 'rotate(90deg)' : 'rotate(0deg)';
-        }, 10);
-      });
-    }
-  });
 });
