@@ -915,9 +915,9 @@ function initRipples() {
     el.style.setProperty('--ripple-y', `${((e.clientY - rect.top)  / rect.height * 100).toFixed(1)}%`);
   }, { passive: true });
 
-  // Fluent Design Background Reveal for buttons
+  // Fluent Design Background Reveal for buttons and cards
   document.addEventListener('pointermove', e => {
-    const el = e.target.closest('.nav-item, .social-btn, .color-swatch, .page-btn, #themeDialogBtn, #backToTopBtn, .btn, .action-btn, .mode-btn, .android-search-bar');
+    const el = e.target.closest('.nav-item, .social-btn, .color-swatch, .page-btn, #themeDialogBtn, #backToTopBtn, .btn, .action-btn, .mode-btn, .android-search-bar, .post-card, .link-card, .timeline-card');
     if (!el) return;
     
     let glow = el.querySelector('.fluent-bg-glow');

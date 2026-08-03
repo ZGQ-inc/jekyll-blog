@@ -2879,7 +2879,7 @@ md-navigation-drawer {
   pointer-events: none;
   border-radius: inherit;
   background: radial-gradient(
-    120px circle at var(--hover-x, -1000px) var(--hover-y, -1000px),
+    var(--fluent-radius, 120px) circle at var(--hover-x, -1000px) var(--hover-y, -1000px),
     color-mix(in srgb, var(--md-sys-color-on-surface) 10%, rgba(255,255,255,0.15)),
     transparent 100%
   );
@@ -2889,4 +2889,9 @@ md-navigation-drawer {
 
 :hover > .fluent-bg-glow {
   opacity: 1;
+}
+
+// Adjust glow radius for large cards
+.post-card, .link-card, .timeline-card {
+  --fluent-radius: 400px;
 }
