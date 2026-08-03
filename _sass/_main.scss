@@ -2310,12 +2310,37 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
   }
 
   // File Download Card
+  .file-download-wrapper {
+    margin: 1.5em 0;
+  }
+  
   .file-download-card {
+    // Default fallback (Primary)
+    --card-color: var(--md-sys-color-primary);
+    --card-color-container: var(--md-sys-color-primary-container);
+    --card-on-color-container: var(--md-sys-color-on-primary-container);
+
+    &.color-secondary {
+      --card-color: var(--md-sys-color-secondary);
+      --card-color-container: var(--md-sys-color-secondary-container);
+      --card-on-color-container: var(--md-sys-color-on-secondary-container);
+    }
+    &.color-tertiary {
+      --card-color: var(--md-sys-color-tertiary);
+      --card-color-container: var(--md-sys-color-tertiary-container);
+      --card-on-color-container: var(--md-sys-color-on-tertiary-container);
+    }
+    &.color-error {
+      --card-color: var(--md-sys-color-error);
+      --card-color-container: var(--md-sys-color-error-container);
+      --card-on-color-container: var(--md-sys-color-on-error-container);
+    }
+
     display: flex;
     align-items: center;
     gap: 16px;
     padding: 16px;
-    margin: 1.5em 0;
+    margin: 0; // Margin is handled by wrapper
     text-decoration: none !important;
     background-color: var(--md-sys-color-surface-container);
     border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 50%, transparent);
@@ -2331,8 +2356,8 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
       transform: translateY(-2px);
       
       .icon-btn-mock {
-        background-color: var(--md-sys-color-primary-container);
-        color: var(--md-sys-color-on-primary-container);
+        background-color: var(--card-color-container);
+        color: var(--card-on-color-container);
       }
     }
 
@@ -2348,8 +2373,8 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
       width: 48px;
       height: 48px;
       border-radius: 50%;
-      background-color: color-mix(in srgb, var(--md-sys-color-primary) 12%, transparent);
-      color: var(--md-sys-color-primary);
+      background-color: color-mix(in srgb, var(--card-color) 12%, transparent);
+      color: var(--card-color);
       flex-shrink: 0;
 
       .material-symbols-outlined {
@@ -2395,7 +2420,7 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
         height: 40px;
         border-radius: 50%;
         background-color: transparent;
-        color: var(--md-sys-color-primary);
+        color: var(--card-color);
         transition: all var(--dur-short4) var(--motion-standard);
       }
     }

@@ -1,18 +1,78 @@
-<a href="{{ include.url }}" class="file-download-card" {% if include.download != false %}download{% endif %} target="_blank" rel="noopener">
-  <div class="file-icon">
-    <span class="material-symbols-outlined">{{ include.icon | default: 'description' }}</span>
-  </div>
-  <div class="file-info">
-    <div class="file-name">{{ include.name }}</div>
-    <div class="file-meta">
-      {% if include.size %}<span class="file-size">{{ include.size }}</span>{% endif %}
-      {% if include.size and include.date %}<span class="separator">•</span>{% endif %}
-      {% if include.date %}<span class="file-date">{{ include.date }}</span>{% endif %}
+{% assign parts = include.name | split: '.' %}
+{% assign ext = parts | last | downcase %}
+
+{% assign file_color = "primary" %}
+{% assign file_icon = "insert_drive_file" %}
+
+{% case ext %}
+  {% when 'pdf' %}
+    {% assign file_color = "error" %}
+    {% assign file_icon = "picture_as_pdf" %}
+  {% when 'zip' or 'rar' or '7z' or 'tar' or 'gz' %}
+    {% assign file_color = "tertiary" %}
+    {% assign file_icon = "folder_zip" %}
+  {% when 'doc' or 'docx' %}
+    {% assign file_color = "primary" %}
+    {% assign file_icon = "description" %}
+  {% when 'xls' or 'xlsx' or 'csv' %}
+    {% assign file_color = "secondary" %}
+    {% assign file_icon = "table" %}
+  {% when 'ppt' or 'pptx' %}
+    {% assign file_color = "error" %}
+    {% assign file_icon = "co_present" %}
+  {% when 'jpg' or 'jpeg' or 'png' or 'gif' or 'svg' or 'webp' or 'ico' %}
+    {% assign file_color = "tertiary" %}
+    {% assign file_icon = "image" %}
+  {% when 'mp3' or 'wav' or 'flac' or 'ogg' %}
+    {% assign file_color = "secondary" %}
+    {% assign file_icon = "audio_file" %}
+  {% when 'mp4' or 'mkv' or 'avi' or 'webm' or 'mov' %}
+    {% assign file_color = "primary" %}
+    {% assign file_icon = "video_file" %}
+  {% when 'exe' or 'msi' or 'dmg' or 'apk' or 'bat' or 'ps1' or 'sh' %}
+    {% assign file_color = "error" %}
+    {% assign file_icon = "terminal" %}
+  {% when 'txt' or 'md' or 'rtf' %}
+    {% assign file_color = "secondary" %}
+    {% assign file_icon = "article" %}
+  {% when 'json' or 'xml' or 'yml' or 'yaml' or 'conf' or 'reg' or 'ini' %}
+    {% assign file_color = "secondary" %}
+    {% assign file_icon = "data_object" %}
+  {% when 'torrent' %}
+    {% assign file_color = "tertiary" %}
+    {% assign file_icon = "cloud_download" %}
+  {% when 'mcpack' or 'save' or 'mcworld' %}
+    {% assign file_color = "primary" %}
+    {% assign file_icon = "extension" %}
+  {% when 'js' or 'ts' or 'py' or 'rb' or 'go' or 'java' or 'c' or 'cpp' or 'rs' or 'php' or 'html' or 'css' or 'scss' or 'cs' or 'swift' or 'kt' or 'dart' or 'lua' or 'sql' %}
+    {% assign file_color = "tertiary" %}
+    {% assign file_icon = "code" %}
+{% endcase %}
+
+{% if include.icon %}
+  {% assign file_icon = include.icon %}
+{% endif %}
+{% if include.color %}
+  {% assign file_color = include.color %}
+{% endif %}
+
+<div class="file-download-wrapper" markdown="0">
+  <a href="{{ include.url }}" class="file-download-card color-{{ file_color }}" {% if include.download != false %}download{% endif %} target="_blank" rel="noopener">
+    <div class="file-icon">
+      <span class="material-symbols-outlined">{{ file_icon }}</span>
     </div>
-  </div>
-  <div class="file-action">
-    <div class="icon-btn-mock" aria-hidden="true">
-      <span class="material-symbols-outlined">download</span>
+    <div class="file-info">
+      <div class="file-name">{{ include.name }}</div>
+      <div class="file-meta">
+        {% if include.size %}<span class="file-size">{{ include.size }}</span>{% endif %}
+        {% if include.size and include.date %}<span class="separator">•</span>{% endif %}
+        {% if include.date %}<span class="file-date">{{ include.date }}</span>{% endif %}
+      </div>
     </div>
-  </div>
-</a>
+    <div class="file-action">
+      <div class="icon-btn-mock" aria-hidden="true">
+        <span class="material-symbols-outlined">download</span>
+      </div>
+    </div>
+  </a>
+</div>
