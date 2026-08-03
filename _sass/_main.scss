@@ -2073,11 +2073,22 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
 }
 
 .comments-section {
-  background: color-mix(in srgb, var(--md-sys-color-surface-container) 60%, transparent);
-  backdrop-filter: blur(12px);
-  border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 40%, transparent);
+  position: relative;
+  z-index: 1;
   border-radius: var(--shape-large);
   padding: 20px;
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    background: color-mix(in srgb, var(--md-sys-color-surface-container) 60%, transparent);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 40%, transparent);
+  }
 }
 
 .comments-title {
@@ -2294,14 +2305,25 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
 }
 
 .timeline-card {
-  background: color-mix(in srgb, var(--md-sys-color-surface-container-low) 85%, transparent);
-  backdrop-filter: blur(12px);
-  border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 40%, transparent);
+  position: relative;
+  z-index: 1;
   border-radius: var(--shape-large);
   padding: 16px 18px;
   transition:
     box-shadow var(--dur-short4) var(--motion-standard),
     transform var(--dur-medium2) var(--motion-emphasized-decel);
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    background: color-mix(in srgb, var(--md-sys-color-surface-container-low) 85%, transparent);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 40%, transparent);
+  }
 
   &:hover { box-shadow: var(--elev-2); transform: translateX(4px); }
 }
@@ -2310,21 +2332,32 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
 .link-card {
   @include ripple-surface;
   display: flex;
+  position: relative;
+  z-index: 1;
   align-items: center;
   gap: 16px;
   padding: 16px 20px;
-  background: color-mix(in srgb, var(--md-sys-color-surface-container-low) 80%, transparent);
-  backdrop-filter: blur(10px);
-  border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 40%, transparent);
   border-radius: var(--shape-large);
   text-decoration: none;
   color: var(--md-sys-color-on-surface);
   transition:
     box-shadow var(--dur-medium2) var(--motion-standard),
-    transform var(--dur-medium2) var(--motion-emphasized-decel),
-    border-color var(--dur-short4);
+    transform var(--dur-medium2) var(--motion-emphasized-decel);
   animation: card-enter var(--dur-long1) var(--motion-emphasized-decel) both;
   @for $i from 1 through 20 { &:nth-child(#{$i}) { animation-delay: #{$i * 60}ms; } }
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    background: color-mix(in srgb, var(--md-sys-color-surface-container-low) 80%, transparent);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 40%, transparent);
+    transition: border-color var(--dur-short4);
+  }
 
   &:hover {
     box-shadow: var(--elev-3);
