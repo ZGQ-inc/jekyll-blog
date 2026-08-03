@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-  const postContent = document.querySelector('.post-content');
+  const postContent = document.querySelector('.article-content');
   if (!postContent) return;
 
   // 1. Group consecutive media elements
