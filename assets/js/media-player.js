@@ -16,7 +16,42 @@ document.addEventListener('DOMContentLoaded', () => {
     const wrapper = document.createElement('div');
     wrapper.className = `md3-media-player ${isVideo ? 'md3-media-video' : 'md3-media-audio'}`;
     media.parentNode.insertBefore(wrapper, media);
-    wrapper.appendChild(media);
+    
+    // For audio, we create a rich card layout
+    let audioBody;
+    if (!isVideo) {
+      // Hide the actual audio element
+      media.style.display = 'none';
+      wrapper.appendChild(media);
+
+      const coverUrl = media.dataset.cover;
+      const title = media.dataset.title || '未知曲目';
+      const artist = media.dataset.artist || '未知艺术家';
+      const album = media.dataset.album || '';
+
+      const coverDiv = document.createElement('div');
+      coverDiv.className = 'audio-cover';
+      if (coverUrl) {
+        coverDiv.innerHTML = `<img src="${coverUrl}" alt="Cover">`;
+      } else {
+        coverDiv.innerHTML = `<div class="audio-cover-placeholder"><span class="material-symbols-outlined">music_note</span></div>`;
+      }
+      wrapper.appendChild(coverDiv);
+
+      audioBody = document.createElement('div');
+      audioBody.className = 'audio-body';
+
+      const headerDiv = document.createElement('div');
+      headerDiv.className = 'audio-header';
+      headerDiv.innerHTML = `
+        <div class="audio-title">${title}</div>
+        <div class="audio-artist">${artist}${album ? ' · ' + album : ''}</div>
+      `;
+      audioBody.appendChild(headerDiv);
+      wrapper.appendChild(audioBody);
+    } else {
+      wrapper.appendChild(media);
+    }
 
     // Create controls container
     const controls = document.createElement('div');
@@ -66,9 +101,10 @@ document.addEventListener('DOMContentLoaded', () => {
       fullscreenBtn.title = '全屏';
       fullscreenBtn.innerHTML = '<span class="material-symbols-outlined">fullscreen</span>';
       controls.appendChild(fullscreenBtn);
+      wrapper.appendChild(controls);
+    } else {
+      audioBody.appendChild(controls);
     }
-
-    wrapper.appendChild(controls);
 
     // --- Logic ---
 
