@@ -53,11 +53,32 @@ async function initMermaid() {
   try {
     const module = await import('https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs');
     const mermaid = module.default;
-    const rootTheme = document.documentElement.getAttribute('data-theme') || 'light';
+    const computedStyles = getComputedStyle(document.documentElement);
+    const primary = computedStyles.getPropertyValue('--md-sys-color-primary').trim() || '#6750A4';
+    const primaryContainer = computedStyles.getPropertyValue('--md-sys-color-primary-container').trim() || '#EADDFF';
+    const onPrimaryContainer = computedStyles.getPropertyValue('--md-sys-color-on-primary-container').trim() || '#21005D';
+    const surface = computedStyles.getPropertyValue('--md-sys-color-surface').trim() || '#FEF7FF';
+    const surfaceContainer = computedStyles.getPropertyValue('--md-sys-color-surface-container').trim() || '#F3EDF7';
+    const onSurface = computedStyles.getPropertyValue('--md-sys-color-on-surface').trim() || '#1D1B20';
+    const outline = computedStyles.getPropertyValue('--md-sys-color-outline-variant').trim() || '#CAC4D0';
+
     mermaid.initialize({
       startOnLoad: false,
-      theme: rootTheme === 'dark' ? 'dark' : 'default',
-      fontFamily: '"Inter", "Noto Sans SC", sans-serif'
+      theme: 'base',
+      themeVariables: {
+        fontFamily: '"Inter", "Noto Sans SC", sans-serif',
+        primaryColor: primaryContainer,
+        primaryTextColor: onPrimaryContainer,
+        primaryBorderColor: outline,
+        lineColor: primary,
+        textColor: onSurface,
+        mainBkg: surfaceContainer,
+        nodeBorder: outline,
+        clusterBkg: surface,
+        clusterBorder: outline,
+        titleColor: onSurface,
+        edgeLabelBackground: surface
+      }
     });
     mermaid.run();
   } catch (err) {
