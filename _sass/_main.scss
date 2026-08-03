@@ -98,10 +98,10 @@
   --nav-rail-width:     80px;   // MD3 spec: 80dp
 
   // ── Glassmorphism ─────────────────────────────────────────────
-  --glass-blur:         20px;
-  --glass-saturate:     160%;
-  --glass-opacity-light: 0.82;
-  --glass-opacity-dark:  0.75;
+  --glass-blur:         24px;
+  --glass-saturate:     150%;
+  --glass-opacity-light: 0.65;
+  --glass-opacity-dark:  0.55;
 
   // ── Typography ────────────────────────────────────────────────
   font-family: 'Noto Sans SC', 'Inter', 'Roboto', system-ui, sans-serif;
@@ -887,7 +887,7 @@ ul, ol { list-style: none; }
     &::before {
       background: color-mix(
         in srgb,
-        var(--md-sys-color-surface-container) 90%,
+        var(--md-sys-color-surface-container) 65%,
         transparent
       );
     }
@@ -1799,10 +1799,10 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
       position: absolute;
       inset: 0;
       z-index: -1;
-      background: rgba(0,0,0,0.4);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      border: 1px solid rgba(255,255,255,0.15);
+      background: rgba(0,0,0,0.25);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255,255,255,0.1);
       border-radius: var(--shape-small);
     }
   }
@@ -2084,10 +2084,10 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
     inset: 0;
     z-index: -1;
     border-radius: inherit;
-    background: color-mix(in srgb, var(--md-sys-color-surface-container) 60%, transparent);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 40%, transparent);
+    background: color-mix(in srgb, var(--md-sys-color-surface-container) 40%, transparent);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 30%, transparent);
   }
 }
 
@@ -2319,10 +2319,10 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
     inset: 0;
     z-index: -1;
     border-radius: inherit;
-    background: color-mix(in srgb, var(--md-sys-color-surface-container-low) 85%, transparent);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 40%, transparent);
+    background: color-mix(in srgb, var(--md-sys-color-surface-container-low) 55%, transparent);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 30%, transparent);
   }
 
   &:hover { box-shadow: var(--elev-2); transform: translateX(4px); }
@@ -2352,10 +2352,10 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
     inset: 0;
     z-index: -1;
     border-radius: inherit;
-    background: color-mix(in srgb, var(--md-sys-color-surface-container-low) 80%, transparent);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 40%, transparent);
+    background: color-mix(in srgb, var(--md-sys-color-surface-container-low) 50%, transparent);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 30%, transparent);
     transition: border-color var(--dur-short4);
   }
 
