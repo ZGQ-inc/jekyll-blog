@@ -274,6 +274,7 @@ async function initGeoJSON() {
 
   try {
     const L = await loadLeaflet();
+    const geojsonLayers = []; // Keep track for dynamic theme updates
 
     blocks.forEach(({ wrapper, codeText }) => {
       const container = document.createElement('div');
@@ -293,24 +294,65 @@ async function initGeoJSON() {
           maxZoom: 20
         }).addTo(map);
 
+        const getStyle = () => {
+          const primary = getComputedStyle(document.documentElement).getPropertyValue('--md-sys-color-primary').trim() || '#0061A4';
+          return {
+            color: primary,
+            weight: 2,
+            fillOpacity: 0.2
+          };
+        };
+
         // Parse and add GeoJSON layer
         const geojsonLayer = L.geoJSON(data, {
-          style: function (feature) {
-            return {
-              color: 'var(--md-sys-color-primary, #0061A4)',
+          style: getStyle,
+          pointToLayer: function (feature, latlng) {
+            return L.circleMarker(latlng, {
+              radius: 8,
+              fillColor: getComputedStyle(document.documentElement).getPropertyValue('--md-sys-color-primary').trim() || '#0061A4',
+              color: '#ffffff',
               weight: 2,
-              fillOpacity: 0.2
-            };
+              opacity: 1,
+              fillOpacity: 0.8
+            });
+          },
+          onEachFeature: function (feature, layer) {
+            if (feature.properties && feature.properties.name) {
+              let popupContent = `<strong>${feature.properties.name}</strong>`;
+              if (feature.properties.description) {
+                popupContent += `<br>${feature.properties.description}`;
+              }
+              layer.bindPopup(popupContent);
+            }
           }
         }).addTo(map);
 
         // Fit bounds
         map.fitBounds(geojsonLayer.getBounds(), { padding: [20, 20] });
+        
+        geojsonLayers.push({ layer: geojsonLayer, map: map, getStyle: getStyle });
       } catch (e) {
         console.error("Failed to parse GeoJSON:", e);
         container.textContent = "Error rendering GeoJSON map.";
       }
     });
+
+    // Listen for theme changes to dynamically update GeoJSON colors
+    document.addEventListener('themechange', () => {
+      setTimeout(() => {
+        const primary = getComputedStyle(document.documentElement).getPropertyValue('--md-sys-color-primary').trim() || '#0061A4';
+        geojsonLayers.forEach(({ layer, getStyle }) => {
+          layer.setStyle(getStyle());
+          // Also update circle markers specifically
+          layer.eachLayer((childLayer) => {
+            if (childLayer instanceof L.CircleMarker) {
+              childLayer.setStyle({ fillColor: primary });
+            }
+          });
+        });
+      }, 50);
+    });
+
   } catch (err) {
     console.error("Leaflet loading failed:", err);
   }
