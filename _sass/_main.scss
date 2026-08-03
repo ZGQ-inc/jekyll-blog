@@ -3361,3 +3361,139 @@ md-navigation-drawer {
 :hover > .fluent-bg-glow {
   opacity: 1;
 }
+
+// ==========================================
+// Right Sidebar TOC (Table of Contents)
+// ==========================================
+
+.post-layout-container {
+  display: flex;
+  align-items: flex-start;
+  gap: 32px;
+  position: relative;
+  
+  .page-content {
+    flex: 1;
+    min-width: 0;
+    transition: max-width var(--dur-medium4) var(--motion-standard);
+  }
+
+  &.toc-hidden {
+    .toc-sidebar {
+      display: none;
+    }
+    .page-content {
+      max-width: 100%;
+    }
+  }
+}
+
+.toc-sidebar {
+  flex-shrink: 0;
+  width: 260px;
+  position: sticky;
+  top: 100px; // Offset from top app bar + margin
+  max-height: calc(100vh - 120px);
+  padding-left: 16px;
+  border-left: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 50%, transparent);
+  
+  // Hide on mobile or small screens
+  @media (max-width: 1024px) {
+    display: none;
+  }
+}
+
+.toc-sidebar-inner {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.toc-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+  color: var(--md-sys-color-on-surface-variant);
+  
+  .material-symbols-outlined {
+    font-size: 20px;
+  }
+  
+  .toc-title {
+    font-weight: 600;
+    font-size: 0.9rem;
+    letter-spacing: 0.05em;
+  }
+}
+
+.toc-content {
+  overflow-y: auto;
+  scrollbar-width: none; // Firefox
+  &::-webkit-scrollbar { display: none; }
+}
+
+.toc-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.toc-item {
+  margin: 4px 0;
+  
+  &.toc-level-h3 {
+    padding-left: 16px;
+  }
+  
+  .toc-link {
+    display: block;
+    padding: 6px 12px;
+    color: var(--md-sys-color-on-surface-variant);
+    font-size: 0.85rem;
+    line-height: 1.4;
+    text-decoration: none !important;
+    border-radius: var(--shape-small);
+    border-left: 3px solid transparent;
+    transition: all var(--dur-short4) var(--motion-standard);
+    
+    &:hover {
+      background-color: var(--md-sys-color-surface-container-highest);
+      color: var(--md-sys-color-on-surface);
+    }
+    
+    &.active {
+      color: var(--md-sys-color-primary);
+      font-weight: 600;
+      background-color: var(--md-sys-color-primary-container);
+      border-left-color: var(--md-sys-color-primary);
+    }
+  }
+}
+
+// TOC Toggle Button Styling
+.toc-toggle-btn {
+  background-color: var(--md-sys-color-surface-container);
+  color: var(--md-sys-color-primary);
+  box-shadow: var(--elev-1);
+  transition: all var(--dur-short4) var(--motion-standard);
+  
+  &:hover {
+    background-color: var(--md-sys-color-primary-container);
+    box-shadow: var(--elev-2);
+  }
+  
+  &.inactive {
+    color: var(--md-sys-color-on-surface-variant);
+    background-color: transparent;
+    box-shadow: none;
+    .material-symbols-outlined::before {
+      content: 'menu';
+    }
+  }
+
+  // Hide on screens where TOC is hidden anyway
+  @media (max-width: 1024px) {
+    display: none;
+  }
+}

@@ -20,6 +20,13 @@ layout: default
     </div>
     {% endif %}
     <h1 class="hero-title">{{ post.title }}</h1>
+    
+    <div style="position:absolute; top:16px; right:16px; z-index:10;">
+      <button class="icon-btn toc-toggle-btn" aria-label="切换目录" title="切换目录">
+        <span class="material-symbols-outlined">menu_open</span>
+      </button>
+    </div>
+
     <div class="hero-meta">
       <span>
         <span class="material-symbols-outlined">calendar_month</span>
@@ -49,8 +56,14 @@ layout: default
     {% endif %}
     <h1 class="hero-title">{{ post.title }}</h1>
   </div>
+  <button class="icon-btn toc-toggle-btn" aria-label="切换目录" title="切换目录" style="position:absolute; top:16px; right:16px;">
+    <span class="material-symbols-outlined">menu_open</span>
+  </button>
 </div>
 {% endif %}
+
+<!-- Post Layout Container (Article + TOC) -->
+<div class="post-layout-container">
 
 <!-- Post Content -->
 <article class="page-content" itemscope itemtype="http://schema.org/BlogPosting">
@@ -224,3 +237,21 @@ layout: default
   {% endif %}
 
 </article>
+
+<!-- Right Sidebar for TOC -->
+<aside class="toc-sidebar" id="tocSidebar">
+  <div class="toc-sidebar-inner">
+    <div class="toc-header">
+      <span class="material-symbols-outlined">format_list_bulleted</span>
+      <span class="toc-title">目录</span>
+    </div>
+    <div class="toc-content" id="tocContent">
+      <!-- JS dynamically injects TOC here -->
+    </div>
+  </div>
+</aside>
+
+</div> <!-- /.post-layout-container -->
+
+<!-- TOC JS -->
+<script src="{{ '/assets/js/toc.js' | relative_url }}"></script>
