@@ -2118,9 +2118,6 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
       color: var(--md-sys-color-primary);
     }
   }
-      background: color-mix(in srgb, var(--md-sys-color-surface-container) 50%, transparent);
-    }
-  }
 
   hr {
     border: none;
