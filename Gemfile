@@ -14,6 +14,9 @@ end
 gem "rouge", "~> 4.2"
 gem "kramdown-parser-gfm"
 
+# HTML Parsing for custom AST transformers
+gem "nokogiri"
+
 # Windows and JRuby specific
 platforms :mingw, :x64_mingw, :mswin, :jruby do
   gem "tzinfo", ">= 1", "< 3"
