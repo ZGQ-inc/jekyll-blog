@@ -178,7 +178,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let startY = 0;
 
   function updateTransform() {
-    contentWrapper.style.transform = \`translate(\${translateX}px, \${translateY}px) scale(\${scale})\`;
+    contentWrapper.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
   }
 
   function resetZoom() {
