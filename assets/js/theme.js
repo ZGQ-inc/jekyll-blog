@@ -908,11 +908,35 @@ function initPageTransitions() {
 
 function initRipples() {
   document.addEventListener('pointerdown', e => {
-    const el = e.target.closest('.nav-item, .post-card, .social-btn, .color-swatch');
+    const el = e.target.closest('.nav-item, .post-card, .social-btn, .color-swatch, .page-btn, #themeDialogBtn, #backToTopBtn, .btn');
     if (!el) return;
     const rect = el.getBoundingClientRect();
     el.style.setProperty('--ripple-x', `${((e.clientX - rect.left) / rect.width * 100).toFixed(1)}%`);
     el.style.setProperty('--ripple-y', `${((e.clientY - rect.top)  / rect.height * 100).toFixed(1)}%`);
+  }, { passive: true });
+
+  // Fluent Design Background Reveal for buttons
+  document.addEventListener('pointermove', e => {
+    const el = e.target.closest('.nav-item, .social-btn, .color-swatch, .page-btn, #themeDialogBtn, #backToTopBtn, .btn');
+    if (!el) return;
+    
+    let glow = el.querySelector('.fluent-bg-glow');
+    if (!glow) {
+      glow = document.createElement('span');
+      glow.className = 'fluent-bg-glow';
+      // Ensure the button is positioned and handles overflow
+      if (getComputedStyle(el).position === 'static') {
+        el.style.position = 'relative';
+      }
+      if (getComputedStyle(el).overflow !== 'hidden') {
+        el.style.overflow = 'hidden';
+      }
+      el.appendChild(glow);
+    }
+    
+    const rect = el.getBoundingClientRect();
+    el.style.setProperty('--hover-x', `${e.clientX - rect.left}px`);
+    el.style.setProperty('--hover-y', `${e.clientY - rect.top}px`);
   }, { passive: true });
 }
 

@@ -2871,3 +2871,22 @@ md-navigation-drawer {
 .timeline:hover .fluent-glow {
   opacity: 1;
 }
+
+.fluent-bg-glow {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  background: radial-gradient(
+    120px circle at var(--hover-x, -1000px) var(--hover-y, -1000px),
+    color-mix(in srgb, var(--md-sys-color-on-surface) 10%, rgba(255,255,255,0.15)),
+    transparent 100%
+  );
+  opacity: 0;
+  transition: opacity var(--dur-short4) var(--motion-standard);
+}
+
+:hover > .fluent-bg-glow {
+  opacity: 1;
+}
