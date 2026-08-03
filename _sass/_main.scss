@@ -1951,6 +1951,24 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
     }
   }
 
+  kbd {
+    display: inline-block;
+    padding: 0.15em 0.5em;
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    font-size: 0.85em;
+    font-weight: 600;
+    line-height: 1.2;
+    color: var(--md-sys-color-on-surface);
+    background-color: var(--md-sys-color-surface-container-highest);
+    border: 1px solid var(--md-sys-color-outline-variant);
+    border-bottom-color: var(--md-sys-color-outline);
+    border-bottom-width: 2px;
+    border-radius: var(--shape-small);
+    box-shadow: inset 0 -1px 0 rgba(0,0,0,0.05);
+    margin: 0 0.2em;
+    vertical-align: text-bottom;
+  }
+
   // Kramdown / Rouge Code Blocks
   .highlighter-rouge, figure.highlight {
     background: var(--md-sys-color-surface-container-high);
