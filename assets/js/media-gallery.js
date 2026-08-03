@@ -119,8 +119,19 @@ document.addEventListener('DOMContentLoaded', () => {
           thumbWrapper.appendChild(playIcon);
         }
 
-        thumbWrapper.addEventListener('click', () => renderMainView(i));
+        thumbWrapper.addEventListener('click', () => {
+          renderMainView(i);
+          thumbWrapper.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+        });
         thumbnails.appendChild(thumbWrapper);
+      });
+
+      // Enable horizontal scrolling with mouse wheel
+      thumbnails.addEventListener('wheel', (e) => {
+        if (e.deltaY !== 0) {
+          e.preventDefault();
+          thumbnails.scrollLeft += e.deltaY;
+        }
       });
 
       renderMainView(activeIndex);
