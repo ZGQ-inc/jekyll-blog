@@ -207,7 +207,7 @@ ul, ol { list-style: none; }
   }
   to {
     opacity: 1;
-    transform: translateY(0) scale(1);
+    transform: none;
     filter: blur(0);
   }
 }
@@ -215,7 +215,7 @@ ul, ol { list-style: none; }
 // Fade-through (switching unrelated destinations)
 @keyframes fade-through-in {
   0%   { opacity: 0; transform: scale(0.92); }
-  100% { opacity: 1; transform: scale(1); }
+  100% { opacity: 1; transform: none; }
 }
 
 // Card stagger entry
@@ -226,14 +226,14 @@ ul, ol { list-style: none; }
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: none;
   }
 }
 
 // Drawer slide-in from left
 @keyframes drawer-open {
   from { transform: translateX(-100%); }
-  to   { transform: translateX(0); }
+  to   { transform: none; }
 }
 
 // Ripple effect
@@ -288,7 +288,7 @@ ul, ol { list-style: none; }
 // Chip appear
 @keyframes chip-appear {
   from { transform: scale(0.85); opacity: 0; }
-  to   { transform: scale(1); opacity: 1; }
+  to   { transform: none; opacity: 1; }
 }
 
 // Scrim fade
