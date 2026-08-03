@@ -48,5 +48,36 @@
   <span class="material-symbols-outlined">arrow_upward</span>
 </button>
 
+<!-- Mermaid.js for Markdown Diagrams (Lazy Loaded) -->
+<script type="module">
+  const mermaidBlocks = document.querySelectorAll('.language-mermaid');
+  if (mermaidBlocks.length > 0) {
+    mermaidBlocks.forEach((block) => {
+      const codeEl = block.querySelector('code');
+      if (!codeEl) return;
+      
+      const mermaidCode = codeEl.textContent;
+      const newContainer = document.createElement('div');
+      newContainer.className = 'mermaid';
+      newContainer.textContent = mermaidCode;
+      newContainer.style.textAlign = 'center';
+      newContainer.style.margin = '1.5em 0';
+      
+      block.parentNode.replaceChild(newContainer, block);
+    });
+
+    import('https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs').then((module) => {
+      const mermaid = module.default;
+      const rootTheme = document.documentElement.getAttribute('data-theme') || 'light';
+      mermaid.initialize({
+        startOnLoad: false,
+        theme: rootTheme === 'dark' ? 'dark' : 'default',
+        fontFamily: '"Inter", "Noto Sans SC", sans-serif'
+      });
+      mermaid.run();
+    });
+  }
+</script>
+
 </body>
 </html>
