@@ -1992,9 +1992,65 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
     border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 50%, transparent);
     border-radius: var(--shape-medium);
     margin: 1.5em 0;
-    overflow-x: auto;
     font-size: 0.9rem;
     line-height: 1.6;
+    position: relative;
+    overflow: hidden; // Keep border radius intact
+
+    // Header styling injected by JS
+    .code-block-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 4px 12px;
+      background: var(--md-sys-color-surface-container-highest);
+      border-bottom: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 50%, transparent);
+      
+      .code-lang {
+        font-family: var(--font-mono);
+        font-size: 0.75rem;
+        color: var(--md-sys-color-on-surface-variant);
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+
+      .code-copy-btn {
+        background: transparent;
+        border: none;
+        color: var(--md-sys-color-on-surface-variant);
+        cursor: pointer;
+        padding: 6px;
+        border-radius: var(--shape-small);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all var(--dur-short4) var(--motion-standard);
+
+        .material-symbols-outlined {
+          font-size: 16px;
+        }
+
+        &:hover {
+          background: var(--md-sys-color-surface-container);
+          color: var(--md-sys-color-on-surface);
+        }
+      }
+    }
+
+    .highlight {
+      overflow-x: auto;
+      scrollbar-width: thin;
+      scrollbar-color: var(--md-sys-color-outline-variant) transparent;
+
+      &::-webkit-scrollbar {
+        height: 6px;
+      }
+      &::-webkit-scrollbar-thumb {
+        background-color: var(--md-sys-color-outline-variant);
+        border-radius: 4px;
+      }
+    }
 
     pre {
       background: transparent;
@@ -2002,6 +2058,7 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
       margin: 0;
       padding: 16px 20px;
       border-radius: 0;
+      min-width: fit-content;
     }
 
     code {
