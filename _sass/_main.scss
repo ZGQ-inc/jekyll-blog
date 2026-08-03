@@ -1241,11 +1241,13 @@ ul, ol { list-style: none; }
 
 .chip-tonal {
   @extend %chip-base;
-  background: var(--md-sys-color-secondary-container);
+  background: color-mix(in srgb, var(--md-sys-color-secondary-container) 80%, var(--md-sys-color-secondary) 20%);
   color: var(--md-sys-color-on-secondary-container);
+  font-weight: 600;
+  border: 1px solid color-mix(in srgb, var(--md-sys-color-secondary) 30%, transparent);
 
   &:hover {
-    background: color-mix(in srgb, var(--md-sys-color-secondary-container) 85%, var(--md-sys-color-on-secondary-container) 15%);
+    background: color-mix(in srgb, var(--md-sys-color-secondary-container) 70%, var(--md-sys-color-on-secondary-container) 30%);
   }
 }
 
