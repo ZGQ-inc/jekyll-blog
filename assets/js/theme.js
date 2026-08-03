@@ -985,3 +985,21 @@ window.showToast = function(msg) {
     toast.classList.remove('show');
   }, 2500);
 };
+
+// Force repaint for mobile Chromium backdrop-filter bugs after entrance animations finish
+window.addEventListener('DOMContentLoaded', () => {
+  setTimeout(() => {
+    // Toggling the filter property forces Chromium to invalidate the composite layer
+    const style = document.createElement('style');
+    style.textContent = '*::before { -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }';
+    document.head.appendChild(style);
+    
+    // Remove the style shortly after to restore the blur and force a clean GPU re-composite
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        document.head.removeChild(style);
+      });
+    });
+  }, 800); // Wait for page-enter (max 600ms) and card-enter animations to complete
+});
+
