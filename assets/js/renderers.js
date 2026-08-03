@@ -109,7 +109,8 @@ async function initMermaid() {
 // 2. STL 3D Model Renderer
 // ----------------------------------------------------
 async function initSTL() {
-  const blocks = getCodeBlocks('stl');
+  const blocks = getCodeBlocks('stl').map(b => ({ ...b, stlType: 'stl' })).concat(
+                 getCodeBlocks('stljs').map(b => ({ ...b, stlType: 'stljs' })));
   if (blocks.length === 0) return;
 
   try {
@@ -120,7 +121,7 @@ async function initSTL() {
 
     const loader = new STLLoader();
 
-    blocks.forEach(({ wrapper, codeText }) => {
+    blocks.forEach(({ wrapper, codeText, stlType }) => {
       const container = document.createElement('div');
       container.className = 'stl-viewer';
       wrapper.parentNode.replaceChild(container, wrapper);
@@ -134,6 +135,8 @@ async function initSTL() {
       scene.background = new THREE.Color(surfaceColor);
 
       const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
+      camera.position.z = 100; // Default position
+      
       const renderer = new THREE.WebGLRenderer({ antialias: true });
       renderer.setSize(container.clientWidth, container.clientHeight);
       container.appendChild(renderer.domElement);
@@ -154,51 +157,13 @@ async function initSTL() {
       dirLight.position.set(0, 200, 100);
       scene.add(dirLight);
 
-      // Parse STL or handle Easter Egg
-      try {
-        // MD3 Style Material
-        const primaryColor = computedStyle.getPropertyValue('--md-sys-color-primary').trim() || '#0061A4';
-        const material = new THREE.MeshPhysicalMaterial({ 
-          color: new THREE.Color(primaryColor),
-          metalness: 0.25,
-          roughness: 0.5,
-          clearcoat: 0.5,
-          clearcoatRoughness: 0.5
-        });
-
-        let mesh;
-        let geometry;
-
-        if (codeText.trim() === 'MAGIC_SHAPE') {
-          mesh = new THREE.Group();
-          
-          const cylGeo = new THREE.CylinderGeometry(8, 8, 40, 32);
-          const cyl = new THREE.Mesh(cylGeo, material);
-          cyl.position.y = 20;
-          mesh.add(cyl);
-
-          const sphGeo = new THREE.SphereGeometry(12, 32, 32);
-          const sph1 = new THREE.Mesh(sphGeo, material);
-          sph1.position.set(-10, 0, 0);
-          mesh.add(sph1);
-
-          const sph2 = new THREE.Mesh(sphGeo, material);
-          sph2.position.set(10, 0, 0);
-          mesh.add(sph2);
-          
-          // Dummy bounding box for camera scaling logic
-          geometry = new THREE.BoxGeometry(40, 60, 24);
-          geometry.computeBoundingBox();
-        } else {
-          geometry = loader.parse(codeText);
-          mesh = new THREE.Mesh(geometry, material);
-          
-          // Center the geometry
-          geometry.computeBoundingBox();
-          const center = new THREE.Vector3();
-          geometry.boundingBox.getCenter(center);
-          mesh.position.sub(center);
-        }
+      // Helper for STL geometry
+      const processGeometry = (geometry, material) => {
+        const mesh = new THREE.Mesh(geometry, material);
+        geometry.computeBoundingBox();
+        const center = new THREE.Vector3();
+        geometry.boundingBox.getCenter(center);
+        mesh.position.sub(center);
 
         // Auto-scale to fit view
         const box = geometry.boundingBox;
@@ -209,6 +174,35 @@ async function initSTL() {
         camera.position.z = cameraZ;
 
         scene.add(mesh);
+      };
+
+      try {
+        const primaryColor = computedStyle.getPropertyValue('--md-sys-color-primary').trim() || '#0061A4';
+        const material = new THREE.MeshPhysicalMaterial({ 
+          color: new THREE.Color(primaryColor),
+          metalness: 0.25,
+          roughness: 0.5,
+          clearcoat: 0.5,
+          clearcoatRoughness: 0.5
+        });
+
+        if (stlType === 'stljs') {
+          // Execute arbitrary Three.js code
+          const scriptFunc = new Function('THREE', 'scene', 'material', 'camera', 'renderer', codeText);
+          scriptFunc(THREE, scene, material, camera, renderer);
+        } else {
+          const trimmedText = codeText.trim();
+          if (trimmedText.startsWith('http') || trimmedText.startsWith('/')) {
+            // Load from URL
+            loader.load(trimmedText, function(geometry) {
+              processGeometry(geometry, material);
+            });
+          } else {
+            // Parse inline STL
+            const geometry = loader.parse(codeText);
+            processGeometry(geometry, material);
+          }
+        }
         
         // Listen for theme changes to dynamically update STL colors
         document.addEventListener('themechange', () => {
