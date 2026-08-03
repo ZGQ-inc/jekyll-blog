@@ -369,17 +369,20 @@ ul, ol { list-style: none; }
 .app-shell {
   display: flex;
   min-height: 100dvh;
-  align-items: flex-start;
+  /* align-items: stretch by default to push footer down */
 }
 
 .main-content {
   flex: 1;
   min-width: 0;
+  margin: 0;
   margin-left: var(--nav-drawer-width);
+  padding: 0;
   transition: margin-left var(--dur-medium2) var(--motion-emphasized);
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
+  align-items: stretch;
 }
 
 
