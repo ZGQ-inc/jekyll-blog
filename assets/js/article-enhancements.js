@@ -52,4 +52,46 @@ document.addEventListener('DOMContentLoaded', () => {
       kbd.insertBefore(iconSpan, kbd.firstChild);
     }
   });
+
+  // 2. KBD Easter Egg (Tooltip)
+  kbdElements.forEach(kbd => {
+    kbd.addEventListener('click', () => {
+      if (document.querySelector('.kbd-tooltip-bubble')) return;
+      
+      const rect = kbd.getBoundingClientRect();
+      const bubble = document.createElement('div');
+      bubble.className = 'kbd-tooltip-bubble';
+      bubble.innerHTML = '不是点我哦 😝';
+      
+      bubble.style.position = 'fixed';
+      bubble.style.background = 'var(--md-sys-color-inverse-surface, #313033)';
+      bubble.style.color = 'var(--md-sys-color-inverse-on-surface, #F4EFF4)';
+      bubble.style.padding = '6px 12px';
+      bubble.style.borderRadius = 'var(--shape-small, 8px)';
+      bubble.style.fontSize = '12px';
+      bubble.style.pointerEvents = 'none';
+      bubble.style.zIndex = '9999';
+      bubble.style.boxShadow = '0 4px 12px rgba(0,0,0,0.3)';
+      bubble.style.opacity = '0';
+      bubble.style.transform = 'translate(-50%, 8px)';
+      bubble.style.transition = 'all 0.3s cubic-bezier(0.2, 0, 0, 1)';
+      
+      document.body.appendChild(bubble);
+      
+      const bRect = bubble.getBoundingClientRect();
+      bubble.style.top = (rect.top - bRect.height - 10) + 'px';
+      bubble.style.left = (rect.left + rect.width / 2) + 'px';
+      
+      requestAnimationFrame(() => {
+        bubble.style.opacity = '1';
+        bubble.style.transform = 'translate(-50%, 0)';
+      });
+      
+      setTimeout(() => {
+        bubble.style.opacity = '0';
+        bubble.style.transform = 'translate(-50%, -8px)';
+        setTimeout(() => bubble.remove(), 300);
+      }, 2000);
+    });
+  });
 });

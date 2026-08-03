@@ -227,6 +227,14 @@ document.addEventListener('DOMContentLoaded', () => {
   lightbox.querySelector('.close-btn').addEventListener('click', closeLightbox);
   lightbox.querySelector('.lightbox-backdrop').addEventListener('click', closeLightbox);
   
+  // Click on empty space to close
+  lightbox.querySelector('.lightbox-content-container').addEventListener('click', (e) => {
+    const wrapper = lightbox.querySelector('.lightbox-content-wrapper');
+    if (e.target === e.currentTarget || e.target === wrapper) {
+      closeLightbox();
+    }
+  });
+  
   prevBtn.addEventListener('click', () => openLightbox(currentLightboxIndex - 1));
   nextBtn.addEventListener('click', () => openLightbox(currentLightboxIndex + 1));
   

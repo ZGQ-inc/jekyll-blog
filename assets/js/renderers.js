@@ -154,10 +154,8 @@ async function initSTL() {
       dirLight.position.set(0, 200, 100);
       scene.add(dirLight);
 
-      // Parse STL
+      // Parse STL or handle Easter Egg
       try {
-        const geometry = loader.parse(codeText);
-        
         // MD3 Style Material
         const primaryColor = computedStyle.getPropertyValue('--md-sys-color-primary').trim() || '#0061A4';
         const material = new THREE.MeshPhysicalMaterial({ 
@@ -168,13 +166,39 @@ async function initSTL() {
           clearcoatRoughness: 0.5
         });
 
-        const mesh = new THREE.Mesh(geometry, material);
-        
-        // Center the geometry
-        geometry.computeBoundingBox();
-        const center = new THREE.Vector3();
-        geometry.boundingBox.getCenter(center);
-        mesh.position.sub(center);
+        let mesh;
+        let geometry;
+
+        if (codeText.trim() === 'MAGIC_SHAPE') {
+          mesh = new THREE.Group();
+          
+          const cylGeo = new THREE.CylinderGeometry(8, 8, 40, 32);
+          const cyl = new THREE.Mesh(cylGeo, material);
+          cyl.position.y = 20;
+          mesh.add(cyl);
+
+          const sphGeo = new THREE.SphereGeometry(12, 32, 32);
+          const sph1 = new THREE.Mesh(sphGeo, material);
+          sph1.position.set(-10, 0, 0);
+          mesh.add(sph1);
+
+          const sph2 = new THREE.Mesh(sphGeo, material);
+          sph2.position.set(10, 0, 0);
+          mesh.add(sph2);
+          
+          // Dummy bounding box for camera scaling logic
+          geometry = new THREE.BoxGeometry(40, 60, 24);
+          geometry.computeBoundingBox();
+        } else {
+          geometry = loader.parse(codeText);
+          mesh = new THREE.Mesh(geometry, material);
+          
+          // Center the geometry
+          geometry.computeBoundingBox();
+          const center = new THREE.Vector3();
+          geometry.boundingBox.getCenter(center);
+          mesh.position.sub(center);
+        }
 
         // Auto-scale to fit view
         const box = geometry.boundingBox;
