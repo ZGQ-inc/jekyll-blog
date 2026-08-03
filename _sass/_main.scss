@@ -863,29 +863,34 @@ ul, ol { list-style: none; }
   gap: 4px;
   flex-shrink: 0;
 
-  // MD3 frosted glass top bar (on scroll it becomes elevated)
-  background: color-mix(
-    in srgb,
-    var(--md-sys-color-surface) calc(var(--glass-opacity-light) * 100%),
-    transparent
-  );
-  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
-  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
-  border-bottom: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 30%, transparent);
-  transform: translateZ(0); // Fix mobile Chrome bug requiring refresh for blur
-  -webkit-transform: translateZ(0);
+  // MD3 frosted glass top bar (pseudo-element for bulletproof Chrome blur)
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: color-mix(
+      in srgb,
+      var(--md-sys-color-surface) calc(var(--glass-opacity-light) * 100%),
+      transparent
+    );
+    backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+    border-bottom: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 30%, transparent);
+    transition: background var(--dur-medium2) var(--motion-standard);
+  }
 
-  transition:
-    box-shadow var(--dur-short4) var(--motion-standard),
-    background var(--dur-medium2) var(--motion-standard);
+  transition: box-shadow var(--dur-short4) var(--motion-standard);
 
   &.scrolled {
     box-shadow: var(--elev-2);
-    background: color-mix(
-      in srgb,
-      var(--md-sys-color-surface-container) 90%,
-      transparent
-    );
+    &::before {
+      background: color-mix(
+        in srgb,
+        var(--md-sys-color-surface-container) 90%,
+        transparent
+      );
+    }
   }
 }
 
@@ -1426,8 +1431,6 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
   margin-bottom: 20px;
   flex-wrap: nowrap;
   width: 100%;
-  transform: translateZ(0); // Fix mobile blur
-  -webkit-transform: translateZ(0);
 }
 
 // Android Search Bar
@@ -1744,7 +1747,6 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
   margin: 0 auto;
   border-radius: 0 0 var(--shape-xl) var(--shape-xl);
   overflow: hidden;
-  isolation: isolate; // Fix Chrome backdrop-filter bug for child tags
 
   .hero-image {
     width: 100%;
@@ -1780,6 +1782,29 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
     gap: 8px;
     margin-bottom: 12px;
     flex-wrap: wrap;
+  }
+
+  .hero-tag-glass {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 12px;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: #fff;
+    z-index: 1;
+
+    &::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      background: rgba(0,0,0,0.4);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: var(--shape-small);
+    }
   }
 
   .hero-title {
@@ -1823,7 +1848,6 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
   max-width: 1100px;
   margin: 0 auto;
   border-radius: 0 0 var(--shape-xl) var(--shape-xl);
-  isolation: isolate;
   animation: page-enter var(--dur-long1) var(--motion-emphasized-decel) both;
 
   .hero-title {

@@ -13,7 +13,7 @@ layout: default
     {% if post.tags.size > 0 %}
     <div class="hero-tags">
       {% for tag in post.tags %}
-      <span class="chip chip-tonal" style="background:rgba(0,0,0,.4);color:#fff;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,0.15)">
+      <span class="hero-tag-glass">
         {{ tag }}
       </span>
       {% endfor %}
