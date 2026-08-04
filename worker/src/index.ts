@@ -47,7 +47,19 @@ interface TgMessage {
   photo?: TgPhotoSize[];
   document?: TgDocument;
   video?: TgVideo;
+  audio?: TgAudio;
   date: number;
+}
+
+interface TgAudio {
+  file_id: string;
+  file_unique_id: string;
+  duration: number;
+  performer?: string;
+  title?: string;
+  file_name?: string;
+  mime_type?: string;
+  file_size?: number;
 }
 
 interface TgChat {
@@ -212,6 +224,12 @@ async function handleTelegramWebhook(request: Request, env: Env): Promise<Respon
   const cancelMatch = text.match(/^\/cancel\s+([a-zA-Z0-9_-]+)$/s);
   if (cancelMatch) {
     await handleCancelCommand(message, cancelMatch[1], env);
+    return jsonResponse({ ok: true });
+  }
+
+  // Handle Media Uploads
+  if (message.photo || message.video || message.audio || message.document) {
+    await handleMediaUpload(message, env);
     return jsonResponse({ ok: true });
   }
 
@@ -526,14 +544,16 @@ async function handleCancelCommand(message: TgMessage, id: string, env: Env): Pr
     const tgMessageId = row.tg_message_id as number;
     const delRes = await callTelegramApi(env.TELEGRAM_BOT_TOKEN, 'deleteMessage', {
       chat_id: env.TELEGRAM_CHANNEL_ID,
-      message_id: tgMessageId
+    message_id: tgMessageId
     });
 
     if (delRes.ok || (delRes.description && delRes.description.includes('message to delete not found'))) {
       await env.DB.prepare(`DELETE FROM post_tg_map WHERE post_id = ?`).bind(id).run();
+
       await sendTelegramMessage(env.TELEGRAM_BOT_TOKEN, {
         chat_id: message.chat.id,
-        text: `✅ 已撤销！频道消息已删除，数据库记录已清除。`,
+        text: `✅ 关联已成功取消！你现在可以重新使用 \`/link\` 命令关联新的频道消息了。`,
+        parse_mode: 'Markdown'
       });
     } else {
       throw new Error(delRes.description || 'Unknown Telegram API error');
@@ -541,7 +561,114 @@ async function handleCancelCommand(message: TgMessage, id: string, env: Env): Pr
   } catch (err) {
     await sendTelegramMessage(env.TELEGRAM_BOT_TOKEN, {
       chat_id: message.chat.id,
-      text: `❌ 撤销失败: ${String(err)}`
+      text: `❌ 取消关联失败: ${String(err)}`
+    });
+  }
+}
+
+function formatBytes(bytes: number, decimals = 1): string {
+  if (!+bytes) return '0 B';
+  const k = 1024;
+  const dm = decimals < 0 ? 0 : decimals;
+  const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`;
+}
+
+function getIconByMime(mime: string): string {
+  if (mime.startsWith('image/')) return 'image';
+  if (mime.startsWith('video/')) return 'movie';
+  if (mime.startsWith('audio/')) return 'audio_file';
+  if (mime === 'application/pdf') return 'picture_as_pdf';
+  if (mime.includes('zip') || mime.includes('rar') || mime.includes('tar') || mime.includes('7z')) return 'folder_zip';
+  return 'description';
+}
+
+async function handleMediaUpload(message: TgMessage, env: Env): Promise<void> {
+  const loadingMsg = await callTelegramApi(env.TELEGRAM_BOT_TOKEN, 'sendMessage', {
+    chat_id: message.chat.id,
+    text: `⏳ 正在上传文件至 R2 存储，请稍候...`
+  });
+
+  try {
+    let fileId = '';
+    let mimeType = '';
+    let fileName = '';
+    let fileSize = 0;
+
+    if (message.photo && message.photo.length > 0) {
+      const largestPhoto = message.photo[message.photo.length - 1];
+      fileId = largestPhoto.file_id;
+      mimeType = 'image/jpeg';
+      fileName = `photo_${Date.now()}.jpg`;
+      fileSize = largestPhoto.file_size || 0;
+    } else if (message.video) {
+      fileId = message.video.file_id;
+      mimeType = message.video.mime_type || 'video/mp4';
+      fileName = message.video.file_name || `video_${Date.now()}.mp4`;
+      fileSize = message.video.file_size || 0;
+    } else if (message.audio) {
+      fileId = message.audio.file_id;
+      mimeType = message.audio.mime_type || 'audio/mpeg';
+      fileName = message.audio.file_name || `audio_${Date.now()}.mp3`;
+      fileSize = message.audio.file_size || 0;
+    } else if (message.document) {
+      fileId = message.document.file_id;
+      mimeType = message.document.mime_type || 'application/octet-stream';
+      fileName = message.document.file_name || `file_${Date.now()}.bin`;
+      fileSize = message.document.file_size || 0;
+    } else {
+      throw new Error('不支持的文件类型');
+    }
+
+    let postId = 'shared';
+    const caption = message.caption || '';
+    const uploadMatch = caption.match(/^\/upload\s+([a-zA-Z0-9_-]+)/s);
+    if (uploadMatch) {
+      postId = uploadMatch[1];
+    } else {
+      const date = new Date();
+      postId = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+    }
+
+    const r2Url = await uploadMediaToR2(env, postId, fileId, mimeType);
+
+    await env.DB.prepare(
+      `INSERT INTO media_uploads (post_id, tg_file_id, r2_key, r2_url, mime_type, file_size)
+       VALUES (?, ?, ?, ?, ?, ?)`
+    ).bind(postId, fileId, r2Url.replace(env.ASSETS_URL + '/', ''), r2Url, mimeType, fileSize).run();
+
+    const formattedSize = formatBytes(fileSize);
+    const today = new Date().toISOString().split('T')[0];
+    const icon = getIconByMime(mimeType);
+    
+    // Liquid file download card format
+    const liquidSnippet = [
+      `{% include file_download.html`,
+      `   name="${fileName}"`,
+      `   size="${formattedSize}"`,
+      `   date="${today}"`,
+      `   icon="${icon}"`,
+      `   url="${r2Url}" %}`
+    ].join('\n');
+
+    let replyText = `✅ **文件上传成功！**\n\n📥 **访问直链**:\n\`${r2Url}\`\n\n📝 **下载卡片代码 (Liquid)**:\n\`\`\`liquid\n${liquidSnippet}\n\`\`\``;
+
+    if (mimeType.startsWith('image/')) {
+      replyText += `\n\n🖼 **普通图片引用**:\n\`![](${r2Url})\``;
+    }
+
+    await callTelegramApi(env.TELEGRAM_BOT_TOKEN, 'editMessageText', {
+      chat_id: message.chat.id,
+      message_id: loadingMsg.result.message_id as number,
+      text: replyText,
+      parse_mode: 'Markdown'
+    });
+  } catch (err) {
+    await callTelegramApi(env.TELEGRAM_BOT_TOKEN, 'editMessageText', {
+      chat_id: message.chat.id,
+      message_id: loadingMsg.result.message_id as number,
+      text: `❌ 上传失败: ${String(err)}`
     });
   }
 }
