@@ -201,6 +201,13 @@ async function handleTelegramWebhook(request: Request, env: Env): Promise<Respon
     return jsonResponse({ ok: true });
   }
 
+  // Parse /sync command
+  const syncMatch = text.match(/^\/sync\s+([a-zA-Z0-9_-]+)(?:\s+(.+))?$/s);
+  if (syncMatch) {
+    await handleSyncCommand(message, syncMatch[1], syncMatch[2] || '', env);
+    return jsonResponse({ ok: true });
+  }
+
   // Parse /cancel command
   const cancelMatch = text.match(/^\/cancel\s+([a-zA-Z0-9_-]+)$/s);
   if (cancelMatch) {
@@ -227,7 +234,7 @@ async function handleNewCommand(message: TgMessage, title: string, env: Env): Pr
   
   await sendTelegramMessage(env.TELEGRAM_BOT_TOKEN, {
     chat_id: message.chat.id,
-    text: `⏳ 正在 GitHub 创建草稿，请稍候...`,
+    text: `⏳ 正在创建草稿，请稍候...`,
   });
 
   try {
@@ -254,7 +261,7 @@ async function handleNewCommand(message: TgMessage, title: string, env: Env): Pr
 
     await sendTelegramMessage(env.TELEGRAM_BOT_TOKEN, {
       chat_id: message.chat.id,
-      text: `✅ 草稿已生成！\n\n**文件名**: \`${slug}.md\`\n**文章 ID**: \`${id}\`\n\n请在本地 VSCode 拉取代码并编辑该文件。提交发布后，请使用以下命令关联到频道：\n\n\`/link ${id} 你的文章摘要内容\``,
+      text: `✅ 草稿已生成！\n\n**文件名**: \`${slug}.md\`\n**文章 ID**: \`${id}\`\n\n提交发布后，请使用以下命令关联到频道：\n\n\`/link ${id} 文章摘要\``,
       parse_mode: 'Markdown'
     });
   } catch (err) {
@@ -265,7 +272,7 @@ async function handleNewCommand(message: TgMessage, title: string, env: Env): Pr
   }
 }
 
-async function fetchPostInfoFromGitHub(id: string, env: Env): Promise<{ title: string; tags: string[]; summary: string } | null> {
+async function fetchPostInfoFromGitHub(id: string, env: Env): Promise<{ title: string; tags: string[]; summary: string; image: string } | null> {
   try {
     const [owner, repo] = env.GITHUB_REPO.split('/');
     const apiUrl = `https://api.github.com/repos/${owner}/${repo}/contents/${env.GITHUB_POSTS_PATH}`;
@@ -308,7 +315,15 @@ async function fetchPostInfoFromGitHub(id: string, env: Env): Promise<{ title: s
         summary = summary.substring(1, summary.length - 1);
       }
     }
-    return { title, tags, summary };
+    const imageMatch = content.match(/^image:\s*(.+)$/m);
+    let image = '';
+    if (imageMatch) {
+      image = imageMatch[1].trim();
+      if ((image.startsWith('"') && image.endsWith('"')) || (image.startsWith("'") && image.endsWith("'"))) {
+        image = image.substring(1, image.length - 1);
+      }
+    }
+    return { title, tags, summary, image };
   } catch (e) {
     return null;
   }
@@ -333,7 +348,7 @@ async function handleLinkCommand(message: TgMessage, id: string, providedSummary
     if (!summary) {
       await sendTelegramMessage(env.TELEGRAM_BOT_TOKEN, {
         chat_id: message.chat.id,
-        text: `❌ 请提供摘要内容。文章头部也未找到 summary 字段。格式: \`/link ${id} 这是摘要\``,
+        text: `❌ 请提供摘要内容。文章头部未找到 summary 字段。格式: \`/link ${id} 摘要\``,
         parse_mode: 'Markdown'
       });
       return;
@@ -382,6 +397,116 @@ async function handleLinkCommand(message: TgMessage, id: string, providedSummary
     await sendTelegramMessage(env.TELEGRAM_BOT_TOKEN, {
       chat_id: message.chat.id,
       text: `❌ 关联失败: ${String(err)}`
+    });
+  }
+}
+
+async function handleSyncCommand(message: TgMessage, id: string, providedSummary: string, env: Env): Promise<void> {
+  await sendTelegramMessage(env.TELEGRAM_BOT_TOKEN, {
+    chat_id: message.chat.id,
+    text: `⏳ 正在查询数据库和 GitHub 以同步文章信息...`,
+  });
+
+  try {
+    const row = await env.DB.prepare(`SELECT tg_message_id FROM post_tg_map WHERE post_id = ?`).bind(id).first();
+    if (!row) {
+      await sendTelegramMessage(env.TELEGRAM_BOT_TOKEN, {
+        chat_id: message.chat.id,
+        text: `⚠️ 找不到 ID 为 \`${id}\` 的关联频道消息，请确认是否已发布过。`,
+        parse_mode: 'Markdown'
+      });
+      return;
+    }
+    const tgMessageId = row.tg_message_id as number;
+
+    const postInfo = await fetchPostInfoFromGitHub(id, env);
+    if (!postInfo) {
+      await sendTelegramMessage(env.TELEGRAM_BOT_TOKEN, {
+        chat_id: message.chat.id,
+        text: `❌ 在 GitHub 上找不到 ID 为 \`${id}\` 的文章源文件。`,
+        parse_mode: 'Markdown'
+      });
+      return;
+    }
+
+    const title = postInfo.title;
+    const tags = postInfo.tags;
+    let summary = providedSummary.trim();
+    if (!summary && postInfo.summary) {
+      summary = postInfo.summary;
+    }
+    if (!summary) {
+      await sendTelegramMessage(env.TELEGRAM_BOT_TOKEN, {
+        chat_id: message.chat.id,
+        text: `❌ 文章头部未找到 summary，且未提供新摘要。格式: \`/sync ${id} 这是一段新摘要\``,
+        parse_mode: 'Markdown'
+      });
+      return;
+    }
+
+    const postUrl = `${env.BLOG_URL}/posts/${id}/`;
+    
+    // Formatting text (keep exactly same as publishToChannel)
+    const idTag = `#ID_${id.replace(/-/g, '_')}`;
+    const otherTags = tags.map(t => `#${t.replace(/[^a-zA-Z0-9_\u4e00-\u9fa5]/g, '_')}`).join(' ');
+    const tagsLine = [idTag, otherTags].filter(Boolean).join(' ');
+
+    const text = [
+      `<b>${title.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</b>`,
+      '',
+      summary.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'),
+      '',
+      `📖 <a href="${postUrl}">阅读完整文章</a>`,
+      '',
+      tagsLine
+    ].join('\n');
+
+    let chatId = env.TELEGRAM_CHANNEL_ID;
+    if (!chatId.startsWith('@') && !chatId.startsWith('-')) {
+      chatId = '@' + chatId;
+    }
+
+    // Try editMessageText first (for text messages)
+    let editRes = await callTelegramApi(env.TELEGRAM_BOT_TOKEN, 'editMessageText', {
+      chat_id: chatId,
+      message_id: tgMessageId,
+      text,
+      parse_mode: 'HTML',
+      link_preview_options: { is_disabled: false, url: postUrl, prefer_large_media: !!postInfo.image }
+    });
+
+    // If it fails because the original message is a Media message (like sent with sendPhoto previously)
+    if (!editRes.ok && (editRes.description?.includes('there is no text in the message to edit') || editRes.description?.includes('message is not modified'))) {
+      if (editRes.description?.includes('message is not modified')) {
+         // Nothing to update
+         editRes = { ok: true } as any;
+      } else {
+        // Fallback to editMessageCaption for legacy photo messages
+        editRes = await callTelegramApi(env.TELEGRAM_BOT_TOKEN, 'editMessageCaption', {
+          chat_id: chatId,
+          message_id: tgMessageId,
+          caption: text,
+          parse_mode: 'HTML'
+        });
+      }
+    }
+
+    if (editRes.ok) {
+      await sendTelegramMessage(env.TELEGRAM_BOT_TOKEN, {
+        chat_id: message.chat.id,
+        text: `✅ 频道消息已成功同步更新！\n\n<b>文章</b>: ${title}`,
+        parse_mode: 'HTML'
+      });
+      // Optionally update local DB title
+      await env.DB.prepare(`UPDATE post_tg_map SET post_title = ?, updated_at = CURRENT_TIMESTAMP WHERE post_id = ?`)
+        .bind(title, id).run();
+    } else {
+      throw new Error(editRes.description || 'Unknown Telegram API error');
+    }
+  } catch (err) {
+    await sendTelegramMessage(env.TELEGRAM_BOT_TOKEN, {
+      chat_id: message.chat.id,
+      text: `❌ 同步失败: ${String(err)}`
     });
   }
 }
@@ -527,7 +652,7 @@ async function publishToChannel(
   const tagsLine = [idTag, otherTags].filter(Boolean).join(' ');
 
   const text = [
-    `📌 <b>${title.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</b>`,
+    `<b>${title.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</b>`,
     '',
     summary.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'),
     '',
@@ -536,24 +661,13 @@ async function publishToChannel(
     tagsLine
   ].join('\n');
 
-  // If image provided, send photo with caption; otherwise text message
-  if (image) {
-    const result = await callTelegramApi(env.TELEGRAM_BOT_TOKEN, 'sendPhoto', {
-      chat_id: chatId,
-      photo: image,
-      caption: text,
-      parse_mode: 'HTML'
-    });
-    if (result.ok) return { message_id: result.result.message_id as number };
-    // Fallback to text if photo fails
-    console.warn('sendPhoto failed, falling back to text:', result.description);
-  }
-
+  // Send text message with link preview options
+  // With prefer_large_media: true, the OpenGraph image (og:image) of the post will be rendered at the bottom!
   const result = await callTelegramApi(env.TELEGRAM_BOT_TOKEN, 'sendMessage', {
     chat_id: chatId,
     text,
     parse_mode: 'HTML',
-    link_preview_options: { is_disabled: false, url: postUrl }
+    link_preview_options: { is_disabled: false, url: postUrl, prefer_large_media: !!image }
   });
 
   if (!result.ok) {
@@ -749,7 +863,7 @@ function escapeMdV2(text: string): string {
 
 function buildHelpText(): string {
   return [
-    '*ZGQ Blog Bot 使用帮助*',
+    '*使用帮助*',
     '',
     '1\\. 创建草稿: `/new [文章标题]`',
     '2\\. 关联频道: `/link <id> <摘要内容>`',
