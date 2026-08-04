@@ -5,13 +5,15 @@
 ## 🌟 主要功能 (Features)
 
 - **高性能静态生成**：使用 Jekyll 引擎构建，极速加载，SEO 友好。
-- **现代化 UI 设计**：采用现代网页设计语言（毛玻璃特效、平滑过渡动画，拟态风格等）。
+- **现代化 UI 设计**：
+  - 采用现代网页设计语言（毛玻璃特效、平滑过渡动画，拟态风格等）。
+  - 内置符合 Material Design 3 (MD3) 规范的沉浸式视频/音频播放器及图片灯箱（Lightbox）。
 - **Cloudflare 全栈支持**：
   - **Pages**：自动托管并全球加速静态网页。
   - **Workers**：提供无服务器后端 API 服务。
   - **D1 数据库**：持久化存储文章数据、评论与动态。
   - **R2 对象存储**：分布式存储媒体资源（图片、附件等）。
-- **Telegram 深度集成**：通过 Bot Webhook，支持实时接收评论通知，支持通过 Bot 快捷发布动态。
+- **Telegram 深度集成**：通过 Bot Webhook，支持从 Telegram 快捷管理博客，支持 Markdown 图文推送、实时接收评论通知等。
 - **自动化 CI/CD**：依托 GitHub Actions 实现自动化部署，代码 Push 即可触发全站自动生成和更新。
 
 ## 🚀 部署指南 (全命令模式)
@@ -90,6 +92,14 @@ GitHub Actions 会自动接管，将站点的最新内容打包并部署到 Clou
 2. **Telegram Webhook**：在浏览器访问或通过 cURL 触发以下链接来注册 Webhook，使其自动监听 Telegram Bot 的消息以处理评论回复/内容发布（替换对应参数）：
    ```text
    https://api.telegram.org/bot{你的BOT_TOKEN}/setWebhook?url={你的WORKER_API_URL}/webhook/telegram&secret_token={你的WEBHOOK_SECRET}
+   ```
+3. **BotFather 命令菜单配置**：为了方便使用 Bot 操作博客，建议前往 Telegram 找到 [@BotFather](https://t.me/BotFather)，输入 `/setcommands` 选择你的 Bot，然后粘贴以下内容：
+   ```text
+   new - 创建新文章草稿
+   link - 推送文章到频道
+   sync - 同步更新频道信息
+   cancel - 取消频道关联
+   help - 显示使用帮助
    ```
 
 ## 📄 许可证 (License)
