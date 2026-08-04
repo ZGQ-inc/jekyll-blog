@@ -243,6 +243,7 @@ async function handleNewCommand(message: TgMessage, title: string, env: Env): Pr
       `categories: []`,
       `tags: []`,
       `comments: true`,
+      `toc: true`,
       '---',
       '',
       '<!-- 请在 VSCode 中编辑此草稿的正文内容 -->',
