@@ -1,4 +1,4 @@
-# ZGQ's Blog - Full Stack Jekyll Automation System
+# ZGQ Inc's Blog
 
 这是一个基于 Jekyll 与 Cloudflare 的现代化全栈静态博客系统，旨在提供高性能、美观且功能丰富的博客体验。
 
@@ -22,6 +22,14 @@
 
 ### 1. 准备工作
 
+**准备 Telegram Bot 与评论区：**
+1. **创建 Bot**：在 Telegram 中找到 [@BotFather](https://t.me/BotFather)，发送 `/newbot` 按照提示创建机器人。完成后，你会得到一段 **Bot Token**（这就是后续配置中的 `TELEGRAM_BOT_TOKEN`）。
+2. **建立频道与评论区**：
+   - 在 Telegram 创建一个新的公开 Channel（频道），设置一个公开链接（例如 `@my_blog_channel`，这就是 `TELEGRAM_CHANNEL_ID`）。
+   - 进入该频道的设置页面，找到 **Discussion (讨论)** 选项，点击创建一个新的群组并绑定。这样每当频道发布新文章时，下方会自动出现 **Leave a comment** 按钮，这也就是你博客系统最完美的**原生评论区**。
+   - **⚠️ 非常重要**：务必将你刚刚创建的 Bot 邀请进这个频道，并且设置为 **管理员 (Administrator)** 具备发布消息的权限，否则 Bot 无法向频道推送文章。
+
+**获取代码：**
 克隆本项目到本地，并进入项目目录：
 ```bash
 git clone https://github.com/ZGQ-inc/jekyll-blog.git
