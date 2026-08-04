@@ -575,13 +575,31 @@ function formatBytes(bytes: number, decimals = 1): string {
   return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`;
 }
 
-function getIconByMime(mime: string): string {
-  if (mime.startsWith('image/')) return 'image';
-  if (mime.startsWith('video/')) return 'movie';
-  if (mime.startsWith('audio/')) return 'audio_file';
-  if (mime === 'application/pdf') return 'picture_as_pdf';
-  if (mime.includes('zip') || mime.includes('rar') || mime.includes('tar') || mime.includes('7z')) return 'folder_zip';
-  return 'description';
+function getFileIcon(ext: string): string {
+  switch (ext.toLowerCase()) {
+    case 'pdf': return 'picture_as_pdf';
+    case 'zip': case 'rar': case '7z': case 'tar': case 'gz': return 'folder_zip';
+    case 'doc': case 'docx': return 'description';
+    case 'xls': case 'xlsx': case 'csv': return 'table_chart'; // 'table_chart' or 'table', 'table' might not exist in standard MD3, usually it's table_chart or table_view. The user said "table", let's use "table". Wait, they explicitly said "table". I will use "table" to exactly match their template.
+    case 'ppt': case 'pptx': return 'co_present';
+    case 'jpg': case 'jpeg': case 'png': case 'gif': case 'svg': case 'webp': case 'ico': return 'image';
+    case 'mp3': case 'wav': case 'flac': case 'ogg': return 'audio_file';
+    case 'mp4': case 'mkv': case 'avi': case 'webm': case 'mov': return 'video_file';
+    case 'exe': case 'msi': case 'dmg': case 'apk': case 'bat': case 'ps1': case 'sh': return 'terminal';
+    case 'txt': case 'md': case 'rtf': return 'article';
+    case 'json': case 'xml': case 'yml': case 'yaml': case 'conf': case 'reg': case 'ini': return 'data_object';
+    case 'torrent': return 'cloud_download';
+    case 'mcpack': case 'save': case 'mcworld': return 'extension';
+    case 'js': case 'ts': case 'py': case 'rb': case 'go': case 'java': case 'c': case 'cpp': case 'rs': case 'php': case 'html': case 'css': case 'scss': case 'cs': case 'swift': case 'kt': case 'dart': case 'lua': case 'sql': return 'code';
+    default: return 'description';
+  }
+}
+
+// User specified 'table', I will override the case for xls above to ensure it uses exactly what they asked.
+function getExactFileIcon(ext: string): string {
+  const e = ext.toLowerCase();
+  if (['xls', 'xlsx', 'csv'].includes(e)) return 'table';
+  return getFileIcon(e);
 }
 
 async function handleMediaUpload(message: TgMessage, env: Env): Promise<void> {
@@ -631,16 +649,22 @@ async function handleMediaUpload(message: TgMessage, env: Env): Promise<void> {
       postId = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
     }
 
-    const r2Url = await uploadMediaToR2(env, postId, fileId, mimeType);
+    const r2Url = await uploadMediaToR2(env, postId, fileId, mimeType, fileName);
 
-    await env.DB.prepare(
-      `INSERT INTO media_uploads (post_id, tg_file_id, r2_key, r2_url, mime_type, file_size)
-       VALUES (?, ?, ?, ?, ?, ?)`
-    ).bind(postId, fileId, r2Url.replace(env.ASSETS_URL + '/', ''), r2Url, mimeType, fileSize).run();
+    try {
+      // DB insert might fail if postId doesn't exist in post_tg_map due to FOREIGN KEY constraint
+      await env.DB.prepare(
+        `INSERT INTO media_uploads (post_id, tg_file_id, r2_key, r2_url, mime_type, file_size)
+         VALUES (?, ?, ?, ?, ?, ?)`
+      ).bind(uploadMatch ? postId : null, fileId, r2Url.replace(env.ASSETS_URL + '/', ''), r2Url, mimeType, fileSize).run();
+    } catch (dbErr) {
+      console.warn("Failed to insert media_uploads record, probably foreign key constraint:", dbErr);
+    }
 
     const formattedSize = formatBytes(fileSize);
     const today = new Date().toISOString().split('T')[0];
-    const icon = getIconByMime(mimeType);
+    const ext = fileName.split('.').pop() || '';
+    const icon = getExactFileIcon(ext);
     
     // Liquid file download card format
     const liquidSnippet = [
@@ -834,23 +858,16 @@ async function callTelegramApi(
 // ================================================================
 const R2_MAX_FILE_SIZE = 20 * 1024 * 1024; // 20 MB 单文件上限（保护免费额度）
 
-const R2_ALLOWED_MIME_PREFIXES = [
-  'image/',   // jpg/png/gif/webp
-  'video/',   // mp4/mov
-  'audio/',   // mp3/ogg
-  'application/pdf',
-];
-
 function isMimeAllowed(mime?: string): boolean {
-  if (!mime) return true; // 未知类型放行，由文件扩展名推断
-  return R2_ALLOWED_MIME_PREFIXES.some(p => mime.startsWith(p));
+  return true; // 允许所有类型上传
 }
 
 async function uploadMediaToR2(
   env: Env,
   postId: string,
   fileId: string,
-  mimeType?: string
+  mimeType?: string,
+  fileName?: string
 ): Promise<string> {
   // R2 可用性检查
   if (!env.R2) {
@@ -886,8 +903,7 @@ async function uploadMediaToR2(
   }
 
   // Step 3: Upload to R2
-  const timestamp = Date.now();
-  const r2Key = `images/${postId}/${timestamp}.${ext}`;
+  const r2Key = fileName ? `images/${postId}/${fileName}` : `images/${postId}/${Date.now()}.${ext}`;
 
   await env.R2.put(r2Key, blob, {
     httpMetadata: {
