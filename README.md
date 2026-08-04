@@ -2,7 +2,7 @@
 
 这是一个基于 Jekyll 与 Cloudflare 的现代化全栈静态博客系统，旨在提供高性能、美观且功能丰富的博客体验。
 
-## 🌟 主要功能 (Features)
+## 🌟 主要功能
 
 - **高性能静态生成**：使用 Jekyll 引擎构建，极速加载，SEO 友好。
 - **现代化 UI 设计**：
@@ -16,25 +16,7 @@
 - **Telegram 深度集成**：通过 Bot Webhook，支持从 Telegram 快捷管理博客，支持 Markdown 图文推送、实时接收评论通知等。
 - **自动化 CI/CD**：依托 GitHub Actions 实现自动化部署，代码 Push 即可触发全站自动生成和更新。
 
-## 📝 个性化配置 (Configuration)
-
-在开始部署或使用之前，你需要先将项目中的默认配置修改为你自己的信息：
-1. **全局站点配置**：编辑根目录下的 `_config.yml`，修改 `title`, `email`, `description`, `url` 等字段为你自己的博客基础信息。
-2. **Worker 环境变量**：编辑 `worker/wrangler.toml`，找到 `[vars]` 区块，修改 `BLOG_URL`（博客域名）、`ASSETS_URL`（R2 图床域名）以及 `GITHUB_REPO`（你的 GitHub 仓库名）。
-
-## ✍️ 写作与发布流程 (Workflow)
-
-依托 Telegram Bot 与 GitHub Actions，日常的写作与发布体验极为顺畅，完整流程如下：
-
-1. **创建草稿**：在你的 Telegram 机器人中输入 `/new [文章标题]`，系统会自动在 GitHub 仓库生成一篇 Markdown 格式的草稿（含标准头部 Front Matter），并触发网站构建。
-2. **编辑文章**：使用你最喜欢的支持 Git 的编辑器（如 VS Code、Obsidian 等）拉取最新代码，编辑刚刚生成的 Markdown 文章。
-   - 各种文字排版、多媒体格式的 Markdown 语法规范，请严格参考此示例文章：[Jekyll 完整 Markup 语法展示](https://blog.zgqinc.gq/posts/npg6ht/)。
-3. **上传图床文件**：在写作过程中如果需要插图、上传附件、放置音视频等，无需寻找第三方图床，**直接将文件或图片发送给你的 Telegram Bot**！Bot 会自动将其存入 R2 存储并返回可以直接复制使用的 Markdown 代码或下载卡片代码。
-4. **推送更新**：在本地完成文章编写后，使用 `git commit` 与 `git push` 推送到 GitHub，博客网站将自动更新。
-5. **发布到频道**：网站更新完成后，在 Telegram 机器人中输入 `/link <文章ID> [摘要内容]`。Bot 会自动提取头图，并将这篇文章排版成精美的卡片推送至你的公开频道（图片在下、文字在上、自带链接预览），同时触发自动关联频道评论区！
-   - *补充说明：后续如果修改了文章封面或摘要，可直接发送 `/sync <文章ID>`，Bot 会同步更新频道里那条历史消息的展示内容。*
-
-## 🚀 部署指南 (全命令模式)
+## 🚀 部署指南
 
 本项目推荐在具有 Node.js 环境及 `wrangler` CLI 的终端下完成初始化。你也可以运行项目中内置的 `scripts/init-cloudflare.bat` (Windows) 或 `scripts/init-cloudflare.sh` (Linux) 自动完成相关操作，以下为详细拆解的命令全流程：
 
@@ -53,6 +35,10 @@
 git clone https://github.com/ZGQ-inc/jekyll-blog.git
 cd jekyll-blog
 ```
+
+在开始部署或使用之前，你需要先将项目中的默认配置修改为你自己的信息：
+1. **全局站点配置**：编辑根目录下的 `_config.yml`，修改 `title`, `email`, `description`, `url` 等字段为你自己的博客基础信息。
+2. **Worker 环境变量**：编辑 `worker/wrangler.toml`，找到 `[vars]` 区块，修改 `BLOG_URL`（博客域名）、`ASSETS_URL`（R2 图床域名）以及 `GITHUB_REPO`（你的 GitHub 仓库名）。
 
 ### 2. 初始化 Cloudflare 资源
 
@@ -112,7 +98,7 @@ git push origin main
 ```
 GitHub Actions 会自动接管，将站点的最新内容打包并部署到 Cloudflare Pages！
 
-### 5. 后续配置 (进阶)
+### 5. 后续配置
 
 1. **R2 域名绑定**：在 Cloudflare Dashboard 对应的 R2 存储桶设置中，绑定自定义域名（如 `assets.yourdomain.com`），以便外网能够以常规 HTTP 协议访问图片。
 2. **Telegram Webhook**：在浏览器访问或通过 cURL 触发以下链接来注册 Webhook，使其自动监听 Telegram Bot 的消息以处理评论回复/内容发布（替换对应参数）：
@@ -127,6 +113,18 @@ GitHub Actions 会自动接管，将站点的最新内容打包并部署到 Clou
    cancel - 取消频道关联
    help - 显示使用帮助
    ```
+
+## ✍️ 写作发布
+
+依托 Telegram Bot 与 GitHub Actions，日常的写作与发布体验极为顺畅，完整流程如下：
+
+1. **创建草稿**：在你的 Telegram 机器人中输入 `/new [文章标题]`，系统会自动在 GitHub 仓库生成一篇 Markdown 格式的草稿（含标准头部 Front Matter），并触发网站构建。
+2. **编辑文章**：使用你最喜欢的支持 Git 的编辑器（如 VS Code、Obsidian 等）拉取最新代码，编辑刚刚生成的 Markdown 文章。
+   - 各种文字排版、多媒体格式的 Markdown 语法规范，请严格参考此示例文章：[Jekyll 完整 Markup 语法展示](https://blog.zgqinc.gq/posts/npg6ht/)。
+3. **上传图床文件**：在写作过程中如果需要插图、上传附件、放置音视频等，无需寻找第三方图床，**直接将文件或图片发送给你的 Telegram Bot**！Bot 会自动将其存入 R2 存储并返回可以直接复制使用的 Markdown 代码或下载卡片代码。
+4. **推送更新**：在本地完成文章编写后，使用 `git commit` 与 `git push` 推送到 GitHub，博客网站将自动更新。
+5. **发布到频道**：网站更新完成后，在 Telegram 机器人中输入 `/link <文章ID> [摘要内容]`。Bot 会自动提取头图，并将这篇文章排版成精美的卡片推送至你的公开频道（图片在下、文字在上、自带链接预览），同时触发自动关联频道评论区！
+   - *补充说明：后续如果修改了文章封面或摘要，可直接发送 `/sync <文章ID>`，Bot 会同步更新频道里那条历史消息的展示内容。*
 
 ## 📄 许可证 (License)
 
