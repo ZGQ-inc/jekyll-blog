@@ -20,8 +20,8 @@ document.addEventListener('DOMContentLoaded', () => {
       });
       
       const onlyMedia = elements.every(el => {
-        if (el.tagName === 'IMG' || el.tagName === 'VIDEO') return true;
-        if (el.tagName === 'A' && el.children.length === 1 && (el.children[0].tagName === 'IMG' || el.children[0].tagName === 'VIDEO')) return true;
+        if (el.tagName === 'IMG') return true;
+        if (el.tagName === 'A' && el.children.length === 1 && (el.children[0].tagName === 'IMG')) return true;
         if (el.tagName === 'BR') return true;
         return false;
       });
@@ -29,11 +29,11 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!hasTextContent && elements.length > 0 && onlyMedia) {
         isMediaBlock = true;
         elements.forEach(el => {
-          if (el.tagName === 'IMG' || el.tagName === 'VIDEO') mediaInNode.push(el);
+          if (el.tagName === 'IMG') mediaInNode.push(el);
           else if (el.tagName === 'A') mediaInNode.push(el.children[0]);
         });
       }
-    } else if (node.tagName === 'IMG' || node.tagName === 'VIDEO') {
+    } else if (node.tagName === 'IMG') {
       isMediaBlock = true;
       mediaInNode.push(node);
     }
@@ -93,9 +93,6 @@ document.addEventListener('DOMContentLoaded', () => {
           openLightbox(parseInt(srcMedia.dataset.lightboxIndex));
         });
 
-        if (clone.tagName === 'VIDEO') {
-          clone.controls = true;
-        }
         mainView.appendChild(clone);
         
         // Update thumbnails
@@ -112,12 +109,6 @@ document.addEventListener('DOMContentLoaded', () => {
         thumbClone.removeAttribute('controls');
         
         thumbWrapper.appendChild(thumbClone);
-        if (media.tagName === 'VIDEO') {
-          const playIcon = document.createElement('span');
-          playIcon.className = 'material-symbols-outlined play-indicator';
-          playIcon.textContent = 'play_circle';
-          thumbWrapper.appendChild(playIcon);
-        }
 
         thumbWrapper.addEventListener('click', () => {
           renderMainView(i);
@@ -157,7 +148,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // 3.5 Catch all remaining standalone media (e.g. images with text/captions)
-  document.querySelectorAll('.article-content img, .article-content video').forEach(media => {
+  document.querySelectorAll('.article-content img').forEach(media => {
     // Skip if already processed
     if (media.dataset.lightboxIndex !== undefined) return;
     // Skip if it's inside a custom link wrapper
@@ -225,7 +216,6 @@ document.addEventListener('DOMContentLoaded', () => {
     clone.removeAttribute('width');
     clone.removeAttribute('height');
     clone.draggable = false;
-    if (clone.tagName === 'VIDEO') clone.controls = true;
     contentWrapper.appendChild(clone);
     
     lightbox.classList.add('open');
@@ -250,7 +240,7 @@ document.addEventListener('DOMContentLoaded', () => {
   lightbox.querySelector('.lightbox-content-container').addEventListener('click', (e) => {
     // Prevent closing if we were dragging or if we clicked directly on the media
     if (isPanDragging) return;
-    if (e.target.tagName === 'IMG' || e.target.tagName === 'VIDEO') return;
+    if (e.target.tagName === 'IMG') return;
     
     const wrapper = lightbox.querySelector('.lightbox-content-wrapper');
     if (e.target === e.currentTarget || e.target === wrapper) {
