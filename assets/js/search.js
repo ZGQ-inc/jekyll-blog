@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', function() {
   searchInput.addEventListener('focus', loadSearchIndex);
   
   window.filterPosts = function() {
-    var cards = document.querySelectorAll('.post-card');
+    var cards = document.querySelectorAll('.post-card, .archive-post-item');
     var q = searchInput.value.trim().toLowerCase();
     var t = window.activeTag ? window.activeTag.toLowerCase() : null;
 
@@ -55,7 +55,7 @@ document.addEventListener('DOMContentLoaded', function() {
         var tags = card.dataset.tags || '';
         
         // Exact substring match as fallback just in case Fuse misses some obvious ones
-        var title = card.dataset.title || '';
+        var title = card.dataset.title || card.querySelector('.archive-title, .card-title')?.textContent.toLowerCase() || '';
         var fallbackMatch = title.includes(q) || tags.includes(q);
         
         var matchQ = matchedUrls.has(url) || fallbackMatch;
@@ -66,7 +66,7 @@ document.addEventListener('DOMContentLoaded', function() {
     } else {
       // No search query, just filter by tag and normal substring
       cards.forEach(function(card) {
-        var title = card.dataset.title || '';
+        var title = card.dataset.title || card.querySelector('.archive-title, .card-title')?.textContent.toLowerCase() || '';
         var tags = card.dataset.tags || '';
         var matchQ = !q || title.includes(q) || tags.includes(q);
         var matchT = !t || tags.includes(t);
@@ -76,6 +76,15 @@ document.addEventListener('DOMContentLoaded', function() {
       // If we need to load fuse because they typed something before focus
       if (q && !fuse) loadSearchIndex();
     }
+
+    // Hide empty archive groups if present
+    document.querySelectorAll('.md3-archive-group').forEach(function(group) {
+      var items = group.querySelectorAll('.archive-post-item');
+      if (items.length > 0) {
+        var visibleItems = Array.from(items).filter(item => item.style.display !== 'none');
+        group.style.display = visibleItems.length === 0 ? 'none' : '';
+      }
+    });
   };
 
   searchInput.addEventListener('input', window.filterPosts);

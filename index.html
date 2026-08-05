@@ -8,8 +8,9 @@ permalink: /
 
   <!-- Page Header -->
   <div class="page-header">
+    {% assign unarchived_posts = site.posts | where_exp: "item", "item.archive != true" %}
     <h1 class="page-title">✍️ 最新文章</h1>
-    <p class="page-subtitle">共 {{ site.posts.size }} 篇文章 · 持续记录中</p>
+    <p class="page-subtitle">共 {{ unarchived_posts.size }} 篇文章 · 持续记录中</p>
   </div>
 
   <!-- Filter Bar -->
@@ -29,7 +30,7 @@ permalink: /
   </div>
 
   <!-- Tag filter chips -->
-  {% assign all_tags = site.posts | map: 'tags' | join: ',' | split: ',' | uniq | sort %}
+  {% assign all_tags = unarchived_posts | map: 'tags' | join: ',' | split: ',' | uniq | sort %}
   {% if all_tags.size > 0 %}
   <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:20px">
     <button class="chip chip-primary" id="tagAll" onclick="filterTag(null, this)" style="font-size:0.75rem">
@@ -49,7 +50,7 @@ permalink: /
   <!-- Post Gallery -->
   <div class="gallery-container grid-mode" id="postGallery">
 
-    {% for post in site.posts %}
+    {% for post in unarchived_posts %}
     <a class="post-card animate-fade-in-up"
        href="{{ post.url | relative_url }}"
        data-title="{{ post.title | downcase }}"
@@ -108,7 +109,7 @@ permalink: /
     </a>
     {% endfor %}
 
-    {% if site.posts.size == 0 %}
+    {% if unarchived_posts.size == 0 %}
     <div class="empty-state" style="grid-column:1/-1">
       <span class="material-symbols-outlined empty-icon">edit_note</span>
       <p class="empty-title">还没有文章</p>

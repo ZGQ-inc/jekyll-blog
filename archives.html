@@ -6,15 +6,23 @@ permalink: /archives/
 
 <main class="page-content" role="main">
   <div class="page-header">
+    {% assign archived_posts = site.posts | where_exp: "post", "post.archive == true" %}
     <h1 class="page-title">📅 归档</h1>
     <p class="page-subtitle">
-      {{ site.posts.size }} 篇文章 ·
-      {{ site.posts | map: 'date' | map: 'year' | uniq | size }} 年
+      {{ archived_posts.size }} 篇文章 ·
+      {{ archived_posts | map: 'date' | map: 'year' | uniq | size }} 年
     </p>
   </div>
 
+  <div class="filter-bar">
+    <div class="android-search-bar">
+      <span class="material-symbols-outlined search-icon">search</span>
+      <input type="text" id="searchInput" placeholder="在归档中搜索文章、标签、正文…" aria-label="搜索归档">
+    </div>
+  </div>
+
   <!-- Year timeline -->
-  {% assign postsByYear = site.posts | group_by_exp: "post", "post.date | date: '%Y'" %}
+  {% assign postsByYear = archived_posts | group_by_exp: "post", "post.date | date: '%Y'" %}
   {% for year_group in postsByYear %}
   <section class="md3-archive-group">
     <div class="md3-archive-header">
@@ -24,7 +32,7 @@ permalink: /archives/
     </div>
 
     {% for post in year_group.items %}
-    <a class="archive-post-item" href="{{ post.url | relative_url }}">
+    <a class="archive-post-item" href="{{ post.url | relative_url }}" data-tags="{{ post.tags | join: ',' | downcase }}">
       <span class="archive-date-badge">
         {{ post.date | date: "%m月%d日" }}
       </span>
@@ -39,11 +47,16 @@ permalink: /archives/
   </section>
   {% endfor %}
 
-  {% if site.posts.size == 0 %}
+  {% if archived_posts.size == 0 %}
   <div class="empty-state">
     <span class="material-symbols-outlined empty-icon">inventory_2</span>
-    <p class="empty-title">暂无文章</p>
-    <p class="empty-body">开始写你的第一篇文章吧</p>
+    <p class="empty-title">暂无归档</p>
+    <p class="empty-body">被归档的文章会出现在这里</p>
   </div>
   {% endif %}
 </main>
+
+<script>
+  window.activeTag = null; // No tag filter on this page
+</script>
+<script src="{{ '/assets/js/search.js' | relative_url }}"></script>

@@ -14,10 +14,12 @@ permalink: /tags/
   <div class="tag-cloud" style="margin-bottom:32px">
     {% assign sorted_tags = site.tags | sort %}
     {% for tag in sorted_tags %}
+    {% assign unarchived_tag_posts = tag[1] | where_exp: "item", "item.archive != true" %}
+    {% if unarchived_tag_posts.size == 0 %}{% continue %}{% endif %}
     {% assign t = tag[0] %}
     <a href="#{{ t | slugify }}" class="tag-item">
       {{ t }}
-      <span class="tag-count">{{ tag[1].size }}</span>
+      <span class="tag-count">{{ unarchived_tag_posts.size }}</span>
     </a>
     {% endfor %}
   </div>
@@ -25,15 +27,17 @@ permalink: /tags/
   <!-- Posts grouped by tag -->
   {% assign sorted_tags = site.tags | sort %}
   {% for tag in sorted_tags %}
+  {% assign unarchived_tag_posts = tag[1] | where_exp: "item", "item.archive != true" %}
+  {% if unarchived_tag_posts.size == 0 %}{% continue %}{% endif %}
   {% assign t = tag[0] %}
   <section id="{{ t | slugify }}" class="md3-archive-group">
     <div class="md3-archive-header">
       <span class="material-symbols-outlined header-icon">tag</span>
       <span class="header-title">{{ t }}</span>
-      <span class="header-count">{{ tag[1].size }} 篇</span>
+      <span class="header-count">{{ unarchived_tag_posts.size }} 篇</span>
     </div>
     
-    {% for post in tag[1] %}
+    {% for post in unarchived_tag_posts %}
     <a class="archive-post-item" href="{{ post.url | relative_url }}">
       <span class="archive-date-badge">{{ post.date | date: "%m-%d" }}</span>
       <span class="archive-title">{{ post.title }}</span>

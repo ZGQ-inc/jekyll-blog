@@ -6,8 +6,9 @@ permalink: /posts/
 
 <main class="page-content" role="main">
   <div class="page-header">
+    {% assign unarchived_posts = site.posts | where_exp: "item", "item.archive != true" %}
     <h1 class="page-title">📝 所有文章</h1>
-    <p class="page-subtitle">共 {{ site.posts.size }} 篇 · 按时间倒序</p>
+    <p class="page-subtitle">共 {{ unarchived_posts.size }} 篇 · 按时间倒序</p>
   </div>
 
   <div class="filter-bar">
@@ -26,7 +27,7 @@ permalink: /posts/
   </div>
 
   <div class="gallery-container grid-mode" id="postGallery">
-    {% for post in site.posts %}
+    {% for post in unarchived_posts %}
     <a class="post-card animate-fade-in-up"
        href="{{ post.url | relative_url }}"
        data-title="{{ post.title | downcase }}"

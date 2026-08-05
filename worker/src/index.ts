@@ -267,6 +267,7 @@ async function handleNewCommand(message: TgMessage, title: string, env: Env): Pr
       `image: ""`,
       `categories: []`,
       `tags: []`,
+      `archive: false`,
       `comments: true`,
       `toc: true`,
       '---',
