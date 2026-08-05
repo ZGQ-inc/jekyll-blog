@@ -2767,72 +2767,113 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
 .tag-cloud {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 8px;
 
   .tag-item {
     @include ripple-surface;
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    padding: 8px 16px;
-    border-radius: var(--shape-full);
-    background: color-mix(in srgb, var(--md-sys-color-surface-container-high) 70%, transparent);
-    border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 50%, transparent);
-    color: var(--md-sys-color-on-surface);
+    padding: 6px 12px;
+    border-radius: 8px;
+    background: var(--md-sys-color-secondary-container);
+    color: var(--md-sys-color-on-secondary-container);
     font-size: 0.875rem;
     font-weight: 500;
     text-decoration: none;
-    animation: chip-appear var(--dur-medium2) var(--motion-emphasized-decel) both;
-    @for $i from 1 through 30 { &:nth-child(#{$i}) { animation-delay: #{$i * 30}ms; } }
-    transition:
-      background var(--dur-short4) var(--motion-standard),
-      border-color var(--dur-short4),
-      transform var(--dur-short3) var(--motion-emphasized),
-      box-shadow var(--dur-short4);
+    transition: background var(--dur-short4), box-shadow var(--dur-short4), transform var(--dur-short3);
 
     &:hover {
-      background: color-mix(in srgb, var(--md-sys-color-primary-container) 70%, transparent);
-      color: var(--md-sys-color-on-primary-container);
-      border-color: color-mix(in srgb, var(--md-sys-color-primary) 40%, transparent);
-      transform: translateY(-2px) scale(1.03);
       box-shadow: var(--elev-1);
-      text-decoration: none;
+      transform: translateY(-1px);
     }
 
     .tag-count {
       font-size: 0.75rem;
-      background: var(--md-sys-color-primary-container);
-      color: var(--md-sys-color-on-primary-container);
-      padding: 1px 7px;
-      border-radius: var(--shape-full);
-      font-weight: 700;
+      background: color-mix(in srgb, var(--md-sys-color-on-secondary-container) 12%, transparent);
+      padding: 2px 6px;
+      border-radius: 4px;
     }
   }
 }
 
-.archive-year {
-  margin-bottom: 32px;
-
-  .archive-year-header {
+.md3-archive-group {
+  background: var(--md-sys-color-surface-container-low);
+  border-radius: var(--shape-corner-extra-large);
+  padding: 20px;
+  margin-bottom: 24px;
+  
+  .md3-archive-header {
     display: flex;
     align-items: center;
     gap: 12px;
-    margin-bottom: 12px;
+    margin-bottom: 16px;
+    color: var(--md-sys-color-primary);
 
-    h2 {
-      font-size: 1.25rem;
-      font-weight: 800;
-      color: var(--md-sys-color-primary);
+    .header-icon {
+      font-size: 1.5rem;
     }
+    
+    .header-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+    }
+    
+    .header-count {
+      margin-left: auto;
+      font-size: 0.875rem;
+      color: var(--md-sys-color-on-surface-variant);
+      background: var(--md-sys-color-surface-variant);
+      padding: 4px 10px;
+      border-radius: var(--shape-full);
+      font-weight: 500;
+    }
+  }
+}
 
-    .archive-year-line {
-      flex: 1;
-      height: 1px;
-      background: linear-gradient(
-        90deg,
-        color-mix(in srgb, var(--md-sys-color-primary) 40%, transparent),
-        transparent
-      );
+.md3-category-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.md3-category-card {
+  @include ripple-surface;
+  background: var(--md-sys-color-surface-container);
+  border: 1px solid var(--md-sys-color-outline-variant);
+  border-radius: var(--shape-corner-large);
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  text-decoration: none;
+  transition: box-shadow var(--dur-short4), transform var(--dur-short4), background var(--dur-short4);
+
+  &:hover {
+    box-shadow: var(--elev-1);
+    transform: translateY(-2px);
+    background: var(--md-sys-color-surface-container-high);
+  }
+
+  .card-icon {
+    font-size: 2rem;
+    color: var(--md-sys-color-primary);
+  }
+
+  .card-content {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    
+    .card-title {
+      font-weight: 700;
+      font-size: 1rem;
+      color: var(--md-sys-color-on-surface);
+    }
+    .card-subtitle {
+      font-size: 0.8125rem;
+      color: var(--md-sys-color-on-surface-variant);
     }
   }
 }

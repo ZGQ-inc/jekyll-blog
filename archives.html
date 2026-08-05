@@ -16,26 +16,27 @@ permalink: /archives/
   <!-- Year timeline -->
   {% assign postsByYear = site.posts | group_by_exp: "post", "post.date | date: '%Y'" %}
   {% for year_group in postsByYear %}
-  <div class="archive-year">
-    <div class="year-header">
-      <span class="year-num">{{ year_group.name }}</span>
-      <span class="year-count">{{ year_group.items.size }} 篇</span>
+  <section class="md3-archive-group">
+    <div class="md3-archive-header">
+      <span class="material-symbols-outlined header-icon">calendar_month</span>
+      <span class="header-title">{{ year_group.name }}</span>
+      <span class="header-count">{{ year_group.items.size }} 篇</span>
     </div>
 
     {% for post in year_group.items %}
     <a class="archive-post-item" href="{{ post.url | relative_url }}">
-      <span class="post-date-badge">
+      <span class="archive-date-badge">
         {{ post.date | date: "%m月%d日" }}
       </span>
-      <span class="post-title-link">{{ post.title }}</span>
+      <span class="archive-title">{{ post.title }}</span>
       <div class="post-tags">
         {% for tag in post.tags limit:2 %}
-        <span class="chip chip-outlined" style="font-size:0.65rem">{{ tag }}</span>
+        <span class="chip chip-outlined">{{ tag }}</span>
         {% endfor %}
       </div>
     </a>
     {% endfor %}
-  </div>
+  </section>
   {% endfor %}
 
   {% if site.posts.size == 0 %}

@@ -11,25 +11,14 @@ permalink: /categories/
   </div>
 
   <!-- Category overview cards -->
-  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-bottom:32px">
+  <div class="md3-category-grid">
     {% assign sorted_cats = site.categories | sort %}
     {% for cat in sorted_cats %}
-    <a href="#{{ cat[0] | slugify }}" style="text-decoration:none">
-      <div style="
-        background:var(--md-sys-color-surface-container);
-        border:1px solid var(--md-sys-color-outline-variant);
-        border-radius:var(--shape-corner-large);
-        padding:16px;
-        display:flex;align-items:center;gap:12px;
-        transition:box-shadow 0.2s,transform 0.2s;
-        cursor:pointer;
-      " onmouseover="this.style.boxShadow='0 2px 8px rgba(0,0,0,.12)';this.style.transform='translateY(-2px)'"
-         onmouseout="this.style.boxShadow='';this.style.transform=''">
-        <span class="material-symbols-outlined" style="font-size:1.8rem;color:var(--md-sys-color-primary)">folder</span>
-        <div>
-          <div style="font-weight:700;font-size:0.95rem;color:var(--md-sys-color-on-surface)">{{ cat[0] }}</div>
-          <div style="font-size:0.75rem;color:var(--md-sys-color-on-surface-variant)">{{ cat[1].size }} 篇</div>
-        </div>
+    <a href="#{{ cat[0] | slugify }}" class="md3-category-card">
+      <span class="material-symbols-outlined card-icon">folder_open</span>
+      <div class="card-content">
+        <div class="card-title">{{ cat[0] }}</div>
+        <div class="card-subtitle">{{ cat[1].size }} 篇</div>
       </div>
     </a>
     {% endfor %}
@@ -38,21 +27,20 @@ permalink: /categories/
   <!-- Posts by category -->
   {% assign sorted_cats = site.categories | sort %}
   {% for cat in sorted_cats %}
-  <section id="{{ cat[0] | slugify }}" style="margin-bottom:28px">
-    <div class="archive-year">
-      <div class="year-header">
-        <span class="material-symbols-outlined" style="color:var(--md-sys-color-primary)">folder_open</span>
-        <span class="year-num">{{ cat[0] }}</span>
-        <span class="year-count">{{ cat[1].size }} 篇</span>
-      </div>
+  <section id="{{ cat[0] | slugify }}" class="md3-archive-group">
+    <div class="md3-archive-header">
+      <span class="material-symbols-outlined header-icon">folder</span>
+      <span class="header-title">{{ cat[0] }}</span>
+      <span class="header-count">{{ cat[1].size }} 篇</span>
     </div>
+    
     {% for post in cat[1] %}
     <a class="archive-post-item" href="{{ post.url | relative_url }}">
-      <span class="post-date-badge">{{ post.date | date: "%Y-%m-%d" }}</span>
-      <span class="post-title-link">{{ post.title }}</span>
+      <span class="archive-date-badge">{{ post.date | date: "%Y-%m-%d" }}</span>
+      <span class="archive-title">{{ post.title }}</span>
       <div class="post-tags">
         {% for tag in post.tags limit:2 %}
-        <span class="chip chip-tonal" style="font-size:0.65rem">{{ tag }}</span>
+        <span class="chip chip-tonal">{{ tag }}</span>
         {% endfor %}
       </div>
     </a>

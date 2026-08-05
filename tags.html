@@ -15,7 +15,7 @@ permalink: /tags/
     {% assign sorted_tags = site.tags | sort %}
     {% for tag in sorted_tags %}
     {% assign t = tag[0] %}
-    <a href="#{{ t | slugify }}" class="tag-cloud-item">
+    <a href="#{{ t | slugify }}" class="tag-item">
       {{ t }}
       <span class="tag-count">{{ tag[1].size }}</span>
     </a>
@@ -26,17 +26,17 @@ permalink: /tags/
   {% assign sorted_tags = site.tags | sort %}
   {% for tag in sorted_tags %}
   {% assign t = tag[0] %}
-  <section id="{{ t | slugify }}" style="margin-bottom:32px">
-    <div class="archive-year">
-      <div class="year-header">
-        <span class="year-num"># {{ t }}</span>
-        <span class="year-count">{{ tag[1].size }} 篇</span>
-      </div>
+  <section id="{{ t | slugify }}" class="md3-archive-group">
+    <div class="md3-archive-header">
+      <span class="material-symbols-outlined header-icon">tag</span>
+      <span class="header-title">{{ t }}</span>
+      <span class="header-count">{{ tag[1].size }} 篇</span>
     </div>
+    
     {% for post in tag[1] %}
     <a class="archive-post-item" href="{{ post.url | relative_url }}">
-      <span class="post-date-badge">{{ post.date | date: "%m-%d" }}</span>
-      <span class="post-title-link">{{ post.title }}</span>
+      <span class="archive-date-badge">{{ post.date | date: "%m-%d" }}</span>
+      <span class="archive-title">{{ post.title }}</span>
     </a>
     {% endfor %}
   </section>
