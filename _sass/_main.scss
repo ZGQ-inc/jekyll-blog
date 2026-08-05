@@ -2799,7 +2799,7 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
 
 .md3-archive-group {
   background: var(--md-sys-color-surface-container-low);
-  border-radius: var(--shape-corner-extra-large);
+  border-radius: var(--shape-xl);
   padding: 20px;
   margin-bottom: 24px;
   
@@ -2842,18 +2842,19 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
   @include ripple-surface;
   background: var(--md-sys-color-surface-container);
   border: 1px solid var(--md-sys-color-outline-variant);
-  border-radius: var(--shape-corner-large);
+  border-radius: var(--shape-large);
   padding: 16px;
   display: flex;
   align-items: center;
   gap: 16px;
-  text-decoration: none;
+  text-decoration: none !important;
   transition: box-shadow var(--dur-short4), transform var(--dur-short4), background var(--dur-short4);
 
   &:hover {
     box-shadow: var(--elev-1);
     transform: translateY(-2px);
     background: var(--md-sys-color-surface-container-high);
+    text-decoration: none !important;
   }
 
   .card-icon {
