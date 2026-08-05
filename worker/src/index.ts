@@ -272,7 +272,7 @@ async function handleNewCommand(message: TgMessage, title: string, env: Env): Pr
       `toc: true`,
       '---',
       '',
-      '<!-- 请在 VSCode 中编辑此草稿的正文内容 -->',
+      '<!-- 正文内容 -->',
       ''
     ].join('\n');
 
