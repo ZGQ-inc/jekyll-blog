@@ -294,7 +294,7 @@ async function handleNewCommand(message: TgMessage, title: string, env: Env): Pr
 async function fetchPostInfoFromGitHub(id: string, env: Env): Promise<{ title: string; tags: string[]; summary: string; image: string } | null> {
   try {
     const [owner, repo] = env.GITHUB_REPO.split('/');
-    const apiUrl = `https://api.github.com/repos/${owner}/${repo}/contents/${env.GITHUB_POSTS_PATH}`;
+    const apiUrl = `https://api.github.com/repos/${owner}/${repo}/git/trees/${env.GITHUB_BRANCH}?recursive=1`;
     const res = await fetch(apiUrl, {
       headers: {
         Authorization: `Bearer ${env.GITHUB_TOKEN}`,
@@ -303,8 +303,12 @@ async function fetchPostInfoFromGitHub(id: string, env: Env): Promise<{ title: s
       }
     });
     if (!res.ok) return null;
-    const files = await res.json() as any[];
-    const file = files.find((f: any) => f.name.endsWith(`-${id}.md`));
+    const treeData = await res.json() as any;
+    const file = treeData.tree.find((f: any) => 
+      f.type === 'blob' && 
+      f.path.startsWith(`${env.GITHUB_POSTS_PATH}/`) && 
+      f.path.endsWith(`-${id}.md`)
+    );
     if (!file) return null;
 
     const fileRes = await fetch(file.url, {
