@@ -6,8 +6,13 @@ permalink: /categories/
 
 <main class="page-content" role="main">
   <div class="page-header">
+    {% assign active_cat_count = 0 %}
+    {% for cat in site.categories %}
+      {% assign unarchived = cat[1] | where_exp: "item", "item.archive != true" %}
+      {% if unarchived.size > 0 %}{% assign active_cat_count = active_cat_count | plus: 1 %}{% endif %}
+    {% endfor %}
     <h1 class="page-title">📁 分类</h1>
-    <p class="page-subtitle">共 {{ site.categories.size }} 个分类</p>
+    <p class="page-subtitle">共 {{ active_cat_count }} 个分类</p>
   </div>
 
   <!-- Category overview cards -->

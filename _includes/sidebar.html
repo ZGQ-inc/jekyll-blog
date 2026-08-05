@@ -48,17 +48,29 @@
     <p class="profile-bio">{{ site.author.bio }}</p>
 
     <!-- Stats -->
+    {% assign unarchived_posts = site.posts | where_exp: "item", "item.archive != true" %}
+    {% assign active_tag_count = 0 %}
+    {% for tag in site.tags %}
+      {% assign unarchived = tag[1] | where_exp: "item", "item.archive != true" %}
+      {% if unarchived.size > 0 %}{% assign active_tag_count = active_tag_count | plus: 1 %}{% endif %}
+    {% endfor %}
+    {% assign active_cat_count = 0 %}
+    {% for cat in site.categories %}
+      {% assign unarchived = cat[1] | where_exp: "item", "item.archive != true" %}
+      {% if unarchived.size > 0 %}{% assign active_cat_count = active_cat_count | plus: 1 %}{% endif %}
+    {% endfor %}
+
     <div class="profile-stats">
       <div class="stat-item">
-        <span class="stat-value">{{ site.posts.size }}</span>
+        <span class="stat-value">{{ unarchived_posts.size }}</span>
         <span class="stat-label">文章</span>
       </div>
       <div class="stat-item">
-        <span class="stat-value">{{ site.tags.size }}</span>
+        <span class="stat-value">{{ active_tag_count }}</span>
         <span class="stat-label">标签</span>
       </div>
       <div class="stat-item">
-        <span class="stat-value">{{ site.categories.size }}</span>
+        <span class="stat-value">{{ active_cat_count }}</span>
         <span class="stat-label">分类</span>
       </div>
     </div>
@@ -74,7 +86,7 @@
        id="nav-{{ item.icon }}">
       <span class="material-symbols-outlined" aria-hidden="true">{{ item.icon }}</span>
       <span class="nav-label">{{ item.title }}</span>
-      {% if item.title == '文章' %}<span class="nav-badge">{{ site.posts.size }}</span>{% endif %}
+      {% if item.title == '文章' %}<span class="nav-badge">{{ unarchived_posts.size }}</span>{% endif %}
     </a>
     {% endfor %}
   </nav>

@@ -6,8 +6,13 @@ permalink: /tags/
 
 <main class="page-content" role="main">
   <div class="page-header">
+    {% assign active_tag_count = 0 %}
+    {% for tag in site.tags %}
+      {% assign unarchived = tag[1] | where_exp: "item", "item.archive != true" %}
+      {% if unarchived.size > 0 %}{% assign active_tag_count = active_tag_count | plus: 1 %}{% endif %}
+    {% endfor %}
     <h1 class="page-title">🏷️ 标签</h1>
-    <p class="page-subtitle">共 {{ site.tags.size }} 个标签</p>
+    <p class="page-subtitle">共 {{ active_tag_count }} 个标签</p>
   </div>
 
   <!-- Tag Cloud -->
