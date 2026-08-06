@@ -135,7 +135,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const hash = window._initialHash;
     
     const scrollToHash = () => {
-      // Small delay after load to let final layout (e.g. MathJax) settle
+      // Fire quickly so the user doesn't wait for all images to load.
+      // Modern browsers' Scroll Anchoring will keep the element in view even if images load later.
       setTimeout(() => {
         try {
           const decodedHash = decodeURIComponent(hash);
@@ -155,14 +156,10 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (e) {
           console.warn('Invalid hash selector:', e);
         }
-      }, 300);
+      }, 50); // Just a tiny 50ms delay after DOM ready
     };
 
-    if (document.readyState === 'complete') {
-      scrollToHash();
-    } else {
-      window.addEventListener('load', scrollToHash);
-    }
+    scrollToHash();
   }
 });
 
