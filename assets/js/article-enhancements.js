@@ -138,7 +138,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => {
       try {
         const decodedHash = decodeURIComponent(hash);
-        const target = document.querySelector(decodedHash);
+        const target = document.getElementById(decodedHash.substring(1));
         if (target) {
           target.scrollIntoView({ behavior: 'smooth' });
           // Put the hash back in the URL

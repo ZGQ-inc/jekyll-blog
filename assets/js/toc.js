@@ -31,7 +31,13 @@ document.addEventListener('DOMContentLoaded', () => {
     
     const link = document.createElement('a');
     link.href = `#${heading.id}`;
-    link.textContent = heading.innerText.trim();
+    
+    // Extract text ignoring the anchor copy icon
+    link.textContent = Array.from(heading.childNodes)
+      .filter(node => node.nodeType === Node.TEXT_NODE || (node.nodeType === Node.ELEMENT_NODE && !node.classList.contains('anchor-icon')))
+      .map(node => node.textContent)
+      .join('').trim();
+      
     link.className = 'toc-link';
     
     // Smooth scroll and close drawer on mobile/click
