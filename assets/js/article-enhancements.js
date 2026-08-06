@@ -144,7 +144,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Handle potential invalid selectors from the hash
         console.warn('Invalid hash selector:', e);
       }
-    }, 500); // 500ms delay gives images/fonts a moment to load and adjust DOM
+    }, 1000); // 1000ms delay gives images/fonts a moment to load and adjust DOM
   }
 });
 
