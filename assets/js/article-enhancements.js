@@ -134,13 +134,18 @@ document.addEventListener('DOMContentLoaded', () => {
   if (window.location.hash) {
     const hash = window.location.hash;
     
-    // Temporarily snap to top to prevent the native abrupt jump
+    // Temporarily disable global CSS smooth scroll and snap to top
+    const htmlEl = document.documentElement;
+    const originalBehavior = htmlEl.style.scrollBehavior;
+    htmlEl.style.scrollBehavior = 'auto';
     window.scrollTo(0, 0);
+    
     // Remove the hash temporarily from the URL
     history.replaceState(null, null, window.location.pathname + window.location.search);
 
-    // Try to scroll smoothly after a short delay
+    // After DOM paints, restore behavior and smooth scroll to target
     setTimeout(() => {
+      htmlEl.style.scrollBehavior = originalBehavior;
       try {
         const decodedHash = decodeURIComponent(hash);
         const target = document.querySelector(decodedHash);
