@@ -94,4 +94,40 @@ document.addEventListener('DOMContentLoaded', () => {
       }, 2000);
     });
   });
+
+  // 3. Heading Anchor Copy Links
+  const headings = document.querySelectorAll('.article-content h1, .article-content h2, .article-content h3, .article-content h4, .article-content h5, .article-content h6');
+  
+  headings.forEach(heading => {
+    if (!heading.id) return;
+    
+    heading.classList.add('anchor-heading');
+    
+    const iconSpan = document.createElement('span');
+    iconSpan.className = 'material-symbols-outlined anchor-icon';
+    iconSpan.textContent = 'link';
+    iconSpan.title = '复制链接';
+    iconSpan.setAttribute('aria-hidden', 'true');
+    
+    heading.appendChild(iconSpan);
+    
+    heading.addEventListener('click', (e) => {
+      // Prevent other click events from interfering, but let default links work if they clicked a link inside heading
+      if (e.target.tagName.toLowerCase() === 'a' && e.target !== iconSpan) return;
+      
+      const url = window.location.href.split('#')[0] + '#' + heading.id;
+      navigator.clipboard.writeText(url).then(() => {
+        const originalText = iconSpan.textContent;
+        iconSpan.textContent = 'check';
+        iconSpan.style.color = 'var(--md-sys-color-primary)';
+        setTimeout(() => {
+          iconSpan.textContent = originalText;
+          iconSpan.style.color = '';
+        }, 1500);
+      }).catch(err => {
+        console.error('Could not copy text: ', err);
+      });
+    });
+  });
 });
+

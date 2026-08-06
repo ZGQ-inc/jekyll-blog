@@ -1885,11 +1885,29 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
   word-wrap: break-word;
   overflow-wrap: break-word;
 
-  h2, h3, h4 {
+  h2, h3, h4, h5, h6 {
     font-weight: 700;
     letter-spacing: -0.01em;
     margin: 1.75em 0 0.6em;
     color: var(--md-sys-color-on-surface);
+  }
+  
+  .anchor-heading {
+    cursor: pointer;
+    position: relative;
+    
+    .anchor-icon {
+      opacity: 0;
+      margin-left: 8px;
+      font-size: 0.8em;
+      vertical-align: middle;
+      color: var(--md-sys-color-on-surface-variant);
+      transition: opacity var(--dur-short4), color var(--dur-short4);
+    }
+    
+    &:hover .anchor-icon {
+      opacity: 1;
+    }
   }
 
   h2 { 
