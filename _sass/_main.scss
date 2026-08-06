@@ -144,8 +144,12 @@ body::-webkit-scrollbar {
 
 html {
   scroll-behavior: smooth;
-  scroll-padding-top: 80px; // Prevent anchors from being hidden under top app bar
+  scroll-padding-top: 24px; // Desktop default (breathing room)
   scrollbar-width: none; // Firefox hide main scrollbar
+  
+  @media (max-width: 1024px) {
+    scroll-padding-top: 80px; // Mobile: 64px top app bar + 16px padding
+  }
 }
 
 html, body {
@@ -1890,7 +1894,6 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
     letter-spacing: -0.01em;
     margin: 1.75em 0 0.6em;
     color: var(--md-sys-color-on-surface);
-    scroll-margin-top: 80px;
   }
   
   .anchor-heading {
