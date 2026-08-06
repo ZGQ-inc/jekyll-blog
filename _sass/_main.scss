@@ -1890,6 +1890,7 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
     letter-spacing: -0.01em;
     margin: 1.75em 0 0.6em;
     color: var(--md-sys-color-on-surface);
+    scroll-margin-top: 80px;
   }
   
   .anchor-heading {
@@ -1899,8 +1900,10 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
     .anchor-icon {
       opacity: 0;
       margin-left: 8px;
-      font-size: 0.8em;
+      font-size: 1.1em;
       vertical-align: middle;
+      position: relative;
+      top: -2px;
       color: var(--md-sys-color-on-surface-variant);
       transition: opacity var(--dur-short4), color var(--dur-short4);
     }
