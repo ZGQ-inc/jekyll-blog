@@ -137,7 +137,20 @@ async function initSTL() {
       const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
       camera.position.z = 100; // Default position
       
-      const renderer = new THREE.WebGLRenderer({ antialias: true });
+      let renderer;
+      try {
+        renderer = new THREE.WebGLRenderer({ antialias: true });
+      } catch (e) {
+        console.warn('WebGLRenderer failed to initialize:', e);
+        container.innerHTML = `
+          <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:100%; color:var(--md-sys-color-error); text-align:center; padding: 16px; background: color-mix(in srgb, var(--md-sys-color-error) 10%, transparent); border-radius: var(--shape-md);">
+            <span class="material-symbols-outlined" style="font-size: 2rem; margin-bottom: 8px;">broken_image</span>
+            <span style="font-size: 0.9rem; font-weight: 500;">无法渲染 3D 模型</span>
+            <span style="font-size: 0.8rem; margin-top: 4px; opacity: 0.8;">当前设备/浏览器不支持 WebGL，或硬件加速已关闭、显存不足。</span>
+          </div>
+        `;
+        return; // Skip rendering this block
+      }
       renderer.setSize(container.clientWidth, container.clientHeight);
       container.appendChild(renderer.domElement);
 
