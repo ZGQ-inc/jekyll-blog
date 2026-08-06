@@ -40,6 +40,11 @@
   if (window.location.hash) {
     window._initialHash = window.location.hash;
     history.replaceState(null, null, window.location.pathname + window.location.search);
+    if ('scrollRestoration' in history) {
+      window._originalScrollRestoration = history.scrollRestoration;
+      history.scrollRestoration = 'manual';
+    }
+    window.scrollTo(0, 0);
   }
 </script>
 

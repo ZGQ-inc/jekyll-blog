@@ -134,20 +134,35 @@ document.addEventListener('DOMContentLoaded', () => {
   if (window._initialHash) {
     const hash = window._initialHash;
     
-    // After DOM paints, smooth scroll to target
-    setTimeout(() => {
-      try {
-        const decodedHash = decodeURIComponent(hash);
-        const target = document.getElementById(decodedHash.substring(1));
-        if (target) {
-          target.scrollIntoView({ behavior: 'smooth' });
-          // Put the hash back in the URL
-          history.replaceState(null, null, hash);
+    const scrollToHash = () => {
+      // Small delay after load to let final layout (e.g. MathJax) settle
+      setTimeout(() => {
+        try {
+          const decodedHash = decodeURIComponent(hash);
+          const target = document.getElementById(decodedHash.substring(1));
+          if (target) {
+            target.scrollIntoView({ behavior: 'smooth' });
+            // Put the hash back in the URL
+            history.replaceState(null, null, hash);
+            
+            // Restore original scroll restoration mode after scroll completes
+            if (window._originalScrollRestoration !== undefined) {
+              setTimeout(() => {
+                history.scrollRestoration = window._originalScrollRestoration;
+              }, 1000);
+            }
+          }
+        } catch (e) {
+          console.warn('Invalid hash selector:', e);
         }
-      } catch (e) {
-        console.warn('Invalid hash selector:', e);
-      }
-    }, 500); // 500ms delay gives images/fonts a moment to load
+      }, 300);
+    };
+
+    if (document.readyState === 'complete') {
+      scrollToHash();
+    } else {
+      window.addEventListener('load', scrollToHash);
+    }
   }
 });
 
