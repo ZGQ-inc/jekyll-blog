@@ -132,19 +132,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // 4. Fix initial anchor jump offset for slow-loading DOM
   if (window.location.hash) {
-    // Try to scroll smoothly after a short delay to account for layout shifts
+    const hash = window.location.hash;
+    
+    // Temporarily snap to top to prevent the native abrupt jump
+    window.scrollTo(0, 0);
+    // Remove the hash temporarily from the URL
+    history.replaceState(null, null, window.location.pathname + window.location.search);
+
+    // Try to scroll smoothly after a short delay
     setTimeout(() => {
       try {
-        const hash = decodeURIComponent(window.location.hash);
-        const target = document.querySelector(hash);
+        const decodedHash = decodeURIComponent(hash);
+        const target = document.querySelector(decodedHash);
         if (target) {
           target.scrollIntoView({ behavior: 'smooth' });
+          // Put the hash back in the URL
+          history.replaceState(null, null, hash);
         }
       } catch (e) {
-        // Handle potential invalid selectors from the hash
         console.warn('Invalid hash selector:', e);
       }
-    }, 1000); // 1000ms delay gives images/fonts a moment to load and adjust DOM
+    }, 500); // 500ms delay gives images/fonts a moment to load
   }
 });
 
