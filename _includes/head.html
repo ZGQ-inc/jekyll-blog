@@ -35,6 +35,12 @@
   if (sessionStorage.getItem('isNavigating')) {
     document.documentElement.classList.add('is-navigating');
   }
+  
+  // Intercept initial hash to prevent native jump and allow smooth JS scroll later
+  if (window.location.hash) {
+    window._initialHash = window.location.hash;
+    history.replaceState(null, null, window.location.pathname + window.location.search);
+  }
 </script>
 
 <!-- Main Stylesheet -->
