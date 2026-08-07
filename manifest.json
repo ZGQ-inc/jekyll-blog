@@ -1,0 +1,16 @@
+{
+  "name": "ZGQ Inc.'s Blog",
+  "short_name": "ZGQ Blog",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#0061A4",
+  "icons": [
+    {
+      "src": "/assets/images/avatar.png",
+      "sizes": "192x192 512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

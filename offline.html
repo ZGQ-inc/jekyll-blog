@@ -1,0 +1,17 @@
+---
+layout: default
+title: "离线 (Offline)"
+permalink: /offline.html
+---
+
+<div style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:60vh; text-align:center; padding: 24px;">
+  <span class="material-symbols-outlined" style="font-size: 4rem; color: var(--md-sys-color-outline);">wifi_off</span>
+  <h1 style="margin-top: 24px; margin-bottom: 8px;">无网络连接</h1>
+  <p style="color: var(--md-sys-color-on-surface-variant); max-width: 400px; margin: 0 auto 24px; line-height: 1.6;">
+    您似乎处于离线状态，或者网络极不稳定。请检查您的网络连接后重试。部分已缓存的页面仍然可以访问。
+  </p>
+  <button onclick="window.location.reload()" style="display: flex; align-items: center; gap: 8px; padding: 10px 24px; border-radius: 100px; border: none; background: var(--md-sys-color-primary); color: var(--md-sys-color-on-primary); font-weight: 500; font-family: inherit; font-size: 0.95rem; cursor: pointer; transition: background 0.2s;">
+    <span class="material-symbols-outlined" style="font-size: 1.2rem;">refresh</span>
+    重试
+  </button>
+</div>
