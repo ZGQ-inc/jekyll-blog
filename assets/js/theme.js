@@ -474,7 +474,7 @@ class ThemeManager {
     Object.entries(palette).forEach(([k, v]) => root.style.setProperty(k, v));
 
     const meta = document.querySelector('meta[name="theme-color"]');
-    if (meta) meta.setAttribute('content', palette['--md-sys-color-primary'] ?? '#0061A4');
+    if (meta) meta.setAttribute('content', palette['--md-sys-color-surface'] ?? '#FDFCFF');
   }
 
   applyTheme(color = this.currentSettings.color, mode = this.currentSettings.mode) {
