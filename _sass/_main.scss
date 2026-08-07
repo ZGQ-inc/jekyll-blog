@@ -915,7 +915,7 @@ ul, ol { list-style: none; }
 }
 
 .app-bar-title {
-  flex: 1;
+  flex: 0 1 auto;
   font-size: 1.125rem;
   font-weight: 700;
   letter-spacing: -0.01em;
