@@ -1,11 +1,12 @@
-const CACHE_NAME = 'zgq-blog-cache-v1';
+const CACHE_NAME = 'zgq-blog-cache-v2';
 const OFFLINE_URL = '/offline.html';
 
 const ASSETS_TO_CACHE = [
   '/',
   '/offline.html',
   '/assets/css/style.css',
-  '/assets/images/avatar.png'
+  '/logo.png',
+  '/logo-monochrome.png'
 ];
 
 self.addEventListener('install', (event) => {
