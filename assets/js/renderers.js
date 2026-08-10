@@ -260,7 +260,12 @@ async function initGeoJSON() {
         const data = JSON.parse(codeText);
         const map = L.map(container);
         
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+        const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+        const tileUrl = isDark ? 
+          'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png' : 
+          'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png';
+          
+        const tileLayer = L.tileLayer(tileUrl, {
           attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
           subdomains: 'abcd',
           maxZoom: 20
@@ -302,17 +307,23 @@ async function initGeoJSON() {
 
         map.fitBounds(geojsonLayer.getBounds(), { padding: [20, 20], maxZoom: 14 });
         
-        geojsonLayers.push({ layer: geojsonLayer, map: map, getStyle: getStyle });
+        geojsonLayers.push({ layer: geojsonLayer, map: map, getStyle: getStyle, tileLayer: tileLayer });
       } catch (e) {
         console.error("Failed to parse GeoJSON:", e);
         container.textContent = "Error rendering GeoJSON map.";
       }
     });
 
-    document.addEventListener('themechange', () => {
+    document.addEventListener('themechange', (e) => {
       setTimeout(() => {
+        const isDark = e.detail?.isDark ?? (document.documentElement.getAttribute('data-theme') === 'dark');
+        const tileUrl = isDark ? 
+          'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png' : 
+          'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png';
         const primary = getComputedStyle(document.documentElement).getPropertyValue('--md-sys-color-primary').trim() || '#0061A4';
-        geojsonLayers.forEach(({ layer, getStyle }) => {
+        
+        geojsonLayers.forEach(({ layer, getStyle, tileLayer }) => {
+          tileLayer.setUrl(tileUrl);
           layer.setStyle(getStyle());
           layer.eachLayer((childLayer) => {
             if (childLayer instanceof L.CircleMarker) {
