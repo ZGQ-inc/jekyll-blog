@@ -1,8 +1,4 @@
 #!/usr/bin/env bash
-# ================================================================
-# ZGQ Blog - Cloudflare 一键初始化脚本 (Linux/macOS)
-# 前提: 已执行 npx wrangler login
-# ================================================================
 
 set -e
 
@@ -13,25 +9,18 @@ YELLOW='\033[1;33m'
 RED='\033[0;31m'
 NC='\033[0m'
 
-echo -e "${BLUE}=================================="
-echo -e "  ZGQ Blog - Cloudflare 初始化"
-echo -e "==================================${NC}"
+echo -e "  Cloudflare 初始化"
 echo ""
 
-# ----------------------------------------------------------------
-# Step 1: 创建 D1 数据库
-# ----------------------------------------------------------------
 echo -e "${YELLOW}[1/5] 创建 D1 数据库 blog-db ...${NC}"
 DB_OUTPUT=$(npx wrangler d1 create blog-db 2>&1)
 echo "$DB_OUTPUT"
 
-# 提取 database_id
 DB_ID=$(echo "$DB_OUTPUT" | grep -oP 'database_id = "\K[^"]+' || true)
 if [ -n "$DB_ID" ]; then
   echo -e "${GREEN}✓ D1 数据库已创建，ID: $DB_ID${NC}"
   echo -e "${YELLOW}⚠ 请将以下 database_id 填入 worker/wrangler.toml:${NC}"
   echo -e "  database_id = \"${DB_ID}\""
-  # Auto-update wrangler.toml if possible
   sed -i.bak "s/PLACEHOLDER_D1_DATABASE_ID/${DB_ID}/" "$WORKER_DIR/wrangler.toml" 2>/dev/null && \
     echo -e "${GREEN}✓ 已自动更新 wrangler.toml${NC}" || true
 else
@@ -39,25 +28,16 @@ else
 fi
 echo ""
 
-# ----------------------------------------------------------------
-# Step 2: 创建 R2 存储桶
-# ----------------------------------------------------------------
 echo -e "${YELLOW}[2/5] 创建 R2 存储桶 blog-assets ...${NC}"
 npx wrangler r2 bucket create blog-assets
 echo -e "${GREEN}✓ R2 存储桶已创建${NC}"
 echo ""
 
-# ----------------------------------------------------------------
-# Step 3: 执行建表 SQL
-# ----------------------------------------------------------------
 echo -e "${YELLOW}[3/5] 初始化 D1 数据库表结构 ...${NC}"
 npx wrangler d1 execute blog-db --file="$WORKER_DIR/schema.sql"
 echo -e "${GREEN}✓ 数据库表已创建${NC}"
 echo ""
 
-# ----------------------------------------------------------------
-# Step 4: 设置 Secrets
-# ----------------------------------------------------------------
 echo -e "${YELLOW}[4/5] 配置 Worker Secrets ...${NC}"
 echo -e "请依次输入以下密钥 (直接回车可跳过，稍后手动设置):"
 echo ""
@@ -80,9 +60,6 @@ read -p "WEBHOOK_SECRET (随机字符串，用于 TG Webhook 验证): " WEBHOOK_
 echo -e "${GREEN}✓ Secrets 配置完成${NC}"
 echo ""
 
-# ----------------------------------------------------------------
-# Step 5: 部署 Worker
-# ----------------------------------------------------------------
 echo -e "${YELLOW}[5/5] 部署 Worker ...${NC}"
 cd "$WORKER_DIR"
 npm install
@@ -90,9 +67,6 @@ npx wrangler deploy
 echo -e "${GREEN}✓ Worker 部署完成${NC}"
 echo ""
 
-# ----------------------------------------------------------------
-# Post-deploy: 设置 Telegram Webhook
-# ----------------------------------------------------------------
 echo -e "${YELLOW}[可选] 设置 Telegram Webhook ...${NC}"
 if [ -n "$TG_TOKEN" ] && [ -n "$WEBHOOK_S" ]; then
   echo ""
@@ -110,9 +84,7 @@ if [ -n "$TG_TOKEN" ] && [ -n "$WEBHOOK_S" ]; then
 fi
 
 echo ""
-echo -e "${BLUE}=================================="
 echo -e "  初始化完成！"
-echo -e "==================================${NC}"
 echo ""
 echo -e "后续步骤:"
 echo -e "  1. 在 GitHub 仓库 Settings → Secrets 中添加:"

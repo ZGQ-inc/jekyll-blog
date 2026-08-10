@@ -2,17 +2,11 @@
 chcp 65001 > nul
 setlocal enabledelayedexpansion
 
-echo ==================================
-echo   ZGQ Blog - Cloudflare 初始化
-echo   (Windows 版)
-echo ==================================
+echo   Cloudflare 初始化
 echo.
 
 set WORKER_DIR=%~dp0..\worker
 
-REM ----------------------------------------------------------------
-REM Step 1: 创建 D1 数据库
-REM ----------------------------------------------------------------
 echo [1/5] 创建 D1 数据库 blog-db ...
 npx wrangler d1 create blog-db
 echo.
@@ -21,23 +15,14 @@ echo 将 PLACEHOLDER_D1_DATABASE_ID 替换为实际的 ID
 pause
 echo.
 
-REM ----------------------------------------------------------------
-REM Step 2: 创建 R2 存储桶
-REM ----------------------------------------------------------------
 echo [2/5] 创建 R2 存储桶 blog-assets ...
 npx wrangler r2 bucket create blog-assets
 echo.
 
-REM ----------------------------------------------------------------
-REM Step 3: 执行建表 SQL
-REM ----------------------------------------------------------------
 echo [3/5] 初始化 D1 数据库表结构 ...
 npx wrangler d1 execute blog-db --file="%WORKER_DIR%\schema.sql"
 echo.
 
-REM ----------------------------------------------------------------
-REM Step 4: 设置 Secrets (逐个交互输入)
-REM ----------------------------------------------------------------
 echo [4/5] 配置 Worker Secrets ...
 echo 以下命令将逐一要求你粘贴密钥值，直接按 Ctrl+C 可跳过单项
 
@@ -63,18 +48,13 @@ npx wrangler secret put WEBHOOK_SECRET --name blog-worker
 
 echo.
 
-REM ----------------------------------------------------------------
-REM Step 5: 安装依赖并部署 Worker
-REM ----------------------------------------------------------------
 echo [5/5] 安装 npm 依赖并部署 Worker ...
 cd "%WORKER_DIR%"
 npm install
 npx wrangler deploy
 echo.
 
-echo ==================================
 echo   初始化完成！
-echo ==================================
 echo.
 echo 后续步骤:
 echo   1. 在 GitHub 仓库 Settings ^> Secrets 中添加:

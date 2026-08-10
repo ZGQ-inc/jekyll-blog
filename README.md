@@ -9,7 +9,7 @@
   - 符合 Material Design 3 (MD3) 规范。
   - 现代网页设计语言（毛玻璃特效、平滑过渡动画，拟态风格等）。
 - **PWA (Progressive Web App) 支持**：
-  - **跨平台安装**：支持在 Android、iOS 及桌面端（Chrome/Edge 等）将博客作为独立应用安装至桌面或主屏幕。
+  - **跨平台安装**：支持在 Android 和 PC端（Firefox/Chrome/Edge 等）将博客作为独立应用安装至桌面或主屏幕。
   - **秒开与断网保护**：利用 Service Worker 进行静态资源深度缓存，极大提升二次访问速度，并在无网络时提供优雅的离线回退页面。
 - **Cloudflare 全栈支持**：
   - **Pages**：自动托管并全球加速静态网页。
