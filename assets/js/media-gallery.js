@@ -2,7 +2,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const postContent = document.querySelector('.article-content');
   if (!postContent) return;
 
-  // 1. Group consecutive media elements
   const childNodes = Array.from(postContent.children);
   const mediaGroups = [];
   let currentGroup = [];
@@ -52,23 +51,19 @@ document.addEventListener('DOMContentLoaded', () => {
     mediaGroups.push(currentGroup);
   }
 
-  // 2. Initialize Lightbox State
-  let allMediaArray = []; // Flat array of all media items across the post for next/prev
+  let allMediaArray = [];
   let currentLightboxIndex = -1;
 
-  // 3. Process Groups into Galleries
   mediaGroups.forEach(group => {
     let allMediaInGroup = [];
     group.forEach(g => allMediaInGroup.push(...g.media));
     
-    // Add all to global media array and assign indices
     allMediaInGroup.forEach(media => {
       media.dataset.lightboxIndex = allMediaArray.length;
       allMediaArray.push(media);
     });
 
     if (allMediaInGroup.length > 1) {
-      // Create Gallery UI
       const gallery = document.createElement('div');
       gallery.className = 'md3-gallery';
       
@@ -87,7 +82,6 @@ document.addEventListener('DOMContentLoaded', () => {
         clone.removeAttribute('width');
         clone.removeAttribute('height');
         
-        // Setup click to open lightbox
         clone.style.cursor = 'zoom-in';
         clone.addEventListener('click', () => {
           openLightbox(parseInt(srcMedia.dataset.lightboxIndex));
@@ -95,7 +89,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         mainView.appendChild(clone);
         
-        // Update thumbnails
         Array.from(thumbnails.children).forEach((thumb, i) => {
           if (i === index) thumb.classList.add('active');
           else thumb.classList.remove('active');
@@ -117,7 +110,6 @@ document.addEventListener('DOMContentLoaded', () => {
         thumbnails.appendChild(thumbWrapper);
       });
 
-      // Enable horizontal scrolling with mouse wheel
       thumbnails.addEventListener('wheel', (e) => {
         if (e.deltaY !== 0) {
           e.preventDefault();
@@ -129,29 +121,23 @@ document.addEventListener('DOMContentLoaded', () => {
       gallery.appendChild(mainView);
       gallery.appendChild(thumbnails);
 
-      // Insert gallery before the first node, then remove original nodes
       const firstNode = group[0].node;
       firstNode.parentNode.insertBefore(gallery, firstNode);
       group.forEach(g => {
         if (g.node.parentNode) g.node.parentNode.removeChild(g.node);
       });
     } else if (allMediaInGroup.length === 1) {
-      // Standalone media: just attach lightbox click
       const media = allMediaInGroup[0];
       media.style.cursor = 'zoom-in';
       media.addEventListener('click', (e) => {
-        // Prevent default if it's a link
         if (media.parentElement.tagName === 'A') e.preventDefault();
         openLightbox(parseInt(media.dataset.lightboxIndex));
       });
     }
   });
 
-  // 3.5 Catch all remaining standalone media (e.g. images with text/captions)
   document.querySelectorAll('.article-content img').forEach(media => {
-    // Skip if already processed
     if (media.dataset.lightboxIndex !== undefined) return;
-    // Skip if it's inside a custom link wrapper
     if (media.closest('a')) return;
     
     media.style.cursor = 'zoom-in';
@@ -164,7 +150,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // 4. Lightbox DOM & Logic
   if (allMediaArray.length === 0) return;
 
   const lightbox = document.createElement('div');
@@ -236,9 +221,7 @@ document.addEventListener('DOMContentLoaded', () => {
   lightbox.querySelector('.close-btn').addEventListener('click', closeLightbox);
   lightbox.querySelector('.lightbox-backdrop').addEventListener('click', closeLightbox);
   
-  // Click on empty space to close
   lightbox.querySelector('.lightbox-content-container').addEventListener('click', (e) => {
-    // Prevent closing if we were dragging or if we clicked directly on the media
     if (isPanDragging) return;
     if (e.target.tagName === 'IMG') return;
     
@@ -255,7 +238,6 @@ document.addEventListener('DOMContentLoaded', () => {
   lightbox.querySelector('.zoom-out-btn').addEventListener('click', () => { scale = Math.max(scale / 1.5, 0.2); updateTransform(); });
   lightbox.querySelector('.zoom-reset-btn').addEventListener('click', resetZoom);
 
-  // Mouse Pan & Zoom
   const container = lightbox.querySelector('.lightbox-content-container');
   
   container.addEventListener('wheel', (e) => {
@@ -292,7 +274,6 @@ document.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => { isPanDragging = false; }, 0);
   });
 
-  // Touch support for panning and pinch-to-zoom
   let initialPinchDistance = null;
   let initialScale = 1;
 
@@ -324,7 +305,7 @@ document.addEventListener('DOMContentLoaded', () => {
       translateY = newY;
       updateTransform();
     } else if (e.touches.length === 2 && initialPinchDistance) {
-      e.preventDefault(); // Prevent native page zoom
+      e.preventDefault();
       isPanDragging = true;
       const dx = e.touches[0].clientX - e.touches[1].clientX;
       const dy = e.touches[0].clientY - e.touches[1].clientY;
@@ -343,7 +324,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // Keyboard navigation
   document.addEventListener('keydown', (e) => {
     if (!lightbox.classList.contains('open')) return;
     if (e.key === 'Escape') closeLightbox();

@@ -1,15 +1,12 @@
 document.addEventListener('DOMContentLoaded', () => {
-  // 1. KBD Special Icons
   const kbdElements = document.querySelectorAll('kbd');
   kbdElements.forEach(kbd => {
-    // Skip if it already has a generated icon
     if (kbd.querySelector('.material-symbols-outlined')) return;
 
     let text = kbd.innerText.trim();
     let originalText = text;
     let icon = '';
     
-    // Check for explicit known unicode symbols often used for keys, strip them
     if (text.includes('⌘')) { text = text.replace(/⌘/g, '').trim(); icon = 'grid_view'; kbd.innerText = text || 'Win'; }
     if (text.includes('⇧')) { text = text.replace(/⇧/g, '').trim(); icon = 'shift'; kbd.innerText = text || 'Shift'; }
     if (text.includes('⎋')) { text = text.replace(/⎋/g, '').trim(); icon = 'close'; kbd.innerText = text || 'Esc'; }
@@ -23,7 +20,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let lowerText = text.toLowerCase();
     
-    // Map common keys to Material Symbols if icon not already found
     if (!icon) {
       if (lowerText === 'shift') icon = 'shift';
       else if (lowerText === 'win' || lowerText === 'windows' || lowerText === 'cmd' || lowerText === 'command') {
@@ -48,12 +44,10 @@ document.addEventListener('DOMContentLoaded', () => {
       const iconSpan = document.createElement('span');
       iconSpan.className = 'material-symbols-outlined';
       iconSpan.textContent = icon;
-      // Prepend icon
       kbd.insertBefore(iconSpan, kbd.firstChild);
     }
   });
 
-  // 2. KBD Easter Egg (Tooltip)
   kbdElements.forEach(kbd => {
     kbd.addEventListener('click', () => {
       if (document.querySelector('.kbd-tooltip-bubble')) return;
@@ -61,7 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const rect = kbd.getBoundingClientRect();
       const bubble = document.createElement('div');
       bubble.className = 'kbd-tooltip-bubble';
-      bubble.innerHTML = '不是点我哦 😝';
+      bubble.innerHTML = '不是点我哦';
       
       bubble.style.position = 'fixed';
       bubble.style.background = 'var(--md-sys-color-inverse-surface, #313033)';
@@ -95,7 +89,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // 3. Heading Anchor Copy Links
   const headings = document.querySelectorAll('.article-content h1, .article-content h2, .article-content h3, .article-content h4, .article-content h5, .article-content h6');
   
   headings.forEach(heading => {
@@ -112,7 +105,6 @@ document.addEventListener('DOMContentLoaded', () => {
     heading.appendChild(iconSpan);
     
     heading.addEventListener('click', (e) => {
-      // Prevent other click events from interfering, but let default links work if they clicked a link inside heading
       if (e.target.tagName.toLowerCase() === 'a' && e.target !== iconSpan) return;
       
       const url = window.location.href.split('#')[0] + '#' + heading.id;
@@ -130,23 +122,18 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // 4. Fix initial anchor jump offset for slow-loading DOM
   if (window._initialHash) {
     const hash = window._initialHash;
     
     const scrollToHash = () => {
-      // Fire quickly so the user doesn't wait for all images to load.
-      // Modern browsers' Scroll Anchoring will keep the element in view even if images load later.
       setTimeout(() => {
         try {
           const decodedHash = decodeURIComponent(hash);
           const target = document.getElementById(decodedHash.substring(1));
           if (target) {
             target.scrollIntoView({ behavior: 'smooth' });
-            // Put the hash back in the URL
             history.replaceState(null, null, hash);
             
-            // Restore original scroll restoration mode after scroll completes
             if (window._originalScrollRestoration !== undefined) {
               setTimeout(() => {
                 history.scrollRestoration = window._originalScrollRestoration;
@@ -156,7 +143,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (e) {
           console.warn('Invalid hash selector:', e);
         }
-      }, 50); // Just a tiny 50ms delay after DOM ready
+      }, 50);
     };
 
     scrollToHash();

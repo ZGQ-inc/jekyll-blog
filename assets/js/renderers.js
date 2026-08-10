@@ -1,9 +1,3 @@
-/**
- * ZGQ Blog - Markdown Renderers
- * Lazy loading implementations for Mermaid, STL, and GeoJSON.
- */
-
-// Helper: Extract relevant code blocks handling different Rouge/Jekyll HTML structures
 function getCodeBlocks(language) {
   const elements = document.querySelectorAll(`.language-${language}, code.language-${language}, code[data-lang="${language}"]`);
   const blocks = [];
@@ -21,7 +15,6 @@ function getCodeBlocks(language) {
     blocks.push({ wrapper, codeText: codeEl.textContent });
   });
   
-  // Deduplicate wrappers
   const uniqueWrappers = new Set();
   const uniqueBlocks = [];
   for (const b of blocks) {
@@ -33,14 +26,10 @@ function getCodeBlocks(language) {
   return uniqueBlocks;
 }
 
-// ----------------------------------------------------
-// 1. Mermaid Renderer
-// ----------------------------------------------------
 async function initMermaid() {
   const blocks = getCodeBlocks('mermaid');
   if (blocks.length === 0) return;
 
-  // Replace original blocks with mermaid divs
   blocks.forEach(({ wrapper, codeText }) => {
     const newContainer = document.createElement('div');
     newContainer.className = 'mermaid';
@@ -84,7 +73,6 @@ async function initMermaid() {
         }
       });
 
-      // Reset content and re-render
       const mermaidDivs = document.querySelectorAll('.mermaid');
       mermaidDivs.forEach(div => {
         div.removeAttribute('data-processed');
@@ -96,7 +84,6 @@ async function initMermaid() {
     await renderMermaid();
 
     document.addEventListener('themechange', () => {
-      // Small delay to ensure CSS variables have updated
       setTimeout(renderMermaid, 50);
     });
 
@@ -105,16 +92,12 @@ async function initMermaid() {
   }
 }
 
-// ----------------------------------------------------
-// 2. STL 3D Model Renderer
-// ----------------------------------------------------
 async function initSTL() {
   const blocks = getCodeBlocks('stl').map(b => ({ ...b, stlType: 'stl' })).concat(
                  getCodeBlocks('stljs').map(b => ({ ...b, stlType: 'stljs' })));
   if (blocks.length === 0) return;
 
   try {
-    // Dynamic import Three.js + STLLoader + OrbitControls using esm.sh to automatically resolve bare module specifiers
     const THREE = await import('https://esm.sh/three@0.158.0');
     const { STLLoader } = await import('https://esm.sh/three@0.158.0/examples/jsm/loaders/STLLoader.js');
     const { OrbitControls } = await import('https://esm.sh/three@0.158.0/examples/jsm/controls/OrbitControls.js');
@@ -126,16 +109,14 @@ async function initSTL() {
       container.className = 'stl-viewer';
       wrapper.parentNode.replaceChild(container, wrapper);
 
-      // Scene setup
       const scene = new THREE.Scene();
       
-      // Get computed styles for theme colors
       const computedStyle = getComputedStyle(document.body);
       const surfaceColor = computedStyle.getPropertyValue('--md-sys-color-surface-container').trim() || '#f3f4f9';
       scene.background = new THREE.Color(surfaceColor);
 
       const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
-      camera.position.z = 100; // Default position
+      camera.position.z = 100;
       
       let renderer;
       try {
@@ -149,19 +130,17 @@ async function initSTL() {
             <span style="font-size: 0.8rem; margin-top: 4px; opacity: 0.8;">当前设备/浏览器不支持 WebGL，或硬件加速已关闭、显存不足。</span>
           </div>
         `;
-        return; // Skip rendering this block
+        return;
       }
       renderer.setSize(container.clientWidth, container.clientHeight);
       container.appendChild(renderer.domElement);
 
-      // Controls
       const controls = new OrbitControls(camera, renderer.domElement);
       controls.enableDamping = true;
       controls.dampingFactor = 0.05;
       controls.autoRotate = true;
       controls.autoRotateSpeed = 1.0;
 
-      // Lighting
       const hemiLight = new THREE.HemisphereLight(0xffffff, 0x444444, 1.0);
       hemiLight.position.set(0, 200, 0);
       scene.add(hemiLight);
@@ -170,7 +149,6 @@ async function initSTL() {
       dirLight.position.set(0, 200, 100);
       scene.add(dirLight);
 
-      // Helper for STL geometry
       const processGeometry = (geometry, material) => {
         const mesh = new THREE.Mesh(geometry, material);
         geometry.computeBoundingBox();
@@ -178,12 +156,11 @@ async function initSTL() {
         geometry.boundingBox.getCenter(center);
         mesh.position.sub(center);
 
-        // Auto-scale to fit view
         const box = geometry.boundingBox;
         const maxDim = Math.max(box.max.x - box.min.x, box.max.y - box.min.y, box.max.z - box.min.z);
         const fov = camera.fov * (Math.PI / 180);
         let cameraZ = Math.abs(maxDim / 2 / Math.tan(fov / 2));
-        cameraZ *= 1.5; // padding
+        cameraZ *= 1.5;
         camera.position.z = cameraZ;
 
         scene.add(mesh);
@@ -200,24 +177,20 @@ async function initSTL() {
         });
 
         if (stlType === 'stljs') {
-          // Execute arbitrary Three.js code
           const scriptFunc = new Function('THREE', 'scene', 'material', 'camera', 'renderer', codeText);
           scriptFunc(THREE, scene, material, camera, renderer);
         } else {
           const trimmedText = codeText.trim();
           if (trimmedText.startsWith('http') || trimmedText.startsWith('/')) {
-            // Load from URL
             loader.load(trimmedText, function(geometry) {
               processGeometry(geometry, material);
             });
           } else {
-            // Parse inline STL
             const geometry = loader.parse(codeText);
             processGeometry(geometry, material);
           }
         }
         
-        // Listen for theme changes to dynamically update STL colors
         document.addEventListener('themechange', () => {
           setTimeout(() => {
             const newStyles = getComputedStyle(document.documentElement);
@@ -229,7 +202,6 @@ async function initSTL() {
           }, 50);
         });
         
-        // Animation Loop
         const animate = function () {
           requestAnimationFrame(animate);
           controls.update();
@@ -237,7 +209,6 @@ async function initSTL() {
         };
         animate();
 
-        // Handle resize
         window.addEventListener('resize', () => {
           if (!container.clientWidth) return;
           camera.aspect = container.clientWidth / container.clientHeight;
@@ -255,9 +226,6 @@ async function initSTL() {
   }
 }
 
-// ----------------------------------------------------
-// 3. GeoJSON / TopoJSON Map Renderer
-// ----------------------------------------------------
 function loadLeaflet() {
   return new Promise((resolve, reject) => {
     if (window.L) return resolve(window.L);
@@ -281,7 +249,7 @@ async function initGeoJSON() {
 
   try {
     const L = await loadLeaflet();
-    const geojsonLayers = []; // Keep track for dynamic theme updates
+    const geojsonLayers = [];
 
     blocks.forEach(({ wrapper, codeText }) => {
       const container = document.createElement('div');
@@ -290,11 +258,8 @@ async function initGeoJSON() {
 
       try {
         const data = JSON.parse(codeText);
-        
-        // Initialize map
         const map = L.map(container);
         
-        // Use CartoDB Positron for a clean, modern look compatible with MD3
         L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
           attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
           subdomains: 'abcd',
@@ -310,7 +275,6 @@ async function initGeoJSON() {
           };
         };
 
-        // Parse and add GeoJSON layer
         const geojsonLayer = L.geoJSON(data, {
           style: getStyle,
           pointToLayer: function (feature, latlng) {
@@ -334,7 +298,6 @@ async function initGeoJSON() {
           }
         }).addTo(map);
 
-        // Fit bounds
         map.fitBounds(geojsonLayer.getBounds(), { padding: [20, 20] });
         
         geojsonLayers.push({ layer: geojsonLayer, map: map, getStyle: getStyle });
@@ -344,13 +307,11 @@ async function initGeoJSON() {
       }
     });
 
-    // Listen for theme changes to dynamically update GeoJSON colors
     document.addEventListener('themechange', () => {
       setTimeout(() => {
         const primary = getComputedStyle(document.documentElement).getPropertyValue('--md-sys-color-primary').trim() || '#0061A4';
         geojsonLayers.forEach(({ layer, getStyle }) => {
           layer.setStyle(getStyle());
-          // Also update circle markers specifically
           layer.eachLayer((childLayer) => {
             if (childLayer instanceof L.CircleMarker) {
               childLayer.setStyle({ fillColor: primary });
@@ -365,9 +326,6 @@ async function initGeoJSON() {
   }
 }
 
-// ----------------------------------------------------
-// Bootstrapper
-// ----------------------------------------------------
 document.addEventListener('DOMContentLoaded', () => {
   initMermaid();
   initSTL();

@@ -2,25 +2,20 @@ document.addEventListener('DOMContentLoaded', () => {
   const mediaElements = document.querySelectorAll('.article-content video, .article-content audio');
 
   mediaElements.forEach(media => {
-    // Only process elements that natively request controls
     if (!media.hasAttribute('controls')) return;
     if (media.classList.contains('md3-custom-player')) return;
 
-    // Remove native controls
     media.removeAttribute('controls');
     media.classList.add('md3-custom-player');
 
     const isVideo = media.tagName === 'VIDEO';
 
-    // Create wrapper
     const wrapper = document.createElement('div');
     wrapper.className = `md3-media-player ${isVideo ? 'md3-media-video' : 'md3-media-audio'}`;
     media.parentNode.insertBefore(wrapper, media);
     
-    // For audio, we create a rich card layout
     let audioBody;
     if (!isVideo) {
-      // Hide the actual audio element
       media.style.display = 'none';
       wrapper.appendChild(media);
 
@@ -53,22 +48,18 @@ document.addEventListener('DOMContentLoaded', () => {
       wrapper.appendChild(media);
     }
 
-    // Create controls container
     const controls = document.createElement('div');
     controls.className = 'media-controls';
     
-    // Play/Pause Button
     const playBtn = document.createElement('button');
     playBtn.className = 'media-btn play-btn';
     playBtn.title = '播放';
     playBtn.innerHTML = '<span class="material-symbols-outlined">play_arrow</span>';
 
-    // Time Display
     const timeDisplay = document.createElement('div');
     timeDisplay.className = 'media-time';
     timeDisplay.textContent = '00:00 / 00:00';
 
-    // Progress Bar
     const progressContainer = document.createElement('div');
     progressContainer.className = 'media-progress-container';
     const progressTrack = document.createElement('div');
@@ -82,7 +73,6 @@ document.addEventListener('DOMContentLoaded', () => {
     progressTrack.appendChild(progressThumb);
     progressContainer.appendChild(progressTrack);
 
-    // Volume Button
     const volumeBtn = document.createElement('button');
     volumeBtn.className = 'media-btn volume-btn';
     volumeBtn.title = '静音/恢复';
@@ -93,7 +83,6 @@ document.addEventListener('DOMContentLoaded', () => {
     controls.appendChild(timeDisplay);
     controls.appendChild(volumeBtn);
 
-    // Fullscreen Button (Video only)
     let fullscreenBtn;
     if (isVideo) {
       fullscreenBtn = document.createElement('button');
@@ -106,9 +95,6 @@ document.addEventListener('DOMContentLoaded', () => {
       audioBody.appendChild(controls);
     }
 
-    // --- Logic ---
-
-    // Format time function
     const formatTime = (timeInSeconds) => {
       if (isNaN(timeInSeconds)) return '00:00';
       const m = Math.floor(timeInSeconds / 60).toString().padStart(2, '0');
@@ -145,7 +131,6 @@ document.addEventListener('DOMContentLoaded', () => {
       wrapper.classList.remove('is-playing');
     });
 
-    // Update time and progress
     media.addEventListener('timeupdate', () => {
       const current = media.currentTime;
       const total = media.duration || 0;
@@ -162,7 +147,6 @@ document.addEventListener('DOMContentLoaded', () => {
       timeDisplay.textContent = `${formatTime(media.currentTime)} / ${formatTime(media.duration)}`;
     });
 
-    // Scrubbing (Dragging progress)
     let isDraggingProgress = false;
 
     const updateProgressFromEvent = (e) => {
@@ -197,7 +181,6 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
     
-    // Touch support for progress
     progressContainer.addEventListener('touchstart', (e) => {
       isDraggingProgress = true;
       updateProgressFromEvent(e.touches[0]);
@@ -213,7 +196,6 @@ document.addEventListener('DOMContentLoaded', () => {
       isDraggingProgress = false;
     });
 
-    // Volume / Mute
     volumeBtn.addEventListener('click', () => {
       media.muted = !media.muted;
       if (media.muted || media.volume === 0) {
@@ -223,7 +205,6 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
 
-    // Fullscreen
     if (isVideo) {
       const toggleFullscreen = () => {
         if (!document.fullscreenElement) {
@@ -255,7 +236,6 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
 
-    // Auto-hide controls for video when playing and mouse is still
     if (isVideo) {
       let hideControlsTimeout;
       const showControls = () => {
@@ -264,7 +244,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (isPlaying) {
           hideControlsTimeout = setTimeout(() => {
             wrapper.classList.add('hide-controls');
-          }, 2500); // Hide after 2.5s of inactivity
+          }, 2500);
         }
       };
 

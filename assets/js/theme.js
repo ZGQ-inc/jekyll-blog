@@ -1,9 +1,3 @@
-/**
- * ZGQ Blog - Material You (Monet) Theme Manager
- * Supports 6 color presets × light/dark/system modes
- * Persists settings in localStorage
- */
-
 const THEMES = {
   blue: {
     name: '海洋蓝', emoji: '🔵', seed: '#0061A4',
@@ -433,10 +427,7 @@ const THEMES = {
   }
 };
 
-// ================================================================
 // ThemeManager
-// ================================================================
-
 class ThemeManager {
   constructor() {
     this.STORAGE_KEY = 'zgq-blog-theme';
@@ -482,22 +473,15 @@ class ThemeManager {
     this.saveSettings();
     this.previewTheme(color, mode);
     
-    // Notify Material Web elements
     const isDark = this.getEffectiveDark();
     document.dispatchEvent(new CustomEvent('themechange', { detail: { color, mode, isDark } }));
   }
 
   init() {
-    // applyTheme() is now called immediately on instantiation
-    // to prevent FOUC, so we don't need to call it here unless we want to ensure
-    // dialogs are synced, but it's already done.
-
-    // Listen for system preference changes
     this.mediaQuery.addEventListener('change', () => {
       if (this.currentSettings.mode === 'system') this.applyTheme();
     });
 
-    // Build and wire theme dialog
     this.buildDialog();
   }
 
@@ -550,7 +534,6 @@ class ThemeManager {
     document.getElementById('themeDialogBtn')?.addEventListener('click', () => {
       this._pendingColor = this.currentSettings.color;
       this._pendingMode = this.currentSettings.mode;
-      // Reset selections to current
       dialog.querySelectorAll('[data-mode]').forEach(el => {
         el.checked = el.dataset.mode === this.currentSettings.mode;
       });
@@ -583,10 +566,7 @@ class ThemeManager {
   }
 }
 
-// ================================================================
-// Sidebar Toggle (mobile)
-// ================================================================
-
+// Sidebar Toggle
 function initSidebar() {
   const sidebar = document.getElementById('sidebar');
   const overlay = document.getElementById('sidebarOverlay');
@@ -617,7 +597,6 @@ function initSidebar() {
     }
   });
 
-  // Custom DOM Scrollbar logic
   const scrollContainer = document.getElementById('sidebarScroll');
   const scrollbar = document.getElementById('sidebarScrollbar');
   const thumb = document.getElementById('sidebarScrollbarThumb');
@@ -631,12 +610,10 @@ function initSidebar() {
       if (scrollHeight > clientHeight) {
         scrollbar.classList.add('visible');
         
-        // Calculate thumb height proportionally, minimum 30px
         const ratio = clientHeight / scrollHeight;
         const thumbHeight = Math.max(30, clientHeight * ratio);
         thumb.style.height = `${thumbHeight}px`;
 
-        // Calculate thumb position
         const scrollRatio = scrollTop / (scrollHeight - clientHeight);
         const maxThumbTop = clientHeight - thumbHeight;
         const thumbTop = scrollRatio * maxThumbTop;
@@ -650,15 +627,11 @@ function initSidebar() {
     scrollContainer.addEventListener('scroll', updateScrollbar, { passive: true });
     window.addEventListener('resize', updateScrollbar, { passive: true });
 
-    // Initial update, slightly delayed to allow layout to settle
     setTimeout(updateScrollbar, 150);
   }
 }
 
-// ================================================================
 // Reading Progress Bar
-// ================================================================
-
 function initReadingProgress() {
   const bar = document.getElementById('readingProgress');
   if (!bar) return;
@@ -671,10 +644,7 @@ function initReadingProgress() {
   }, { passive: true });
 }
 
-// ================================================================
 // Active Nav Highlighting
-// ================================================================
-
 function initActiveNav() {
   const currentPath = window.location.pathname;
   document.querySelectorAll('.sidebar-nav .nav-item').forEach(link => {
@@ -688,10 +658,7 @@ function initActiveNav() {
   });
 }
 
-// ================================================================
-// View Toggle (grid / list)
-// ================================================================
-
+// View Toggle
 function initViewToggle() {
   const gallery = document.getElementById('postGallery');
   if (!gallery) return;
@@ -703,7 +670,6 @@ function initViewToggle() {
     btn.classList.toggle('active', btn.dataset.view === savedView);
     btn.addEventListener('click', () => {
       const view = btn.dataset.view;
-      // MD3 Fade-through transition for grid/list switch
       gallery.style.opacity = '0';
       gallery.style.transform = 'scale(0.97)';
       gallery.style.transition = 'opacity 150ms cubic-bezier(0.3,0,1,1), transform 150ms cubic-bezier(0.3,0,1,1)';
@@ -721,10 +687,7 @@ function initViewToggle() {
   });
 }
 
-// ================================================================
-// Top App Bar — Scroll elevation (MD3 spec: +2dp on scroll)
-// ================================================================
-
+// Top App Bar
 function initTopAppBar() {
   const bar = document.querySelector('.top-app-bar');
   if (!bar) return;
@@ -734,10 +697,7 @@ function initTopAppBar() {
   }, { passive: true });
 }
 
-// ================================================================
-// Theme Dialog — MD3 compliant open/close with animations
-// ================================================================
-
+// Theme Dialog
 function initThemeDialog() {
   const dialog = document.getElementById('themeDialog');
   if (!dialog) return;
@@ -754,7 +714,6 @@ function initThemeDialog() {
     });
   }
 
-  // Init with current
   const { color, mode } = window.themeManager.currentSettings;
   syncModeButtons(mode);
   syncSwatches(color);
@@ -829,10 +788,7 @@ function initThemeDialog() {
   window.closeThemeDialog = closeThemeDialog;
 }
 
-// ================================================================
-// Page Transition — MD3 Shared Axis Z (forward navigation)
-// ================================================================
-
+// Page Transition
 function initPageTransitions() {
   const main = document.querySelector('.main-content');
   const isNavigating = sessionStorage.getItem('isNavigating');
@@ -840,7 +796,6 @@ function initPageTransitions() {
 
   if (main) {
     if (isNavigating) {
-      // Transfer hidden state to inline styles BEFORE removing the class to prevent flash
       main.style.transition = 'none';
       main.style.opacity = '0';
       main.style.transform = 'translateY(16px)';
@@ -848,7 +803,6 @@ function initPageTransitions() {
       
       document.documentElement.classList.remove('is-navigating');
       
-      // Use double rAF to guarantee a frame render before transitioning
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
           main.style.transition = 'opacity 400ms cubic-bezier(0.05,0.7,0.1,1), transform 400ms cubic-bezier(0.05,0.7,0.1,1), filter 400ms';
@@ -861,7 +815,6 @@ function initPageTransitions() {
       document.documentElement.classList.remove('is-navigating');
     }
 
-    // Handle bfcache: if user clicks "Back" in browser, reset the hidden inline styles
     window.addEventListener('pageshow', e => {
       if (e.persisted) {
         document.documentElement.classList.remove('is-navigating');
@@ -902,10 +855,7 @@ function initPageTransitions() {
   });
 }
 
-// ================================================================
 // Ripple Pointer Position Tracking
-// ================================================================
-
 function initRipples() {
   document.addEventListener('pointerdown', e => {
     const el = e.target.closest('.nav-item, .post-card, .social-btn, .color-swatch, .page-btn, #themeDialogBtn, #backToTopBtn, .btn, .action-btn, .mode-btn');
@@ -924,7 +874,6 @@ function initRipples() {
     if (!glow) {
       glow = document.createElement('span');
       glow.className = 'fluent-bg-glow';
-      // Ensure the button is positioned and handles overflow
       if (getComputedStyle(el).position === 'static') {
         el.style.position = 'relative';
       }
@@ -940,17 +889,11 @@ function initRipples() {
   }, { passive: true });
 }
 
-// ================================================================
 // Init
-// ================================================================
-
 window.themeManager = new ThemeManager();
-// Apply theme immediately to prevent FOUC
 window.themeManager.applyTheme();
 
-// ================================================================
 // Back to Top FAB
-// ================================================================
 function initBackToTop() {
   const btn = document.getElementById('backToTopBtn');
   if (!btn) return;
@@ -994,9 +937,8 @@ window.showToast = function(msg) {
     document.body.appendChild(toast);
   }
   
-  // Reset animation state
   toast.classList.remove('show');
-  void toast.offsetWidth; // Trigger reflow
+  void toast.offsetWidth;
   
   toast.textContent = msg;
   toast.classList.add('show');
@@ -1010,16 +952,13 @@ window.showToast = function(msg) {
   }, 2500);
 };
 
-// ================================================================
 // Fluent Design Hover Reveal Effect
-// ================================================================
 window.addEventListener('DOMContentLoaded', () => {
   const fluentGrids = document.querySelectorAll('.gallery-container, .links-grid, .timeline');
   fluentGrids.forEach(grid => {
     grid.addEventListener('mousemove', e => {
       const cards = grid.querySelectorAll('.post-card, .link-card, .timeline-card');
       cards.forEach(card => {
-        // Inject glow layer dynamically to avoid pseudo-element conflicts
         let glow = card.querySelector('.fluent-glow');
         if (!glow) {
           glow = document.createElement('span');

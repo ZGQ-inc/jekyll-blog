@@ -18,7 +18,7 @@
 <!-- App Shell -->
 <div class="app-shell">
 
-  <!-- Sidebar (includes overlay + theme dialog) -->
+  <!-- Sidebar -->
   {% include sidebar.html %}
 
   <!-- Main Content -->
@@ -53,7 +53,7 @@
   <!-- TOC Overlay -->
   <div class="toc-overlay" id="tocOverlay" aria-hidden="true"></div>
 
-  <!-- PC TOC Floating Button (Visible only on PC) -->
+  <!-- PC TOC Floating Button -->
   <button class="pc-toc-btn" id="pcTocBtn" aria-label="展开目录" title="展开目录" style="display: none;">
     <span class="material-symbols-outlined">menu_book</span>
     <span class="btn-text">目录</span>
@@ -80,7 +80,7 @@
   <span class="material-symbols-outlined">arrow_upward</span>
 </button>
 
-<!-- Markdown Lazy Renderers (Mermaid, STL, GeoJSON) -->
+<!-- Markdown Lazy Renderers -->
 <script type="module" src="{{ '/assets/js/renderers.js' | relative_url }}"></script>
 
 <!-- Color Swatches for Inline Code -->
@@ -90,7 +90,6 @@
     const colorRegex = /^(#([0-9a-fA-F]{3,4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})|rgba?\([\d\s,%.]+\)|hsla?\([\d\s,%.a-zA-Z]+\))$/i;
     
     inlineCodes.forEach(code => {
-      // Ignore block-level code blocks
       if (code.parentElement && code.parentElement.tagName === 'PRE') return;
       
       const text = code.textContent.trim();
@@ -99,7 +98,6 @@
         swatch.className = 'color-swatch';
         swatch.style.backgroundColor = text;
         
-        // Add classes and swatch
         code.classList.add('has-color-swatch');
         code.prepend(swatch);
       }

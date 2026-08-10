@@ -32,13 +32,11 @@
 <!-- Fuse.js for Full-Text Search -->
 <script src="https://cdn.jsdelivr.net/npm/fuse.js@7.0.0/dist/fuse.min.js"></script>
 
-<!-- Prevent transition flash -->
 <script>
   if (sessionStorage.getItem('isNavigating')) {
     document.documentElement.classList.add('is-navigating');
   }
   
-  // Intercept initial hash to prevent native jump and allow smooth JS scroll later
   if (window.location.hash) {
     window._initialHash = window.location.hash;
     history.replaceState(null, null, window.location.pathname + window.location.search);

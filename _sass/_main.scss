@@ -1,26 +1,12 @@
-// ================================================================
-// ZGQ Blog — Material Design 3 (Android Native) Style System
-// Spec: Material Design 3 for Android / Jetpack Compose
-// Motion: MD3 Motion System (Emphasized / Standard curves)
-// Glass: Frosted surfaces with tonal elevation
-// ================================================================
-
-
-// ================================================================
-// §0. CSS @property — Smooth animated color transitions
-// ================================================================
+// CSS @property
 @property --md-sys-color-primary             { syntax: '<color>'; inherits: true; initial-value: #0061A4; }
 @property --md-sys-color-surface             { syntax: '<color>'; inherits: true; initial-value: #FDFCFF; }
 @property --md-sys-color-background          { syntax: '<color>'; inherits: true; initial-value: #FDFCFF; }
 @property --md-sys-color-surface-container   { syntax: '<color>'; inherits: true; initial-value: #EDEDF1; }
 @property --md-sys-color-primary-container   { syntax: '<color>'; inherits: true; initial-value: #D1E4FF; }
 
-
-// ================================================================
-// §1. Design Tokens — MD3 Reference Implementation
-// ================================================================
 :root {
-  // ── MD3 Color System ──────────────────────────────────────────
+  // Color System
   --md-sys-color-primary:                  #0061A4;
   --md-sys-color-on-primary:               #FFFFFF;
   --md-sys-color-primary-container:        #D1E4FF;
@@ -55,8 +41,8 @@
   --md-sys-color-inverse-primary:          #9ECAFF;
   --md-sys-color-scrim:                    #000000;
 
-  // ── MD3 Shape System (Android dp → px) ───────────────────────
-  // None=0, ExtraSmall=4, Small=8, Medium=12, Large=16, ExtraLarge=28, Full=∞
+  // Shape System
+  // None=0, ExtraSmall=4, Small=8, Medium=12, Large=16, ExtraLarge=28, Full=9999
   --shape-none:         0px;
   --shape-xs:           4px;
   --shape-small:        8px;
@@ -65,18 +51,16 @@
   --shape-xl:           28px;
   --shape-full:         9999px;
 
-  // ── MD3 Elevation (tonal + shadow) ───────────────────────────
+  // Elevation
   --elev-1: 0 1px 2px rgba(0,0,0,.06), 0 1px 3px 1px rgba(0,0,0,.06);
   --elev-2: 0 1px 2px rgba(0,0,0,.10), 0 2px 6px 2px rgba(0,0,0,.08);
   --elev-3: 0 4px 8px 3px rgba(0,0,0,.08), 0 1px 3px rgba(0,0,0,.12);
   --elev-4: 0 6px 10px 4px rgba(0,0,0,.08), 0 2px 3px rgba(0,0,0,.12);
 
-  // ── MD3 Motion System ─────────────────────────────────────────
-  // Emphasized (entrances, persistent elements)
+  // Motion System
   --motion-emphasized:           cubic-bezier(0.2, 0, 0, 1);
   --motion-emphasized-decel:     cubic-bezier(0.05, 0.7, 0.1, 1.0);
   --motion-emphasized-accel:     cubic-bezier(0.3, 0, 0.8, 0.15);
-  // Standard (simple transitions)
   --motion-standard:             cubic-bezier(0.2, 0, 0, 1);
   --motion-standard-decel:       cubic-bezier(0, 0, 0, 1);
   --motion-standard-accel:       cubic-bezier(0.3, 0, 1, 1);
@@ -93,17 +77,17 @@
   --dur-long1: 450ms;
   --dur-long2: 500ms;
 
-  // ── Layout ────────────────────────────────────────────────────
-  --nav-drawer-width:   360px;  // MD3 spec: 360dp
-  --nav-rail-width:     80px;   // MD3 spec: 80dp
+  // Layout
+  --nav-drawer-width:   360px;
+  --nav-rail-width:     80px;
 
-  // ── Glassmorphism ─────────────────────────────────────────────
+  // Glassmorphism
   --glass-blur:         24px;
   --glass-saturate:     150%;
   --glass-opacity-light: 0.65;
   --glass-opacity-dark:  0.55;
 
-  // ── Typography ────────────────────────────────────────────────
+  // Typography
   font-family: 'Noto Sans SC', 'Inter', 'Roboto', system-ui, sans-serif;
   font-size: 16px;
   line-height: 1.5;
@@ -111,7 +95,7 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-// Dark mode: color-scheme for browser scrollbar & form elements
+// Dark mode
 [data-theme="dark"] {
   color-scheme: dark;
 
@@ -122,9 +106,7 @@
 }
 
 
-// ================================================================
-// §2. CSS Reset & Base
-// ================================================================
+// CSS Reset & Base
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
@@ -133,7 +115,6 @@
   outline-color: var(--md-sys-color-primary);
 }
 
-// Hide WebKit scrollbars ONLY for the main viewport
 html::-webkit-scrollbar,
 body::-webkit-scrollbar {
   display: none;
@@ -144,11 +125,11 @@ body::-webkit-scrollbar {
 
 html {
   scroll-behavior: smooth;
-  scroll-padding-top: 24px; // Desktop default (breathing room)
-  scrollbar-width: none; // Firefox hide main scrollbar
+  scroll-padding-top: 24px;
+  scrollbar-width: none;
   
   @media (max-width: 1024px) {
-    scroll-padding-top: 80px; // Mobile: 64px top app bar + 16px padding
+    scroll-padding-top: 80px;
   }
 }
 
@@ -161,7 +142,6 @@ body {
   color: var(--md-sys-color-on-background);
   min-height: 100dvh;
   overflow-x: hidden;
-  // Smooth theme transitions
   transition:
     background-color var(--dur-medium2) var(--motion-standard),
     color var(--dur-medium2) var(--motion-standard);
@@ -183,9 +163,7 @@ ul, ol { list-style: none; }
 }
 
 
-// ================================================================
-// §3. MD3 Custom Scrollbar
-// ================================================================
+// Scrollbar
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb {
@@ -198,18 +176,15 @@ ul, ol { list-style: none; }
 }
 ::-webkit-scrollbar-corner { background: transparent; }
 
-// Firefox
 * {
   scrollbar-width: thin;
   scrollbar-color: color-mix(in srgb, var(--md-sys-color-outline) 50%, transparent) transparent;
 }
 
 
-// ================================================================
-// §4. MD3 Keyframe Animations
-// ================================================================
+// Keyframe Animations
 
-// Page entry: Fade + Slide (Z-axis Shared Axis forward)
+// Page entry
 @keyframes page-enter {
   from {
     opacity: 0;
@@ -223,7 +198,7 @@ ul, ol { list-style: none; }
   }
 }
 
-// Fade-through (switching unrelated destinations)
+// Fade-through
 @keyframes fade-through-in {
   0%   { opacity: 0; transform: scale(0.92); }
   100% { opacity: 1; transform: none; }
@@ -259,13 +234,13 @@ ul, ol { list-style: none; }
   }
 }
 
-// Spin (avatar ring)
+// Spin
 @keyframes spin {
   from { transform: rotate(0deg); }
   to   { transform: rotate(360deg); }
 }
 
-// Float (decorative blobs)
+// Float
 @keyframes float {
   0%, 100% { transform: translateY(0px) rotate(0deg); }
   50%       { transform: translateY(-10px) rotate(3deg); }
@@ -309,9 +284,7 @@ ul, ol { list-style: none; }
 }
 
 
-// ================================================================
-// §5. MD3 Ripple Mixin
-// ================================================================
+// Ripple Mixin
 @mixin ripple-surface {
   position: relative;
   overflow: hidden;
@@ -332,7 +305,6 @@ ul, ol { list-style: none; }
     border-radius: inherit;
   }
 
-  // Hover state is now handled dynamically by Fluent Background Reveal
   &:active::after {
     opacity: 1;
     background: radial-gradient(
@@ -343,9 +315,7 @@ ul, ol { list-style: none; }
   }
 }
 
-// ================================================================
-// §6. Reading Progress Bar
-// ================================================================
+// Reading Progress Bar
 #readingProgress {
   position: fixed;
   top: 0;
@@ -362,18 +332,14 @@ ul, ol { list-style: none; }
   border-radius: 0 var(--shape-full) var(--shape-full) 0;
   transition: width 80ms linear;
   pointer-events: none;
-  // Glow effect
   box-shadow: 0 0 8px color-mix(in srgb, var(--md-sys-color-primary) 60%, transparent);
 }
 
 
-// ================================================================
-// §7. App Shell Layout
-// ================================================================
+// App Shell Layout
 .app-shell {
   display: flex;
   min-height: 100dvh;
-  /* align-items: stretch by default to push footer down */
 }
 
 .main-content {
@@ -390,9 +356,7 @@ ul, ol { list-style: none; }
 }
 
 
-// ================================================================
-// §8. Navigation Drawer (MD3 Modal / Permanent)
-// ================================================================
+// Navigation Drawer
 .sidebar-overlay {
   display: none;
   position: fixed;
@@ -412,7 +376,7 @@ ul, ol { list-style: none; }
 }
 
 .sidebar {
-  // MD3 Navigation Drawer spec:
+  // Navigation Drawer spec:
   // Width: 360dp, shape: none on left, Large(16dp) on right
   width: var(--nav-drawer-width);
   height: 100dvh;
@@ -427,7 +391,7 @@ ul, ol { list-style: none; }
   scrollbar-width: none;
   &::-webkit-scrollbar { display: none; }
 
-  // MD3 Drawer surface: surface-container-low with elevation
+  // Drawer surface
   background-color: color-mix(
     in srgb,
     var(--md-sys-color-surface-container-low) calc(var(--glass-opacity-light) * 100%),
@@ -436,20 +400,16 @@ ul, ol { list-style: none; }
   backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
   -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
 
-  // MD3 Drawer: right side has Large (16dp) corners
+  // Drawer
   border-radius: 0 var(--shape-large) var(--shape-large) 0;
-
-  // Subtle right border for glass edge
   border-right: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 40%, transparent);
-
-  // Elevation 1 shadow
   box-shadow: var(--elev-1), 4px 0 32px color-mix(in srgb, var(--md-sys-color-scrim) 8%, transparent);
 
   transition:
     transform var(--dur-medium4) var(--motion-emphasized-decel),
     box-shadow var(--dur-medium2) var(--motion-standard);
 
-  // Decorative tonal blob (primary color wash, top)
+  // Decorative tonal blob
   &::before {
     content: '';
     position: absolute;
@@ -468,7 +428,7 @@ ul, ol { list-style: none; }
     transition: background var(--dur-medium2);
   }
 
-  // Secondary blob (bottom-right)
+  // Secondary blob
   &::after {
     content: '';
     position: absolute;
@@ -500,7 +460,7 @@ ul, ol { list-style: none; }
   &::-webkit-scrollbar { display: none; }
 }
 
-// Custom MD3 Sidebar Scrollbar (DOM-based)
+// Sidebar Scrollbar
 .md3-sidebar-scrollbar {
   position: absolute;
   top: 0;
@@ -525,11 +485,9 @@ ul, ol { list-style: none; }
   border-radius: 4px;
   background: color-mix(in srgb, var(--md-sys-color-on-surface-variant) 40%, transparent);
   transition: background var(--dur-short4);
-  
-  // No hover state if pointer-events is none on parent, but good to have if we enable dragging later
 }
 
-// ── Sidebar Top Bar ───────────────────────────────────────────
+// Sidebar Top Bar
 .sidebar-top-bar {
   display: flex;
   align-items: center;
@@ -538,10 +496,9 @@ ul, ol { list-style: none; }
   flex-shrink: 0;
 }
 
-// Hidden on desktop — !important overrides .icon-btn { display:flex } which is declared later
 .sidebar-close-btn { display: none !important; }
 
-// Theme pill button (MD3 Suggestion chip style)
+// Theme pill button
 .theme-config-btn {
   display: flex;
   align-items: center;
@@ -581,9 +538,7 @@ ul, ol { list-style: none; }
 }
 
 
-// ================================================================
-// §9. Profile Section
-// ================================================================
+// Profile Section
 .profile-section {
   padding: 12px 20px 16px;
   text-align: center;
@@ -648,7 +603,7 @@ ul, ol { list-style: none; }
   margin-bottom: 14px;
 }
 
-// Stats row (MD3 style cards)
+// Stats row
 .profile-stats {
   display: flex;
   justify-content: center;
@@ -688,9 +643,7 @@ ul, ol { list-style: none; }
 }
 
 
-// ================================================================
-// §10. Sidebar Divider
-// ================================================================
+// Sidebar Divider
 .sidebar-divider {
   height: 1px;
   margin: 8px 16px;
@@ -705,9 +658,7 @@ ul, ol { list-style: none; }
 }
 
 
-// ================================================================
-// §11. Navigation List (MD3 Navigation Drawer Items)
-// ================================================================
+// Navigation List
 .sidebar-nav {
   padding: 4px 12px;
   flex-shrink: 0;
@@ -718,8 +669,8 @@ ul, ol { list-style: none; }
   align-items: center;
   gap: 12px;
   padding: 0 16px;
-  height: 56px;           // MD3 spec: 56dp
-  border-radius: var(--shape-full);  // MD3 drawer items: full rounded
+  height: 56px;
+  border-radius: var(--shape-full);
   margin-bottom: 2px;
   color: var(--md-sys-color-on-surface-variant);
   font-size: 0.875rem;
@@ -778,7 +729,7 @@ ul, ol { list-style: none; }
     background: color-mix(in srgb, var(--md-sys-color-on-surface) 12%, transparent);
   }
 
-  // Active state: MD3 uses secondary-container for active nav item
+  // Active state
   &.active {
     background: var(--md-sys-color-secondary-container);
     color: var(--md-sys-color-on-secondary-container);
@@ -795,7 +746,7 @@ ul, ol { list-style: none; }
   }
 }
 
-// Nav Badge (e.g. post count)
+// Nav Badge
 .nav-badge {
   min-width: 20px;
   height: 20px;
@@ -818,9 +769,7 @@ ul, ol { list-style: none; }
 }
 
 
-// ================================================================
-// §12. Sidebar Footer — Social Links
-// ================================================================
+// Sidebar Footer
 .sidebar-footer {
   padding: 8px 12px 20px;
   flex-shrink: 0;
@@ -869,11 +818,9 @@ ul, ol { list-style: none; }
 }
 
 
-// ================================================================
-// §13. Mobile Top App Bar (MD3 Small Top App Bar)
-// ================================================================
+// Mobile Top App Bar
 .top-app-bar {
-  display: none;  // Hidden on desktop (drawer always visible)
+  display: none;
   position: sticky;
   top: 0;
   z-index: 100;
@@ -883,7 +830,7 @@ ul, ol { list-style: none; }
   gap: 4px;
   flex-shrink: 0;
 
-  // MD3 frosted glass top bar (pseudo-element for bulletproof Chrome blur)
+  // MD3 frosted glass top bar
   &::before {
     content: "";
     position: absolute;
@@ -927,9 +874,7 @@ ul, ol { list-style: none; }
 }
 
 
-// ================================================================
-// §14. Icon Button (MD3 Standard Icon Button)
-// ================================================================
+// Icon Button
 .icon-btn {
   @include ripple-surface;
   display: flex;
@@ -959,9 +904,7 @@ ul, ol { list-style: none; }
 }
 
 
-// ================================================================
-// §15. Theme Dialog (MD3 Full-Screen / Alert Dialog)
-// ================================================================
+// Theme Dialog
 .theme-dialog {
   position: fixed;
   inset: 0;
@@ -972,7 +915,6 @@ ul, ol { list-style: none; }
   padding: 24px;
   pointer-events: none;
   visibility: hidden;
-  // Hold visibility during child exit animations
   transition: visibility 0s linear var(--dur-medium3);
 
   &.open {
@@ -980,7 +922,6 @@ ul, ol { list-style: none; }
     visibility: visible;
     transition: visibility 0s linear;
 
-    // Scrim blur fades IN via opacity
     .theme-dialog-scrim {
       opacity: 1;
     }
@@ -1004,7 +945,6 @@ ul, ol { list-style: none; }
 }
 
 .theme-dialog-surface {
-  // MD3 Dialog: ExtraLarge (28dp) corners, surface-container-high background
   background: color-mix(
     in srgb,
     var(--md-sys-color-surface-container-high) 92%,
@@ -1041,7 +981,7 @@ ul, ol { list-style: none; }
   line-height: 1.4;
 }
 
-// Mode selector (MD3 Segmented Button style)
+// Mode selector
 .mode-selector {
   display: flex;
   gap: 0;
@@ -1157,9 +1097,7 @@ ul, ol { list-style: none; }
 }
 
 
-// ================================================================
-// §16. MD3 Button System
-// ================================================================
+// Button System
 %btn-base {
   @include ripple-surface;
   display: inline-flex;
@@ -1238,9 +1176,7 @@ ul, ol { list-style: none; }
 }
 
 
-// ================================================================
-// §17. MD3 Chip System
-// ================================================================
+// Chip System
 %chip-base {
   display: inline-flex;
   align-items: center;
@@ -1287,7 +1223,6 @@ ul, ol { list-style: none; }
   }
 }
 
-// Clickable chips
 button.chip-primary, button.chip-tonal, button.chip-outlined,
 a.chip-primary, a.chip-tonal, a.chip-outlined {
   cursor: pointer;
@@ -1298,16 +1233,13 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
 }
 
 
-// ================================================================
-// §18. MD3 Filled Text Field (with animated floating label)
-// ================================================================
+// Filled Text Field
 .md3-textfield {
   position: relative;
   display: flex;
   align-items: center;
   flex: 1;
 
-  // Active indicator (bottom border)
   &::after {
     content: '';
     position: absolute;
@@ -1370,7 +1302,6 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
       top var(--dur-medium2) var(--motion-emphasized-decel);
   }
 
-  // Float label when focused or has content
   input:focus ~ label,
   input:not(:placeholder-shown) ~ label {
     top: 14px;
@@ -1394,7 +1325,7 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
   &:focus-within .search-icon { color: var(--md-sys-color-primary); }
 }
 
-// Legacy search-field (fallback for non-md3-textfield usage)
+// Legacy search-field
 .search-field {
   position: relative;
   flex: 1;
@@ -1441,9 +1372,7 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
 }
 
 
-// ================================================================
-// §19. Filter Bar
-// ================================================================
+// Filter Bar
 .filter-bar {
   display: flex;
   gap: 12px;
@@ -1453,7 +1382,7 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
   width: 100%;
 }
 
-// Android Search Bar
+// Search Bar
 .android-search-bar {
   display: flex;
   align-items: center;
@@ -1494,7 +1423,7 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
   }
 }
 
-// View toggle (MD3 Icon button group)
+// View toggle
 .view-toggle {
   display: flex;
   background: color-mix(in srgb, var(--md-sys-color-surface-container-high) 70%, transparent);
@@ -1538,9 +1467,7 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
 }
 
 
-// ================================================================
-// §20. Post Gallery & Cards (MD3 Elevated Card)
-// ================================================================
+// Post Gallery & Cards
 .page-content {
   width: 100%;
   padding: 24px 24px 48px;
@@ -1603,7 +1530,7 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
   }
 }
 
-// MD3 Elevated Card
+// Elevated Card
 .post-card {
   @include ripple-surface;
   display: flex;
@@ -1616,7 +1543,6 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
   color: var(--md-sys-color-on-surface);
   cursor: pointer;
 
-  // Staggered entry animation
   animation: card-enter var(--dur-long1) var(--motion-emphasized-decel) both;
   @for $i from 1 through 20 {
     &:nth-child(#{$i}) { animation-delay: #{$i * 50}ms; }
@@ -1756,9 +1682,7 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
 }
 
 
-// ================================================================
-// §21. Post Article Layout
-// ================================================================
+// Post Article Layout
 
 // Hero image section
 .post-hero {
@@ -1856,7 +1780,7 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
   }
 }
 
-// No-image post hero (tonal gradient)
+// No-image post hero
 .post-hero-no-image {
   background: linear-gradient(
     135deg,
@@ -2005,7 +1929,7 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
     }
   }
 
-  // Details & Summary (Collapsible)
+  // Details & Summary
   details {
     background: var(--md-sys-color-surface-container-low);
     border: 1px solid var(--md-sys-color-outline-variant);
@@ -2025,7 +1949,6 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
         border-bottom-right-radius: 0;
       }
 
-      // Add a fade-in and slide-down animation to the content
       & > *:not(summary) {
         animation: details-show 0.3s cubic-bezier(0.2, 0, 0, 1);
       }
@@ -2062,7 +1985,6 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
       color: var(--md-sys-color-primary);
     }
     
-    // Hide default marker for webkit and standard
     &::marker {
       content: none;
     }
@@ -2096,9 +2018,8 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
     font-size: 0.85rem;
     line-height: 1.6;
     position: relative;
-    overflow: hidden; // Keep border radius intact
+    overflow: hidden;
 
-    // Header styling injected by JS
     .code-block-header {
       display: flex;
       align-items: center;
@@ -2192,7 +2113,6 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
     }
   }
 
-  // Fallback for raw pre tags without highlighter
   > pre {
     background: var(--md-sys-color-surface-container-high);
     border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 50%, transparent);
@@ -2325,7 +2245,6 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
     ol { padding-left: 1.5em; }
     li { margin-bottom: 0.5em; }
     
-    // Footnote return link
     a.reversefootnote {
       font-family: monospace;
       text-decoration: none;
@@ -2334,7 +2253,7 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
     }
   }
 
-  // GitHub Alerts (MD3 Styled)
+  // GitHub Alerts
   .github-alert {
     padding: 16px 20px;
     margin: 1.5em 0;
@@ -2389,7 +2308,7 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
     p:last-child { margin-bottom: 0; }
   }
 
-  // Details & Summary (Expansion Panels)
+  // Details & Summary
   details {
     margin: 1.5em 0;
     border: 1px solid var(--md-sys-color-outline-variant);
@@ -2408,14 +2327,14 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
       background-color: transparent;
       transition: background-color 0.2s ease;
       user-select: none;
-      list-style: none; // Hides default arrow in standard browsers
+      list-style: none;
 
       &::-webkit-details-marker {
-        display: none; // Hides default arrow in Safari/Chrome
+        display: none;
       }
 
       &::before {
-        content: '\e5cf'; // material symbol expand_more
+        content: '\e5cf';
         font-family: 'Material Symbols Outlined';
         font-weight: normal;
         font-style: normal;
@@ -2450,13 +2369,11 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
       }
     }
 
-    // Content padding
     & > :not(summary) {
       padding-left: 20px;
       padding-right: 20px;
     }
     
-    // Add breathing room to the first and last children of the content area
     & > :not(summary):first-of-type {
       margin-top: 16px;
     }
@@ -2475,7 +2392,7 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
     overflow: hidden;
     background-color: var(--md-sys-color-surface-container);
     position: relative;
-    z-index: 1; // Create stacking context
+    z-index: 1;
 
     img {
       border-radius: 0;
@@ -2490,7 +2407,6 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
   }
   
   .file-download-card {
-    // Default fallback (Primary)
     --card-color: var(--md-sys-color-primary);
     --card-color-container: var(--md-sys-color-primary-container);
     --card-on-color-container: var(--md-sys-color-on-primary-container);
@@ -2515,7 +2431,7 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
     align-items: center;
     gap: 16px;
     padding: 16px;
-    margin: 0; // Margin is handled by wrapper
+    margin: 0;
     text-decoration: none !important;
     background-color: var(--md-sys-color-surface-container);
     border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 50%, transparent);
@@ -2559,7 +2475,7 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
 
     .file-info {
       flex: 1;
-      min-width: 0; // Truncate text properly
+      min-width: 0;
       
       .file-name {
         font-weight: 600;
@@ -2664,9 +2580,7 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
 }
 
 
-// ================================================================
-// §22. TG Discussion Card & Comments
-// ================================================================
+// TG Discussion Card & Comments
 .tg-discuss-card {
   display: flex;
   align-items: center;
@@ -2733,9 +2647,7 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
 }
 
 
-// ================================================================
-// §23. Empty State
-// ================================================================
+// Empty State
 .empty-state {
   display: flex;
   flex-direction: column;
@@ -2767,9 +2679,7 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
 }
 
 
-// ================================================================
-// §24. Footer
-// ================================================================
+// Footer
 .site-footer {
   padding: 24px;
   text-align: center;
@@ -2785,9 +2695,7 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
 }
 
 
-// ================================================================
-// §25. Page-specific: Tags, Categories, Archives, etc.
-// ================================================================
+// Page-specific
 .tag-cloud {
   display: flex;
   flex-wrap: wrap;
@@ -3052,9 +2960,7 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
 }
 
 
-// ================================================================
-// §26. MD3 Navigation Rail (Tablet breakpoint)
-// ================================================================
+// Navigation Rail
 @media (max-width: 1100px) and (min-width: 769px) {
   :root { --nav-drawer-width: var(--nav-rail-width); }
 
@@ -3120,9 +3026,7 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
 }
 
 
-// ================================================================
-// §27. Mobile Layout
-// ================================================================
+// Mobile Layout
 @media (max-width: 768px) {
   :root { --nav-drawer-width: min(80vw, 360px); }
 
@@ -3134,7 +3038,6 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
     &.open {
       transform: translateX(0);
       box-shadow: var(--elev-4), 0 0 60px rgba(0,0,0,.25);
-      // Re-enable blobs on mobile drawer
       &::before, &::after { display: block; }
     }
   }
@@ -3171,8 +3074,6 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
   .hero-title { font-size: 1.375rem !important; }
   .hero-content { padding: 20px 16px; }
 
-  /* filter-bar inline on mobile */
-
   .article-content { font-size: 1rem; }
 
   .tg-discuss-card { flex-direction: column; text-align: center; }
@@ -3180,21 +3081,18 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
   .post-actions { justify-content: center; }
 }
 
-// Very small screens
 @media (max-width: 380px) {
   .page-content { padding: 12px 12px 48px; }
   .card-body { padding: 12px; }
 }
 
 
-// ================================================================
-// §28. Transition Helpers (Shared Axis Z — navigate between pages)
-// ================================================================
+// Transition Helpers
 .animate-fade-in-up {
   animation: card-enter var(--dur-medium4) var(--motion-emphasized-decel) both;
 }
 
-// Content transitions (for JS-driven page changes)
+// Content transitions
 .content-transition-enter {
   animation: page-enter var(--dur-long1) var(--motion-emphasized-decel) both;
 }
@@ -3203,7 +3101,6 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
   animation: fade-through-in var(--dur-medium2) var(--motion-standard-accel) reverse both;
 }
 
-// Initial state for page transitions (prevents flash)
 html.is-navigating .main-content {
   opacity: 0;
   transform: translateY(16px);
@@ -3211,17 +3108,12 @@ html.is-navigating .main-content {
   transition: none !important;
 }
 
-// ================================================================
-// §29. Material Web Component Overrides
-// ================================================================
-
-// Override MWC dialog shape to match our MD3 spec
+// Material Web Component Overrides
 md-dialog {
   --md-dialog-container-shape: var(--shape-xl);
   --md-dialog-container-color: var(--md-sys-color-surface-container-high);
 }
 
-// Override MWC button shape
 md-filled-button {
   --md-filled-button-container-shape: var(--shape-full);
 }
@@ -3234,16 +3126,13 @@ md-text-button {
   --md-text-button-container-shape: var(--shape-full);
 }
 
-// Navigation drawer MD3 overrides
 md-navigation-drawer {
   --md-navigation-drawer-container-shape: 0 var(--shape-large) var(--shape-large) 0;
   --md-navigation-drawer-container-color: transparent;
 }
 
 
-// ================================================================
-// §30. Syntax Highlighting (Rouge / MD3 themed)
-// ================================================================
+// Syntax Highlighting
 .highlight {
   .c, .c1, .cm { color: color-mix(in srgb, var(--md-sys-color-on-surface-variant) 80%, transparent); font-style: italic; }
   .k, .kd, .kn { color: var(--md-sys-color-tertiary); font-weight: 600; }
@@ -3256,9 +3145,7 @@ md-navigation-drawer {
   .nt { color: var(--md-sys-color-tertiary); }
 }
 
-// ================================================================
-// §31. Friend Links (links.html)
-// ================================================================
+// Friend Links
 .links-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(min(280px, 100%), 1fr));
@@ -3320,9 +3207,7 @@ md-navigation-drawer {
   line-height: 1.4;
 }
 
-// ================================================================
-// §28. FAB & Back to Top
-// ================================================================
+// FAB & Back to Top
 .fab {
   @include ripple-surface;
   position: fixed;
@@ -3391,7 +3276,7 @@ md-navigation-drawer {
   }
 }
 
-// ── Pages: About & Links ──────────────────────────────────────
+// About & Links
 .about-section {
   background: var(--md-sys-color-surface-container-low);
   border-radius: var(--shape-large);
@@ -3477,9 +3362,7 @@ md-navigation-drawer {
   overflow: hidden;
 }
 
-// ================================================================
-// §23. Toast Notification (Glassmorphism Snackbar)
-// ================================================================
+// Toast Notification
 .md-toast {
   position: fixed;
   bottom: 24px;
@@ -3508,16 +3391,13 @@ md-navigation-drawer {
   }
 }
 
-// Adjust for mobile so it doesn't overlap FAB
 @media (max-width: 768px) {
   .md-toast {
-    bottom: 88px; /* Above the FAB */
+    bottom: 88px;
   }
 }
 
-// ================================================================
-// §10. Fluent Design Hover Reveal
-// ================================================================
+// Fluent Design Hover Reveal
 .fluent-glow {
   position: absolute;
   inset: 0;
@@ -3562,10 +3442,7 @@ md-navigation-drawer {
   opacity: 1;
 }
 
-// ==========================================
-// Right Sidebar TOC Drawer
-// ==========================================
-
+// TOC Drawer
 .toc-overlay {
   position: fixed;
   inset: 0;
@@ -3611,7 +3488,6 @@ md-navigation-drawer {
     transform: translateX(0);
   }
 
-  // On PC, make it act like a sliding card vertically centered
   @media (min-width: 1025px) {
     top: 50%;
     bottom: auto;
@@ -3631,7 +3507,7 @@ md-navigation-drawer {
   right: 0;
   top: 50%;
   transform: translateY(-50%);
-  z-index: 1998; // Below overlay so it gets dimmed if overlay active
+  z-index: 1998;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -3656,7 +3532,6 @@ md-navigation-drawer {
     box-shadow: -4px 0 12px rgba(0,0,0,0.15);
   }
   
-  // Hide the button itself if the drawer is open (optional, but looks better)
   &.drawer-open {
     transform: translate(100%, -50%);
   }
@@ -3667,7 +3542,7 @@ md-navigation-drawer {
   
   .btn-text {
     font-size: 0.8rem;
-    writing-mode: vertical-lr; // vertical text
+    writing-mode: vertical-lr;
     letter-spacing: 0.2em;
     font-weight: 600;
   }
@@ -3683,10 +3558,7 @@ md-navigation-drawer {
   }
 }
 
-// ==========================================
-// Media Gallery & Lightbox (MD3)
-// ==========================================
-
+// Media Gallery & Lightbox
 .md3-gallery {
   display: flex;
   flex-direction: column;
@@ -3788,7 +3660,7 @@ md-navigation-drawer {
   opacity: 0;
   visibility: hidden;
   transition: opacity 0.3s ease, visibility 0.3s ease;
-  touch-action: none; // Prevent native page zoom and scroll on mobile
+  touch-action: none;
 
   &.open {
     opacity: 1;
@@ -3975,7 +3847,7 @@ md-navigation-drawer {
   }
 }
 
-/* Custom MD3 Media Player */
+// Media Player
 .md3-media-player {
   position: relative;
   display: flex;
@@ -4004,7 +3876,6 @@ md-navigation-drawer {
     }
   }
 
-  /* Audio uses inline player styling, Video uses overlay */
   &.md3-media-audio {
     flex-direction: row;
     align-items: center;
@@ -4225,4 +4096,3 @@ md-navigation-drawer {
     pointer-events: none;
   }
 }
-

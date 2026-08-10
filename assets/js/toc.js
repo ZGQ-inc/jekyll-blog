@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (!articleContent || !tocContent || !tocDrawer) return;
 
-  // 1. Generate TOC
+  // Generate TOC
   const headings = Array.from(articleContent.querySelectorAll('h2, h3'));
   
   if (headings.length === 0) {
@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let hasValidItems = false;
 
   headings.forEach(heading => {
-    if (!heading.id) return; // Kramdown generates IDs automatically
+    if (!heading.id) return;
     
     hasValidItems = true;
     const listItem = document.createElement('li');
@@ -32,7 +32,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const link = document.createElement('a');
     link.href = `#${heading.id}`;
     
-    // Extract text ignoring the anchor copy icon
     link.textContent = Array.from(heading.childNodes)
       .filter(node => node.nodeType === Node.TEXT_NODE || (node.nodeType === Node.ELEMENT_NODE && !node.classList.contains('anchor-icon')))
       .map(node => node.textContent)
@@ -40,7 +39,6 @@ document.addEventListener('DOMContentLoaded', () => {
       
     link.className = 'toc-link';
     
-    // Smooth scroll and close drawer on mobile/click
     link.addEventListener('click', (e) => {
       e.preventDefault();
       history.pushState(null, null, link.hash);
@@ -49,7 +47,6 @@ document.addEventListener('DOMContentLoaded', () => {
         target.scrollIntoView({ behavior: 'smooth' });
       }
       
-      // Close drawer on small screens if clicking a link
       if (window.innerWidth < 1025) {
         closeToc();
       }
@@ -65,19 +62,18 @@ document.addEventListener('DOMContentLoaded', () => {
     return;
   }
 
-  // Show the TOC button since we have valid items
   if (topTocBtn) topTocBtn.style.display = 'inline-flex';
   if (pcTocBtn) pcTocBtn.style.display = 'flex';
   
   tocContent.appendChild(tocList);
 
-  // 2. ScrollSpy using IntersectionObserver
+  // ScrollSpy using IntersectionObserver
   const tocLinks = document.querySelectorAll('.toc-link');
   let activeId = null;
 
   const observerOptions = {
     root: null,
-    rootMargin: '-80px 0px -70% 0px', // Trigger slightly below the top app bar
+    rootMargin: '-80px 0px -70% 0px',
     threshold: 0
   };
 
@@ -105,7 +101,6 @@ document.addEventListener('DOMContentLoaded', () => {
         link.classList.remove('active');
         if (link.getAttribute('href') === `#${activeId}`) {
           link.classList.add('active');
-          // Auto scroll TOC
           const listItem = link.parentElement;
           if (listItem.offsetTop > tocContent.scrollTop + tocContent.clientHeight || listItem.offsetTop < tocContent.scrollTop) {
             tocContent.scrollTo({
@@ -122,12 +117,11 @@ document.addEventListener('DOMContentLoaded', () => {
     if (h.id) observer.observe(h);
   });
 
-  // 3. TOC Drawer Toggle Logic
+  // TOC Drawer Toggle Logic
   function openToc() {
     tocDrawer.classList.add('open');
     if (pcTocBtn) pcTocBtn.classList.add('drawer-open');
     
-    // Only show overlay and lock body scroll on small screens
     if (window.innerWidth <= 1024) {
       if (tocOverlay) tocOverlay.classList.add('visible');
       document.body.style.overflow = 'hidden';
@@ -169,7 +163,6 @@ document.addEventListener('DOMContentLoaded', () => {
     tocOverlay.addEventListener('click', closeToc);
   }
 
-  // Handle window resize logic for body scroll
   window.addEventListener('resize', () => {
     if (window.innerWidth >= 1025) {
       document.body.style.overflow = '';

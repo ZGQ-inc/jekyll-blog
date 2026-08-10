@@ -55,6 +55,10 @@ test*.css
 test*.css.map
 test*.scss
 frosted-glass.html
+bot-api-llms.txt
+material-web-llms.txt
+fix_logo.py
+test_kramdown.rb
 
 # Nested wrangler caches
 **/.wrangler/

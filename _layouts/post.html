@@ -61,7 +61,7 @@ layout: default
   <meta itemprop="image" content="{{ post.image | absolute_url }}">
   {% endif %}
 
-  <!-- Post meta bar (under hero, no image case) -->
+  <!-- Post meta bar -->
   {% unless post.image %}
   <div class="card-meta" style="margin-bottom:16px">
     <span class="meta-item">
@@ -97,7 +97,7 @@ layout: default
   </div>
   {% endif %}
 
-  <!-- Post Actions: Share + Prev/Next -->
+  <!-- Post Actions -->
   <div class="post-actions">
     <a class="action-btn btn-outlined"
        href="https://t.me/share/url?url={{ post.url | absolute_url | url_encode }}&text={{ post.title | url_encode }}"
@@ -111,7 +111,7 @@ layout: default
     </button>
   </div>
 
-  <!-- Prev / Next navigation -->
+  <!-- Navigation -->
   <div style="display:flex;gap:12px;margin:20px 0;flex-wrap:wrap">
     {% if page.previous.url %}
     <a href="{{ page.previous.url | relative_url }}" class="action-btn btn-tonal" style="flex:1;min-width:140px;justify-content:flex-start">
@@ -163,10 +163,8 @@ layout: default
       .then(function(r) { return r.ok ? r.json() : null; })
       .then(function(data) {
         if (data && data.tg_post_url) {
-          // Update discuss button
           btn.href = data.tg_post_url;
           
-          // Load Native Telegram Discussion Iframe directly
           if (commentsContainer && data.tg_message_id && data.tg_channel_id) {
             var cleanChannel = data.tg_channel_id.replace('@', '');
             var isDark = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? '&dark=1' : '';
@@ -195,7 +193,6 @@ layout: default
             });
           }
         } else if (channelName) {
-          // Fallback to channel root
           btn.href = 'https://t.me/' + channelName;
           if (commentsContainer) {
             commentsContainer.innerHTML = '<p style="text-align:center;color:var(--md-sys-color-on-surface-variant);padding:20px;">本文尚未关联 Telegram 频道讨论。请等待推送。</p>';
