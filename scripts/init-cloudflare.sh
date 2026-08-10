@@ -95,13 +95,18 @@ echo ""
 # ----------------------------------------------------------------
 echo -e "${YELLOW}[可选] 设置 Telegram Webhook ...${NC}"
 if [ -n "$TG_TOKEN" ] && [ -n "$WEBHOOK_S" ]; then
-  WORKER_URL="https://api.zgqinc.gq"
-  WEBHOOK_RESP=$(curl -s "https://api.telegram.org/bot${TG_TOKEN}/setWebhook" \
-    -d "url=${WORKER_URL}/webhook/telegram" \
-    -d "secret_token=${WEBHOOK_S}" \
-    -d "allowed_updates=[\"message\"]")
-  echo "TG Webhook 响应: $WEBHOOK_RESP"
-  echo -e "${GREEN}✓ Telegram Webhook 已设置${NC}"
+  echo ""
+  read -p "是否自动设置 TG Webhook? 请输入你的 WORKER_API_URL (如 https://api.yourdomain.com，直接回车跳过): " WORKER_URL
+  if [ -n "$WORKER_URL" ]; then
+    WEBHOOK_RESP=$(curl -s "https://api.telegram.org/bot${TG_TOKEN}/setWebhook" \
+      -d "url=${WORKER_URL}/webhook/telegram" \
+      -d "secret_token=${WEBHOOK_S}" \
+      -d "allowed_updates=[\"message\"]")
+    echo "TG Webhook 响应: $WEBHOOK_RESP"
+    echo -e "${GREEN}✓ Telegram Webhook 已设置${NC}"
+  else
+    echo -e "${YELLOW}已跳过自动设置 Webhook。请后续参考 README 手动配置。${NC}"
+  fi
 fi
 
 echo ""
@@ -113,5 +118,5 @@ echo -e "后续步骤:"
 echo -e "  1. 在 GitHub 仓库 Settings → Secrets 中添加:"
 echo -e "     CF_API_TOKEN / CF_ACCOUNT_ID / CF_PAGES_PROJECT_NAME"
 echo -e "     WORKER_API_URL / NOTIFY_SECRET"
-echo -e "  2. 在 Cloudflare Dashboard 中为 R2 配置自定义域名 assets.zgqinc.gq"
+echo -e "  2. 在 Cloudflare Dashboard 中为 R2 配置自定义域名 assets.yourdomain.com"
 echo -e "  3. Push 代码到 GitHub main 分支触发首次部署"

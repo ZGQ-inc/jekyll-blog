@@ -80,9 +80,9 @@ echo 后续步骤:
 echo   1. 在 GitHub 仓库 Settings ^> Secrets 中添加:
 echo      CF_API_TOKEN / CF_ACCOUNT_ID / CF_PAGES_PROJECT_NAME
 echo      WORKER_API_URL / NOTIFY_SECRET
-echo   2. 在 Cloudflare Dashboard 为 R2 配置自定义域名 assets.zgqinc.gq
+echo   2. 在 Cloudflare Dashboard 为 R2 配置自定义域名 assets.yourdomain.com
 echo   3. 手动设置 Telegram Webhook:
-echo      https://api.telegram.org/bot{TOKEN}/setWebhook?url=https://api.zgqinc.gq/webhook/telegram^&secret_token={SECRET}
+echo      https://api.telegram.org/bot{TOKEN}/setWebhook?url={你的WORKER_API_URL}/webhook/telegram^&secret_token={SECRET}
 echo   4. Push 代码到 GitHub 触发首次部署
 echo.
 pause
