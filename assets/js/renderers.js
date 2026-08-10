@@ -278,14 +278,16 @@ async function initGeoJSON() {
         const geojsonLayer = L.geoJSON(data, {
           style: getStyle,
           pointToLayer: function (feature, latlng) {
-            return L.circleMarker(latlng, {
-              radius: 8,
-              fillColor: getComputedStyle(document.documentElement).getPropertyValue('--md-sys-color-primary').trim() || '#0061A4',
-              color: '#ffffff',
-              weight: 2,
-              opacity: 1,
-              fillOpacity: 0.8
+            const primary = getComputedStyle(document.documentElement).getPropertyValue('--md-sys-color-primary').trim() || '#0061A4';
+            const iconHtml = `<div style="color: ${primary}; display: flex; align-items: center; justify-content: center; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));"><span class="material-symbols-outlined" style="font-size: 36px; font-variation-settings: 'FILL' 1;">location_on</span></div>`;
+            const divIcon = L.divIcon({
+              className: 'custom-md3-pin',
+              html: iconHtml,
+              iconSize: [36, 36],
+              iconAnchor: [18, 34],
+              popupAnchor: [0, -34]
             });
+            return L.marker(latlng, { icon: divIcon });
           },
           onEachFeature: function (feature, layer) {
             if (feature.properties && feature.properties.name) {
@@ -298,7 +300,7 @@ async function initGeoJSON() {
           }
         }).addTo(map);
 
-        map.fitBounds(geojsonLayer.getBounds(), { padding: [20, 20] });
+        map.fitBounds(geojsonLayer.getBounds(), { padding: [20, 20], maxZoom: 14 });
         
         geojsonLayers.push({ layer: geojsonLayer, map: map, getStyle: getStyle });
       } catch (e) {
@@ -315,6 +317,9 @@ async function initGeoJSON() {
           layer.eachLayer((childLayer) => {
             if (childLayer instanceof L.CircleMarker) {
               childLayer.setStyle({ fillColor: primary });
+            } else if (childLayer instanceof L.Marker && childLayer.getElement()) {
+              const iconDiv = childLayer.getElement().querySelector('div');
+              if (iconDiv) iconDiv.style.color = primary;
             }
           });
         });
