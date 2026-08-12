@@ -105,12 +105,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
   window.openCalendarDialog = function() {
     initCalendar();
-    dialog.classList.add('show');
+    dialog.classList.add('open');
     document.body.style.overflow = 'hidden';
   };
 
   window.closeCalendarDialog = function() {
-    dialog.classList.remove('show');
+    dialog.classList.remove('open');
     document.body.style.overflow = '';
   };
 
