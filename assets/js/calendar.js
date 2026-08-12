@@ -29,41 +29,63 @@ document.addEventListener('DOMContentLoaded', function() {
         currentMonth = latestDate.getMonth();
       }
     }
-    renderCalendar();
+    renderCalendar(false);
   }
 
-  function renderCalendar() {
-    daysGrid.innerHTML = '';
-    monthDisplay.textContent = currentYear + '年 ' + (currentMonth + 1) + '月';
-    
-    const firstDayIndex = new Date(currentYear, currentMonth, 1).getDay();
-    const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
-    
-    // Empty slots before first day
-    for (let i = 0; i < firstDayIndex; i++) {
-      const empty = document.createElement('div');
-      daysGrid.appendChild(empty);
+  function renderCalendar(animate = true) {
+    if (animate) {
+      daysGrid.style.transition = 'opacity 0.15s ease';
+      daysGrid.style.opacity = 0;
     }
     
-    // Days
-    for (let i = 1; i <= daysInMonth; i++) {
-      const btn = document.createElement('button');
-      btn.className = 'cal-day-btn';
-      btn.textContent = i;
+    setTimeout(() => {
+      daysGrid.innerHTML = '';
+      monthDisplay.textContent = currentYear + '\u5E74 ' + (currentMonth + 1) + '\u6708';
       
-      const mStr = String(currentMonth + 1).padStart(2, '0');
-      const dStr = String(i).padStart(2, '0');
-      const dateStr = currentYear + '-' + mStr + '-' + dStr;
+      const firstDayIndex = new Date(currentYear, currentMonth, 1).getDay();
+      const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
       
-      if (postDates.has(dateStr)) {
-        btn.classList.add('has-posts');
-        btn.addEventListener('click', () => jumpToDate(dateStr));
-      } else {
-        btn.disabled = true;
+      let currentSlot = 0;
+      
+      // Empty slots before first day
+      for (let i = 0; i < firstDayIndex; i++) {
+        const empty = document.createElement('div');
+        daysGrid.appendChild(empty);
+        currentSlot++;
       }
       
-      daysGrid.appendChild(btn);
-    }
+      // Days
+      for (let i = 1; i <= daysInMonth; i++) {
+        const btn = document.createElement('button');
+        btn.className = 'cal-day-btn';
+        btn.textContent = i;
+        
+        const mStr = String(currentMonth + 1).padStart(2, '0');
+        const dStr = String(i).padStart(2, '0');
+        const dateStr = currentYear + '-' + mStr + '-' + dStr;
+        
+        if (postDates.has(dateStr)) {
+          btn.classList.add('has-posts');
+          btn.addEventListener('click', () => jumpToDate(dateStr));
+        } else {
+          btn.disabled = true;
+        }
+        
+        daysGrid.appendChild(btn);
+        currentSlot++;
+      }
+      
+      // Empty slots after last day to reach 42 (6 rows exactly)
+      const totalSlots = 42;
+      for (let i = currentSlot; i < totalSlots; i++) {
+        const empty = document.createElement('div');
+        daysGrid.appendChild(empty);
+      }
+      
+      if (animate) {
+        daysGrid.style.opacity = 1;
+      }
+    }, animate ? 150 : 0);
   }
 
   function jumpToDate(dateStr) {
@@ -94,13 +116,13 @@ document.addEventListener('DOMContentLoaded', function() {
   prevBtn.addEventListener('click', () => {
     currentMonth--;
     if (currentMonth < 0) { currentMonth = 11; currentYear--; }
-    renderCalendar();
+    renderCalendar(true);
   });
   
   nextBtn.addEventListener('click', () => {
     currentMonth++;
     if (currentMonth > 11) { currentMonth = 0; currentYear++; }
-    renderCalendar();
+    renderCalendar(true);
   });
 
   window.openCalendarDialog = function() {
@@ -130,7 +152,7 @@ document.addEventListener('DOMContentLoaded', function() {
       if (dateParts.length >= 2) {
         currentYear = parseInt(dateParts[0], 10);
         currentMonth = parseInt(dateParts[1], 10) - 1;
-        renderCalendar();
+        renderCalendar(false);
       }
     });
   });
