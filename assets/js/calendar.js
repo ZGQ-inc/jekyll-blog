@@ -33,59 +33,58 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   function renderCalendar(animate = true) {
-    if (animate) {
-      daysGrid.style.transition = 'opacity 0.15s ease';
-      daysGrid.style.opacity = 0;
+    daysGrid.innerHTML = '';
+    monthDisplay.textContent = currentYear + '\u5E74 ' + (currentMonth + 1) + '\u6708';
+    
+    const firstDayIndex = new Date(currentYear, currentMonth, 1).getDay();
+    const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+    
+    let currentSlot = 0;
+    
+    // Empty slots before first day
+    for (let i = 0; i < firstDayIndex; i++) {
+      const empty = document.createElement('div');
+      daysGrid.appendChild(empty);
+      currentSlot++;
     }
     
-    setTimeout(() => {
-      daysGrid.innerHTML = '';
-      monthDisplay.textContent = currentYear + '\u5E74 ' + (currentMonth + 1) + '\u6708';
+    // Days
+    for (let i = 1; i <= daysInMonth; i++) {
+      const btn = document.createElement('button');
+      btn.className = 'cal-day-btn';
+      btn.textContent = i;
       
-      const firstDayIndex = new Date(currentYear, currentMonth, 1).getDay();
-      const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+      const mStr = String(currentMonth + 1).padStart(2, '0');
+      const dStr = String(i).padStart(2, '0');
+      const dateStr = currentYear + '-' + mStr + '-' + dStr;
       
-      let currentSlot = 0;
-      
-      // Empty slots before first day
-      for (let i = 0; i < firstDayIndex; i++) {
-        const empty = document.createElement('div');
-        daysGrid.appendChild(empty);
-        currentSlot++;
+      if (postDates.has(dateStr)) {
+        btn.classList.add('has-posts');
+        btn.addEventListener('click', () => jumpToDate(dateStr));
+      } else {
+        btn.disabled = true;
       }
       
-      // Days
-      for (let i = 1; i <= daysInMonth; i++) {
-        const btn = document.createElement('button');
-        btn.className = 'cal-day-btn';
-        btn.textContent = i;
-        
-        const mStr = String(currentMonth + 1).padStart(2, '0');
-        const dStr = String(i).padStart(2, '0');
-        const dateStr = currentYear + '-' + mStr + '-' + dStr;
-        
-        if (postDates.has(dateStr)) {
-          btn.classList.add('has-posts');
-          btn.addEventListener('click', () => jumpToDate(dateStr));
-        } else {
-          btn.disabled = true;
-        }
-        
-        daysGrid.appendChild(btn);
-        currentSlot++;
-      }
-      
-      // Empty slots after last day to reach 42 (6 rows exactly)
-      const totalSlots = 42;
-      for (let i = currentSlot; i < totalSlots; i++) {
-        const empty = document.createElement('div');
-        daysGrid.appendChild(empty);
-      }
-      
-      if (animate) {
-        daysGrid.style.opacity = 1;
-      }
-    }, animate ? 150 : 0);
+      daysGrid.appendChild(btn);
+      currentSlot++;
+    }
+    
+    // Empty slots after last day to reach 42 (6 rows exactly)
+    const totalSlots = 42;
+    for (let i = currentSlot; i < totalSlots; i++) {
+      const empty = document.createElement('div');
+      daysGrid.appendChild(empty);
+    }
+    
+    if (animate) {
+      daysGrid.animate([
+        { opacity: 0, transform: 'scale(0.98)' },
+        { opacity: 1, transform: 'scale(1)' }
+      ], {
+        duration: 250,
+        easing: 'cubic-bezier(0.2, 0, 0, 1)'
+      });
+    }
   }
 
   function jumpToDate(dateStr) {
