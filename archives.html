@@ -14,46 +14,7 @@ permalink: /archives/
     </p>
   </div>
 
-  <div class="filter-bar">
-    <div class="android-search-bar">
-      <span class="material-symbols-outlined search-icon">search</span>
-      <input type="text" id="searchInput" placeholder="在归档中搜索文章、标签、正文…" aria-label="搜索归档">
-    </div>
-  </div>
-
-  <!-- Year timeline -->
-  {% assign postsByYear = archived_posts | group_by_exp: "post", "post.date | date: '%Y'" %}
-  {% for year_group in postsByYear %}
-  <section class="md3-archive-group">
-    <div class="md3-archive-header">
-      <span class="material-symbols-outlined header-icon">calendar_month</span>
-      <span class="header-title">{{ year_group.name }}</span>
-      <span class="header-count">{{ year_group.items.size }} 篇</span>
-    </div>
-
-    {% for post in year_group.items %}
-    <a class="archive-post-item" href="{{ post.url | relative_url }}" data-tags="{{ post.tags | join: ',' | downcase }}">
-      <span class="archive-date-badge">
-        {{ post.date | date: "%m月%d日" }}
-      </span>
-      <span class="archive-title">{{ post.title }}</span>
-      <div class="post-tags">
-        {% for tag in post.tags limit:2 %}
-        <span class="chip chip-outlined">{{ tag }}</span>
-        {% endfor %}
-      </div>
-    </a>
-    {% endfor %}
-  </section>
-  {% endfor %}
-
-  {% if archived_posts.size == 0 %}
-  <div class="empty-state">
-    <span class="material-symbols-outlined empty-icon">inventory_2</span>
-    <p class="empty-title">暂无归档</p>
-    <p class="empty-body">被归档的文章会出现在这里</p>
-  </div>
-  {% endif %}
+  {% include post-list.html posts=archived_posts empty_title="暂无归档" empty_body="被归档的文章会出现在这里" empty_icon="inventory_2" %}
 </main>
 
 <script>

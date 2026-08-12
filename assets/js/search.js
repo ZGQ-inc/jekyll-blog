@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', function() {
   searchInput.addEventListener('focus', loadSearchIndex);
   
   window.filterPosts = function() {
-    var cards = document.querySelectorAll('.post-card, .archive-post-item');
+    var cards = document.querySelectorAll('.post-card');
     var q = searchInput.value.trim().toLowerCase();
     var t = window.activeTag ? window.activeTag.toLowerCase() : null;
 
@@ -69,11 +69,17 @@ document.addEventListener('DOMContentLoaded', function() {
       if (q && !fuse) loadSearchIndex();
     }
 
-    document.querySelectorAll('.md3-archive-group').forEach(function(group) {
-      var items = group.querySelectorAll('.archive-post-item');
-      if (items.length > 0) {
-        var visibleItems = Array.from(items).filter(item => item.style.display !== 'none');
-        group.style.display = visibleItems.length === 0 ? 'none' : '';
+    document.querySelectorAll('.timeline-header').forEach(function(header) {
+      var dateStr = header.dataset.date;
+      // Find all post-cards that belong to this date
+      // We can check the meta-item data-date inside the card
+      var cardsForDate = Array.from(document.querySelectorAll('.post-card')).filter(card => {
+        var trigger = card.querySelector('.calendar-jump-trigger');
+        return trigger && trigger.dataset.date === dateStr;
+      });
+      if (cardsForDate.length > 0) {
+        var visibleItems = cardsForDate.filter(item => item.style.display !== 'none');
+        header.style.display = visibleItems.length === 0 ? 'none' : '';
       }
     });
   };
