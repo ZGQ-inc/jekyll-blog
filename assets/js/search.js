@@ -86,3 +86,21 @@ document.addEventListener('DOMContentLoaded', function() {
 
   searchInput.addEventListener('input', window.filterPosts);
 });
+
+// Tag filter logic
+window.activeTag = null;
+
+window.filterTag = function(tag, btn) {
+  window.activeTag = tag;
+  document.querySelectorAll('[onclick^="filterTag"]').forEach(function(b) {
+    b.className = 'chip chip-outlined';
+    b.style.fontSize = '0.75rem';
+  });
+  if (btn) {
+    btn.className = 'chip chip-primary';
+    btn.style.fontSize = '0.75rem';
+  }
+  if (typeof window.filterPosts === 'function') {
+    window.filterPosts();
+  }
+};

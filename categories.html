@@ -8,7 +8,7 @@ permalink: /categories/
   <div class="page-header">
     {% assign active_cat_count = 0 %}
     {% for cat in site.categories %}
-      {% assign unarchived = cat[1] | where_exp: "item", "item.archive != true" %}
+      {% assign unarchived = cat[1] %}
       {% if unarchived.size > 0 %}{% assign active_cat_count = active_cat_count | plus: 1 %}{% endif %}
     {% endfor %}
     <h1 class="page-title">📁 分类</h1>
@@ -19,7 +19,7 @@ permalink: /categories/
   <div class="md3-category-grid">
     {% assign sorted_cats = site.categories | sort %}
     {% for cat in sorted_cats %}
-    {% assign unarchived_cat_posts = cat[1] | where_exp: "item", "item.archive != true" %}
+    {% assign unarchived_cat_posts = cat[1] %}
     {% if unarchived_cat_posts.size == 0 %}{% continue %}{% endif %}
     <a href="#{{ cat[0] | slugify }}" class="md3-category-card">
       <span class="material-symbols-outlined card-icon">folder_open</span>
@@ -35,7 +35,7 @@ permalink: /categories/
   <div class="gallery-container timeline-mode" style="margin-bottom: 24px;">
     {% assign sorted_cats = site.categories | sort %}
     {% for cat in sorted_cats %}
-      {% assign unarchived_cat_posts = cat[1] | where_exp: "item", "item.archive != true" %}
+      {% assign unarchived_cat_posts = cat[1] %}
       {% if unarchived_cat_posts.size == 0 %}{% continue %}{% endif %}
       
       <div class="timeline-header" id="{{ cat[0] | slugify }}">

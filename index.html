@@ -17,23 +17,4 @@ permalink: /
 
 </main>
 
-<script>
-// Tag filter logic
-window.activeTag = null;
-
-function filterTag(tag, btn) {
-  window.activeTag = tag;
-  document.querySelectorAll('[onclick^="filterTag"]').forEach(function(b) {
-    b.className = 'chip chip-outlined';
-    b.style.fontSize = '0.75rem';
-  });
-  if (btn) {
-    btn.className = 'chip chip-primary';
-    btn.style.fontSize = '0.75rem';
-  }
-  if (typeof window.filterPosts === 'function') {
-    window.filterPosts();
-  }
-}
-</script>
 <script src="{{ '/assets/js/search.js' | relative_url }}"></script>

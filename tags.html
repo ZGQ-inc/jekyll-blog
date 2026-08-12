@@ -8,7 +8,7 @@ permalink: /tags/
   <div class="page-header">
     {% assign active_tag_count = 0 %}
     {% for tag in site.tags %}
-      {% assign unarchived = tag[1] | where_exp: "item", "item.archive != true" %}
+      {% assign unarchived = tag[1] %}
       {% if unarchived.size > 0 %}{% assign active_tag_count = active_tag_count | plus: 1 %}{% endif %}
     {% endfor %}
     <h1 class="page-title">🏷️ 标签</h1>
@@ -19,7 +19,7 @@ permalink: /tags/
   <div class="tag-cloud" style="margin-bottom:32px">
     {% assign sorted_tags = site.tags | sort %}
     {% for tag in sorted_tags %}
-    {% assign unarchived_tag_posts = tag[1] | where_exp: "item", "item.archive != true" %}
+    {% assign unarchived_tag_posts = tag[1] %}
     {% if unarchived_tag_posts.size == 0 %}{% continue %}{% endif %}
     {% assign t = tag[0] %}
     <a href="#{{ t | slugify }}" class="tag-item">
@@ -33,7 +33,7 @@ permalink: /tags/
   <div class="gallery-container timeline-mode" style="margin-bottom: 24px;">
     {% assign sorted_tags = site.tags | sort %}
     {% for tag in sorted_tags %}
-      {% assign unarchived_tag_posts = tag[1] | where_exp: "item", "item.archive != true" %}
+      {% assign unarchived_tag_posts = tag[1] %}
       {% if unarchived_tag_posts.size == 0 %}{% continue %}{% endif %}
       {% assign t = tag[0] %}
       
