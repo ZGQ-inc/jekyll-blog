@@ -39,7 +39,6 @@ document.addEventListener('DOMContentLoaded', function() {
   window.filterPosts = function() {
     var cards = document.querySelectorAll('.post-card');
     var q = searchInput.value.trim().toLowerCase();
-    var t = window.activeTag ? window.activeTag.toLowerCase() : null;
 
     if (q && fuse) {
       var results = fuse.search(q);
@@ -53,18 +52,16 @@ document.addEventListener('DOMContentLoaded', function() {
         var fallbackMatch = title.includes(q) || tags.includes(q);
         
         var matchQ = matchedUrls.has(url) || fallbackMatch;
-        var matchT = !t || tags.includes(t);
         
-        card.style.display = (matchQ && matchT) ? '' : 'none';
+        card.style.display = matchQ ? '' : 'none';
       });
     } else {
       cards.forEach(function(card) {
         var title = card.dataset.title || card.querySelector('.archive-title, .card-title')?.textContent.toLowerCase() || '';
         var tags = card.dataset.tags || '';
         var matchQ = !q || title.includes(q) || tags.includes(q);
-        var matchT = !t || tags.includes(t);
         
-        card.style.display = (matchQ && matchT) ? '' : 'none';
+        card.style.display = matchQ ? '' : 'none';
       });
       if (q && !fuse) loadSearchIndex();
     }
@@ -87,20 +84,4 @@ document.addEventListener('DOMContentLoaded', function() {
   searchInput.addEventListener('input', window.filterPosts);
 });
 
-// Tag filter logic
-window.activeTag = null;
 
-window.filterTag = function(tag, btn) {
-  window.activeTag = tag;
-  document.querySelectorAll('[onclick^="filterTag"]').forEach(function(b) {
-    b.className = 'chip chip-outlined';
-    b.style.fontSize = '0.75rem';
-  });
-  if (btn) {
-    btn.className = 'chip chip-primary';
-    btn.style.fontSize = '0.75rem';
-  }
-  if (typeof window.filterPosts === 'function') {
-    window.filterPosts();
-  }
-};
