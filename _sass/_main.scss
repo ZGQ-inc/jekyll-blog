@@ -1378,7 +1378,7 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
   gap: 12px;
   align-items: center;
   margin-bottom: 20px;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
   width: 100%;
 }
 
@@ -4085,5 +4085,18 @@ md-navigation-drawer {
     transition: transform 0.2s;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
     pointer-events: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .filter-bar {
+    .android-search-bar { min-width: 100%; flex: 1 1 100%; }
+    .view-toggle { margin-left: 0; }
+  }
+}
+
+@media (max-width: 768px) {
+  .filter-bar {
+    justify-content: flex-end;
   }
 }

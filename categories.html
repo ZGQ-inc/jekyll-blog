@@ -32,30 +32,49 @@ permalink: /categories/
   </div>
 
   <!-- Posts by category -->
-  {% assign sorted_cats = site.categories | sort %}
-  {% for cat in sorted_cats %}
-  {% assign unarchived_cat_posts = cat[1] | where_exp: "item", "item.archive != true" %}
-  {% if unarchived_cat_posts.size == 0 %}{% continue %}{% endif %}
-  <section id="{{ cat[0] | slugify }}" class="md3-archive-group">
-    <div class="md3-archive-header">
-      <span class="material-symbols-outlined header-icon">folder</span>
-      <span class="header-title">{{ cat[0] }}</span>
-      <span class="header-count">{{ unarchived_cat_posts.size }} 篇</span>
-    </div>
-    
-    {% for post in unarchived_cat_posts %}
-    <a class="archive-post-item" href="{{ post.url | relative_url }}">
-      <span class="archive-date-badge">{{ post.date | date: "%Y-%m-%d" }}</span>
-      <span class="archive-title">{{ post.title }}</span>
-      <div class="post-tags">
-        {% for tag in post.tags limit:2 %}
-        <span class="chip chip-tonal">{{ tag }}</span>
-        {% endfor %}
+  <div class="gallery-container timeline-mode" style="margin-bottom: 24px;">
+    {% assign sorted_cats = site.categories | sort %}
+    {% for cat in sorted_cats %}
+      {% assign unarchived_cat_posts = cat[1] | where_exp: "item", "item.archive != true" %}
+      {% if unarchived_cat_posts.size == 0 %}{% continue %}{% endif %}
+      
+      <div class="timeline-header" id="{{ cat[0] | slugify }}">
+        <span class="material-symbols-outlined header-icon">folder</span>
+        <span class="header-title">{{ cat[0] }}</span>
+        <span class="header-count">{{ unarchived_cat_posts.size }} 篇</span>
       </div>
-    </a>
+      
+      {% for post in unarchived_cat_posts %}
+      <a class="post-card animate-fade-in-up" href="{{ post.url | relative_url }}">
+        <div class="card-thumb-wrapper">
+          {% if post.image %}
+          <img class="card-thumb" src="{{ post.image }}" alt="{{ post.title }}" loading="lazy">
+          {% else %}
+          <div class="card-no-image">
+            <span class="material-symbols-outlined">article</span>
+          </div>
+          {% endif %}
+        </div>
+        <div class="card-body">
+          <h2 class="card-title">{{ post.title }}</h2>
+          <div class="card-meta">
+            <span class="meta-item">
+              <span class="material-symbols-outlined">calendar_month</span>
+              {{ post.date | date: "%Y-%m-%d" }}
+            </span>
+          </div>
+          {% if post.tags.size > 0 %}
+          <div class="card-tags">
+            {% for tag in post.tags limit:2 %}
+            <span class="chip chip-tonal">{{ tag }}</span>
+            {% endfor %}
+          </div>
+          {% endif %}
+        </div>
+      </a>
+      {% endfor %}
     {% endfor %}
-  </section>
-  {% endfor %}
+  </div>
 
   {% if site.categories.size == 0 %}
   <div class="empty-state">

@@ -30,24 +30,41 @@ permalink: /tags/
   </div>
 
   <!-- Posts grouped by tag -->
-  {% assign sorted_tags = site.tags | sort %}
-  {% for tag in sorted_tags %}
-  {% assign unarchived_tag_posts = tag[1] | where_exp: "item", "item.archive != true" %}
-  {% if unarchived_tag_posts.size == 0 %}{% continue %}{% endif %}
-  {% assign t = tag[0] %}
-  <section id="{{ t | slugify }}" class="md3-archive-group">
-    <div class="md3-archive-header">
-      <span class="material-symbols-outlined header-icon">tag</span>
-      <span class="header-title">{{ t }}</span>
-      <span class="header-count">{{ unarchived_tag_posts.size }} 篇</span>
-    </div>
-    
-    {% for post in unarchived_tag_posts %}
-    <a class="archive-post-item" href="{{ post.url | relative_url }}">
-      <span class="archive-date-badge">{{ post.date | date: "%m-%d" }}</span>
-      <span class="archive-title">{{ post.title }}</span>
-    </a>
+  <div class="gallery-container timeline-mode" style="margin-bottom: 24px;">
+    {% assign sorted_tags = site.tags | sort %}
+    {% for tag in sorted_tags %}
+      {% assign unarchived_tag_posts = tag[1] | where_exp: "item", "item.archive != true" %}
+      {% if unarchived_tag_posts.size == 0 %}{% continue %}{% endif %}
+      {% assign t = tag[0] %}
+      
+      <div class="timeline-header" id="{{ t | slugify }}">
+        <span class="material-symbols-outlined header-icon">tag</span>
+        <span class="header-title">{{ t }}</span>
+        <span class="header-count">{{ unarchived_tag_posts.size }} 篇</span>
+      </div>
+      
+      {% for post in unarchived_tag_posts %}
+      <a class="post-card animate-fade-in-up" href="{{ post.url | relative_url }}">
+        <div class="card-thumb-wrapper">
+          {% if post.image %}
+          <img class="card-thumb" src="{{ post.image }}" alt="{{ post.title }}" loading="lazy">
+          {% else %}
+          <div class="card-no-image">
+            <span class="material-symbols-outlined">article</span>
+          </div>
+          {% endif %}
+        </div>
+        <div class="card-body">
+          <h2 class="card-title">{{ post.title }}</h2>
+          <div class="card-meta">
+            <span class="meta-item">
+              <span class="material-symbols-outlined">calendar_month</span>
+              {{ post.date | date: "%Y-%m-%d" }}
+            </span>
+          </div>
+        </div>
+      </a>
+      {% endfor %}
     {% endfor %}
-  </section>
-  {% endfor %}
+  </div>
 </main>
