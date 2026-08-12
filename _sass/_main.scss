@@ -1563,29 +1563,15 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
 
     .post-card {
       flex-direction: row;
-      background: transparent;
-      box-shadow: none;
-      border: none;
-      border-bottom: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 40%, transparent);
-      border-radius: 0;
-      padding: 12px 0;
-      gap: 12px;
-      
-      &:hover {
-        background: color-mix(in srgb, var(--md-sys-color-surface-container-highest) 50%, transparent);
-        padding-left: 12px;
-        padding-right: 12px;
-        border-radius: var(--shape-medium);
-      }
       
       .card-thumb-wrapper {
         width: 80px;
         min-height: 60px;
         flex-shrink: 0;
-        border-radius: var(--shape-small);
+        border-radius: var(--shape-large) 0 0 var(--shape-large);
       }
 
-      .card-body { padding: 0; display: flex; flex-direction: column; justify-content: center; }
+      .card-body { padding: 12px 16px; display: flex; flex-direction: column; justify-content: center; }
       .card-title { font-size: 1rem; margin-bottom: 4px; }
       .card-summary { display: none; }
       .card-meta { margin: 0; font-size: 0.8125rem; }
