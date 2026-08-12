@@ -15,9 +15,11 @@
       <span class="material-symbols-outlined">view_timeline</span>
     </button>
   </div>
-  <button class="icon-btn" id="openCalendarBtn" aria-label="日历跳转" title="跳转日期">
-    <span class="material-symbols-outlined">calendar_month</span>
-  </button>
+  <div class="view-toggle">
+    <button id="openCalendarBtn" aria-label="日历跳转" title="跳转日期">
+      <span class="material-symbols-outlined">calendar_month</span>
+    </button>
+  </div>
 </div>
 
 <!-- Tag filter chips -->
@@ -115,69 +117,4 @@
   </div>
   {% endif %}
 </div><!-- /gallery-container -->
-<!-- Calendar Dialog -->
-<div class="theme-dialog" id="calendarDialog" role="dialog" aria-modal="true" aria-labelledby="calendarDialogTitle">
-  <div class="theme-dialog-scrim" aria-hidden="true" onclick="closeCalendarDialog()"></div>
-  <div class="theme-dialog-surface" style="max-width: 340px;">
-    <!-- Title -->
-    <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
-      <span class="material-symbols-outlined" style="color:var(--md-sys-color-primary);font-size:22px">calendar_month</span>
-      <h2 class="theme-dialog-title" id="calendarDialogTitle" style="margin:0;font-size:1.125rem;">跳转日期</h2>
-      <button class="icon-btn" aria-label="关闭" style="margin-left:auto;width:36px;height:36px" onclick="closeCalendarDialog()">
-        <span class="material-symbols-outlined" style="font-size:20px">close</span>
-      </button>
-    </div>
 
-    <!-- Calendar Header (Month Switcher) -->
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
-      <button class="icon-btn" id="calPrevMonth" aria-label="上个月"><span class="material-symbols-outlined">chevron_left</span></button>
-      <div id="calMonthDisplay" style="font-weight:600;font-size:1rem;color:var(--md-sys-color-on-surface)">2026年 8月</div>
-      <button class="icon-btn" id="calNextMonth" aria-label="下个月"><span class="material-symbols-outlined">chevron_right</span></button>
-    </div>
-
-    <!-- Calendar Grid -->
-    <div class="calendar-grid">
-      <!-- Weekdays -->
-      <div class="cal-weekdays" style="display:grid;grid-template-columns:repeat(7,1fr);text-align:center;font-size:0.75rem;color:var(--md-sys-color-on-surface-variant);font-weight:600;margin-bottom:8px;">
-        <span>日</span><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span>
-      </div>
-      <!-- Days -->
-      <div id="calDaysGrid" style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center;">
-        <!-- JS injects days here -->
-      </div>
-    </div>
-  </div>
-</div>
-
-<style>
-.cal-day-btn {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  border: none;
-  background: transparent;
-  color: var(--md-sys-color-on-surface);
-  font-size: 0.875rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto;
-  cursor: pointer;
-  transition: background var(--dur-short4), color var(--dur-short4);
-}
-.cal-day-btn:hover:not(:disabled) {
-  background: var(--md-sys-color-surface-variant);
-}
-.cal-day-btn.has-posts {
-  background: var(--md-sys-color-primary-container);
-  color: var(--md-sys-color-on-primary-container);
-  font-weight: 700;
-}
-.cal-day-btn.has-posts:hover {
-  background: color-mix(in srgb, var(--md-sys-color-primary-container) 80%, var(--md-sys-color-primary));
-}
-.cal-day-btn:disabled {
-  color: var(--md-sys-color-outline);
-  cursor: default;
-}
-</style>
