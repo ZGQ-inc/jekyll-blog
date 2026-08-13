@@ -169,7 +169,8 @@ export default {
 };
 
 // ================================================================
-// Handler: Telegram Webhook
+// ZGQ Blog Cloudflare Worker - Telegram Webhook
+// Trigger CF Worker CI Test
 // ================================================================
 
 async function handleTelegramWebhook(request: Request, env: Env): Promise<Response> {
