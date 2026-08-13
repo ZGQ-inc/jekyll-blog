@@ -46,10 +46,10 @@
 }
 
 /* Gradients for text-only banners */
-.banner-gradient-1 { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
-.banner-gradient-2 { background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%); }
-.banner-gradient-3 { background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%); }
-.banner-gradient-4 { background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%); }
+.banner-gradient-1 { background: linear-gradient(135deg, var(--md-sys-color-primary-container), var(--md-sys-color-tertiary-container)); }
+.banner-gradient-2 { background: linear-gradient(135deg, var(--md-sys-color-secondary-container), var(--md-sys-color-primary-container)); }
+.banner-gradient-3 { background: linear-gradient(135deg, var(--md-sys-color-tertiary-container), var(--md-sys-color-secondary-container)); }
+.banner-gradient-4 { background: linear-gradient(135deg, var(--md-sys-color-primary-container), var(--md-sys-color-secondary-container)); }
 
 /* Overlay to ensure text readability */
 .banner-overlay {
@@ -154,8 +154,7 @@
 /* Navigation Buttons */
 .banner-nav-btn {
   position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
+  top: 16px;
   width: 40px;
   height: 40px;
   border-radius: 50%;
@@ -177,8 +176,8 @@
 .banner-nav-next { right: 16px; }
 @media (max-width: 768px) {
   .banner-nav-btn { width: 32px; height: 32px; opacity: 0.8; }
-  .banner-nav-prev { left: 8px; }
-  .banner-nav-next { right: 8px; }
+  .banner-nav-prev { left: 12px; top: 12px; }
+  .banner-nav-next { right: 12px; top: 12px; }
 }
 /* Progress Bar */
 .banner-progress-container {
@@ -341,6 +340,8 @@ document.addEventListener('DOMContentLoaded', () => {
   animationFrameId = requestAnimationFrame(animate);
 });
 </script>
+
+
 
 
 
