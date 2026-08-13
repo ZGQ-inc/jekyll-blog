@@ -46,10 +46,10 @@
 }
 
 /* Gradients for text-only banners */
-.banner-gradient-1 { background: linear-gradient(135deg, var(--md-sys-color-primary-container), var(--md-sys-color-tertiary-container)); }
-.banner-gradient-2 { background: linear-gradient(135deg, var(--md-sys-color-secondary-container), var(--md-sys-color-primary-container)); }
-.banner-gradient-3 { background: linear-gradient(135deg, var(--md-sys-color-tertiary-container), var(--md-sys-color-secondary-container)); }
-.banner-gradient-4 { background: linear-gradient(135deg, var(--md-sys-color-primary-container), var(--md-sys-color-secondary-container)); }
+.banner-gradient-1 { background: linear-gradient(135deg, var(--md-sys-color-primary), var(--md-sys-color-tertiary)); }
+.banner-gradient-2 { background: linear-gradient(135deg, var(--md-sys-color-secondary), var(--md-sys-color-primary)); }
+.banner-gradient-3 { background: linear-gradient(135deg, var(--md-sys-color-tertiary), var(--md-sys-color-secondary)); }
+.banner-gradient-4 { background: linear-gradient(135deg, var(--md-sys-color-error), var(--md-sys-color-primary)); }
 
 /* Overlay to ensure text readability */
 .banner-overlay {
@@ -66,14 +66,10 @@
   width: 100%;
   padding: 24px 20px 24px 20px;
   z-index: 3;
-  color: var(--md-sys-color-on-surface);
+  color: #fff;
   display: flex;
   flex-direction: column;
   gap: 8px;
-}
-
-.banner-slide.has-image .banner-content {
-  color: #fff;
 }
 
 @media (max-width: 768px) {
@@ -84,8 +80,9 @@
 
 .banner-tag {
   align-self: flex-start;
-  background-color: var(--md-sys-color-primary);
-  color: var(--md-sys-color-on-primary);
+  background-color: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(4px);
+  color: #fff;
   padding: 4px 12px;
   border-radius: 16px;
   font-size: 0.75rem;
@@ -95,26 +92,16 @@
   margin-bottom: 4px;
 }
 
-.banner-slide.has-image .banner-tag {
-  background-color: rgba(255, 255, 255, 0.2);
-  backdrop-filter: blur(4px);
-  color: #fff;
-}
-
 .banner-title {
   margin: 0;
   font-size: 1.75rem;
   font-weight: 700;
   line-height: 1.3;
-  text-shadow: none;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.3);
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
-}
-
-.banner-slide.has-image .banner-title {
-  text-shadow: 0 2px 4px rgba(0,0,0,0.3);
 }
 
 @media (max-width: 768px) {
@@ -226,13 +213,14 @@
       {% if mod == 2 %}{% assign gradient_class = "banner-gradient-3" %}{% endif %}
       {% if mod == 3 %}{% assign gradient_class = "banner-gradient-4" %}{% endif %}
       
-      <a href="{{ post.url | relative_url }}" class="banner-slide {% if post.image %}has-image{% else %}no-image{% endif %}" aria-label="{{ post.title }}">
+      <a href="{{ post.url | relative_url }}" class="banner-slide" aria-label="{{ post.title }}">
         {% if post.image %}
           <div class="banner-bg" style="background-image: url('{{ post.image }}');"></div>
-          <div class="banner-overlay"></div>
         {% else %}
           <div class="banner-bg {{ gradient_class }}"></div>
         {% endif %}
+        
+        <div class="banner-overlay"></div>
         
         <div class="banner-content">
           <span class="banner-tag">📣 最新公告</span>
