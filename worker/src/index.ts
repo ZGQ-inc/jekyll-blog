@@ -113,13 +113,6 @@ interface TgVideo {
   file_size?: number;
 }
 
-interface TgFile {
-  file_id: string;
-  file_unique_id: string;
-  file_size?: number;
-  file_path?: string;
-}
-
 interface NotifyPayload {
   post_id: string;
   title: string;
@@ -128,15 +121,6 @@ interface NotifyPayload {
   image?: string;
   slug: string;
   date: string;
-}
-
-interface PostCommand {
-  id: string;
-  title: string;
-  summary: string;
-  tags: string[];
-  mediaFileId?: string;
-  mediaType?: 'photo' | 'document' | 'video';
 }
 
 // ================================================================
@@ -970,7 +954,7 @@ async function callTelegramApi(
 // ================================================================
 const R2_MAX_FILE_SIZE = 20 * 1024 * 1024; // 20 MB 单文件上限（保护免费额度）
 
-function isMimeAllowed(mime?: string): boolean {
+function isMimeAllowed(_mime?: string): boolean {
   return true; // 允许所有类型上传
 }
 
@@ -1079,43 +1063,14 @@ async function commitToGitHub(env: Env, slug: string, content: string, folder: s
 // Markdown Builder
 // ================================================================
 
-function buildMarkdownFile(opts: {
-  id: string;
-  title: string;
-  summary: string;
-  tags: string[];
-  image?: string;
-  date: string;
-  slug: string;
-}): string {
-  const { id, title, summary, tags, image, date, slug } = opts;
-  const tagsYaml = tags.length > 0 ? `[${tags.map(t => `"${t}"`).join(', ')}]` : '[]';
 
-  const frontMatter = [
-    '---',
-    `layout: post`,
-    `title: "${title.replace(/"/g, '\\"')}"`,
-    `id: "${id}"`,
-    `date: ${date}`,
-    `summary: "${summary.replace(/"/g, '\\"')}"`,
-    `tags: ${tagsYaml}`,
-    image ? `image: "${image}"` : null,
-    `comments: true`,
-    `published_via: telegram`,
-    '---',
-  ].filter(Boolean).join('\n');
-
-  return `${frontMatter}\n\n${summary}\n\n<!-- 由 Telegram Bot 自动发布 -->\n`;
-}
 
 // ================================================================
 // Utility Functions
 // ================================================================
 
 /** Escape special characters for Telegram MarkdownV2 */
-function escapeMdV2(text: string): string {
-  return text.replace(/[_*[\]()~`>#+=|{}.!\\-]/g, '\\$&');
-}
+
 
 function buildHelpText(): string {
   return [
@@ -1144,4 +1099,5 @@ function corsResponse(res: Response): Response {
   headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   return new Response(res.body, { status: res.status, headers });
 }
+
 
