@@ -22,9 +22,12 @@
   display: flex;
   width: 100%;
   height: 100%;
-  transition: transform 0.6s cubic-bezier(0.2, 0, 0, 1);
-  will-change: transform;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
+.banner-track::-webkit-scrollbar { display: none; }
 
 .banner-slide {
   flex: 0 0 100%;
@@ -34,6 +37,8 @@
   display: block;
   text-decoration: none;
   overflow: hidden;
+  scroll-snap-align: center;
+  scroll-snap-stop: always;
 }
 
 /* Backgrounds */
@@ -274,7 +279,6 @@ document.addEventListener('DOMContentLoaded', () => {
   let isPaused = false;
 
   function updateCarousel() {
-    track.style.transform = `translateX(-${currentIndex * 100}%)`;
     dots.forEach((dot, index) => {
       dot.classList.toggle('active', index === currentIndex);
     });
@@ -284,6 +288,11 @@ document.addEventListener('DOMContentLoaded', () => {
     currentIndex = index;
     if (currentIndex >= slideCount) currentIndex = 0;
     if (currentIndex < 0) currentIndex = slideCount - 1;
+    
+    track.scrollTo({
+      left: currentIndex * track.clientWidth,
+      behavior: 'smooth'
+    });
     
     updateCarousel();
     progress = 0;
@@ -300,20 +309,19 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!isPaused) {
       const elapsed = timestamp - startTime;
       progress = Math.min(elapsed / SLIDE_DURATION, 1);
-      progressBar.style.width = `${progress * 100}%`;
+      if (progressBar) progressBar.style.width = `${progress * 100}%`;
       
       if (progress >= 1) {
         nextSlide();
       }
     } else {
-      // Shift startTime so progress doesn't jump when unpaused
       startTime = timestamp - (progress * SLIDE_DURATION);
     }
     
     animationFrameId = requestAnimationFrame(animate);
   }
 
-    const prevBtn = document.getElementById('bannerPrevBtn');
+  const prevBtn = document.getElementById('bannerPrevBtn');
   const nextBtn = document.getElementById('bannerNextBtn');
   
   if (prevBtn && nextBtn) {
@@ -337,41 +345,33 @@ document.addEventListener('DOMContentLoaded', () => {
   // Pause on hover
   carousel.addEventListener('mouseenter', () => isPaused = true);
   carousel.addEventListener('mouseleave', () => isPaused = false);
-  // Swipe detection for banner
-  let swipeStartX = 0;
-  let swipeEndX = 0;
+  
+  // Pause during touch
+  carousel.addEventListener('touchstart', () => isPaused = true, {passive: true});
+  carousel.addEventListener('touchend', () => isPaused = false, {passive: true});
 
-  carousel.addEventListener('touchstart', (e) => {
-    isPaused = true;
-    swipeStartX = e.changedTouches[0].screenX;
+  // Sync index on native scroll
+  let scrollTimeout;
+  track.addEventListener('scroll', () => {
+    if (scrollTimeout) cancelAnimationFrame(scrollTimeout);
+    scrollTimeout = requestAnimationFrame(() => {
+      const itemWidth = track.clientWidth;
+      if (itemWidth === 0) return;
+      const index = Math.round(track.scrollLeft / itemWidth);
+      if (index !== currentIndex) {
+        currentIndex = index;
+        updateCarousel();
+        // Reset auto play when user scrolls manually
+        if (!isPaused) {
+          progress = 0;
+          startTime = performance.now();
+        }
+      }
+    });
   }, {passive: true});
-
-  carousel.addEventListener('touchend', (e) => {
-    isPaused = false;
-    swipeEndX = e.changedTouches[0].screenX;
-    handleSwipe();
-  }, {passive: true});
-
-  function handleSwipe() {
-    const threshold = 50;
-    if (swipeEndX < swipeStartX - threshold) {
-      nextSlide();
-    }
-    if (swipeEndX > swipeStartX + threshold) {
-      goToSlide(currentIndex - 1);
-    }
-  }
-
-  // Original touch handlers (will override or we replace them)
 
   // Start animation
   animationFrameId = requestAnimationFrame(animate);
 });
-</script>
-
-
-
-
-
 
 
