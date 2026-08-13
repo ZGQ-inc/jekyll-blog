@@ -75,37 +75,59 @@ document.addEventListener('DOMContentLoaded', () => {
       
       let activeIndex = 0;
 
-      const renderMainView = (index) => {
-        mainView.innerHTML = '';
-        const srcMedia = allMediaInGroup[index];
-        const clone = srcMedia.cloneNode(true);
+      // Populate mainView with all images
+      allMediaInGroup.forEach((media, i) => {
+        const clone = media.cloneNode(true);
         clone.removeAttribute('width');
         clone.removeAttribute('height');
-        
         clone.style.cursor = 'zoom-in';
         clone.addEventListener('click', () => {
-          openLightbox(parseInt(srcMedia.dataset.lightboxIndex));
+          openLightbox(parseInt(media.dataset.lightboxIndex));
         });
-
         mainView.appendChild(clone);
-        
-        Array.from(thumbnails.children).forEach((thumb, i) => {
+      });
+
+      const updateActiveThumb = (index) => {
+        if (activeIndex === index) return;
+        activeIndex = index;
+        const thumbChildren = Array.from(thumbnails.children);
+        thumbChildren.forEach((thumb, i) => {
           if (i === index) thumb.classList.add('active');
           else thumb.classList.remove('active');
         });
+        
+        if (thumbChildren[index]) {
+          thumbChildren[index].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+        }
       };
+
+      // Native scroll snap swipe tracking
+      let scrollTimeout;
+      mainView.addEventListener('scroll', () => {
+        if (scrollTimeout) cancelAnimationFrame(scrollTimeout);
+        scrollTimeout = requestAnimationFrame(() => {
+          const itemWidth = mainView.clientWidth;
+          if (itemWidth === 0) return;
+          const index = Math.round(mainView.scrollLeft / itemWidth);
+          updateActiveThumb(index);
+        });
+      }, {passive: true});
 
       allMediaInGroup.forEach((media, i) => {
         const thumbWrapper = document.createElement('div');
         thumbWrapper.className = 'gallery-thumbnail-item';
+        if (i === 0) thumbWrapper.classList.add('active');
         const thumbClone = media.cloneNode(true);
         thumbClone.removeAttribute('controls');
         
         thumbWrapper.appendChild(thumbClone);
 
         thumbWrapper.addEventListener('click', () => {
-          renderMainView(i);
-          thumbWrapper.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+          mainView.scrollTo({
+            left: i * mainView.clientWidth,
+            behavior: 'smooth'
+          });
+          updateActiveThumb(i);
         });
         thumbnails.appendChild(thumbWrapper);
       });
@@ -117,7 +139,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       });
 
-      renderMainView(activeIndex);
       gallery.appendChild(mainView);
       gallery.appendChild(thumbnails);
 
@@ -181,7 +202,6 @@ document.addEventListener('DOMContentLoaded', () => {
   let isPanDragging = false;
   let startX = 0;
   let startY = 0;
-  let touchStartX = 0;
 
   function updateTransform() {
     contentWrapper.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
@@ -284,7 +304,6 @@ document.addEventListener('DOMContentLoaded', () => {
       isPanDragging = false;
       startX = e.touches[0].clientX - translateX;
       startY = e.touches[0].clientY - translateY;
-      touchStartX = e.touches[0].clientX;
     } else if (e.touches.length === 2) {
       isDragging = false;
       const dx = e.touches[0].clientX - e.touches[1].clientX;
@@ -333,4 +352,3 @@ document.addEventListener('DOMContentLoaded', () => {
     if (e.key === 'ArrowRight') openLightbox(currentLightboxIndex + 1);
   });
 });
-
