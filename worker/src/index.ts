@@ -1082,12 +1082,13 @@ async function commitToGitHub(env: Env, slug: string, content: string, folder: s
 
 function buildHelpText(): string {
   return [
-    '*使用帮助*',
+    '*使用指南*',
     '',
-    '1\\. 创建草稿: `/new [文章标题]`',
+    '1\\. 新建草稿: `/new [文章标题]`',
     '2\\. 关联频道: `/link <id> [摘要内容]`',
-    '3\\. 更新频道: `/sync <id> [新摘要]`',
-    '4\\. 撤销发布: `/cancel <id>`',
+    '3\\. 同步频道: `/sync <id> [新摘要内容]`',
+    '4\\. 取消关联: `/cancel <id>`',
+    '5\\. 手动绑定: `/bind <id> <url>`',
   ].join('\n');
 }
 
