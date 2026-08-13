@@ -3,11 +3,15 @@ document.addEventListener('DOMContentLoaded', function() {
   if (!dialog) return;
 
   const monthDisplay = document.getElementById('calMonthDisplay');
-  const daysGrid = document.getElementById('calDaysGrid');
+  const scrollContainer = document.getElementById('calDaysScroll');
+  const prevGrid = document.getElementById('calDaysGridPrev');
+  const currGrid = document.getElementById('calDaysGridCurrent');
+  const nextGrid = document.getElementById('calDaysGridNext');
   const prevBtn = document.getElementById('calPrevMonth');
   const nextBtn = document.getElementById('calNextMonth');
   
   let currentYear, currentMonth;
+  let isUpdatingScroll = false;
   
   // Collect all dates that have posts on the current page
   const postDates = new Set();
@@ -20,7 +24,6 @@ document.addEventListener('DOMContentLoaded', function() {
     currentYear = now.getFullYear();
     currentMonth = now.getMonth();
     
-    // If there are posts, start the calendar at the most recent post's month
     if (postDates.size > 0) {
       const sortedDates = Array.from(postDates).sort().reverse();
       const latestDate = new Date(sortedDates[0]);
@@ -29,34 +32,28 @@ document.addEventListener('DOMContentLoaded', function() {
         currentMonth = latestDate.getMonth();
       }
     }
-    renderCalendar(false);
+    renderCalendar();
   }
 
-  function renderCalendar(animate = true) {
-    daysGrid.innerHTML = '';
-    monthDisplay.textContent = currentYear + '\u5E74 ' + (currentMonth + 1) + '\u6708';
-    
-    const firstDayIndex = new Date(currentYear, currentMonth, 1).getDay();
-    const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+  function renderGrid(gridEl, year, month) {
+    gridEl.innerHTML = '';
+    const firstDayIndex = new Date(year, month, 1).getDay();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
     
     let currentSlot = 0;
-    
-    // Empty slots before first day
     for (let i = 0; i < firstDayIndex; i++) {
-      const empty = document.createElement('div');
-      daysGrid.appendChild(empty);
+      gridEl.appendChild(document.createElement('div'));
       currentSlot++;
     }
     
-    // Days
     for (let i = 1; i <= daysInMonth; i++) {
       const btn = document.createElement('button');
       btn.className = 'cal-day-btn';
       btn.textContent = i;
       
-      const mStr = String(currentMonth + 1).padStart(2, '0');
+      const mStr = String(month + 1).padStart(2, '0');
       const dStr = String(i).padStart(2, '0');
-      const dateStr = currentYear + '-' + mStr + '-' + dStr;
+      const dateStr = year + '-' + mStr + '-' + dStr;
       
       if (postDates.has(dateStr)) {
         btn.classList.add('has-posts');
@@ -64,27 +61,32 @@ document.addEventListener('DOMContentLoaded', function() {
       } else {
         btn.disabled = true;
       }
-      
-      daysGrid.appendChild(btn);
+      gridEl.appendChild(btn);
       currentSlot++;
     }
     
-    // Empty slots after last day to reach 42 (6 rows exactly)
     const totalSlots = 42;
     for (let i = currentSlot; i < totalSlots; i++) {
-      const empty = document.createElement('div');
-      daysGrid.appendChild(empty);
+      gridEl.appendChild(document.createElement('div'));
     }
+  }
+
+  function renderCalendar() {
+    monthDisplay.textContent = currentYear + '\u5E74 ' + (currentMonth + 1) + '\u6708';
     
-    if (animate) {
-      daysGrid.animate([
-        { opacity: 0, transform: 'scale(0.98)' },
-        { opacity: 1, transform: 'scale(1)' }
-      ], {
-        duration: 250,
-        easing: 'cubic-bezier(0.2, 0, 0, 1)'
-      });
-    }
+    let pY = currentYear, pM = currentMonth - 1;
+    if (pM < 0) { pM = 11; pY--; }
+    renderGrid(prevGrid, pY, pM);
+    
+    renderGrid(currGrid, currentYear, currentMonth);
+    
+    let nY = currentYear, nM = currentMonth + 1;
+    if (nM > 11) { nM = 0; nY++; }
+    renderGrid(nextGrid, nY, nM);
+    
+    isUpdatingScroll = true;
+    scrollContainer.scrollTo({ left: scrollContainer.clientWidth, behavior: 'instant' });
+    setTimeout(() => { isUpdatingScroll = false; }, 50);
   }
 
   function jumpToDate(dateStr) {
@@ -112,39 +114,36 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   }
 
+
   prevBtn.addEventListener('click', () => {
-    currentMonth--;
-    if (currentMonth < 0) { currentMonth = 11; currentYear--; }
-    renderCalendar(true);
+    scrollContainer.scrollTo({ left: 0, behavior: 'smooth' });
   });
   
   nextBtn.addEventListener('click', () => {
-    currentMonth++;
-    if (currentMonth > 11) { currentMonth = 0; currentYear++; }
-    renderCalendar(true);
+    scrollContainer.scrollTo({ left: scrollContainer.clientWidth * 2, behavior: 'smooth' });
   });
 
-    let swipeStartX = 0;
-  let swipeEndX = 0;
-
-  daysGrid.addEventListener('touchstart', (e) => {
-    swipeStartX = e.changedTouches[0].screenX;
+  let scrollTimeout;
+  scrollContainer.addEventListener('scroll', () => {
+    if (isUpdatingScroll) return;
+    if (scrollTimeout) cancelAnimationFrame(scrollTimeout);
+    
+    scrollTimeout = requestAnimationFrame(() => {
+      const itemWidth = scrollContainer.clientWidth;
+      if (itemWidth === 0) return;
+      
+      const index = Math.round(scrollContainer.scrollLeft / itemWidth);
+      if (index === 0) {
+        currentMonth--;
+        if (currentMonth < 0) { currentMonth = 11; currentYear--; }
+        renderCalendar();
+      } else if (index === 2) {
+        currentMonth++;
+        if (currentMonth > 11) { currentMonth = 0; currentYear++; }
+        renderCalendar();
+      }
+    });
   }, {passive: true});
-
-  daysGrid.addEventListener('touchend', (e) => {
-    swipeEndX = e.changedTouches[0].screenX;
-    handleCalendarSwipe();
-  }, {passive: true});
-
-  function handleCalendarSwipe() {
-    const threshold = 50;
-    if (swipeEndX < swipeStartX - threshold) {
-      nextBtn.click();
-    }
-    if (swipeEndX > swipeStartX + threshold) {
-      prevBtn.click();
-    }
-  }
 
   window.openCalendarDialog = function() {
     initCalendar();

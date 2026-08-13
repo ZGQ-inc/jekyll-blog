@@ -25,14 +25,28 @@
         <span>日</span><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span>
       </div>
       <!-- Days -->
-      <div id="calDaysGrid" style="display:grid;grid-template-columns:repeat(7,1fr);grid-auto-rows:32px;gap:4px;text-align:center;">
-        <!-- JS injects days here -->
+      <div id="calDaysScroll" style="display:flex; overflow-x:auto; scroll-snap-type: x mandatory; scrollbar-width: none; -ms-overflow-style: none;">
+        <div id="calDaysGridPrev" class="cal-days-grid-page"></div>
+        <div id="calDaysGridCurrent" class="cal-days-grid-page"></div>
+        <div id="calDaysGridNext" class="cal-days-grid-page"></div>
       </div>
     </div>
   </div>
 </div>
 
 <style>
+#calDaysScroll::-webkit-scrollbar { display: none; }
+.cal-days-grid-page {
+  flex: 0 0 100%;
+  width: 100%;
+  scroll-snap-align: center;
+  scroll-snap-stop: always;
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  grid-auto-rows: 32px;
+  gap: 4px;
+  text-align: center;
+}
 .cal-day-btn {
   width: 32px;
   height: 32px;
