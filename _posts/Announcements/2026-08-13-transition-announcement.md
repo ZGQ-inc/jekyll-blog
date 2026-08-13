@@ -1,13 +1,16 @@
 ---
 layout: post
-title: "关于频道失而复得与未来计划"
+title: "关于频道失而复得与未来展望"
 id: "transition-announcement"
 date: 2026-08-13 10:00:00
 summary: "频道历经波折终于找回，为了更长远的发展，未来文章将首发于博客，频道将作为订阅推送与讨论区。"
+image: "/assets/images/banner-wesen.png"
 announcement: true
 comments: true
 badge: "📢 转型通知"
 ---
+
+> 头图画师：Wesen
 
 相信很多人都知道最近一个月发生了什么。一直以来，大家都习惯了在 Telegram 频道里阅读我发布的文章。但是这场频道被盗的风波让我经历了非常煎熬的几周。
 
