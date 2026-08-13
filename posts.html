@@ -6,7 +6,13 @@ permalink: /posts/
 
 <main class="page-content" role="main">
   <div class="page-header">
-    {% assign unarchived_posts = site.posts | where_exp: "item", "item.archive != true" %}
+    {% assign temp_posts = site.posts | where_exp: "item", "item.archive != true" %}
+    {% assign unarchived_posts = "" | split: "" %}
+    {% for p in temp_posts %}
+      {% if p.announcement != true and p.announcement != "true" %}
+        {% assign unarchived_posts = unarchived_posts | push: p %}
+      {% endif %}
+    {% endfor %}
     <h1 class="page-title">📝 所有文章</h1>
     <p class="page-subtitle">共 {{ unarchived_posts.size }} 篇 · 按时间倒序</p>
   </div>
@@ -18,3 +24,4 @@ permalink: /posts/
   window.activeTag = null; // No tag filter on this page
 </script>
 <script src="{{ '/assets/js/search.js' | relative_url }}"></script>
+
