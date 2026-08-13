@@ -59,6 +59,11 @@ bot-api-llms.txt
 material-web-llms.txt
 fix_logo.py
 test_kramdown.rb
+walkthrough.md
+task.md
+implementation_plan.md
+update_index1.py
+fix_calendar.py
 
 # Nested wrangler caches
 **/.wrangler/
