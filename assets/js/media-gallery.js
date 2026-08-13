@@ -181,6 +181,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let isPanDragging = false;
   let startX = 0;
   let startY = 0;
+  let touchStartX = 0;
 
   function updateTransform() {
     contentWrapper.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
@@ -283,6 +284,7 @@ document.addEventListener('DOMContentLoaded', () => {
       isPanDragging = false;
       startX = e.touches[0].clientX - translateX;
       startY = e.touches[0].clientY - translateY;
+      touchStartX = e.touches[0].clientX;
     } else if (e.touches.length === 2) {
       isDragging = false;
       const dx = e.touches[0].clientX - e.touches[1].clientX;
@@ -331,3 +333,4 @@ document.addEventListener('DOMContentLoaded', () => {
     if (e.key === 'ArrowRight') openLightbox(currentLightboxIndex + 1);
   });
 });
+

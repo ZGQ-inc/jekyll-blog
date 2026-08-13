@@ -124,6 +124,28 @@ document.addEventListener('DOMContentLoaded', function() {
     renderCalendar(true);
   });
 
+    let swipeStartX = 0;
+  let swipeEndX = 0;
+
+  daysGrid.addEventListener('touchstart', (e) => {
+    swipeStartX = e.changedTouches[0].screenX;
+  }, {passive: true});
+
+  daysGrid.addEventListener('touchend', (e) => {
+    swipeEndX = e.changedTouches[0].screenX;
+    handleCalendarSwipe();
+  }, {passive: true});
+
+  function handleCalendarSwipe() {
+    const threshold = 50;
+    if (swipeEndX < swipeStartX - threshold) {
+      nextBtn.click();
+    }
+    if (swipeEndX > swipeStartX + threshold) {
+      prevBtn.click();
+    }
+  }
+
   window.openCalendarDialog = function() {
     initCalendar();
     dialog.classList.add('open');
@@ -138,14 +160,58 @@ document.addEventListener('DOMContentLoaded', function() {
   // Bind trigger buttons
   const openBtn = document.getElementById('openCalendarBtn');
   if (openBtn) {
-    openBtn.addEventListener('click', window.openCalendarDialog);
+    openBtn.addEventListener('click',   let swipeStartX = 0;
+  let swipeEndX = 0;
+
+  daysGrid.addEventListener('touchstart', (e) => {
+    swipeStartX = e.changedTouches[0].screenX;
+  }, {passive: true});
+
+  daysGrid.addEventListener('touchend', (e) => {
+    swipeEndX = e.changedTouches[0].screenX;
+    handleCalendarSwipe();
+  }, {passive: true});
+
+  function handleCalendarSwipe() {
+    const threshold = 50;
+    if (swipeEndX < swipeStartX - threshold) {
+      nextBtn.click();
+    }
+    if (swipeEndX > swipeStartX + threshold) {
+      prevBtn.click();
+    }
+  }
+
+  window.openCalendarDialog);
   }
   
   document.querySelectorAll('.calendar-jump-trigger').forEach(trigger => {
     trigger.addEventListener('click', (e) => {
       e.preventDefault();
       e.stopPropagation();
-      window.openCalendarDialog();
+        let swipeStartX = 0;
+  let swipeEndX = 0;
+
+  daysGrid.addEventListener('touchstart', (e) => {
+    swipeStartX = e.changedTouches[0].screenX;
+  }, {passive: true});
+
+  daysGrid.addEventListener('touchend', (e) => {
+    swipeEndX = e.changedTouches[0].screenX;
+    handleCalendarSwipe();
+  }, {passive: true});
+
+  function handleCalendarSwipe() {
+    const threshold = 50;
+    if (swipeEndX < swipeStartX - threshold) {
+      nextBtn.click();
+    }
+    if (swipeEndX > swipeStartX + threshold) {
+      prevBtn.click();
+    }
+  }
+
+  window.openCalendarDialog();
       // Optionally could jump to that month immediately
       const dateParts = trigger.dataset.date.split('-');
       if (dateParts.length >= 2) {
@@ -156,3 +222,4 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
 });
+
