@@ -14,11 +14,18 @@ permalink: /
     <div style="height: 24px;"></div> <!-- Spacer if no announcements -->
   {% endif %}
 
-  {% assign unarchived_posts = site.posts | where_exp: "item", "item.archive != true" | where_exp: "item", "item.announcement != true" %}
+  {% assign temp_posts = site.posts | where_exp: "item", "item.archive != true" %}
+  {% assign unarchived_posts = "" | split: "" %}
+  {% for p in temp_posts %}
+    {% if p.announcement != true and p.announcement != "true" %}
+      {% assign unarchived_posts = unarchived_posts | push: p %}
+    {% endif %}
+  {% endfor %}
   {% include post-list.html posts=unarchived_posts empty_title="还没有文章" empty_body="第一篇文章正在路上" empty_icon="edit_note" %}
 
 </main>
 
 <script src="{{ '/assets/js/search.js' | relative_url }}"></script>
+
 
 

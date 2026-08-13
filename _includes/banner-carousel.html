@@ -3,7 +3,7 @@
 .banner-carousel {
   position: relative;
   width: 100%;
-  height: 280px;
+  height: clamp(240px, 40vh, 360px);
   border-radius: 28px;
   overflow: hidden;
   margin-bottom: 24px;
@@ -13,7 +13,7 @@
 
 @media (max-width: 768px) {
   .banner-carousel {
-    height: 220px;
+    height: clamp(180px, 35vh, 240px);
     border-radius: 20px;
   }
 }
@@ -293,3 +293,4 @@ document.addEventListener('DOMContentLoaded', () => {
   animationFrameId = requestAnimationFrame(animate);
 });
 </script>
+
