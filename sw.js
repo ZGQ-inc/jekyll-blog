@@ -1,4 +1,7 @@
-const CACHE_NAME = 'zgq-blog-cache-v2';
+---
+layout: null
+---
+const CACHE_NAME = 'zgq-blog-cache-{{ site.time | date: "%s" }}';
 const OFFLINE_URL = '/offline.html';
 
 const ASSETS_TO_CACHE = [
