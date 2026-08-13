@@ -1,4 +1,4 @@
-name: Deploy Blog & Notify Telegram
+name: Notify Telegram
 
 on:
   push:
@@ -9,48 +9,9 @@ permissions:
   contents: read
 
 jobs:
-  # Build Jekyll & Deploy to Cloudflare Pages
-  build-and-deploy:
-    name: Build Jekyll → Deploy CF Pages
-    runs-on: ubuntu-latest
-    outputs:
-      deploy_url: ${{ steps.deploy.outputs.url }}
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 2
-
-      - name: Setup Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: '3.3'
-          bundler-cache: true
-
-      - name: Build Jekyll
-        run: bundle exec jekyll build --strict_front_matter
-        env:
-          JEKYLL_ENV: production
-
-      - name: Deploy to Cloudflare Pages
-        id: deploy
-        uses: cloudflare/pages-action@v1
-        with:
-          apiToken: ${{ secrets.CF_API_TOKEN }}
-          accountId: ${{ secrets.CF_ACCOUNT_ID }}
-          projectName: ${{ secrets.CF_PAGES_PROJECT_NAME }}
-          directory: _site
-          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
-          branch: main
-          wranglerVersion: '3'
-
-  # Detect new posts & notify Worker to push TG
   notify-telegram:
     name: Notify Telegram Channel
     runs-on: ubuntu-latest
-    needs: build-and-deploy
-    if: false
 
     steps:
       - name: Checkout repository
@@ -62,8 +23,8 @@ jobs:
         id: detect
         run: |
           # Find .md files changed in the last commit under _posts/
-          CHANGED=$(git diff --name-only HEAD~1 HEAD -- '_posts/*.md' 2>/dev/null || \
-                    git show --name-only HEAD --pretty=format: -- '_posts/*.md')
+          CHANGED=$(git diff --name-only HEAD~1 HEAD -- '_posts/**/*.md' '_posts/*.md' 2>/dev/null || \
+                    git show --name-only HEAD --pretty=format: -- '_posts/**/*.md' '_posts/*.md')
 
           echo "Changed files: $CHANGED"
 
@@ -118,7 +79,7 @@ jobs:
           image      = extract('image')
           tags       = extract_list('tags')
 
-          # Derive slug from filename (e.g. _posts/2026-07-31-hello-world.md → 2026-07-31-hello-world)
+          # Derive slug from filename (e.g. _posts/2026-07-31-hello-world.md -> 2026-07-31-hello-world)
           slug = os.path.basename(post_file).replace('.md', '')
 
           if not post_id or not title:
@@ -160,4 +121,4 @@ jobs:
         env:
           POST_FILE: ${{ steps.detect.outputs.post_file }}
           WORKER_API_URL: ${{ secrets.WORKER_API_URL }}
-          NOTIFY_SECRET: ${{ secrets.NOTIFY_SECRET }}
+          NOTIFY_SECRET: ${{ secrets.NOTIFY_S

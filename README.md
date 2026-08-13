@@ -84,12 +84,21 @@ npx wrangler deploy
 cd ..
 ```
 
-### 4. 设置 GitHub Actions 自动部署
+### 4. 设置 GitHub Actions 与 Cloudflare Pages 自动部署
 
-在你的 GitHub 仓库的 **Settings > Secrets and variables > Actions** 中添加以下 Repository Secrets：
-- `CF_API_TOKEN`：Cloudflare API 令牌（需具备对 Pages、Workers 和 D1 的相应编辑权限）
+本项目完全依赖 **Cloudflare Pages 原生的 GitHub 继承**来自动构建和部署博客静态页面。
+1. 前往 Cloudflare Dashboard，选择 **Pages**，点击 **Connect to Git**。
+2. 授权你的 GitHub 账户，选择你克隆的 `jekyll-blog` 仓库。
+3. 在构建设置中：
+   - 框架预设：选择 `Jekyll`
+   - 构建命令：`bundle exec jekyll build --strict_front_matter`
+   - 输出目录：`_site`
+4. 环境变量（可选）：设置 `JEKYLL_ENV` 为 `production`。
+5. 点击保存并部署。以后每次你向 GitHub 推送代码，Cloudflare 就会**全自动**为你编译并部署网页。
+
+同时，本项目包含 GitHub Actions 工作流（用于后台运行 Worker 自动发布与 Telegram 通知等逻辑）。请在你的 GitHub 仓库的 **Settings > Secrets and variables > Actions** 中添加以下 Repository Secrets：
+- `CF_API_TOKEN`：Cloudflare API 令牌（需具备对 Workers 和 D1 的相应编辑权限）
 - `CF_ACCOUNT_ID`：你的 Cloudflare Account ID
-- `CF_PAGES_PROJECT_NAME`：要部署到 Cloudflare Pages 的项目名称
 - `WORKER_API_URL`：上一步部署成功后 Cloudflare 提供的 Worker API 域名（如 `https://api.yourdomain.com`）
 - `NOTIFY_SECRET`：此处必须与上述设置到 Wrangler 中的密钥完全一致
 
@@ -99,7 +108,6 @@ git add .
 git commit -m "Initial deploy"
 git push origin main
 ```
-GitHub Actions 会自动接管，将站点的最新内容打包并部署到 Cloudflare Pages！
 
 ### 5. 后续配置
 
