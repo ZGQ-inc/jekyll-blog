@@ -118,11 +118,12 @@ git push origin main
    ```
 3. **BotFather 命令菜单配置**：为了方便使用 Bot 操作博客，建议前往 Telegram 找到 [@BotFather](https://t.me/BotFather)，输入 `/setcommands` 选择你的 Bot，然后粘贴以下内容：
    ```text
-   new - 创建新文章草稿
-   link - 推送文章到频道
-   sync - 同步更新频道信息
-   cancel - 取消频道关联
-   help - 显示使用帮助
+   new - 新建草稿
+   link - 关联到频道
+   sync - 同步频道消息
+   cancel - 取消关联
+   bind - 手动绑定
+   help - 显示使用说明帮助
    ```
 
 ## ✍️ 写作发布

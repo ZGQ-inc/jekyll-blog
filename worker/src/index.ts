@@ -230,6 +230,13 @@ async function handleTelegramWebhook(request: Request, env: Env): Promise<Respon
     return jsonResponse({ ok: true });
   }
 
+  // Parse /bind command
+  const bindMatch = text.match(/^\/bind\s+([a-zA-Z0-9_-]+)\s+(https?:\/\/t\.me\/(?:c\/)?([a-zA-Z0-9_]+)\/(\d+))/s);
+  if (bindMatch) {
+    await handleBindCommand(message, bindMatch[1], bindMatch[2], bindMatch[3], bindMatch[4], env);
+    return jsonResponse({ ok: true });
+  }
+
   // Handle Media Uploads
   if (message.photo || message.video || message.audio || message.document) {
     await handleMediaUpload(message, env);
@@ -1102,3 +1109,53 @@ function corsResponse(res: Response): Response {
 }
 
 
+
+async function handleBindCommand(message: TgMessage, id: string, fullUrl: string, channel: string, msgIdStr: string, env: Env): Promise<void> {
+  await sendTelegramMessage(env.TELEGRAM_BOT_TOKEN, {
+    chat_id: message.chat.id,
+    text: `⏳ 正在绑定信息...`,
+  });
+
+  try {
+    const postInfo = await fetchPostInfoFromGitHub(id, env);
+    if (!postInfo) {
+      throw new Error(`未能在仓库中找到对应的文章信息 (ID: ${id})。`);
+    }
+
+    const msgId = parseInt(msgIdStr, 10);
+    let formattedChannel = channel;
+    
+    if (/^\d+$/.test(channel)) {
+      formattedChannel = `-100${channel}`;
+    } else if (!channel.startsWith('@')) {
+      formattedChannel = `@${channel}`;
+    }
+
+    const postUrl = `${env.BLOG_URL}/posts/${id}/`;
+
+    await env.DB.prepare(
+      `INSERT OR REPLACE INTO post_tg_map
+       (post_id, tg_message_id, tg_channel_id, post_title, post_url, post_slug, published_via)
+       VALUES (?, ?, ?, ?, ?, ?, ?)`
+    ).bind(
+      id,
+      msgId,
+      formattedChannel,
+      postInfo.title,
+      postUrl,
+      id,
+      'telegram_manual_bind'
+    ).run();
+
+    await sendTelegramMessage(env.TELEGRAM_BOT_TOKEN, {
+      chat_id: message.chat.id,
+      text: `✅ 手动绑定成功！\n\n<b>文章</b>: ${postInfo.title}\n<b>频道消息</b>: ${fullUrl}`,
+      parse_mode: 'HTML'
+    });
+  } catch (err) {
+    await sendTelegramMessage(env.TELEGRAM_BOT_TOKEN, {
+      chat_id: message.chat.id,
+      text: `❌ 绑定失败: ${String(err)}`
+    });
+  }
+}
