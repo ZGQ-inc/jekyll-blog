@@ -1,0 +1,295 @@
+<style>
+/* Banner Carousel Styles */
+.banner-carousel {
+  position: relative;
+  width: 100%;
+  height: 280px;
+  border-radius: 28px;
+  overflow: hidden;
+  margin-bottom: 24px;
+  background-color: var(--md-sys-color-surface-variant);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+@media (max-width: 768px) {
+  .banner-carousel {
+    height: 220px;
+    border-radius: 20px;
+  }
+}
+
+.banner-track {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.6s cubic-bezier(0.2, 0, 0, 1);
+  will-change: transform;
+}
+
+.banner-slide {
+  flex: 0 0 100%;
+  width: 100%;
+  height: 100%;
+  position: relative;
+  display: block;
+  text-decoration: none;
+  overflow: hidden;
+}
+
+/* Backgrounds */
+.banner-bg {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background-size: cover;
+  background-position: center;
+  z-index: 1;
+}
+
+/* Gradients for text-only banners */
+.banner-gradient-1 { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+.banner-gradient-2 { background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%); }
+.banner-gradient-3 { background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%); }
+.banner-gradient-4 { background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%); }
+
+/* Overlay to ensure text readability */
+.banner-overlay {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.2) 60%, rgba(0,0,0,0.1) 100%);
+  z-index: 2;
+}
+
+.banner-content {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding: 32px 24px 28px 24px;
+  z-index: 3;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+@media (max-width: 768px) {
+  .banner-content {
+    padding: 24px 16px 20px 16px;
+  }
+}
+
+.banner-tag {
+  align-self: flex-start;
+  background-color: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(4px);
+  padding: 4px 12px;
+  border-radius: 16px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.banner-title {
+  margin: 0;
+  font-size: 1.75rem;
+  font-weight: 700;
+  line-height: 1.3;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+@media (max-width: 768px) {
+  .banner-title { font-size: 1.25rem; }
+}
+
+.banner-summary {
+  margin: 0;
+  font-size: 0.95rem;
+  opacity: 0.9;
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+@media (max-width: 768px) {
+  .banner-summary { font-size: 0.85rem; }
+}
+
+/* Indicators */
+.banner-indicators {
+  position: absolute;
+  bottom: 12px;
+  right: 24px;
+  display: flex;
+  gap: 6px;
+  z-index: 4;
+}
+
+@media (max-width: 768px) {
+  .banner-indicators { right: 16px; bottom: 10px; }
+}
+
+.banner-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.4);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.banner-dot.active {
+  width: 20px;
+  border-radius: 4px;
+  background-color: #fff;
+}
+
+/* Progress Bar */
+.banner-progress-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background-color: rgba(255, 255, 255, 0.2);
+  z-index: 4;
+}
+
+.banner-progress-bar {
+  height: 100%;
+  width: 0%;
+  background-color: rgba(255, 255, 255, 0.8);
+  /* The transition will be handled by JS for smooth pausing */
+}
+</style>
+
+<div class="banner-carousel" id="bannerCarousel">
+  <div class="banner-progress-container">
+    <div class="banner-progress-bar" id="bannerProgress"></div>
+  </div>
+
+  <div class="banner-track" id="bannerTrack">
+    {% for post in include.announcements %}
+      {% assign mod = forloop.index | modulo: 4 %}
+      {% if mod == 0 %}{% assign gradient_class = "banner-gradient-1" %}{% endif %}
+      {% if mod == 1 %}{% assign gradient_class = "banner-gradient-2" %}{% endif %}
+      {% if mod == 2 %}{% assign gradient_class = "banner-gradient-3" %}{% endif %}
+      {% if mod == 3 %}{% assign gradient_class = "banner-gradient-4" %}{% endif %}
+      
+      <a href="{{ post.url | relative_url }}" class="banner-slide" aria-label="{{ post.title }}">
+        {% if post.image %}
+          <div class="banner-bg" style="background-image: url('{{ post.image }}');"></div>
+        {% else %}
+          <div class="banner-bg {{ gradient_class }}"></div>
+        {% endif %}
+        
+        <div class="banner-overlay"></div>
+        
+        <div class="banner-content">
+          <span class="banner-tag">📣 最新公告</span>
+          <h2 class="banner-title">{{ post.title }}</h2>
+          {% if post.summary %}
+            <p class="banner-summary">{{ post.summary }}</p>
+          {% elsif post.excerpt %}
+            <p class="banner-summary">{{ post.excerpt | strip_html | truncate: 60 }}</p>
+          {% endif %}
+        </div>
+      </a>
+    {% endfor %}
+  </div>
+
+  <div class="banner-indicators" id="bannerDots">
+    {% for post in include.announcements %}
+      <div class="banner-dot {% if forloop.first %}active{% endif %}" data-index="{{ forloop.index0 }}"></div>
+    {% endfor %}
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const carousel = document.getElementById('bannerCarousel');
+  if (!carousel) return;
+
+  const track = document.getElementById('bannerTrack');
+  const dots = document.querySelectorAll('.banner-dot');
+  const progressBar = document.getElementById('bannerProgress');
+  
+  const slideCount = dots.length;
+  if (slideCount <= 1) {
+    if (progressBar) progressBar.style.display = 'none';
+    if (dots.length) document.getElementById('bannerDots').style.display = 'none';
+    return;
+  }
+
+  const SLIDE_DURATION = 5000; // 5 seconds per slide
+  let currentIndex = 0;
+  let startTime = null;
+  let progress = 0; // 0 to 1
+  let animationFrameId = null;
+  let isPaused = false;
+
+  function updateCarousel() {
+    track.style.transform = `translateX(-${currentIndex * 100}%)`;
+    dots.forEach((dot, index) => {
+      dot.classList.toggle('active', index === currentIndex);
+    });
+  }
+
+  function goToSlide(index) {
+    currentIndex = index;
+    if (currentIndex >= slideCount) currentIndex = 0;
+    if (currentIndex < 0) currentIndex = slideCount - 1;
+    
+    updateCarousel();
+    progress = 0;
+    startTime = performance.now();
+  }
+
+  function nextSlide() {
+    goToSlide(currentIndex + 1);
+  }
+
+  function animate(timestamp) {
+    if (!startTime) startTime = timestamp;
+    
+    if (!isPaused) {
+      const elapsed = timestamp - startTime;
+      progress = Math.min(elapsed / SLIDE_DURATION, 1);
+      progressBar.style.width = `${progress * 100}%`;
+      
+      if (progress >= 1) {
+        nextSlide();
+      }
+    } else {
+      // Shift startTime so progress doesn't jump when unpaused
+      startTime = timestamp - (progress * SLIDE_DURATION);
+    }
+    
+    animationFrameId = requestAnimationFrame(animate);
+  }
+
+  // Dots click handler
+  dots.forEach((dot, index) => {
+    dot.addEventListener('click', (e) => {
+      e.preventDefault();
+      goToSlide(index);
+    });
+  });
+
+  // Pause on hover or touch
+  carousel.addEventListener('mouseenter', () => isPaused = true);
+  carousel.addEventListener('mouseleave', () => isPaused = false);
+  carousel.addEventListener('touchstart', () => isPaused = true, {passive: true});
+  carousel.addEventListener('touchend', () => isPaused = false, {passive: true});
+
+  // Start animation
+  animationFrameId = requestAnimationFrame(animate);
+});
+</script>

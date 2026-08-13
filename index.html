@@ -6,13 +6,15 @@ permalink: /
 
 <main class="page-content" role="main">
 
-  <!-- Page Header -->
-  <div class="page-header">
-    {% assign unarchived_posts = site.posts | where_exp: "item", "item.archive != true" %}
-    <h1 class="page-title">✍️ 最新文章</h1>
-    <p class="page-subtitle">共 {{ unarchived_posts.size }} 篇文章 · 持续记录中</p>
-  </div>
+  <!-- Announcements Banner -->
+  {% assign announcements = site.posts | where_exp: "item", "item.announcement == true" %}
+  {% if announcements.size > 0 %}
+    {% include banner-carousel.html announcements=announcements %}
+  {% else %}
+    <div style="height: 24px;"></div> <!-- Spacer if no announcements -->
+  {% endif %}
 
+  {% assign unarchived_posts = site.posts | where_exp: "item", "item.archive != true and item.announcement != true" %}
   {% include post-list.html posts=unarchived_posts empty_title="还没有文章" empty_body="第一篇文章正在路上" empty_icon="edit_note" %}
 
 </main>
