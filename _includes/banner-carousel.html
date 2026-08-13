@@ -205,14 +205,14 @@
   /* The transition will be handled by JS for smooth pausing */
 }
 </style>
-
+{% assign active_announcements = include.announcements | where_exp: "post", "post.archive != true" %}
 <div class="banner-carousel" id="bannerCarousel">
   <div class="banner-progress-container">
     <div class="banner-progress-bar" id="bannerProgress"></div>
   </div>
 
   <div class="banner-track" id="bannerTrack">
-    {% for post in include.announcements %}
+    {% for post in active_announcements %}
       {% assign mod = forloop.index | modulo: 4 %}
       {% if mod == 0 %}{% assign gradient_class = "banner-gradient-1" %}{% endif %}
       {% if mod == 1 %}{% assign gradient_class = "banner-gradient-2" %}{% endif %}
@@ -249,7 +249,7 @@
     <span class="material-symbols-outlined">chevron_right</span>
   </button>
   <div class="banner-indicators" id="bannerDots">
-    {% for post in include.announcements %}
+    {% for post in active_announcements %}
       <div class="banner-dot {% if forloop.first %}active{% endif %}" data-index="{{ forloop.index0 }}"></div>
     {% endfor %}
   </div>
