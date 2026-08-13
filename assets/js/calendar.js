@@ -126,9 +126,9 @@ document.addEventListener('DOMContentLoaded', function() {
   let scrollTimeout;
   scrollContainer.addEventListener('scroll', () => {
     if (isUpdatingScroll) return;
-    if (scrollTimeout) cancelAnimationFrame(scrollTimeout);
     
-    scrollTimeout = requestAnimationFrame(() => {
+    clearTimeout(scrollTimeout);
+    scrollTimeout = setTimeout(() => {
       const itemWidth = scrollContainer.clientWidth;
       if (itemWidth === 0) return;
       
@@ -142,7 +142,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (currentMonth > 11) { currentMonth = 0; currentYear++; }
         renderCalendar();
       }
-    });
+    }, 150);
   }, {passive: true});
 
   window.openCalendarDialog = function() {
