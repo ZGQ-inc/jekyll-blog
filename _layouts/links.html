@@ -1,0 +1,104 @@
+---
+layout: default
+---
+
+<style>
+  .links-nav-bar {
+    position: sticky;
+    top: 16px;
+    z-index: 100;
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    padding: 8px 12px;
+    margin: 0 auto 32px;
+    max-width: fit-content;
+    position: sticky;
+    top: 64px;
+    z-index: 99;
+    border-radius: 99px;
+    box-shadow: var(--elev-2);
+
+    &::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      border-radius: inherit;
+      background: color-mix(in srgb, var(--md-sys-color-surface-container-low) 50%, transparent);
+      backdrop-filter: blur(16px) saturate(150%);
+      -webkit-backdrop-filter: blur(16px) saturate(150%);
+      border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 30%, transparent);
+    }
+  }
+
+  @media (max-width: 768px) {
+    .links-nav-bar {
+      top: 80px;
+      /* Account for 64px mobile top app bar + 16px margin */
+    }
+  }
+
+  .links-nav-item {
+    padding: 8px 16px;
+    border-radius: 99px;
+    color: var(--md-sys-color-on-surface-variant);
+    text-decoration: none !important;
+    font-size: 0.95rem;
+    font-weight: 600;
+    transition: all var(--dur-short4);
+  }
+
+  .links-nav-item:hover {
+    color: var(--md-sys-color-on-surface);
+    background-color: var(--md-sys-color-surface-container-highest);
+  }
+
+  .links-section-title {
+    font-size: 1.4rem;
+    color: var(--md-sys-color-on-surface);
+    margin: 40px 0 24px;
+    padding-left: 12px;
+    border-left: 4px solid var(--md-sys-color-primary);
+    scroll-margin-top: 100px;
+  }
+</style>
+
+<main class="page-content" role="main">
+  <div class="page-header">
+    <h1 class="page-title">🔗 {{ page.title }}</h1>
+    <p class="page-subtitle">友情链接</p>
+  </div>
+
+  <nav class="links-nav-bar">
+    {% for section in page.friends %}
+      <a href="#{{ section.id }}" class="links-nav-item">{{ section.category }}</a>
+    {% endfor %}
+  </nav>
+
+  {% for section in page.friends %}
+    <h2 id="{{ section.id }}" class="links-section-title">{{ section.category }}</h2>
+    <div class="links-grid">
+      {% for link in section.items %}
+        <a href="{{ link.url }}" class="friend-card" target="_blank" rel="noopener">
+          {% if link.avatar %}
+            <img src="{{ link.avatar }}" class="friend-avatar" alt="{{ link.name }}">
+          {% else %}
+            {% assign color = link.color | default: "primary" %}
+            <div class="friend-avatar" style="background:var(--md-sys-color-{{ color }}-container);display:flex;align-items:center;justify-content:center;font-size:1.5rem">
+              {{ link.emoji }}
+            </div>
+          {% endif %}
+          <div class="friend-info">
+            <div class="friend-name">{{ link.name }}</div>
+            <div class="friend-desc">{{ link.desc }}</div>
+          </div>
+        </a>
+      {% endfor %}
+    </div>
+  {% endfor %}
+
+  <div class="about-section" style="margin-top:32px">
+    {{ content }}
+  </div>
+</main>
