@@ -1,0 +1,27 @@
+---
+layout: default
+---
+
+<main class="page-content" role="main">
+  <div class="page-header">
+    <h1 class="page-title">⚡ {{ page.title }}</h1>
+    <p class="page-subtitle">博客历程</p>
+  </div>
+
+  <div class="timeline" id="timeline">
+    {% for item in page.updates %}
+      <div class="timeline-item">
+        <div class="timeline-card">
+          <div class="timeline-date">{{ item.date }}</div>
+          <div class="timeline-content">
+            {{ item.content | markdownify }}
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+
+  <div style="margin-top: 2rem;">
+    {{ content }}
+  </div>
+</main>
