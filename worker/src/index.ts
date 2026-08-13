@@ -24,6 +24,7 @@ interface Env {
   GITHUB_REPO: string;
   GITHUB_BRANCH: string;
   GITHUB_POSTS_PATH: string;
+  CHANNELS_CONFIG?: string;
   // Secrets
   TELEGRAM_BOT_TOKEN: string;
   TELEGRAM_CHANNEL_ID: string;
@@ -36,12 +37,23 @@ interface TgUpdate {
   update_id: number;
   message?: TgMessage;
   channel_post?: TgMessage;
+  callback_query?: TgCallbackQuery;
+}
+
+interface TgCallbackQuery {
+  id: string;
+  from: TgUser;
+  message?: TgMessage;
+  inline_message_id?: string;
+  chat_instance: string;
+  data?: string;
 }
 
 interface TgMessage {
   message_id: number;
   chat: TgChat;
   from?: TgUser;
+  reply_to_message?: TgMessage;
   text?: string;
   caption?: string;
   photo?: TgPhotoSize[];
@@ -184,6 +196,12 @@ async function handleTelegramWebhook(request: Request, env: Env): Promise<Respon
   }
 
   const update: TgUpdate = await request.json();
+  
+  if (update.callback_query) {
+    await handleCallbackQuery(update.callback_query, env);
+    return jsonResponse({ ok: true });
+  }
+
   const message = update.message;
 
   if (!message) {
@@ -246,15 +264,64 @@ async function handleTelegramWebhook(request: Request, env: Env): Promise<Respon
 }
 
 async function handleNewCommand(message: TgMessage, title: string, env: Env): Promise<void> {
-  const id = Math.random().toString(36).substring(2, 8); // e.g. 4f9a2b
+  let channels: any[] = [];
+  try {
+    channels = JSON.parse(env.CHANNELS_CONFIG || '[]');
+  } catch (e) {
+    console.warn("Failed to parse CHANNELS_CONFIG", e);
+  }
+
+  if (channels.length === 0) {
+    await sendTelegramMessage(env.TELEGRAM_BOT_TOKEN, {
+      chat_id: message.chat.id,
+      text: `❌ 未配置任何频道 (CHANNELS_CONFIG)，无法创建草稿。`
+    });
+    return;
+  }
+
+  const buttons = channels.map((c: any) => ([{
+    text: `${c.name} (${c.id})`,
+    callback_data: `new_draft:${c.folder}`
+  }]));
+
+  await sendTelegramMessage(env.TELEGRAM_BOT_TOKEN, {
+    chat_id: message.chat.id,
+    text: `请选择要将 <b>${title.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</b> 发布到哪个频道：`,
+    parse_mode: 'HTML',
+    reply_to_message_id: message.message_id,
+    reply_markup: {
+      inline_keyboard: buttons
+    }
+  });
+}
+
+async function handleCallbackQuery(callbackQuery: TgCallbackQuery, env: Env): Promise<void> {
+  const data = callbackQuery.data;
+  if (!data || !data.startsWith('new_draft:')) return;
+
+  const folder = data.split(':')[1];
+  const originalMessage = callbackQuery.message?.reply_to_message?.text || '';
+  
+  const newMatch = originalMessage.match(/^\/new\s+(.+)/s) || originalMessage.match(/^\/new$/);
+  const title = newMatch && newMatch[1] ? newMatch[1].trim() : '未命名文章';
+
+  await callTelegramApi(env.TELEGRAM_BOT_TOKEN, 'answerCallbackQuery', {
+    callback_query_id: callbackQuery.id
+  });
+
+  if (callbackQuery.message) {
+    await callTelegramApi(env.TELEGRAM_BOT_TOKEN, 'editMessageText', {
+      chat_id: callbackQuery.message.chat.id,
+      message_id: callbackQuery.message.message_id,
+      text: `⏳ 正在为您创建草稿到 \`${folder}\`，请稍候...`,
+      parse_mode: 'Markdown'
+    });
+  }
+
+  const id = Math.random().toString(36).substring(2, 8);
   const today = new Date().toISOString().split('T')[0];
   const slug = `${today}-${id}`;
   
-  await sendTelegramMessage(env.TELEGRAM_BOT_TOKEN, {
-    chat_id: message.chat.id,
-    text: `⏳ 正在创建草稿，请稍候...`,
-  });
-
   try {
     const dateStr = new Date().toISOString().replace('T', ' ').substring(0, 19);
     const mdContent = [
@@ -276,22 +343,28 @@ async function handleNewCommand(message: TgMessage, title: string, env: Env): Pr
       ''
     ].join('\n');
 
-    await commitToGitHub(env, slug, mdContent);
+    await commitToGitHub(env, slug, mdContent, folder);
 
-    await sendTelegramMessage(env.TELEGRAM_BOT_TOKEN, {
-      chat_id: message.chat.id,
-      text: `✅ 草稿已生成！\n\n**文件名**: \`${slug}.md\`\n**文章 ID**: \`${id}\`\n\n提交发布后，请使用以下命令关联到频道：\n\n\`/link ${id} 文章摘要\``,
-      parse_mode: 'Markdown'
-    });
+    if (callbackQuery.message) {
+      await callTelegramApi(env.TELEGRAM_BOT_TOKEN, 'editMessageText', {
+        chat_id: callbackQuery.message.chat.id,
+        message_id: callbackQuery.message.message_id,
+        text: `✅ 草稿已生成！\n\n**频道**: \`${folder}\`\n**文件名**: \`${slug}.md\`\n**文章 ID**: \`${id}\`\n\n提交发布后，请使用以下命令关联：\n\n\`/link ${id} 文章摘要\``,
+        parse_mode: 'Markdown'
+      });
+    }
   } catch (err) {
-    await sendTelegramMessage(env.TELEGRAM_BOT_TOKEN, {
-      chat_id: message.chat.id,
-      text: `❌ 草稿创建失败: ${String(err)}`
-    });
+    if (callbackQuery.message) {
+      await callTelegramApi(env.TELEGRAM_BOT_TOKEN, 'editMessageText', {
+        chat_id: callbackQuery.message.chat.id,
+        message_id: callbackQuery.message.message_id,
+        text: `❌ 草稿创建失败: ${String(err)}`
+      });
+    }
   }
 }
 
-async function fetchPostInfoFromGitHub(id: string, env: Env): Promise<{ title: string; tags: string[]; summary: string; image: string } | null> {
+async function fetchPostInfoFromGitHub(id: string, env: Env): Promise<{ title: string; tags: string[]; summary: string; image: string; folder: string } | null> {
   try {
     const [owner, repo] = env.GITHUB_REPO.split('/');
     const apiUrl = `https://api.github.com/repos/${owner}/${repo}/git/trees/${env.GITHUB_BRANCH}?recursive=1`;
@@ -310,6 +383,15 @@ async function fetchPostInfoFromGitHub(id: string, env: Env): Promise<{ title: s
       f.path.endsWith(`-${id}.md`)
     );
     if (!file) return null;
+
+    let folder = '';
+    const prefix = `${env.GITHUB_POSTS_PATH}/`;
+    if (file.path.startsWith(prefix)) {
+      const parts = file.path.substring(prefix.length).split('/');
+      if (parts.length > 1) {
+        folder = parts.slice(0, parts.length - 1).join('/');
+      }
+    }
 
     const fileRes = await fetch(file.url, {
       headers: {
@@ -346,7 +428,7 @@ async function fetchPostInfoFromGitHub(id: string, env: Env): Promise<{ title: s
         image = image.substring(1, image.length - 1);
       }
     }
-    return { title, tags, summary, image };
+    return { title, tags, summary, image, folder };
   } catch (e) {
     return null;
   }
@@ -377,13 +459,27 @@ async function handleLinkCommand(message: TgMessage, id: string, providedSummary
       return;
     }
     
+    const folder = postInfo ? postInfo.folder : '';
+
+    let channels: any[] = [];
+    try {
+      channels = JSON.parse(env.CHANNELS_CONFIG || '[]');
+    } catch(e) {}
+
+    let targetChannel = env.TELEGRAM_CHANNEL_ID;
+    const matchedChannel = channels.find(c => c.folder === folder);
+    if (matchedChannel) {
+      targetChannel = matchedChannel.id;
+    }
+
     const postUrl = `${env.BLOG_URL}/posts/${id}/`;
     const tgResult = await publishToChannel(env, {
       id,
       title,
       summary,
       tags,
-      postUrl
+      postUrl,
+      targetChannel
     });
 
     if (tgResult && tgResult.message_id) {
@@ -394,7 +490,7 @@ async function handleLinkCommand(message: TgMessage, id: string, providedSummary
       ).bind(
         id,
         tgResult.message_id,
-        env.TELEGRAM_CHANNEL_ID,
+        targetChannel,
         title,
         postUrl,
         id,
@@ -402,10 +498,10 @@ async function handleLinkCommand(message: TgMessage, id: string, providedSummary
       ).run();
 
       let channelLink = '';
-      if (env.TELEGRAM_CHANNEL_ID.startsWith('@')) {
-        channelLink = `\n<b>频道</b>: https://t.me/${env.TELEGRAM_CHANNEL_ID.substring(1)}/${tgResult.message_id}`;
-      } else if (env.TELEGRAM_CHANNEL_ID.startsWith('-100')) {
-        channelLink = `\n<b>频道</b>: https://t.me/c/${env.TELEGRAM_CHANNEL_ID.substring(4)}/${tgResult.message_id}`;
+      if (targetChannel.startsWith('@')) {
+        channelLink = `\n<b>频道</b>: https://t.me/${targetChannel.substring(1)}/${tgResult.message_id}`;
+      } else if (targetChannel.startsWith('-100')) {
+        channelLink = `\n<b>频道</b>: https://t.me/c/${targetChannel.substring(4)}/${tgResult.message_id}`;
       }
 
       await sendTelegramMessage(env.TELEGRAM_BOT_TOKEN, {
@@ -431,7 +527,7 @@ async function handleSyncCommand(message: TgMessage, id: string, providedSummary
   });
 
   try {
-    const row = await env.DB.prepare(`SELECT tg_message_id FROM post_tg_map WHERE post_id = ?`).bind(id).first();
+    const row = await env.DB.prepare(`SELECT tg_message_id, tg_channel_id FROM post_tg_map WHERE post_id = ?`).bind(id).first();
     if (!row) {
       await sendTelegramMessage(env.TELEGRAM_BOT_TOKEN, {
         chat_id: message.chat.id,
@@ -484,7 +580,7 @@ async function handleSyncCommand(message: TgMessage, id: string, providedSummary
       tagsLine
     ].join('\n');
 
-    let chatId = env.TELEGRAM_CHANNEL_ID;
+    let chatId = (row.tg_channel_id as string) || env.TELEGRAM_CHANNEL_ID;
     if (!chatId.startsWith('@') && !chatId.startsWith('-')) {
       chatId = '@' + chatId;
     }
@@ -792,11 +888,11 @@ async function handleGetPostTg(postId: string, env: Env): Promise<Response> {
 
 async function publishToChannel(
   env: Env,
-  opts: { id: string; title: string; summary: string; tags: string[]; postUrl: string; image?: string }
+  opts: { id: string; title: string; summary: string; tags: string[]; postUrl: string; image?: string; targetChannel?: string }
 ): Promise<{ message_id: number; error?: string } | null> {
   const { id, title, summary, tags, postUrl, image } = opts;
 
-  let chatId = env.TELEGRAM_CHANNEL_ID;
+  let chatId = opts.targetChannel || env.TELEGRAM_CHANNEL_ID;
   if (!chatId.startsWith('@') && !chatId.startsWith('-')) {
     chatId = '@' + chatId;
   }
@@ -816,6 +912,17 @@ async function publishToChannel(
     '',
     tagsLine
   ].join('\n');
+
+  if (image) {
+    const res = await callTelegramApi(env.TELEGRAM_BOT_TOKEN, 'sendPhoto', {
+      chat_id: chatId,
+      photo: image,
+      caption: text,
+      parse_mode: 'HTML'
+    });
+    if (res.ok) return { message_id: res.result.message_id as number };
+    console.error('Failed to send photo:', res);
+  }
 
   // Send text message with link preview options
   // With prefer_large_media: true, the OpenGraph image (og:image) of the post will be rendered at the bottom!
@@ -924,9 +1031,10 @@ async function uploadMediaToR2(
 // GitHub API Helpers
 // ================================================================
 
-async function commitToGitHub(env: Env, slug: string, content: string): Promise<void> {
+async function commitToGitHub(env: Env, slug: string, content: string, folder: string = ''): Promise<void> {
   const [owner, repo] = env.GITHUB_REPO.split('/');
-  const filePath = `${env.GITHUB_POSTS_PATH}/${slug}.md`;
+  const pathPrefix = folder ? `${env.GITHUB_POSTS_PATH}/${folder}` : env.GITHUB_POSTS_PATH;
+  const filePath = `${pathPrefix}/${slug}.md`;
   const apiUrl = `https://api.github.com/repos/${owner}/${repo}/contents/${filePath}`;
 
   // Check if file exists (to get SHA for update)
@@ -1036,3 +1144,4 @@ function corsResponse(res: Response): Response {
   headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   return new Response(res.body, { status: res.status, headers });
 }
+

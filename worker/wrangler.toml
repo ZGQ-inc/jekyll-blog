@@ -37,6 +37,7 @@ ASSETS_URL     = "https://assets.zgqinc.gq"
 GITHUB_REPO    = "ZGQ-inc/jekyll-blog"
 GITHUB_BRANCH  = "main"
 GITHUB_POSTS_PATH = "_posts"
+CHANNELS_CONFIG = '[{"id": "@ZGQincLiqun", "name": "主频道", "folder": "ZGQincLiqun"}, {"id": "@CopyRightZGQInc", "name": "个人频道", "folder": "CopyRightZGQInc"}]'
 
 # ================================================================
 # Secrets (通过 `wrangler secret put <NAME>` 注入，不在此文件中明文)
