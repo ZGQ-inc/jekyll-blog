@@ -1671,6 +1671,8 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
   padding: 4px 10px;
   border-radius: var(--shape-full);
   border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 40%, transparent);
+  transform: translateZ(0);
+  will-change: transform;
 }
 
 .card-body {
@@ -1708,6 +1710,7 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
   display: flex;
   gap: 12px;
   flex-wrap: wrap;
+  transform: translateZ(0);
 }
 
 .meta-item {

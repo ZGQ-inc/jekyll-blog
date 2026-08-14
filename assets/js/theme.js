@@ -808,6 +808,8 @@ function initPageTransitions() {
       document.documentElement.classList.remove('is-navigating');
       
       requestAnimationFrame(() => {
+        // Unlock transitions before triggering the enter animation
+        document.body.classList.remove('preload');
         requestAnimationFrame(() => {
           main.style.transition = 'opacity 400ms cubic-bezier(0.05,0.7,0.1,1), transform 400ms cubic-bezier(0.05,0.7,0.1,1), filter 400ms';
           main.style.opacity = '1';
@@ -817,6 +819,9 @@ function initPageTransitions() {
       });
     } else {
       document.documentElement.classList.remove('is-navigating');
+      requestAnimationFrame(() => {
+        document.body.classList.remove('preload');
+      });
     }
 
     window.addEventListener('pageshow', e => {
@@ -929,11 +934,6 @@ document.addEventListener('DOMContentLoaded', () => {
   initPageTransitions();
   initRipples();
   initBackToTop();
-  
-  // Remove transition lock after initial paint setup
-  setTimeout(() => {
-    document.body.classList.remove('preload');
-  }, 50);
 });
 
 // Toast Notification System
