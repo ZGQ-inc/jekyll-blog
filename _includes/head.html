@@ -14,18 +14,19 @@
 <!-- Anti-FOUC Theme Script -->
 <script>
   (function() {
+    var color = 'blue', mode = 'system';
+    var validColors = ['blue', 'purple', 'green', 'orange', 'rose', 'teal'];
     try {
       var saved = localStorage.getItem('zgq-blog-theme');
-      var color = 'blue', mode = 'system';
       if (saved) {
         var parsed = JSON.parse(saved);
-        color = parsed.color || 'blue';
-        mode = parsed.mode || 'system';
+        if (parsed.color && validColors.indexOf(parsed.color) !== -1) color = parsed.color;
+        if (parsed.mode === 'light' || parsed.mode === 'dark') mode = parsed.mode;
       }
-      var isDark = mode === 'dark' || (mode === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
-      document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
-      document.documentElement.setAttribute('data-color', color);
     } catch(e) {}
+    var isDark = mode === 'dark' || (mode === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+    document.documentElement.setAttribute('data-color', color);
   })();
 </script>
 
