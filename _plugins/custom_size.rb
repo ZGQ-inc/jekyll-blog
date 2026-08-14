@@ -1,16 +1,30 @@
 Jekyll::Hooks.register [:posts, :pages, :documents], :pre_render do |doc|
-  # 支持 [size:4rem]你的超大文本[/size]
-  # 使用正则匹配，非贪婪模式
-  doc.content = doc.content.gsub(/\[size:([^\]]+)\](.*?)\[\/size\]/m) do |match|
+  content = doc.content
+
+  # Temporarily extract all code blocks (inline and fenced) to protect them
+  code_blocks = []
+  # Match 1 or more backticks, followed by any content, followed by the exact same number of backticks
+  content.gsub!(/(`+)(.+?)\1/m) do |match|
+    code_blocks << match
+    "__CODE_BLOCK_#{code_blocks.length - 1}__"
+  end
+
+  # Process the [size:...] tags on the safe content
+  content.gsub!(/\[size:([^\]]+)\](.*?)\[\/size\]/m) do |match|
     size = $1.strip
-    content = $2
+    inner = $2
     
-    # 如果内部包含换行（段落），则使用 div 并且启用 markdown="1" 让 kramdown 继续解析内部 markdown
-    # 如果是纯行内文本，则使用 span
-    if content.include?("\n")
-      "<div style=\"font-size: #{size}; line-height: 1.3; font-weight: 700;\" markdown=\"1\">\n#{content}\n</div>"
+    if inner.include?("\n")
+      "<div style=\"font-size: #{size}; line-height: 1.3; font-weight: 700;\" markdown=\"1\">\n#{inner}\n</div>"
     else
-      "<span style=\"font-size: #{size}; font-weight: 700;\">#{content}</span>"
+      "<span style=\"font-size: #{size}; font-weight: 700;\">#{inner}</span>"
     end
   end
+
+  # Restore the protected code blocks
+  content.gsub!(/__CODE_BLOCK_(\d+)__/) do |match|
+    code_blocks[$1.to_i]
+  end
+
+  doc.content = content
 end
