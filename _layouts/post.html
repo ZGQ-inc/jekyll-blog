@@ -49,6 +49,22 @@ layout: default
     </div>
     {% endif %}
     <h1 class="hero-title">{{ post.title }}</h1>
+    
+    <div class="hero-meta">
+      <span>
+        <span class="material-symbols-outlined">calendar_month</span>
+        {{ post.date | date: "%Y年%m月%d日" }}
+      </span>
+      <span>
+        <span class="material-symbols-outlined">person</span>
+        {{ site.author.name }}
+      </span>
+      {% assign words = post.content | number_of_words %}
+      <span>
+        <span class="material-symbols-outlined">schedule</span>
+        约 {{ words | divided_by: 300 | plus: 1 }} 分钟阅读
+      </span>
+    </div>
   </div>
 </div>
 {% endif %}
@@ -62,24 +78,6 @@ layout: default
   {% endif %}
 
   <!-- Post meta bar -->
-  {% unless post.image %}
-  <div class="card-meta" style="margin-bottom:16px">
-    <span class="meta-item">
-      <span class="material-symbols-outlined">calendar_month</span>
-      {{ post.date | date: "%Y年%m月%d日" }}
-    </span>
-    <span class="meta-item">
-      <span class="material-symbols-outlined">person</span>
-      {{ site.author.name }}
-    </span>
-    {% assign words = post.content | number_of_words %}
-    <span class="meta-item">
-      <span class="material-symbols-outlined">schedule</span>
-      约 {{ words | divided_by: 300 | plus: 1 }} 分钟阅读
-    </span>
-  </div>
-  {% endunless %}
-
   <!-- Article body -->
   <div class="article-content" itemprop="articleBody">
     {{ content }}
