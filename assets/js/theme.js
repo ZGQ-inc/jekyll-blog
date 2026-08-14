@@ -456,14 +456,12 @@ class ThemeManager {
 
   previewTheme(color, mode) {
     const isDark = (mode === 'dark') || (mode === 'light' ? false : this.mediaQuery.matches);
-    const palette = THEMES[color]?.[isDark ? 'dark' : 'light'] ?? THEMES.blue.light;
     const root = document.documentElement;
 
     root.setAttribute('data-theme', isDark ? 'dark' : 'light');
     root.setAttribute('data-color', color);
 
-    Object.entries(palette).forEach(([k, v]) => root.style.setProperty(k, v));
-
+    const palette = THEMES[color]?.[isDark ? 'dark' : 'light'] ?? THEMES.blue.light;
     const meta = document.querySelector('meta[name="theme-color"]');
     if (meta) meta.setAttribute('content', palette['--md-sys-color-surface'] ?? '#FDFCFF');
   }
