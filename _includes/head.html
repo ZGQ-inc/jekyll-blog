@@ -11,6 +11,24 @@
 <!-- Canonical -->
 <link rel="canonical" href="{{ page.url | absolute_url }}">
 
+<!-- Anti-FOUC Theme Script -->
+<script>
+  (function() {
+    try {
+      var saved = localStorage.getItem('zgq-blog-theme');
+      var color = 'blue', mode = 'system';
+      if (saved) {
+        var parsed = JSON.parse(saved);
+        color = parsed.color || 'blue';
+        mode = parsed.mode || 'system';
+      }
+      var isDark = mode === 'dark' || (mode === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+      document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-color', color);
+    } catch(e) {}
+  })();
+</script>
+
 <!-- Fonts: Noto Sans SC + Material Symbols -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
