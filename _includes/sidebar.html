@@ -119,10 +119,12 @@
       </a>
       {% endif %}
 
-      <a class="social-btn" href="https://domain.zgqinc.gq"
+      {% if site.social.navigation %}
+      <a class="social-btn" href="{{ site.social.navigation }}"
          target="_blank" rel="noopener" aria-label="导航页">
         <span class="material-symbols-outlined">explore</span>
       </a>
+      {% endif %}
 
       {% if site.social.rss %}
       <a class="social-btn" href="{{ '/feed.xml' | absolute_url }}" target="_blank" title="RSS">

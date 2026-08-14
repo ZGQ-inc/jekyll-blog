@@ -40,7 +40,7 @@ cd jekyll-blog
 ```
 
 在开始部署或使用之前，你需要先将项目中的默认配置修改为你自己的信息：
-1. **全局站点配置**：编辑根目录下的 `_config.yml`，修改 `title`, `email`, `description`, `url` 等字段为你自己的博客基础信息。
+1. **全局站点配置**：编辑根目录下的 `_config.yml`，修改 `title`, `email`, `description`, `url` 等字段为你自己的博客基础信息。尤其注意 `social` 下的 `github`, `telegram`, `telegram_channel`, `navigation` 等社交链接字段。
 2. **Worker 环境变量**：编辑 `worker/wrangler.toml`，找到 `[vars]` 区块，修改 `BLOG_URL`（博客域名）、`ASSETS_URL`（R2 图床域名）以及 `GITHUB_REPO`（你的 GitHub 仓库名）。
 
 ### 2. 初始化 Cloudflare 资源
@@ -75,6 +75,9 @@ npx wrangler secret put WEBHOOK_SECRET --name blog-worker
 *(注：NOTIFY_SECRET 和 WEBHOOK_SECRET 请自行生成并在本地记录，建议使用高强度随机字符串)*
 
 ### 3. 部署服务端 (Worker)
+
+> [!TIP]
+> **可选项**：因为本项目配置了 GitHub Actions 工作流，当你在第 4 步中配置好仓库的机密信息（Secrets）并推送代码到 Github 后，工作流会自动帮你部署 Worker。如果你不想配置 GitHub Actions，或者你想在本地先部署一次验证功能，可以通过以下命令手动发布：
 
 进入 Worker 目录，安装依赖并发布到 Cloudflare：
 ```bash
