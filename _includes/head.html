@@ -1,6 +1,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#FDFCFF">
+<meta name="color-scheme" content="dark light">
 <link rel="icon" type="image/x-icon" href="{{ '/favicon.ico' | relative_url }}">
 <link rel="apple-touch-icon" href="{{ '/assets/images/avatar.png' | relative_url }}">
 <link rel="manifest" href="{{ '/manifest.json' | relative_url }}">
@@ -13,7 +13,7 @@
 
 <!-- Preload Transition Lock -->
 <style>
-  .preload * {
+  body.preload {
     transition: none !important;
   }
 </style>
@@ -36,6 +36,9 @@
     document.documentElement.setAttribute('data-color', color);
   })();
 </script>
+
+<!-- Main Stylesheet -->
+<link rel="stylesheet" href="{{ '/assets/css/style.css' | relative_url }}?v={{ site.time | date: '%s' }}">
 
 <!-- Fonts: Noto Sans SC + Material Symbols -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -73,9 +76,6 @@
     window.scrollTo(0, 0);
   }
 </script>
-
-<!-- Main Stylesheet -->
-<link rel="stylesheet" href="{{ '/assets/css/style.css' | relative_url }}?v={{ site.time | date: '%s' }}">
 
 <!-- Open Graph extras -->
 {% if page.image %}
