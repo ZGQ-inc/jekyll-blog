@@ -810,6 +810,10 @@ function initPageTransitions() {
       requestAnimationFrame(() => {
         // Unlock transitions before triggering the enter animation
         document.body.classList.remove('preload');
+        
+        // Force layout flush for Firefox to prevent frame coalescing
+        void document.body.offsetHeight;
+        
         requestAnimationFrame(() => {
           main.style.transition = 'opacity 400ms cubic-bezier(0.05,0.7,0.1,1), transform 400ms cubic-bezier(0.05,0.7,0.1,1), filter 400ms';
           main.style.opacity = '1';

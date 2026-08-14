@@ -1593,6 +1593,8 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
   text-decoration: none;
   color: var(--md-sys-color-on-surface);
   cursor: pointer;
+  transform: translateZ(0);
+  will-change: transform, opacity;
 
   animation: card-enter var(--dur-long1) var(--motion-emphasized-decel) both;
   @for $i from 1 through 20 {
