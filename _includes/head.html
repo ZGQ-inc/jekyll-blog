@@ -11,6 +11,13 @@
 <!-- Canonical -->
 <link rel="canonical" href="{{ page.url | absolute_url }}">
 
+<!-- Preload Transition Lock -->
+<style>
+  .preload * {
+    transition: none !important;
+  }
+</style>
+
 <!-- Anti-FOUC Theme Script -->
 <script>
   (function() {
@@ -68,7 +75,7 @@
 </script>
 
 <!-- Main Stylesheet -->
-<link rel="stylesheet" href="{{ '/assets/css/style.css' | relative_url }}">
+<link rel="stylesheet" href="{{ '/assets/css/style.css' | relative_url }}?v={{ site.time | date: '%s' }}">
 
 <!-- Open Graph extras -->
 {% if page.image %}

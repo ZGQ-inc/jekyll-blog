@@ -438,7 +438,13 @@ class ThemeManager {
   loadSettings() {
     try {
       const saved = localStorage.getItem(this.STORAGE_KEY);
-      if (saved) return JSON.parse(saved);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        const validColors = ['blue', 'purple', 'green', 'orange', 'rose', 'teal'];
+        if (!validColors.includes(parsed.color)) parsed.color = 'blue';
+        if (parsed.mode !== 'light' && parsed.mode !== 'dark' && parsed.mode !== 'system') parsed.mode = 'system';
+        return parsed;
+      }
     } catch (_) {}
     return { color: 'blue', mode: 'system' };
   }
@@ -923,6 +929,11 @@ document.addEventListener('DOMContentLoaded', () => {
   initPageTransitions();
   initRipples();
   initBackToTop();
+  
+  // Remove transition lock after initial paint setup
+  setTimeout(() => {
+    document.body.classList.remove('preload');
+  }, 50);
 });
 
 // Toast Notification System
