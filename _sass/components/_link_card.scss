@@ -6,30 +6,25 @@
   max-width: 480px; /* Limit width so it doesn't have too much whitespace */
   text-decoration: none !important;
   color: inherit !important;
-  background-color: var(--md-sys-color-surface-container-lowest);
-  border: 1px solid var(--md-sys-color-outline-variant);
+  background-color: var(--md-sys-color-surface-container);
+  border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 50%, transparent);
   border-radius: var(--shape-large);
   overflow: hidden;
   margin: 1.5rem 0;
-  transition: background-color 0.2s cubic-bezier(0.2, 0, 0, 1),
-              box-shadow 0.2s cubic-bezier(0.2, 0, 0, 1),
-              border-color 0.2s cubic-bezier(0.2, 0, 0, 1);
-  box-shadow: var(--md-sys-elevation-1);
-}
-
-html[data-theme="dark"] .md3-link-card {
-  background-color: var(--md-sys-color-surface-container-low);
+  transition: all var(--dur-short4) var(--motion-standard);
+  box-shadow: var(--elev-1);
 }
 
 .md3-link-card:hover {
-  background-color: var(--md-sys-color-surface-container);
-  box-shadow: var(--md-sys-elevation-2);
-  border-color: color-mix(in srgb, var(--md-sys-color-outline-variant) 80%, var(--md-sys-color-primary));
+  background-color: var(--md-sys-color-surface-container-highest);
+  border-color: var(--md-sys-color-outline-variant);
+  box-shadow: var(--elev-2);
+  transform: translateY(-2px);
 }
 
 .md3-link-card:active {
-  box-shadow: var(--md-sys-elevation-1);
-  background-color: var(--md-sys-color-surface-container-high);
+  transform: translateY(0);
+  box-shadow: var(--elev-1);
 }
 
 .md3-link-card .card-content {
