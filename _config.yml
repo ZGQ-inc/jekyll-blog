@@ -70,16 +70,11 @@ kramdown:
 # Permalink style
 permalink: /posts/:slug/
 
-# Pagination (requires jekyll-paginate)
-paginate: 10
-paginate_path: "/page/:num/"
-
 # Plugins
 plugins:
   - jekyll-feed
   - jekyll-sitemap
   - jekyll-seo-tag
-  - jekyll-paginate
 
 # Exclude from build
 exclude:

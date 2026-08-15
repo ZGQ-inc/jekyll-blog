@@ -7,7 +7,6 @@ group :jekyll_plugins do
   gem "jekyll-feed", "~> 0.17"
   gem "jekyll-sitemap"
   gem "jekyll-seo-tag", "~> 2.8"
-  gem "jekyll-paginate", "~> 1.1"
 end
 
 # Rouge for syntax highlighting
