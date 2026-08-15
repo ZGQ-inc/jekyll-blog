@@ -143,6 +143,7 @@ Jekyll::Hooks.register [:pages, :documents], :post_convert do |doc|
       card_html = %Q{
         <a href="#{url}" class="md3-link-card" target="#{is_internal ? '_self' : '_blank'}" rel="noopener">
           <div class="card-content">
+            #{image_html}
             <div class="card-text">
               <div class="card-title">#{title_safe.empty? ? url : title_safe}</div>
               #{desc_trunc.empty? ? '' : %Q{<div class="card-desc">#{desc_trunc}</div>}}
@@ -151,7 +152,6 @@ Jekyll::Hooks.register [:pages, :documents], :post_convert do |doc|
                 <span class="card-domain">#{domain_safe}</span>
               </div>
             </div>
-            #{image_html}
           </div>
         </a>
       }
