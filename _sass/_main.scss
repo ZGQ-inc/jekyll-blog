@@ -6,6 +6,7 @@
 @property --md-sys-color-primary-container   { syntax: '<color>'; inherits: true; initial-value: #D1E4FF; }
 
 @import "themes";
+@import "components/link_card";
 
 :root {
   // Fallback Color System (Blue Light)
