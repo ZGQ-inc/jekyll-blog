@@ -132,9 +132,9 @@ Jekyll::Hooks.register [:pages, :documents], :post_convert do |doc|
         img_src = image_safe
         img_src = (site.config['url'] || '') + img_src if img_src.start_with?('/')
         image_html = %Q{
-          <div class="card-image-wrapper">
+          <span class="card-image-wrapper">
             <img src="#{img_src}" class="card-image" loading="lazy" onerror="this.parentElement.style.display='none'">
-          </div>
+          </span>
         }
       end
 
@@ -142,17 +142,17 @@ Jekyll::Hooks.register [:pages, :documents], :post_convert do |doc|
 
       card_html = %Q{
         <a href="#{url}" class="md3-link-card" target="#{is_internal ? '_self' : '_blank'}" rel="noopener">
-          <div class="card-content">
+          <span class="card-content">
             #{image_html}
-            <div class="card-text">
-              <div class="card-title">#{title_safe.empty? ? url : title_safe}</div>
-              #{desc_trunc.empty? ? '' : %Q{<div class="card-desc">#{desc_trunc}</div>}}
-              <div class="card-meta">
+            <span class="card-text">
+              <span class="card-title">#{title_safe.empty? ? url : title_safe}</span>
+              #{desc_trunc.empty? ? '' : %Q{<span class="card-desc">#{desc_trunc}</span>}}
+              <span class="card-meta">
                 #{favicon_html}
                 <span class="card-domain">#{domain_safe}</span>
-              </div>
-            </div>
-          </div>
+              </span>
+            </span>
+          </span>
         </a>
       }
       a.replace(card_html)
