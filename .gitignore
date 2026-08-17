@@ -50,23 +50,8 @@ temp/
 !.dev.vars.example
 !.env.example
 
-# Test and scratch files
-*.py
-test*.css
-test*.css.map
-test*.scss
-frosted-glass.html
-bot-api-llms.txt
-material-web-llms.txt
-fix_logo.py
-test_kramdown.rb
-walkthrough.md
-task.md
-implementation_plan.md
-update_index1.py
-fix_calendar.py
-zgqinc.gq.txt
-scratch/
+# Local scratch and test files
+local/
 
 # Nested wrangler caches
 **/.wrangler/
