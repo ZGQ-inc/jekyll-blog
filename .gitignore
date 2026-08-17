@@ -50,8 +50,10 @@ temp/
 !.dev.vars.example
 !.env.example
 
-# Local scratch and test files
+# Local test files
 local/
+task.md
+walkthrough.md
 
 # Nested wrangler caches
 **/.wrangler/
