@@ -66,6 +66,7 @@ implementation_plan.md
 update_index1.py
 fix_calendar.py
 zgqinc.gq.txt
+scratch/
 
 # Nested wrangler caches
 **/.wrangler/
