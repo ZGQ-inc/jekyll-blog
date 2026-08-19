@@ -52,6 +52,7 @@ temp/
 
 # Local test files
 local/
+scratch/
 task.md
 walkthrough.md
 
