@@ -799,7 +799,10 @@ function initPageTransitions() {
   sessionStorage.removeItem('isNavigating');
 
   if (main) {
-    if (isNavigating) {
+    // If arriving with a hash, avoid CSS transforms on main to keep scroll coordinate solid
+    const hasHash = Boolean(window.location.hash && window.location.hash.length > 1);
+
+    if (isNavigating && !hasHash) {
       main.style.transition = 'none';
       main.style.opacity = '0';
       main.style.transform = 'translateY(16px)';
@@ -808,10 +811,7 @@ function initPageTransitions() {
       document.documentElement.classList.remove('is-navigating');
       
       requestAnimationFrame(() => {
-        // Unlock transitions before triggering the enter animation
         document.body.classList.remove('preload');
-        
-        // Force layout flush for Firefox to prevent frame coalescing
         void document.body.offsetHeight;
         
         requestAnimationFrame(() => {
@@ -823,6 +823,9 @@ function initPageTransitions() {
       });
     } else {
       document.documentElement.classList.remove('is-navigating');
+      main.style.transform = 'none';
+      main.style.opacity = '1';
+      main.style.filter = 'none';
       requestAnimationFrame(() => {
         document.body.classList.remove('preload');
       });
@@ -852,6 +855,11 @@ function initPageTransitions() {
     try {
       const url = new URL(href, window.location.origin);
       if (url.origin !== window.location.origin) return;
+
+      // If linking to same path with just a hash, let anchor handler process it
+      if (url.pathname === window.location.pathname && url.hash) {
+        return;
+      }
     } catch { return; }
 
     e.preventDefault();
@@ -1069,42 +1077,58 @@ function initTagCloudCollapse() {
 // Universal Accurate Anchor Jump Handler
 function initSmoothAnchorJumps() {
   document.addEventListener('click', (e) => {
-    const anchor = e.target.closest('a[href^="#"]');
+    const anchor = e.target.closest('a[href*="#"]');
     if (!anchor) return;
     
     const href = anchor.getAttribute('href');
     if (!href || href === '#' || href.length <= 1) return;
     
-    if (window.blogPagination && window.blogPagination.isInitialized) {
-      e.preventDefault();
-      window.blogPagination.jumpToAnchor(href);
-      try { history.pushState(null, '', href); } catch (err) {}
-      return;
-    }
-
-    const rawId = href.substring(1);
-    let targetEl = null;
-    try {
-      targetEl = document.getElementById(rawId) || document.getElementById(decodeURIComponent(rawId));
-    } catch (err) {
-      targetEl = document.getElementById(rawId);
-    }
+    const hashIndex = href.indexOf('#');
+    if (hashIndex === -1) return;
+    const hashPart = href.substring(hashIndex);
+    const pathPart = href.substring(0, hashIndex);
     
-    if (targetEl) {
-      e.preventDefault();
-      targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      try { history.pushState(null, '', href); } catch (err) {}
+    const isCurrentPage = !pathPart ||
+      pathPart === window.location.pathname ||
+      pathPart === window.location.pathname.replace(/\/$/, '') ||
+      pathPart === window.location.pathname + '/';
 
-      // MD3 Pulse highlight on target header
-      targetEl.animate([
-        { background: 'color-mix(in srgb, var(--md-sys-color-primary-container) 85%, transparent)', borderRadius: '12px', paddingLeft: '12px' },
-        { background: 'transparent', borderRadius: '', paddingLeft: '' }
-      ], { duration: 2000, easing: 'cubic-bezier(0.2, 0, 0, 1)' });
+    if (isCurrentPage) {
+      if (window.blogPagination && window.blogPagination.isInitialized) {
+        e.preventDefault();
+        window.blogPagination.jumpToAnchor(hashPart);
+        try { history.pushState(null, '', hashPart); } catch (err) {}
+        return;
+      }
+
+      const rawId = hashPart.substring(1);
+      let targetEl = null;
+      try {
+        targetEl = document.getElementById(rawId) || document.getElementById(decodeURIComponent(rawId));
+      } catch (err) {
+        targetEl = document.getElementById(rawId);
+      }
+      
+      if (targetEl) {
+        e.preventDefault();
+        const main = document.querySelector('.main-content') || document.querySelector('main');
+        if (main) main.style.transform = 'none';
+        const rect = targetEl.getBoundingClientRect();
+        const topOffset = rect.top + (window.pageYOffset || document.documentElement.scrollTop) - 84;
+        window.scrollTo({ top: Math.max(0, topOffset), behavior: 'smooth' });
+        try { history.pushState(null, '', hashPart); } catch (err) {}
+
+        // MD3 Pulse highlight on target header
+        targetEl.animate([
+          { background: 'color-mix(in srgb, var(--md-sys-color-primary-container) 85%, transparent)', borderRadius: '12px', paddingLeft: '12px' },
+          { background: 'transparent', borderRadius: '', paddingLeft: '' }
+        ], { duration: 2000, easing: 'cubic-bezier(0.2, 0, 0, 1)' });
+      }
     }
   });
 
   if (window.location.hash && window.location.hash.length > 1) {
-    setTimeout(() => {
+    const handleInitialJump = () => {
       if (window.blogPagination && window.blogPagination.isInitialized) {
         window.blogPagination.jumpToAnchor(window.location.hash);
         return;
@@ -1117,13 +1141,21 @@ function initSmoothAnchorJumps() {
         targetEl = document.getElementById(rawId);
       }
       if (targetEl) {
-        targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        const main = document.querySelector('.main-content') || document.querySelector('main');
+        if (main) main.style.transform = 'none';
+        const rect = targetEl.getBoundingClientRect();
+        const topOffset = rect.top + (window.pageYOffset || document.documentElement.scrollTop) - 84;
+        window.scrollTo({ top: Math.max(0, topOffset), behavior: 'smooth' });
         targetEl.animate([
           { background: 'color-mix(in srgb, var(--md-sys-color-primary-container) 85%, transparent)', borderRadius: '12px', paddingLeft: '12px' },
           { background: 'transparent', borderRadius: '', paddingLeft: '' }
         ], { duration: 2000, easing: 'cubic-bezier(0.2, 0, 0, 1)' });
       }
-    }, 150);
+    };
+
+    setTimeout(handleInitialJump, 100);
+    setTimeout(handleInitialJump, 400);
+    window.addEventListener('load', handleInitialJump, { once: true });
   }
 }
 

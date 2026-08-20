@@ -238,16 +238,24 @@ class BlogPaginationManager {
       timelineBtn.click();
     }
 
-    setTimeout(() => {
+    const doScrollToHeader = () => {
       const header = document.querySelector(`.timeline-header[data-date="${dateStr}"]`);
       if (header) {
-        header.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        header.style.display = '';
+        const main = document.querySelector('.main-content') || document.querySelector('main');
+        if (main) main.style.transform = 'none';
+        const rect = header.getBoundingClientRect();
+        const topOffset = rect.top + (window.pageYOffset || document.documentElement.scrollTop) - 84;
+        window.scrollTo({ top: Math.max(0, topOffset), behavior: 'smooth' });
         header.animate([
           { background: 'color-mix(in srgb, var(--md-sys-color-primary-container) 85%, transparent)', borderRadius: '12px', paddingLeft: '12px' },
           { background: 'transparent', borderRadius: '', paddingLeft: '' }
         ], { duration: 2000, easing: 'cubic-bezier(0.2, 0, 0, 1)' });
       }
-    }, 80);
+    };
+
+    setTimeout(doScrollToHeader, 60);
+    setTimeout(doScrollToHeader, 280);
   }
 
   // Cross-page Jump to Tag or Category anchor (#slug)
@@ -291,15 +299,21 @@ class BlogPaginationManager {
       }
     }
 
-    headerEl.style.display = '';
-
-    setTimeout(() => {
-      headerEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    const doScrollToAnchor = () => {
+      headerEl.style.display = '';
+      const main = document.querySelector('.main-content') || document.querySelector('main');
+      if (main) main.style.transform = 'none';
+      const rect = headerEl.getBoundingClientRect();
+      const topOffset = rect.top + (window.pageYOffset || document.documentElement.scrollTop) - 84;
+      window.scrollTo({ top: Math.max(0, topOffset), behavior: 'smooth' });
       headerEl.animate([
         { background: 'color-mix(in srgb, var(--md-sys-color-primary-container) 85%, transparent)', borderRadius: '12px', paddingLeft: '12px' },
         { background: 'transparent', borderRadius: '', paddingLeft: '' }
       ], { duration: 2000, easing: 'cubic-bezier(0.2, 0, 0, 1)' });
-    }, 80);
+    };
+
+    setTimeout(doScrollToAnchor, 60);
+    setTimeout(doScrollToAnchor, 280);
   }
 }
 
