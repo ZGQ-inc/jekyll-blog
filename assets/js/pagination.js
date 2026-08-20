@@ -69,13 +69,14 @@ class BlogPaginationManager {
     this.isInitialized = true;
     this.render({ scroll: false });
 
-    // If initial URL has a hash, handle hash jump after render
-    if (window.location.hash && window.location.hash.length > 1) {
+    // If initial URL has a hash (or preserved in window._initialHash), handle hash jump after render
+    const initialHash = window._initialHash || window.location.hash;
+    if (initialHash && initialHash.length > 1) {
       setTimeout(() => {
-        this.jumpToAnchor(window.location.hash);
+        this.jumpToAnchor(initialHash);
       }, 80);
       setTimeout(() => {
-        this.jumpToAnchor(window.location.hash);
+        this.jumpToAnchor(initialHash);
       }, 350);
     }
   }
@@ -306,6 +307,10 @@ class BlogPaginationManager {
       const rect = headerEl.getBoundingClientRect();
       const topOffset = rect.top + (window.pageYOffset || document.documentElement.scrollTop) - 84;
       window.scrollTo({ top: Math.max(0, topOffset), behavior: 'smooth' });
+      try { history.replaceState(null, null, '#' + targetId); } catch (e) {}
+      if (window._originalScrollRestoration !== undefined && 'scrollRestoration' in history) {
+        setTimeout(() => { history.scrollRestoration = window._originalScrollRestoration; }, 1000);
+      }
       headerEl.animate([
         { background: 'color-mix(in srgb, var(--md-sys-color-primary-container) 85%, transparent)', borderRadius: '12px', paddingLeft: '12px' },
         { background: 'transparent', borderRadius: '', paddingLeft: '' }

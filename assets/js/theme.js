@@ -947,6 +947,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initRipples();
   initBackToTop();
   initTagCloudCollapse();
+  initGlobalAnchorHeadings();
   initSmoothAnchorJumps();
 });
 
@@ -1074,7 +1075,108 @@ function initTagCloudCollapse() {
   topBtn.addEventListener('click', () => toggleExpand());
 }
 
-// Universal Accurate Anchor Jump Handler
+// Global Unified Anchor Jump Executor (Works across all pages, with or without pagination)
+window.executeGlobalAnchorJump = function(hash) {
+  if (!hash || hash === '#') return;
+  const rawId = hash.startsWith('#') ? hash.substring(1) : hash;
+  let targetId = rawId;
+  try { targetId = decodeURIComponent(rawId); } catch (err) {}
+
+  // 1. If blog pagination is initialized, route through pagination manager
+  if (window.blogPagination && window.blogPagination.isInitialized) {
+    window.blogPagination.jumpToAnchor(hash);
+    try { history.replaceState(null, null, '#' + targetId); } catch (err) {}
+    if (window._originalScrollRestoration !== undefined && 'scrollRestoration' in history) {
+      setTimeout(() => { history.scrollRestoration = window._originalScrollRestoration; }, 1000);
+    }
+    return;
+  }
+
+  // 2. Direct DOM jump for articles and non-paginated views
+  let targetEl = document.getElementById(targetId) || document.getElementById(rawId);
+  if (!targetEl) {
+    try {
+      targetEl = document.querySelector(`[id="${CSS.escape(targetId)}"]`) ||
+                 document.querySelector(`[id="${CSS.escape(rawId)}"]`) ||
+                 document.querySelector(`.timeline-header[data-tag="${CSS.escape(targetId)}"]`) ||
+                 document.querySelector(`.timeline-header[data-cat="${CSS.escape(targetId)}"]`);
+    } catch (e) {}
+  }
+  if (!targetEl) {
+    const allHeaders = document.querySelectorAll('h1, h2, h3, h4, h5, h6, .timeline-header, [id]');
+    for (const h of allHeaders) {
+      if (h.id === targetId || h.id === rawId || h.dataset.tag === targetId || h.dataset.cat === targetId || h.dataset.tag === rawId || h.dataset.cat === rawId) {
+        targetEl = h;
+        break;
+      }
+    }
+  }
+
+  if (targetEl) {
+    targetEl.style.display = '';
+    const main = document.querySelector('.main-content') || document.querySelector('main');
+    if (main) main.style.transform = 'none';
+
+    const rect = targetEl.getBoundingClientRect();
+    const scrollTop = window.pageYOffset || document.documentElement.scrollTop || 0;
+    const targetTop = Math.max(0, rect.top + scrollTop - 84);
+
+    window.scrollTo({ top: targetTop, behavior: 'smooth' });
+    try { history.replaceState(null, null, '#' + targetId); } catch (err) {}
+
+    targetEl.animate([
+      { background: 'color-mix(in srgb, var(--md-sys-color-primary-container) 85%, transparent)', borderRadius: '12px', paddingLeft: '12px' },
+      { background: 'transparent', borderRadius: '', paddingLeft: '' }
+    ], { duration: 2200, easing: 'cubic-bezier(0.2, 0, 0, 1)' });
+
+    if (window._originalScrollRestoration !== undefined && 'scrollRestoration' in history) {
+      setTimeout(() => { history.scrollRestoration = window._originalScrollRestoration; }, 1000);
+    }
+  }
+};
+
+// Global Anchor Headings Setup (Articles & Timeline Headers)
+function initGlobalAnchorHeadings() {
+  const headings = document.querySelectorAll('.article-content h1, .article-content h2, .article-content h3, .article-content h4, .article-content h5, .article-content h6, .timeline-header');
+
+  headings.forEach(heading => {
+    const id = heading.id || heading.dataset.tag || heading.dataset.cat;
+    if (!id) return;
+    if (heading.querySelector('.anchor-icon')) return;
+
+    heading.classList.add('anchor-heading');
+
+    const iconSpan = document.createElement('span');
+    iconSpan.className = 'material-symbols-outlined anchor-icon';
+    iconSpan.textContent = 'link';
+    iconSpan.title = '复制链接并跳转';
+    iconSpan.setAttribute('aria-hidden', 'true');
+
+    heading.appendChild(iconSpan);
+
+    heading.addEventListener('click', (e) => {
+      // Don't intercept if clicking an interactive inner element (like buttons or outer links)
+      if (e.target.tagName.toLowerCase() === 'a' && e.target !== iconSpan && !e.target.classList.contains('header-title')) return;
+
+      const fullUrl = window.location.href.split('#')[0] + '#' + encodeURIComponent(id);
+      
+      navigator.clipboard.writeText(fullUrl).then(() => {
+        const originalText = iconSpan.textContent;
+        iconSpan.textContent = 'check';
+        iconSpan.style.color = 'var(--md-sys-color-primary)';
+        if (window.showToast) window.showToast('链接已复制！');
+        setTimeout(() => {
+          iconSpan.textContent = originalText;
+          iconSpan.style.color = '';
+        }, 1500);
+      }).catch(() => {});
+
+      window.executeGlobalAnchorJump('#' + id);
+    });
+  });
+}
+
+// Universal In-page Anchor Click Handler & Initial Hash Handler
 function initSmoothAnchorJumps() {
   document.addEventListener('click', (e) => {
     const anchor = e.target.closest('a[href*="#"]');
@@ -1094,67 +1196,20 @@ function initSmoothAnchorJumps() {
       pathPart === window.location.pathname + '/';
 
     if (isCurrentPage) {
-      if (window.blogPagination && window.blogPagination.isInitialized) {
-        e.preventDefault();
-        window.blogPagination.jumpToAnchor(hashPart);
-        try { history.pushState(null, '', hashPart); } catch (err) {}
-        return;
-      }
-
-      const rawId = hashPart.substring(1);
-      let targetEl = null;
-      try {
-        targetEl = document.getElementById(rawId) || document.getElementById(decodeURIComponent(rawId));
-      } catch (err) {
-        targetEl = document.getElementById(rawId);
-      }
-      
-      if (targetEl) {
-        e.preventDefault();
-        const main = document.querySelector('.main-content') || document.querySelector('main');
-        if (main) main.style.transform = 'none';
-        const rect = targetEl.getBoundingClientRect();
-        const topOffset = rect.top + (window.pageYOffset || document.documentElement.scrollTop) - 84;
-        window.scrollTo({ top: Math.max(0, topOffset), behavior: 'smooth' });
-        try { history.pushState(null, '', hashPart); } catch (err) {}
-
-        // MD3 Pulse highlight on target header
-        targetEl.animate([
-          { background: 'color-mix(in srgb, var(--md-sys-color-primary-container) 85%, transparent)', borderRadius: '12px', paddingLeft: '12px' },
-          { background: 'transparent', borderRadius: '', paddingLeft: '' }
-        ], { duration: 2000, easing: 'cubic-bezier(0.2, 0, 0, 1)' });
-      }
+      e.preventDefault();
+      window.executeGlobalAnchorJump(hashPart);
     }
   });
 
-  if (window.location.hash && window.location.hash.length > 1) {
+  const initialHash = window._initialHash || window.location.hash;
+  if (initialHash && initialHash.length > 1) {
     const handleInitialJump = () => {
-      if (window.blogPagination && window.blogPagination.isInitialized) {
-        window.blogPagination.jumpToAnchor(window.location.hash);
-        return;
-      }
-      const rawId = window.location.hash.substring(1);
-      let targetEl = null;
-      try {
-        targetEl = document.getElementById(rawId) || document.getElementById(decodeURIComponent(rawId));
-      } catch (err) {
-        targetEl = document.getElementById(rawId);
-      }
-      if (targetEl) {
-        const main = document.querySelector('.main-content') || document.querySelector('main');
-        if (main) main.style.transform = 'none';
-        const rect = targetEl.getBoundingClientRect();
-        const topOffset = rect.top + (window.pageYOffset || document.documentElement.scrollTop) - 84;
-        window.scrollTo({ top: Math.max(0, topOffset), behavior: 'smooth' });
-        targetEl.animate([
-          { background: 'color-mix(in srgb, var(--md-sys-color-primary-container) 85%, transparent)', borderRadius: '12px', paddingLeft: '12px' },
-          { background: 'transparent', borderRadius: '', paddingLeft: '' }
-        ], { duration: 2000, easing: 'cubic-bezier(0.2, 0, 0, 1)' });
-      }
+      window.executeGlobalAnchorJump(initialHash);
     };
 
-    setTimeout(handleInitialJump, 100);
-    setTimeout(handleInitialJump, 400);
+    setTimeout(handleInitialJump, 80);
+    setTimeout(handleInitialJump, 300);
+    setTimeout(handleInitialJump, 650);
     window.addEventListener('load', handleInitialJump, { once: true });
   }
 }

@@ -1543,13 +1543,29 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
       gap: 12px;
       margin-top: 16px;
       margin-bottom: 8px;
-      padding-bottom: 8px;
+      padding: 4px 8px 8px;
       scroll-margin-top: 84px;
       border-bottom: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 50%, transparent);
       color: var(--md-sys-color-primary);
+      cursor: pointer;
+      border-radius: var(--shape-medium);
+      transition: background var(--dur-short4), padding-left var(--dur-short4);
 
-      .header-icon { font-size: 1.5rem; }
+      .header-icon { font-size: 1.5rem; flex-shrink: 0; }
       .header-title { font-size: 1.25rem; font-weight: 700; }
+      
+      .anchor-icon {
+        opacity: 0;
+        font-size: 1.15rem;
+        color: var(--md-sys-color-on-surface-variant);
+        transition: opacity var(--dur-short3), color var(--dur-short3);
+        margin-left: 2px;
+      }
+
+      &:hover .anchor-icon {
+        opacity: 0.85;
+      }
+
       .header-count {
         margin-left: auto;
         font-size: 0.875rem;
@@ -1558,6 +1574,7 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
         padding: 4px 10px;
         border-radius: var(--shape-full);
         font-weight: 500;
+        flex-shrink: 0;
       }
     }
 
