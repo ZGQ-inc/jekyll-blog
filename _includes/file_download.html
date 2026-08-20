@@ -1,58 +1,123 @@
 {% assign parts = include.name | split: '.' %}
-{% assign ext = parts | last | downcase %}
+{% assign ext = parts | last | downcase | strip %}
 
 {% assign file_color = "primary" %}
 {% assign file_icon = "insert_drive_file" %}
 
 {% case ext %}
+  {% comment %} Compressed Archives {% endcomment %}
+  {% when 'zip' or 'rar' or '7z' or 'tar' or 'gz' or 'bz2' or 'xz' or 'zst' or 'tgz' or 'tbz' or 'txz' or 'cab' or 'iso' or 'img' or 'vhd' or 'vmdk' or 'dmg' or 'pkg' %}
+    {% assign file_color = "tertiary" %}
+    {% assign file_icon = "folder_zip" %}
+
+  {% comment %} Documents & Office {% endcomment %}
   {% when 'pdf' %}
     {% assign file_color = "error" %}
     {% assign file_icon = "picture_as_pdf" %}
-  {% when 'zip' or 'rar' or '7z' or 'tar' or 'gz' %}
-    {% assign file_color = "tertiary" %}
-    {% assign file_icon = "folder_zip" %}
-  {% when 'doc' or 'docx' %}
+  {% when 'doc' or 'docx' or 'odt' or 'rtf' or 'wps' or 'pages' %}
     {% assign file_color = "primary" %}
     {% assign file_icon = "description" %}
-  {% when 'xls' or 'xlsx' or 'csv' %}
+  {% when 'xls' or 'xlsx' or 'csv' or 'tsv' or 'ods' or 'numbers' %}
     {% assign file_color = "secondary" %}
     {% assign file_icon = "table" %}
-  {% when 'ppt' or 'pptx' %}
+  {% when 'ppt' or 'pptx' or 'odp' or 'key' %}
     {% assign file_color = "error" %}
     {% assign file_icon = "co_present" %}
-  {% when 'jpg' or 'jpeg' or 'png' or 'gif' or 'svg' or 'webp' or 'ico' %}
+  {% when 'epub' or 'mobi' or 'azw' or 'azw3' or 'cbr' or 'cbz' or 'djvu' %}
+    {% assign file_color = "tertiary" %}
+    {% assign file_icon = "menu_book" %}
+  {% when 'srt' or 'vtt' or 'ass' or 'ssa' or 'sub' %}
+    {% assign file_color = "secondary" %}
+    {% assign file_icon = "subtitles" %}
+
+  {% comment %} Images & Visual Design {% endcomment %}
+  {% when 'jpg' or 'jpeg' or 'png' or 'gif' or 'svg' or 'webp' or 'ico' or 'cur' or 'avif' or 'heic' or 'heif' %}
     {% assign file_color = "tertiary" %}
     {% assign file_icon = "image" %}
-  {% when 'mp3' or 'wav' or 'flac' or 'ogg' %}
+  {% when 'psd' or 'psb' or 'ai' or 'eps' or 'cdr' or 'sketch' or 'fig' or 'tif' or 'tiff' or 'raw' or 'cr2' or 'nef' or 'dng' %}
+    {% assign file_color = "tertiary" %}
+    {% assign file_icon = "palette" %}
+  {% when 'stl' or 'obj' or 'fbx' or 'gltf' or 'glb' or 'blend' or '3ds' or 'step' or 'stp' or 'dae' %}
+    {% assign file_color = "primary" %}
+    {% assign file_icon = "view_in_ar" %}
+
+  {% comment %} Audio & Music {% endcomment %}
+  {% when 'mp3' or 'wav' or 'flac' or 'ogg' or 'm4a' or 'aac' or 'opus' or 'wma' or 'alac' or 'mid' or 'midi' or 'ape' %}
     {% assign file_color = "secondary" %}
     {% assign file_icon = "audio_file" %}
-  {% when 'mp4' or 'mkv' or 'avi' or 'webm' or 'mov' %}
+
+  {% comment %} Video & Motion {% endcomment %}
+  {% when 'mp4' or 'mkv' or 'avi' or 'webm' or 'mov' or 'flv' or 'wmv' or 'm4v' or 'ts' or 'rmvb' or '3gp' %}
     {% assign file_color = "primary" %}
     {% assign file_icon = "video_file" %}
-  {% when 'exe' or 'msi' or 'dmg' or 'apk' or 'bat' or 'ps1' or 'sh' %}
+
+  {% comment %} Software, Executables & Mobile Packages {% endcomment %}
+  {% when 'exe' or 'msi' or 'bat' or 'cmd' or 'com' or 'scr' or 'appimage' or 'deb' or 'rpm' or 'run' %}
     {% assign file_color = "error" %}
     {% assign file_icon = "terminal" %}
-  {% when 'txt' or 'md' or 'rtf' %}
-    {% assign file_color = "secondary" %}
-    {% assign file_icon = "article" %}
-  {% when 'json' or 'xml' or 'yml' or 'yaml' or 'conf' or 'reg' or 'ini' %}
-    {% assign file_color = "secondary" %}
-    {% assign file_icon = "data_object" %}
-  {% when 'torrent' %}
-    {% assign file_color = "tertiary" %}
-    {% assign file_icon = "cloud_download" %}
-  {% when 'mcpack' or 'save' or 'mcworld' %}
+  {% when 'apk' or 'apks' or 'xapk' or 'aab' or 'ipa' %}
+    {% assign file_color = "primary" %}
+    {% assign file_icon = "android" %}
+  {% when 'xpi' or 'crx' or 'tgx-theme' or 'vsix' or 'plugin' or 'mod' %}
     {% assign file_color = "primary" %}
     {% assign file_icon = "extension" %}
-  {% when 'js' or 'ts' or 'py' or 'rb' or 'go' or 'java' or 'c' or 'cpp' or 'rs' or 'php' or 'html' or 'css' or 'scss' or 'cs' or 'swift' or 'kt' or 'dart' or 'lua' or 'sql' %}
+
+  {% comment %} Minecraft, Game Saves & ROMs {% endcomment %}
+  {% when 'mcpack' or 'mcaddon' or 'mcworld' or 'mcstructure' or 'mctemplate' %}
+    {% assign file_color = "primary" %}
+    {% assign file_icon = "token" %}
+  {% when 'save' or 'sav' or 'dat' or 'rom' or 'nes' or 'sfc' or 'gba' or 'nds' or 'nsp' or 'xci' or 'wbfs' %}
+    {% assign file_color = "primary" %}
+    {% assign file_icon = "sports_esports" %}
+
+  {% comment %} Fonts & Torrents {% endcomment %}
+  {% when 'ttf' or 'otf' or 'woff' or 'woff2' or 'eot' or 'fon' %}
+    {% assign file_color = "secondary" %}
+    {% assign file_icon = "font_download" %}
+  {% when 'torrent' or 'magnet' %}
+    {% assign file_color = "tertiary" %}
+    {% assign file_icon = "cloud_download" %}
+
+  {% comment %} Web, Source Code & Data {% endcomment %}
+  {% when 'html' or 'htm' or 'xhtml' or 'css' or 'scss' or 'sass' or 'less' or 'vue' or 'svelte' %}
+    {% assign file_color = "primary" %}
+    {% assign file_icon = "html" %}
+  {% when 'js' or 'mjs' or 'cjs' or 'ts' or 'tsx' or 'jsx' or 'py' or 'pyw' or 'rb' or 'go' or 'java' or 'c' or 'cpp' or 'cc' or 'cxx' or 'h' or 'hpp' or 'cs' or 'rs' or 'php' or 'swift' or 'kt' or 'kts' or 'dart' or 'lua' or 'r' or 'sh' or 'bash' or 'zsh' or 'ps1' or 'sql' %}
     {% assign file_color = "tertiary" %}
     {% assign file_icon = "code" %}
+  {% when 'txt' or 'md' or 'markdown' or 'log' or 'info' %}
+    {% assign file_color = "secondary" %}
+    {% assign file_icon = "article" %}
+  {% when 'json' or 'json5' or 'jsonc' or 'xml' or 'yml' or 'yaml' or 'toml' or 'ini' or 'conf' or 'config' or 'reg' or 'env' or 'properties' or 'infopanel' %}
+    {% assign file_color = "secondary" %}
+    {% assign file_icon = "data_object" %}
+
+  {% comment %} Name Keyword Fallback for non-standard extension titles {% endcomment %}
+  {% else %}
+    {% assign lname = include.name | downcase %}
+    {% if lname contains 'zip' or lname contains 'rar' or lname contains '7z' or lname contains 'tar' or lname contains '合集' or lname contains '资源包' or lname contains '压缩包' %}
+      {% assign file_color = "tertiary" %}
+      {% assign file_icon = "folder_zip" %}
+    {% elsif lname contains 'apk' or lname contains '安卓' or lname contains 'android' %}
+      {% assign file_color = "primary" %}
+      {% assign file_icon = "android" %}
+    {% elsif lname contains 'pdf' or lname contains '文档' %}
+      {% assign file_color = "error" %}
+      {% assign file_icon = "picture_as_pdf" %}
+    {% elsif lname contains 'exe' or lname contains '安装包' %}
+      {% assign file_color = "error" %}
+      {% assign file_icon = "terminal" %}
+    {% elsif lname contains '游戏' or lname contains 'dlc' or lname contains 'rom' or lname contains '存档' %}
+      {% assign file_color = "primary" %}
+      {% assign file_icon = "sports_esports" %}
+    {% endif %}
 {% endcase %}
 
+{% comment %} Handle explicit icon aliases {% endcomment %}
 {% if include.icon and include.icon != "" %}
   {% assign raw_icon = include.icon | downcase | strip %}
   {% case raw_icon %}
-    {% when 'file-zip' or 'zip' or 'archive' or 'rar' or '7z' or 'tar' or 'gz' or 'file_zip' %}
+    {% when 'file-zip' or 'zip' or 'archive' or 'rar' or '7z' or 'tar' or 'gz' or 'file_zip' or 'folder-zip' %}
       {% assign file_icon = "folder_zip" %}
       {% assign file_color = "tertiary" %}
     {% when 'file-pdf' or 'pdf' or 'file_pdf' %}
@@ -89,6 +154,7 @@
       {% assign file_icon = include.icon %}
   {% endcase %}
 {% endif %}
+
 {% if include.color %}
   {% assign file_color = include.color %}
 {% endif %}
