@@ -36,7 +36,7 @@ permalink: /tags/
         {% assign unarchived_tag_posts = tag[1] %}
         {% if unarchived_tag_posts.size == 0 %}{% continue %}{% endif %}
         {% assign t = tag[0] %}
-        <a href="#{{ t | append: '' | slugify }}" class="tag-item">
+        <a href="#{{ t }}" class="tag-item">
           <span class="material-symbols-outlined tag-chip-icon">tag</span>
           <span class="tag-name">{{ t }}</span>
           <span class="tag-count">{{ unarchived_tag_posts.size }}</span>
@@ -55,7 +55,7 @@ permalink: /tags/
       {% if unarchived_tag_posts.size == 0 %}{% continue %}{% endif %}
       {% assign t = tag[0] %}
       
-      <div class="timeline-header" id="{{ t | append: '' | slugify }}" data-tag="{{ t }}">
+      <div class="timeline-header" id="{{ t }}" data-tag="{{ t }}">
         <span class="material-symbols-outlined header-icon">tag</span>
         <span class="header-title">{{ t }}</span>
         <span class="header-count">{{ unarchived_tag_posts.size }} 篇</span>

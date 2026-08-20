@@ -21,7 +21,7 @@ permalink: /categories/
     {% for cat in sorted_cats %}
     {% assign unarchived_cat_posts = cat[1] %}
     {% if unarchived_cat_posts.size == 0 %}{% continue %}{% endif %}
-    <a href="#{{ cat[0] | append: '' | slugify }}" class="md3-category-card">
+    <a href="#{{ cat[0] }}" class="md3-category-card">
       <span class="material-symbols-outlined card-icon">folder_open</span>
       <div class="card-content">
         <div class="card-title">{{ cat[0] }}</div>
@@ -38,7 +38,7 @@ permalink: /categories/
       {% assign unarchived_cat_posts = cat[1] %}
       {% if unarchived_cat_posts.size == 0 %}{% continue %}{% endif %}
       
-      <div class="timeline-header" id="{{ cat[0] | append: '' | slugify }}" data-cat="{{ cat[0] }}">
+      <div class="timeline-header" id="{{ cat[0] }}" data-cat="{{ cat[0] }}">
         <span class="material-symbols-outlined header-icon">folder</span>
         <span class="header-title">{{ cat[0] }}</span>
         <span class="header-count">{{ unarchived_cat_posts.size }} 篇</span>

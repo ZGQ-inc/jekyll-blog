@@ -13,9 +13,9 @@ layout: default
     {% if post.tags.size > 0 %}
     <div class="hero-tags">
       {% for tag in post.tags %}
-      <span class="hero-tag-glass">
+      <a href="{{ '/tags/' | relative_url }}#{{ tag }}" class="hero-tag-glass">
         {{ tag }}
-      </span>
+      </a>
       {% endfor %}
     </div>
     {% endif %}
@@ -44,7 +44,7 @@ layout: default
     {% if post.tags.size > 0 %}
     <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px">
       {% for tag in post.tags %}
-      <span class="chip chip-primary">{{ tag }}</span>
+      <a href="{{ '/tags/' | relative_url }}#{{ tag }}" class="chip chip-primary">{{ tag }}</a>
       {% endfor %}
     </div>
     {% endif %}
@@ -88,7 +88,7 @@ layout: default
   <div class="card-tags" style="padding-top:16px;border-top:2px solid var(--md-sys-color-surface-container-high)">
     <span class="material-symbols-outlined" style="font-size:1.2rem;color:var(--md-sys-color-on-surface-variant);margin-right:4px">label</span>
     {% for tag in post.tags %}
-    <a href="{{ '/tags/' | relative_url }}#{{ tag | append: '' | slugify }}" class="chip chip-tonal">
+    <a href="{{ '/tags/' | relative_url }}#{{ tag }}" class="chip chip-tonal">
       {{ tag }}
     </a>
     {% endfor %}

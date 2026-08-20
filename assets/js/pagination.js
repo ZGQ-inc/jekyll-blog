@@ -60,6 +60,12 @@ class BlogPaginationManager {
       this.render({ scroll: false });
     });
 
+    window.addEventListener('hashchange', () => {
+      if (window.location.hash && window.location.hash.length > 1) {
+        this.jumpToAnchor(window.location.hash);
+      }
+    });
+
     this.isInitialized = true;
     this.render({ scroll: false });
 
@@ -67,7 +73,10 @@ class BlogPaginationManager {
     if (window.location.hash && window.location.hash.length > 1) {
       setTimeout(() => {
         this.jumpToAnchor(window.location.hash);
-      }, 200);
+      }, 80);
+      setTimeout(() => {
+        this.jumpToAnchor(window.location.hash);
+      }, 350);
     }
   }
 
@@ -245,13 +254,18 @@ class BlogPaginationManager {
   jumpToAnchor(hash) {
     if (!this.isInitialized || !hash || hash === '#') return;
     const rawId = hash.startsWith('#') ? hash.substring(1) : hash;
-    const targetId = decodeURIComponent(rawId);
+    let targetId = rawId;
+    try { targetId = decodeURIComponent(rawId); } catch (err) {}
 
     let headerEl = document.getElementById(targetId) || document.getElementById(rawId);
     if (!headerEl) {
-      headerEl = document.querySelector(`.timeline-header[id="${targetId}"]`) ||
-                 document.querySelector(`.timeline-header[data-tag="${targetId}"]`) ||
-                 document.querySelector(`.timeline-header[data-cat="${targetId}"]`);
+      const allHeaders = this.galleryContainer ? this.galleryContainer.querySelectorAll('.timeline-header') : document.querySelectorAll('.timeline-header');
+      for (const h of allHeaders) {
+        if (h.id === targetId || h.id === rawId || h.dataset.tag === targetId || h.dataset.cat === targetId || h.dataset.tag === rawId || h.dataset.cat === rawId) {
+          headerEl = h;
+          break;
+        }
+      }
     }
 
     if (!headerEl) return;
@@ -277,15 +291,14 @@ class BlogPaginationManager {
       }
     }
 
+    headerEl.style.display = '';
+
     setTimeout(() => {
-      const target = document.getElementById(targetId) || document.getElementById(rawId) || headerEl;
-      if (target) {
-        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        target.animate([
-          { background: 'color-mix(in srgb, var(--md-sys-color-primary-container) 85%, transparent)', borderRadius: '12px', paddingLeft: '12px' },
-          { background: 'transparent', borderRadius: '', paddingLeft: '' }
-        ], { duration: 2000, easing: 'cubic-bezier(0.2, 0, 0, 1)' });
-      }
+      headerEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      headerEl.animate([
+        { background: 'color-mix(in srgb, var(--md-sys-color-primary-container) 85%, transparent)', borderRadius: '12px', paddingLeft: '12px' },
+        { background: 'transparent', borderRadius: '', paddingLeft: '' }
+      ], { duration: 2000, easing: 'cubic-bezier(0.2, 0, 0, 1)' });
     }, 80);
   }
 }
