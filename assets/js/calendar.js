@@ -92,6 +92,11 @@ document.addEventListener('DOMContentLoaded', function() {
   function jumpToDate(dateStr) {
     closeCalendarDialog();
     
+    if (window.blogPagination && window.blogPagination.isInitialized) {
+      window.blogPagination.jumpToDate(dateStr);
+      return;
+    }
+
     const header = document.querySelector('.timeline-header[data-date="' + dateStr + '"]');
     if (!header) return;
 

@@ -55,21 +55,21 @@ permalink: /tags/
   </div>
 
   <!-- Posts grouped by tag -->
-  <div class="gallery-container timeline-mode" style="margin-bottom: 24px;">
+  <div class="gallery-container timeline-mode" id="tagPostGallery" style="margin-bottom: 24px;">
     {% assign sorted_tags = site.tags | sort %}
     {% for tag in sorted_tags %}
       {% assign unarchived_tag_posts = tag[1] %}
       {% if unarchived_tag_posts.size == 0 %}{% continue %}{% endif %}
       {% assign t = tag[0] %}
       
-      <div class="timeline-header" id="{{ t | append: '' | slugify }}">
+      <div class="timeline-header" id="{{ t | append: '' | slugify }}" data-tag="{{ t }}">
         <span class="material-symbols-outlined header-icon">tag</span>
         <span class="header-title">{{ t }}</span>
         <span class="header-count">{{ unarchived_tag_posts.size }} 篇</span>
       </div>
       
       {% for post in unarchived_tag_posts %}
-      <a class="post-card scroll-animate" href="{{ post.url | relative_url }}">
+      <a class="post-card scroll-animate" data-tag="{{ t }}" href="{{ post.url | relative_url }}">
         <div class="card-thumb-wrapper">
           {% if post.image %}
           <img class="card-thumb" src="{{ post.image }}" alt="{{ post.title }}" loading="lazy">

@@ -37,48 +37,52 @@ document.addEventListener('DOMContentLoaded', function() {
   searchInput.addEventListener('focus', loadSearchIndex);
   
   window.filterPosts = function() {
-    var cards = document.querySelectorAll('.post-card');
+    var allCards = Array.from(document.querySelectorAll('.post-card'));
     var q = searchInput.value.trim().toLowerCase();
+    var matchedCards = [];
 
     if (q && fuse) {
       var results = fuse.search(q);
       var matchedUrls = new Set(results.map(r => r.item.url));
       
-      cards.forEach(function(card) {
+      allCards.forEach(function(card) {
         var url = card.getAttribute('href');
         var tags = card.dataset.tags || '';
-        
         var title = card.dataset.title || card.querySelector('.archive-title, .card-title')?.textContent.toLowerCase() || '';
         var fallbackMatch = title.includes(q) || tags.includes(q);
-        
         var matchQ = matchedUrls.has(url) || fallbackMatch;
-        
-        card.style.display = matchQ ? '' : 'none';
+        if (matchQ) matchedCards.push(card);
       });
-    } else {
-      cards.forEach(function(card) {
+    } else if (q) {
+      allCards.forEach(function(card) {
         var title = card.dataset.title || card.querySelector('.archive-title, .card-title')?.textContent.toLowerCase() || '';
         var tags = card.dataset.tags || '';
-        var matchQ = !q || title.includes(q) || tags.includes(q);
-        
-        card.style.display = matchQ ? '' : 'none';
+        var matchQ = title.includes(q) || tags.includes(q);
+        if (matchQ) matchedCards.push(card);
       });
-      if (q && !fuse) loadSearchIndex();
+      if (!fuse) loadSearchIndex();
+    } else {
+      matchedCards = [...allCards];
     }
 
-    document.querySelectorAll('.timeline-header').forEach(function(header) {
-      var dateStr = header.dataset.date;
-      // Find all post-cards that belong to this date
-      // We can check the meta-item data-date inside the card
-      var cardsForDate = Array.from(document.querySelectorAll('.post-card')).filter(card => {
-        var trigger = card.querySelector('.calendar-jump-trigger');
-        return trigger && trigger.dataset.date === dateStr;
+    if (window.blogPagination && window.blogPagination.isInitialized) {
+      window.blogPagination.setFilteredCards(matchedCards);
+    } else {
+      allCards.forEach(function(card) {
+        card.style.display = matchedCards.includes(card) ? '' : 'none';
       });
-      if (cardsForDate.length > 0) {
-        var visibleItems = cardsForDate.filter(item => item.style.display !== 'none');
-        header.style.display = visibleItems.length === 0 ? 'none' : '';
-      }
-    });
+      document.querySelectorAll('.timeline-header').forEach(function(header) {
+        var dateStr = header.dataset.date;
+        var cardsForDate = allCards.filter(card => {
+          var trigger = card.querySelector('.calendar-jump-trigger');
+          return trigger && trigger.dataset.date === dateStr;
+        });
+        if (cardsForDate.length > 0) {
+          var visibleItems = cardsForDate.filter(item => item.style.display !== 'none');
+          header.style.display = visibleItems.length === 0 ? 'none' : '';
+        }
+      });
+    }
   };
 
   searchInput.addEventListener('input', window.filterPosts);

@@ -4291,3 +4291,86 @@ md-navigation-drawer {
     justify-content: flex-end;
   }
 }
+
+// Floating Bottom Island Pagination Component (MD3)
+.floating-island {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: color-mix(in srgb, var(--md-sys-color-surface-container-high) 85%, transparent);
+  backdrop-filter: blur(16px) saturate(160%);
+  -webkit-backdrop-filter: blur(16px) saturate(160%);
+  box-shadow: var(--elev-3);
+  border-radius: var(--shape-full);
+  padding: 6px 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  z-index: 99;
+  border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 45%, transparent);
+  transition: opacity var(--dur-medium2) var(--motion-standard),
+              transform var(--dur-medium2) var(--motion-standard),
+              background-color var(--dur-short4);
+  user-select: none;
+
+  .island-icon-btn {
+    @include ripple-surface;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: var(--shape-full);
+    border: none;
+    background: transparent;
+    color: var(--md-sys-color-on-surface);
+    cursor: pointer;
+    transition: background var(--dur-short3), color var(--dur-short3), transform var(--dur-short2);
+
+    &:hover:not(:disabled) {
+      background: color-mix(in srgb, var(--md-sys-color-on-surface) 10%, transparent);
+      color: var(--md-sys-color-primary);
+    }
+
+    &:active:not(:disabled) {
+      transform: scale(0.92);
+    }
+
+    &:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+    }
+
+    .material-symbols-outlined {
+      font-size: 1.25rem;
+    }
+  }
+
+  .island-divider {
+    width: 1px;
+    height: 20px;
+    background-color: color-mix(in srgb, var(--md-sys-color-outline-variant) 60%, transparent);
+  }
+
+  .island-text {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--md-sys-color-on-surface-variant);
+    white-space: nowrap;
+    padding: 0 4px;
+  }
+
+  @media (max-width: 768px) {
+    bottom: 16px;
+    padding: 4px 10px;
+    gap: 6px;
+    max-width: 94vw;
+
+    .island-text.status-text,
+    .island-divider.status-text {
+      display: none; // Keep compact on small mobile screens
+    }
+  }
+}
+

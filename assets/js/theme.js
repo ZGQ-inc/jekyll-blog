@@ -1091,6 +1091,13 @@ function initSmoothAnchorJumps() {
     const href = anchor.getAttribute('href');
     if (!href || href === '#' || href.length <= 1) return;
     
+    if (window.blogPagination && window.blogPagination.isInitialized) {
+      e.preventDefault();
+      window.blogPagination.jumpToAnchor(href);
+      try { history.pushState(null, '', href); } catch (err) {}
+      return;
+    }
+
     const rawId = href.substring(1);
     let targetEl = null;
     try {
@@ -1101,12 +1108,8 @@ function initSmoothAnchorJumps() {
     
     if (targetEl) {
       e.preventDefault();
-      
       targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      
-      try {
-        history.pushState(null, '', href);
-      } catch (err) {}
+      try { history.pushState(null, '', href); } catch (err) {}
 
       // MD3 Pulse highlight on target header
       targetEl.animate([
@@ -1118,6 +1121,10 @@ function initSmoothAnchorJumps() {
 
   if (window.location.hash && window.location.hash.length > 1) {
     setTimeout(() => {
+      if (window.blogPagination && window.blogPagination.isInitialized) {
+        window.blogPagination.jumpToAnchor(window.location.hash);
+        return;
+      }
       const rawId = window.location.hash.substring(1);
       let targetEl = null;
       try {

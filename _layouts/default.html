@@ -8,6 +8,7 @@
   <script src="{{ '/assets/js/media-gallery.js' | relative_url }}?v={{ site.time | date: '%s' }}"></script>
   <script src="{{ '/assets/js/media-player.js' | relative_url }}?v={{ site.time | date: '%s' }}"></script>
   <script src="{{ '/assets/js/calendar.js' | relative_url }}?v={{ site.time | date: '%s' }}"></script>
+  <script src="{{ '/assets/js/pagination.js' | relative_url }}?v={{ site.time | date: '%s' }}"></script>
 </head>
 <body class="preload">
 
@@ -105,6 +106,7 @@
 </script>
 
 {% include calendar-dialog.html %}
+{% include bottom-island.html %}
 {% include pwa.html %}
 </body>
 </html>

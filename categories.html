@@ -32,20 +32,20 @@ permalink: /categories/
   </div>
 
   <!-- Posts by category -->
-  <div class="gallery-container timeline-mode" style="margin-bottom: 24px;">
+  <div class="gallery-container timeline-mode" id="catPostGallery" style="margin-bottom: 24px;">
     {% assign sorted_cats = site.categories | sort %}
     {% for cat in sorted_cats %}
       {% assign unarchived_cat_posts = cat[1] %}
       {% if unarchived_cat_posts.size == 0 %}{% continue %}{% endif %}
       
-      <div class="timeline-header" id="{{ cat[0] | append: '' | slugify }}">
+      <div class="timeline-header" id="{{ cat[0] | append: '' | slugify }}" data-cat="{{ cat[0] }}">
         <span class="material-symbols-outlined header-icon">folder</span>
         <span class="header-title">{{ cat[0] }}</span>
         <span class="header-count">{{ unarchived_cat_posts.size }} 篇</span>
       </div>
       
       {% for post in unarchived_cat_posts %}
-      <a class="post-card scroll-animate" href="{{ post.url | relative_url }}">
+      <a class="post-card scroll-animate" data-cat="{{ cat[0] }}" href="{{ post.url | relative_url }}">
         <div class="card-thumb-wrapper">
           {% if post.image %}
           <img class="card-thumb" src="{{ post.image }}" alt="{{ post.title }}" loading="lazy">
