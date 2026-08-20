@@ -22,7 +22,7 @@ permalink: /tags/
     {% assign unarchived_tag_posts = tag[1] %}
     {% if unarchived_tag_posts.size == 0 %}{% continue %}{% endif %}
     {% assign t = tag[0] %}
-    <a href="#{{ t | slugify }}" class="tag-item">
+    <a href="#{{ t | append: '' | slugify }}" class="tag-item">
       {{ t }}
       <span class="tag-count">{{ unarchived_tag_posts.size }}</span>
     </a>
@@ -37,7 +37,7 @@ permalink: /tags/
       {% if unarchived_tag_posts.size == 0 %}{% continue %}{% endif %}
       {% assign t = tag[0] %}
       
-      <div class="timeline-header" id="{{ t | slugify }}">
+      <div class="timeline-header" id="{{ t | append: '' | slugify }}">
         <span class="material-symbols-outlined header-icon">tag</span>
         <span class="header-title">{{ t }}</span>
         <span class="header-count">{{ unarchived_tag_posts.size }} 篇</span>
