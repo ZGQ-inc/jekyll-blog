@@ -128,12 +128,8 @@ body::-webkit-scrollbar {
 
 html {
   scroll-behavior: smooth;
-  scroll-padding-top: 24px;
+  scroll-padding-top: 84px;
   scrollbar-width: none;
-  
-  @media (max-width: 1024px) {
-    scroll-padding-top: 80px;
-  }
 }
 
 html, body {
@@ -1548,6 +1544,7 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
       margin-top: 16px;
       margin-bottom: 8px;
       padding-bottom: 8px;
+      scroll-margin-top: 84px;
       border-bottom: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 50%, transparent);
       color: var(--md-sys-color-primary);
 
@@ -1582,12 +1579,15 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
   }
 }
 
+// Scroll animation initial state
+.scroll-animate:not(.animate-fade-in-up) {
+  opacity: 0;
+}
+
 // Elevated Card
 .post-card {
   @include ripple-surface;
   display: flex;
-  content-visibility: auto;
-  contain-intrinsic-size: 300px;
   flex-direction: column;
   background: var(--md-sys-color-surface-container-low);
   border-radius: var(--shape-large);
@@ -1597,9 +1597,6 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
   color: var(--md-sys-color-on-surface);
   cursor: pointer;
   transform: translateZ(0);
-
-  /* Animations are now orchestrated by IntersectionObserver in JS */
-  opacity: 0; /* Hidden by default until JS adds animate-fade-in-up */
 
   box-shadow: var(--elev-1);
   transition:
@@ -2769,11 +2766,160 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
 }
 
 
-// Page-specific
+// Page-specific: MD3 Collapsible Tag Cloud Component
+.md3-tag-cloud-card {
+  background: var(--md-sys-color-surface-container-low);
+  border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 35%, transparent);
+  border-radius: var(--shape-xl);
+  padding: 16px 20px 16px;
+  margin-bottom: 32px;
+  box-shadow: var(--elev-1);
+  transition: box-shadow var(--dur-medium2) var(--motion-standard), border-color var(--dur-short4);
+
+  &:hover {
+    box-shadow: var(--elev-2);
+    border-color: color-mix(in srgb, var(--md-sys-color-outline-variant) 60%, transparent);
+  }
+
+  .tag-cloud-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 25%, transparent);
+
+    .tag-cloud-header-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+
+      .tag-cloud-icon {
+        color: var(--md-sys-color-primary);
+        font-size: 1.25rem;
+      }
+
+      .tag-cloud-heading {
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--md-sys-color-on-surface);
+      }
+
+      .tag-cloud-counter {
+        font-size: 0.75rem;
+        font-weight: 600;
+        background: var(--md-sys-color-secondary-container);
+        color: var(--md-sys-color-on-secondary-container);
+        padding: 2px 8px;
+        border-radius: var(--shape-full);
+      }
+    }
+
+    .md3-tag-collapse-btn {
+      @include ripple-surface;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 6px 12px;
+      border-radius: var(--shape-full);
+      border: none;
+      background: transparent;
+      color: var(--md-sys-color-primary);
+      font-size: 0.875rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background var(--dur-short3), transform var(--dur-short3);
+
+      &:hover {
+        background: color-mix(in srgb, var(--md-sys-color-primary) 10%, transparent);
+      }
+
+      .toggle-icon {
+        font-size: 1.25rem;
+        transition: transform 350ms var(--motion-emphasized);
+      }
+    }
+  }
+
+  .tag-cloud-viewport {
+    position: relative;
+    overflow: hidden;
+    max-height: 124px;
+    transition: max-height 450ms var(--motion-emphasized-decel);
+
+    &.expanded {
+      max-height: 4000px;
+    }
+
+    .tag-cloud-gradient-mask {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 60px;
+      background: linear-gradient(to bottom, transparent, var(--md-sys-color-surface-container-low) 95%);
+      pointer-events: none;
+      opacity: 1;
+      transition: opacity var(--dur-medium2) var(--motion-standard);
+    }
+
+    &.expanded .tag-cloud-gradient-mask {
+      opacity: 0;
+    }
+  }
+
+  .tag-cloud-card-footer {
+    display: flex;
+    justify-content: center;
+    padding-top: 12px;
+
+    .tag-expand-full-btn {
+      @include ripple-surface;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      max-width: 320px;
+      padding: 10px 20px;
+      border: none;
+      border-radius: var(--shape-full);
+      background: var(--md-sys-color-secondary-container);
+      color: var(--md-sys-color-on-secondary-container);
+      font-size: 0.875rem;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: var(--elev-1);
+      transition: background var(--dur-short4), box-shadow var(--dur-short4), transform var(--dur-short3);
+
+      &:hover {
+        box-shadow: var(--elev-2);
+        transform: translateY(-1px);
+        background: color-mix(in srgb, var(--md-sys-color-secondary-container) 85%, var(--md-sys-color-primary));
+      }
+
+      &:active {
+        transform: scale(0.98);
+      }
+
+      .material-symbols-outlined {
+        font-size: 1.2rem;
+      }
+    }
+  }
+
+  &.is-expanded {
+    .tag-cloud-card-header .toggle-icon {
+      transform: rotate(180deg);
+    }
+  }
+}
+
 .tag-cloud {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
+  padding-bottom: 8px;
 
   .tag-item {
     @include ripple-surface;
@@ -2781,24 +2927,36 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
     align-items: center;
     gap: 6px;
     padding: 6px 12px;
-    border-radius: 8px;
-    background: var(--md-sys-color-secondary-container);
-    color: var(--md-sys-color-on-secondary-container);
+    border-radius: var(--shape-small);
+    background: var(--md-sys-color-surface-container);
+    border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 30%, transparent);
+    color: var(--md-sys-color-on-surface);
     font-size: 0.875rem;
     font-weight: 500;
     text-decoration: none;
-    transition: background var(--dur-short4), box-shadow var(--dur-short4), transform var(--dur-short3);
+    transition: background var(--dur-short4), box-shadow var(--dur-short4), transform var(--dur-short3), border-color var(--dur-short4);
 
     &:hover {
       box-shadow: var(--elev-1);
       transform: translateY(-1px);
+      background: var(--md-sys-color-secondary-container);
+      color: var(--md-sys-color-on-secondary-container);
+      border-color: transparent;
+    }
+
+    .tag-chip-icon {
+      font-size: 0.95rem;
+      color: var(--md-sys-color-on-surface-variant);
+      opacity: 0.8;
     }
 
     .tag-count {
       font-size: 0.75rem;
-      background: color-mix(in srgb, var(--md-sys-color-on-secondary-container) 12%, transparent);
+      font-weight: 600;
+      background: color-mix(in srgb, var(--md-sys-color-primary) 12%, transparent);
+      color: var(--md-sys-color-primary);
       padding: 2px 6px;
-      border-radius: 4px;
+      border-radius: var(--shape-full);
     }
   }
 }

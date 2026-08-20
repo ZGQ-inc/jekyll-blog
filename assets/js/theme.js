@@ -938,6 +938,8 @@ document.addEventListener('DOMContentLoaded', () => {
   initPageTransitions();
   initRipples();
   initBackToTop();
+  initTagCloudCollapse();
+  initSmoothAnchorJumps();
 });
 
 // Toast Notification System
@@ -1023,4 +1025,115 @@ document.addEventListener("DOMContentLoaded", () => {
 
   cards.forEach(card => observer.observe(card));
 });
+
+// MD3 Collapsible Tag Cloud Component Controller
+function initTagCloudCollapse() {
+  const card = document.getElementById('tagCloudCard');
+  const viewport = document.getElementById('tagCloudViewport');
+  const topBtn = document.getElementById('tagCollapseToggleBtn');
+  const footerBtn = document.getElementById('tagExpandFullBtn');
+  if (!card || !viewport) return;
+
+  let isExpanded = false;
+
+  function toggleExpand(expand) {
+    if (typeof expand === 'boolean') {
+      isExpanded = expand;
+    } else {
+      isExpanded = !isExpanded;
+    }
+
+    if (isExpanded) {
+      const content = viewport.querySelector('.tag-cloud');
+      const targetHeight = content ? (content.scrollHeight + 24) : (viewport.scrollHeight + 24);
+      viewport.style.maxHeight = targetHeight + 'px';
+      viewport.classList.remove('collapsed');
+      viewport.classList.add('expanded');
+      card.classList.add('is-expanded');
+
+      if (topBtn) {
+        topBtn.querySelector('.toggle-text').textContent = '收起标签';
+        topBtn.setAttribute('aria-expanded', 'true');
+      }
+      if (footerBtn) {
+        footerBtn.querySelector('.expand-full-text').textContent = '收起标签';
+        footerBtn.querySelector('.material-symbols-outlined').textContent = 'unfold_less';
+      }
+    } else {
+      viewport.style.maxHeight = '124px';
+      viewport.classList.remove('expanded');
+      viewport.classList.add('collapsed');
+      card.classList.remove('is-expanded');
+
+      if (topBtn) {
+        topBtn.querySelector('.toggle-text').textContent = '展开全部';
+        topBtn.setAttribute('aria-expanded', 'false');
+      }
+      if (footerBtn) {
+        const counter = card.querySelector('.tag-cloud-counter');
+        const countText = counter ? ` ${counter.textContent} ` : '';
+        footerBtn.querySelector('.expand-full-text').textContent = `展开全部${countText}个标签`;
+        footerBtn.querySelector('.material-symbols-outlined').textContent = 'unfold_more';
+      }
+    }
+  }
+
+  if (topBtn) topBtn.addEventListener('click', () => toggleExpand());
+  if (footerBtn) footerBtn.addEventListener('click', () => toggleExpand());
+}
+
+// Universal Accurate Anchor Jump Handler
+function initSmoothAnchorJumps() {
+  document.addEventListener('click', (e) => {
+    const anchor = e.target.closest('a[href^="#"]');
+    if (!anchor) return;
+    
+    const href = anchor.getAttribute('href');
+    if (!href || href === '#' || href.length <= 1) return;
+    
+    const rawId = href.substring(1);
+    let targetEl = null;
+    try {
+      targetEl = document.getElementById(rawId) || document.getElementById(decodeURIComponent(rawId));
+    } catch (err) {
+      targetEl = document.getElementById(rawId);
+    }
+    
+    if (targetEl) {
+      e.preventDefault();
+      
+      targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      
+      try {
+        history.pushState(null, '', href);
+      } catch (err) {}
+
+      // MD3 Pulse highlight on target header
+      targetEl.animate([
+        { background: 'color-mix(in srgb, var(--md-sys-color-primary-container) 85%, transparent)', borderRadius: '12px', paddingLeft: '12px' },
+        { background: 'transparent', borderRadius: '', paddingLeft: '' }
+      ], { duration: 2000, easing: 'cubic-bezier(0.2, 0, 0, 1)' });
+    }
+  });
+
+  if (window.location.hash && window.location.hash.length > 1) {
+    setTimeout(() => {
+      const rawId = window.location.hash.substring(1);
+      let targetEl = null;
+      try {
+        targetEl = document.getElementById(rawId) || document.getElementById(decodeURIComponent(rawId));
+      } catch (err) {
+        targetEl = document.getElementById(rawId);
+      }
+      if (targetEl) {
+        targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        targetEl.animate([
+          { background: 'color-mix(in srgb, var(--md-sys-color-primary-container) 85%, transparent)', borderRadius: '12px', paddingLeft: '12px' },
+          { background: 'transparent', borderRadius: '', paddingLeft: '' }
+        ], { duration: 2000, easing: 'cubic-bezier(0.2, 0, 0, 1)' });
+      }
+    }, 150);
+  }
+}
+
 

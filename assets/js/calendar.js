@@ -93,25 +93,24 @@ document.addEventListener('DOMContentLoaded', function() {
     closeCalendarDialog();
     
     const header = document.querySelector('.timeline-header[data-date="' + dateStr + '"]');
-    if (header) {
-      // Force switch to timeline view if not active
-      const timelineBtn = document.querySelector('button[data-view="timeline"]');
-      if (timelineBtn && !timelineBtn.classList.contains('active')) {
-        timelineBtn.click();
-        
-        // Wait for transition before scrolling
-        setTimeout(() => {
-          header.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          // Highlight effect
-          header.animate([
-            { background: 'var(--md-sys-color-surface-variant)' },
-            { background: 'transparent' }
-          ], { duration: 1500, easing: 'ease-out' });
-        }, 250);
-      } else {
-        header.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }
+    if (!header) return;
+
+    const timelineBtn = document.querySelector('button[data-view="timeline"]');
+    const switchNeeded = timelineBtn && !timelineBtn.classList.contains('active');
+    if (switchNeeded) {
+      timelineBtn.click();
     }
+
+    // Wait for view layout reflow before scrolling
+    setTimeout(() => {
+      header.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      
+      // MD3 Pulse highlight
+      header.animate([
+        { background: 'color-mix(in srgb, var(--md-sys-color-primary-container) 85%, transparent)', borderRadius: '12px', paddingLeft: '12px' },
+        { background: 'transparent', borderRadius: '', paddingLeft: '' }
+      ], { duration: 2000, easing: 'cubic-bezier(0.2, 0, 0, 1)' });
+    }, switchNeeded ? 120 : 20);
   }
 
 

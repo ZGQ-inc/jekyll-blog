@@ -15,18 +15,43 @@ permalink: /tags/
     <p class="page-subtitle">共 {{ active_tag_count }} 个标签</p>
   </div>
 
-  <!-- Tag Cloud -->
-  <div class="tag-cloud" style="margin-bottom:32px">
-    {% assign sorted_tags = site.tags | sort %}
-    {% for tag in sorted_tags %}
-    {% assign unarchived_tag_posts = tag[1] %}
-    {% if unarchived_tag_posts.size == 0 %}{% continue %}{% endif %}
-    {% assign t = tag[0] %}
-    <a href="#{{ t | append: '' | slugify }}" class="tag-item">
-      {{ t }}
-      <span class="tag-count">{{ unarchived_tag_posts.size }}</span>
-    </a>
-    {% endfor %}
+  <!-- MD3 Collapsible Tag Cloud Card -->
+  <div class="md3-tag-cloud-card" id="tagCloudCard">
+    <div class="tag-cloud-card-header">
+      <div class="tag-cloud-header-left">
+        <span class="material-symbols-outlined tag-cloud-icon">sell</span>
+        <span class="tag-cloud-heading">标签云</span>
+        <span class="tag-cloud-counter">{{ active_tag_count }}</span>
+      </div>
+      <button type="button" class="md3-tag-collapse-btn" id="tagCollapseToggleBtn" aria-expanded="false" aria-label="展开或折叠标签列表">
+        <span class="toggle-text">展开全部</span>
+        <span class="material-symbols-outlined toggle-icon">expand_more</span>
+      </button>
+    </div>
+
+    <div class="tag-cloud-viewport collapsed" id="tagCloudViewport">
+      <div class="tag-cloud" id="tagCloudList">
+        {% assign sorted_tags = site.tags | sort %}
+        {% for tag in sorted_tags %}
+        {% assign unarchived_tag_posts = tag[1] %}
+        {% if unarchived_tag_posts.size == 0 %}{% continue %}{% endif %}
+        {% assign t = tag[0] %}
+        <a href="#{{ t | append: '' | slugify }}" class="tag-item">
+          <span class="material-symbols-outlined tag-chip-icon">tag</span>
+          <span class="tag-name">{{ t }}</span>
+          <span class="tag-count">{{ unarchived_tag_posts.size }}</span>
+        </a>
+        {% endfor %}
+      </div>
+      <div class="tag-cloud-gradient-mask" id="tagCloudMask"></div>
+    </div>
+
+    <div class="tag-cloud-card-footer" id="tagCloudFooter">
+      <button type="button" class="tag-expand-full-btn" id="tagExpandFullBtn">
+        <span class="material-symbols-outlined">unfold_more</span>
+        <span class="expand-full-text">展开全部 {{ active_tag_count }} 个标签</span>
+      </button>
+    </div>
   </div>
 
   <!-- Posts grouped by tag -->
