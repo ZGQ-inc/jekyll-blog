@@ -35,7 +35,7 @@
     </div>
 
     {% for post in day_group.items %}
-    <a class="post-card animate-fade-in-up"
+    <a class="post-card"
        href="{{ post.url | relative_url }}"
        data-title="{{ post.title | downcase }}"
        data-tags="{{ post.tags | join: ',' | downcase }}"
