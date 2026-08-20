@@ -2538,9 +2538,16 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
       background-color: color-mix(in srgb, var(--card-color) 12%, transparent);
       color: var(--card-color);
       flex-shrink: 0;
+      overflow: hidden;
 
       .material-symbols-outlined {
-        font-size: 28px;
+        font-size: 24px;
+        line-height: 1;
+        width: 24px;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
       }
     }
 
@@ -2752,12 +2759,16 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
 
 // Footer
 .site-footer {
-  padding: 24px;
+  padding: 24px 24px 100px;
   text-align: center;
   font-size: 0.8125rem;
   color: var(--md-sys-color-on-surface-variant);
   border-top: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 40%, transparent);
   margin-top: auto;
+
+  @media (max-width: 768px) {
+    padding: 20px 16px 88px;
+  }
 
   a {
     color: var(--md-sys-color-primary);

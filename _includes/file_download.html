@@ -49,8 +49,45 @@
     {% assign file_icon = "code" %}
 {% endcase %}
 
-{% if include.icon %}
-  {% assign file_icon = include.icon %}
+{% if include.icon and include.icon != "" %}
+  {% assign raw_icon = include.icon | downcase | strip %}
+  {% case raw_icon %}
+    {% when 'file-zip' or 'zip' or 'archive' or 'rar' or '7z' or 'tar' or 'gz' or 'file_zip' %}
+      {% assign file_icon = "folder_zip" %}
+      {% assign file_color = "tertiary" %}
+    {% when 'file-pdf' or 'pdf' or 'file_pdf' %}
+      {% assign file_icon = "picture_as_pdf" %}
+      {% assign file_color = "error" %}
+    {% when 'file-code' or 'code' or 'script' or 'file_code' %}
+      {% assign file_icon = "code" %}
+      {% assign file_color = "tertiary" %}
+    {% when 'file-text' or 'text' or 'txt' or 'document' or 'doc' or 'docx' or 'file_text' %}
+      {% assign file_icon = "description" %}
+      {% assign file_color = "secondary" %}
+    {% when 'file-excel' or 'excel' or 'sheet' or 'csv' or 'xls' or 'xlsx' %}
+      {% assign file_icon = "table" %}
+      {% assign file_color = "secondary" %}
+    {% when 'file-ppt' or 'ppt' or 'powerpoint' %}
+      {% assign file_icon = "co_present" %}
+      {% assign file_color = "error" %}
+    {% when 'file-image' or 'image' or 'img' or 'pic' or 'photo' %}
+      {% assign file_icon = "image" %}
+      {% assign file_color = "tertiary" %}
+    {% when 'file-audio' or 'audio' or 'music' or 'sound' %}
+      {% assign file_icon = "audio_file" %}
+      {% assign file_color = "secondary" %}
+    {% when 'file-video' or 'video' or 'movie' %}
+      {% assign file_icon = "video_file" %}
+      {% assign file_color = "primary" %}
+    {% when 'file-apk' or 'apk' or 'android' or 'app' %}
+      {% assign file_icon = "android" %}
+      {% assign file_color = "primary" %}
+    {% when 'file-exe' or 'exe' or 'binary' or 'terminal' %}
+      {% assign file_icon = "terminal" %}
+      {% assign file_color = "error" %}
+    {% else %}
+      {% assign file_icon = include.icon %}
+  {% endcase %}
 {% endif %}
 {% if include.color %}
   {% assign file_color = include.color %}
