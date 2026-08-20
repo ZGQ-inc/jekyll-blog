@@ -2868,46 +2868,6 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
     }
   }
 
-  .tag-cloud-card-footer {
-    display: flex;
-    justify-content: center;
-    padding-top: 12px;
-
-    .tag-expand-full-btn {
-      @include ripple-surface;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      width: 100%;
-      max-width: 320px;
-      padding: 10px 20px;
-      border: none;
-      border-radius: var(--shape-full);
-      background: var(--md-sys-color-secondary-container);
-      color: var(--md-sys-color-on-secondary-container);
-      font-size: 0.875rem;
-      font-weight: 600;
-      cursor: pointer;
-      box-shadow: var(--elev-1);
-      transition: background var(--dur-short4), box-shadow var(--dur-short4), transform var(--dur-short3);
-
-      &:hover {
-        box-shadow: var(--elev-2);
-        transform: translateY(-1px);
-        background: color-mix(in srgb, var(--md-sys-color-secondary-container) 85%, var(--md-sys-color-primary));
-      }
-
-      &:active {
-        transform: scale(0.98);
-      }
-
-      .material-symbols-outlined {
-        font-size: 1.2rem;
-      }
-    }
-  }
-
   &.is-expanded {
     .tag-cloud-card-header .toggle-icon {
       transform: rotate(180deg);
@@ -4296,17 +4256,17 @@ md-navigation-drawer {
 .floating-island {
   position: fixed;
   bottom: 24px;
-  left: 50%;
+  left: calc(50% + (var(--nav-drawer-width) / 2));
   transform: translateX(-50%);
   background-color: color-mix(in srgb, var(--md-sys-color-surface-container-high) 85%, transparent);
   backdrop-filter: blur(16px) saturate(160%);
   -webkit-backdrop-filter: blur(16px) saturate(160%);
   box-shadow: var(--elev-3);
   border-radius: var(--shape-full);
-  padding: 6px 14px;
+  padding: 4px 10px;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   z-index: 99;
   border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 45%, transparent);
   transition: opacity var(--dur-medium2) var(--motion-standard),
@@ -4347,30 +4307,24 @@ md-navigation-drawer {
     }
   }
 
-  .island-divider {
-    width: 1px;
-    height: 20px;
-    background-color: color-mix(in srgb, var(--md-sys-color-outline-variant) 60%, transparent);
-  }
-
   .island-text {
     font-size: 0.875rem;
-    font-weight: 500;
-    color: var(--md-sys-color-on-surface-variant);
+    font-weight: 600;
+    color: var(--md-sys-color-on-surface);
     white-space: nowrap;
-    padding: 0 4px;
+    padding: 0 6px;
+  }
+
+  @media (max-width: 1024px) {
+    left: calc(50% + (var(--nav-rail-width) / 2));
   }
 
   @media (max-width: 768px) {
+    left: 50%;
     bottom: 16px;
-    padding: 4px 10px;
-    gap: 6px;
+    padding: 4px 8px;
+    gap: 4px;
     max-width: 94vw;
-
-    .island-text.status-text,
-    .island-divider.status-text {
-      display: none; // Keep compact on small mobile screens
-    }
   }
 }
 

@@ -1031,8 +1031,7 @@ function initTagCloudCollapse() {
   const card = document.getElementById('tagCloudCard');
   const viewport = document.getElementById('tagCloudViewport');
   const topBtn = document.getElementById('tagCollapseToggleBtn');
-  const footerBtn = document.getElementById('tagExpandFullBtn');
-  if (!card || !viewport) return;
+  if (!card || !viewport || !topBtn) return;
 
   let isExpanded = false;
 
@@ -1051,35 +1050,20 @@ function initTagCloudCollapse() {
       viewport.classList.add('expanded');
       card.classList.add('is-expanded');
 
-      if (topBtn) {
-        topBtn.querySelector('.toggle-text').textContent = '收起标签';
-        topBtn.setAttribute('aria-expanded', 'true');
-      }
-      if (footerBtn) {
-        footerBtn.querySelector('.expand-full-text').textContent = '收起标签';
-        footerBtn.querySelector('.material-symbols-outlined').textContent = 'unfold_less';
-      }
+      topBtn.querySelector('.toggle-text').textContent = '收起标签';
+      topBtn.setAttribute('aria-expanded', 'true');
     } else {
       viewport.style.maxHeight = '124px';
       viewport.classList.remove('expanded');
       viewport.classList.add('collapsed');
       card.classList.remove('is-expanded');
 
-      if (topBtn) {
-        topBtn.querySelector('.toggle-text').textContent = '展开全部';
-        topBtn.setAttribute('aria-expanded', 'false');
-      }
-      if (footerBtn) {
-        const counter = card.querySelector('.tag-cloud-counter');
-        const countText = counter ? ` ${counter.textContent} ` : '';
-        footerBtn.querySelector('.expand-full-text').textContent = `展开全部${countText}个标签`;
-        footerBtn.querySelector('.material-symbols-outlined').textContent = 'unfold_more';
-      }
+      topBtn.querySelector('.toggle-text').textContent = '展开全部';
+      topBtn.setAttribute('aria-expanded', 'false');
     }
   }
 
-  if (topBtn) topBtn.addEventListener('click', () => toggleExpand());
-  if (footerBtn) footerBtn.addEventListener('click', () => toggleExpand());
+  topBtn.addEventListener('click', () => toggleExpand());
 }
 
 // Universal Accurate Anchor Jump Handler
