@@ -45,7 +45,7 @@ permalink: /categories/
       </div>
       
       {% for post in unarchived_cat_posts %}
-      <a class="post-card animate-fade-in-up" href="{{ post.url | relative_url }}">
+      <a class="post-card scroll-animate" href="{{ post.url | relative_url }}">
         <div class="card-thumb-wrapper">
           {% if post.image %}
           <img class="card-thumb" src="{{ post.image }}" alt="{{ post.title }}" loading="lazy">
