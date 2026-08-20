@@ -988,3 +988,39 @@ window.addEventListener('DOMContentLoaded', () => {
     });
   });
 });
+
+document.addEventListener("DOMContentLoaded", () => {
+  const cards = document.querySelectorAll(".scroll-animate");
+  if (!cards.length) return;
+
+  // Stagger index for initial load
+  let initialStaggerCount = 0;
+
+  const observer = new IntersectionObserver((entries, obs) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const card = entry.target;
+        
+        // Add a slight stagger for the initial batch of visible cards
+        // For cards scrolled into view later, animate immediately
+        const delay = initialStaggerCount < 15 ? (initialStaggerCount * 50) : 0;
+        if (initialStaggerCount < 15) {
+          initialStaggerCount++;
+        }
+        
+        if (delay > 0) {
+          card.style.animationDelay = delay + "ms";
+        }
+        card.classList.add("animate-fade-in-up");
+        card.style.opacity = ""; // Remove the inline opacity: 0 so animation can take over
+        obs.unobserve(card);
+      }
+    });
+  }, {
+    rootMargin: "50px 0px", // Trigger slightly before it comes into view
+    threshold: 0.05
+  });
+
+  cards.forEach(card => observer.observe(card));
+});
+

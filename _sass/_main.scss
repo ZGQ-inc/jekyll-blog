@@ -1586,6 +1586,8 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
 .post-card {
   @include ripple-surface;
   display: flex;
+  content-visibility: auto;
+  contain-intrinsic-size: 300px;
   flex-direction: column;
   background: var(--md-sys-color-surface-container-low);
   border-radius: var(--shape-large);
@@ -1595,12 +1597,9 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
   color: var(--md-sys-color-on-surface);
   cursor: pointer;
   transform: translateZ(0);
-  will-change: transform, opacity;
 
-  animation: card-enter var(--dur-long1) var(--motion-emphasized-decel) both;
-  @for $i from 1 through 20 {
-    &:nth-child(#{$i}) { animation-delay: #{$i * 50}ms; }
-  }
+  /* Animations are now orchestrated by IntersectionObserver in JS */
+  opacity: 0; /* Hidden by default until JS adds animate-fade-in-up */
 
   box-shadow: var(--elev-1);
   transition:
