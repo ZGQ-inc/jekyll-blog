@@ -1586,8 +1586,6 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
 .post-card {
   @include ripple-surface;
   display: flex;
-  content-visibility: auto;
-  contain-intrinsic-size: 300px;
   flex-direction: column;
   background: var(--md-sys-color-surface-container-low);
   border-radius: var(--shape-large);
