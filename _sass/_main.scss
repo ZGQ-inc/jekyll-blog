@@ -1906,6 +1906,17 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
     letter-spacing: -0.01em;
     margin: 1.75em 0 0.6em;
     color: var(--md-sys-color-on-surface);
+
+    img {
+      display: inline-block !important;
+      vertical-align: middle !important;
+      margin: 0 4px !important;
+      box-shadow: none !important;
+      border-radius: 3px !important;
+      max-height: 22px !important;
+      width: auto !important;
+      height: auto !important;
+    }
   }
   
   .anchor-heading {
@@ -2230,6 +2241,20 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
     border-radius: var(--shape-large);
     margin: 1.5em 0;
     box-shadow: var(--elev-2);
+
+    &[src*="shields.io"],
+    &[src*="badge"],
+    &[src*="min-tuijian"],
+    &[src*="min-oss"],
+    &[src*=".svg"] {
+      display: inline-block !important;
+      vertical-align: middle !important;
+      margin: 0 3px !important;
+      border-radius: 3px !important;
+      box-shadow: none !important;
+      max-height: 22px !important;
+      width: auto !important;
+    }
   }
 
   ul, ol {
