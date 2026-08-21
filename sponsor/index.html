@@ -1,0 +1,1013 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>赞助商精选大全 - 赞助商详情 - OverTheFirewall</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Noto+Sans+SC:wght@400;500;700&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined">
+  <style>
+    :root {
+      --md-sys-color-primary: #0061A4;
+      --md-sys-color-on-primary: #FFFFFF;
+      --md-sys-color-primary-container: #D1E4FF;
+      --md-sys-color-on-primary-container: #001D36;
+      --md-sys-color-secondary: #535F70;
+      --md-sys-color-secondary-container: #D7E3F7;
+      --md-sys-color-on-secondary-container: #101C2B;
+      --md-sys-color-surface: #FDFDFF;
+      --md-sys-color-on-surface: #1A1C1E;
+      --md-sys-color-surface-variant: #DFE2EB;
+      --md-sys-color-on-surface-variant: #43474E;
+      --md-sys-color-outline: #73777F;
+      --md-sys-color-outline-variant: #C3C7CF;
+      --md-sys-color-background: #F8F9FA;
+      --md-sys-color-on-background: #1A1C1E;
+      --md-sys-color-surface-container: #EDEDF1;
+      --md-sys-color-surface-container-high: #E7E8EC;
+      --md-sys-color-surface-container-low: #F3F3F7;
+      --radius-sm: 8px;
+      --radius-md: 16px;
+      --radius-lg: 24px;
+      --radius-full: 9999px;
+      --shadow-1: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.12);
+      --shadow-2: 0 4px 12px rgba(0,0,0,0.08), 0 2px 6px rgba(0,0,0,0.06);
+    }
+
+    [data-theme="dark"] {
+      --md-sys-color-primary: #9ECAFF;
+      --md-sys-color-on-primary: #003258;
+      --md-sys-color-primary-container: #00497D;
+      --md-sys-color-on-primary-container: #D1E4FF;
+      --md-sys-color-secondary: #BBC7DB;
+      --md-sys-color-secondary-container: #3B4858;
+      --md-sys-color-on-secondary-container: #D7E3F7;
+      --md-sys-color-surface: #1A1C1E;
+      --md-sys-color-on-surface: #E2E2E6;
+      --md-sys-color-surface-variant: #43474E;
+      --md-sys-color-on-surface-variant: #C3C7CF;
+      --md-sys-color-outline: #8D9199;
+      --md-sys-color-outline-variant: #43474E;
+      --md-sys-color-background: #121316;
+      --md-sys-color-on-background: #E2E2E6;
+      --md-sys-color-surface-container: #202224;
+      --md-sys-color-surface-container-high: #2B2D30;
+      --md-sys-color-surface-container-low: #1C1E20;
+      --shadow-1: 0 1px 3px rgba(0,0,0,0.3);
+      --shadow-2: 0 4px 16px rgba(0,0,0,0.4);
+      color-scheme: dark;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: 'Noto Sans SC', 'Roboto', system-ui, -apple-system, sans-serif;
+      background: var(--md-sys-color-background);
+      color: var(--md-sys-color-on-background);
+      min-height: 100vh;
+      line-height: 1.6;
+      padding-bottom: 60px;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    /* Top App Bar */
+    .top-app-bar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 64px;
+      padding: 0 16px;
+      background: color-mix(in srgb, var(--md-sys-color-surface) 88%, transparent);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 40%, transparent);
+    }
+
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      border-radius: var(--radius-full);
+      border: 1px solid var(--md-sys-color-outline-variant);
+      background: var(--md-sys-color-surface);
+      color: var(--md-sys-color-on-surface);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.2,0,0,1);
+    }
+    .back-btn:hover {
+      background: var(--md-sys-color-surface-container);
+      transform: translateX(-2px);
+    }
+
+    .theme-toggle-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: none;
+      background: var(--md-sys-color-surface-container);
+      color: var(--md-sys-color-on-surface);
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .theme-toggle-btn:hover {
+      background: var(--md-sys-color-surface-container-high);
+    }
+
+    /* Container */
+    .page-container {
+      max-width: 960px;
+      margin: 24px auto 0;
+      padding: 0 16px;
+    }
+
+    /* Hero Card */
+    .hero-card {
+      background: var(--md-sys-color-surface);
+      border-radius: var(--radius-lg);
+      padding: 32px 24px;
+      text-align: center;
+      box-shadow: var(--shadow-2);
+      border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 40%, transparent);
+      margin-bottom: 24px;
+    }
+
+    .sponsor-logo {
+      width: 96px;
+      height: 96px;
+      object-fit: contain;
+      border-radius: var(--radius-md);
+      padding: 6px;
+      background: var(--md-sys-color-surface-container);
+      margin-bottom: 16px;
+      box-shadow: var(--shadow-1);
+    }
+
+    .sponsor-title {
+      font-size: 1.85rem;
+      font-weight: 700;
+      color: var(--md-sys-color-on-surface);
+      margin-bottom: 8px;
+    }
+
+    .sponsor-slogan {
+      font-size: 1.05rem;
+      color: var(--md-sys-color-primary);
+      font-weight: 500;
+      max-width: 680px;
+      margin: 0 auto 20px;
+      line-height: 1.5;
+    }
+
+    .sponsor-intro-list {
+      text-align: left;
+      max-width: 720px;
+      margin: 0 auto 24px;
+      background: var(--md-sys-color-surface-container-low);
+      padding: 16px 20px;
+      border-radius: var(--radius-md);
+      font-size: 0.95rem;
+      color: var(--md-sys-color-on-surface-variant);
+    }
+    .sponsor-intro-list p {
+      margin-bottom: 8px;
+    }
+    .sponsor-intro-list p:last-child {
+      margin-bottom: 0;
+    }
+
+    .cta-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--md-sys-color-primary);
+      color: var(--md-sys-color-on-primary);
+      padding: 12px 28px;
+      border-radius: var(--radius-full);
+      font-size: 1.05rem;
+      font-weight: 700;
+      text-decoration: none;
+      box-shadow: 0 4px 12px color-mix(in srgb, var(--md-sys-color-primary) 40%, transparent);
+      transition: all 0.2s cubic-bezier(0.2,0,0,1);
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px color-mix(in srgb, var(--md-sys-color-primary) 50%, transparent);
+    }
+
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--md-sys-color-secondary-container);
+      color: var(--md-sys-color-on-secondary-container);
+      padding: 12px 20px;
+      border-radius: var(--radius-full);
+      font-size: 0.95rem;
+      font-weight: 500;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+    .btn-secondary:hover {
+      background: color-mix(in srgb, var(--md-sys-color-secondary-container) 85%, var(--md-sys-color-on-secondary-container) 15%);
+    }
+
+    /* Section Card */
+    .section-card {
+      background: var(--md-sys-color-surface);
+      border-radius: var(--radius-lg);
+      padding: 28px 24px;
+      margin-bottom: 24px;
+      box-shadow: var(--shadow-1);
+      border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 40%, transparent);
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 2px solid var(--md-sys-color-surface-container);
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: var(--md-sys-color-on-surface);
+    }
+    .section-title .material-symbols-outlined {
+      color: var(--md-sys-color-primary);
+    }
+
+    .date-badge {
+      font-size: 0.8rem;
+      padding: 4px 10px;
+      border-radius: var(--radius-full);
+      background: var(--md-sys-color-surface-container);
+      color: var(--md-sys-color-on-surface-variant);
+      font-weight: 500;
+    }
+
+    /* Speedtest */
+    .speedtest-container {
+      text-align: center;
+    }
+    .speedtest-img {
+      max-width: 100%;
+      height: auto;
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-1);
+      cursor: zoom-in;
+      transition: transform 0.2s;
+    }
+    .speedtest-img:hover {
+      transform: scale(1.01);
+    }
+
+    /* Plans Grid */
+    .plans-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px;
+    }
+
+    .plan-card {
+      background: var(--md-sys-color-surface-container-low);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 40%, transparent);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .plan-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-2);
+      border-color: var(--md-sys-color-primary);
+    }
+
+    .plan-name {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--md-sys-color-primary);
+      margin-bottom: 8px;
+    }
+
+    .plan-price {
+      font-size: 1.45rem;
+      font-weight: 800;
+      color: var(--md-sys-color-on-surface);
+      margin-bottom: 12px;
+    }
+    .plan-price small {
+      font-size: 0.85rem;
+      font-weight: 400;
+      color: var(--md-sys-color-on-surface-variant);
+    }
+
+    .plan-features {
+      list-style: none;
+      font-size: 0.88rem;
+      color: var(--md-sys-color-on-surface-variant);
+      margin-bottom: 16px;
+      line-height: 1.7;
+    }
+    .plan-features li {
+      display: flex;
+      align-items: flex-start;
+      gap: 6px;
+      margin-bottom: 4px;
+    }
+
+    /* Nodes Grid */
+    .nodes-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 10px;
+    }
+
+    .node-item {
+      background: var(--md-sys-color-surface-container-low);
+      padding: 10px 14px;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.88rem;
+      border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 30%, transparent);
+    }
+
+    .node-name {
+      font-weight: 500;
+      color: var(--md-sys-color-on-surface);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .node-rate {
+      font-size: 0.75rem;
+      font-weight: 700;
+      background: var(--md-sys-color-primary-container);
+      color: var(--md-sys-color-on-primary-container);
+      padding: 2px 6px;
+      border-radius: var(--radius-sm);
+      margin-left: 6px;
+      flex-shrink: 0;
+    }
+
+    /* Disclaimer */
+    .disclaimer-card {
+      background: var(--md-sys-color-surface-container-low);
+      padding: 16px 20px;
+      border-radius: var(--radius-md);
+      font-size: 0.85rem;
+      color: var(--md-sys-color-on-surface-variant);
+      line-height: 1.6;
+      border-left: 4px solid var(--md-sys-color-primary);
+    }
+
+    /* Lightbox modal */
+    .lightbox-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      background: rgba(0,0,0,0.85);
+      backdrop-filter: blur(8px);
+      align-items: center;
+      justify-content: center;
+      cursor: zoom-out;
+    }
+    .lightbox-modal.active {
+      display: flex;
+    }
+    .lightbox-modal img {
+      max-width: 92vw;
+      max-height: 92vh;
+      border-radius: var(--radius-md);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+    }
+
+    @media (max-width: 600px) {
+      .hero-card { padding: 24px 16px; }
+      .sponsor-title { font-size: 1.5rem; }
+      .btn-primary { width: 100%; justify-content: center; }
+      .plans-grid { grid-template-columns: 1fr; }
+      .nodes-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header class="top-app-bar">
+    <a href="javascript:void(0)" onclick="if(history.length>1){history.back()}else{window.location.href='/'}" class="back-btn">
+      <span class="material-symbols-outlined" style="font-size:1.2rem">arrow_back</span>
+      <span>返回</span>
+    </a>
+    <div style="display:flex;align-items:center;gap:8px">
+      <a href="/sponsor/" class="back-btn" style="border-radius:var(--radius-full)">
+        <span class="material-symbols-outlined" style="font-size:1.1rem">apps</span>
+        <span>赞助商大全</span>
+      </a>
+      <button class="theme-toggle-btn" id="themeToggleBtn" title="切换暗色/亮色模式">
+        <span class="material-symbols-outlined" id="themeIcon">dark_mode</span>
+      </button>
+    </div>
+  </header>
+  <main class="page-container">
+
+<div class="hero-card" style="margin-bottom:24px">
+  <span class="material-symbols-outlined" style="font-size:48px;color:var(--md-sys-color-primary);margin-bottom:12px">verified_user</span>
+  <h1 class="sponsor-title">OverTheFirewall 赞助商精选大全</h1>
+  <p class="sponsor-slogan">精选优质网络中继与专线服务商 · 详细测速报告 · 方案价格一览 · 节点全景分布</p>
+  <div style="margin-top:16px">
+    <a href="/_posts/Announcements/2026-08-21-overthefirewall-sponsors" class="btn-secondary">
+      <span class="material-symbols-outlined">article</span>
+      <span>返回博客横幅公告文章</span>
+    </a>
+  </div>
+</div>
+
+<div class="plans-grid" style="grid-template-columns:repeat(auto-fill, minmax(280px, 1fr));gap:16px;margin-bottom:24px">
+  
+    <div class="plan-card" style="padding:20px;display:flex;flex-direction:column;justify-content:space-between">
+      <div>
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+          <img src="/assets/images/sponsors/tshl_logo.png" alt="天枢互联" style="width:48px;height:48px;object-fit:contain;border-radius:8px;background:var(--md-sys-color-surface-container);padding:2px">
+          <div>
+            <div style="font-size:1.15rem;font-weight:700;color:var(--md-sys-color-on-surface)">天枢互联</div>
+            <div style="display:flex;gap:6px;margin-top:2px">
+              
+              <span class="date-badge" style="font-size:0.7rem;padding:2px 6px">方案</span>
+              <span class="date-badge" style="font-size:0.7rem;padding:2px 6px">节点</span>
+            </div>
+          </div>
+        </div>
+        <p style="font-size:0.88rem;color:var(--md-sys-color-on-surface-variant);line-height:1.5;margin-bottom:16px;min-height:42px">
+          全球网络中继服务,随时随处尽情使用
+        </p>
+      </div>
+      <div style="display:flex;gap:8px">
+        <a href="/sponsor/sponsor.html" class="btn-primary" style="flex:1;justify-content:center;font-size:0.88rem;padding:8px 12px">
+          <span>查看详情</span>
+        </a>
+        <a href="https://tshl.work/auth/register?code=qeUkRYq515NDNKSSIWUqwedkex4VDeOK" target="_blank" rel="noopener" class="btn-secondary" style="padding:8px 12px;border-radius:var(--radius-full)" title="直达官网">
+          <span class="material-symbols-outlined" style="font-size:18px">open_in_new</span>
+        </a>
+      </div>
+    </div>
+    
+    <div class="plan-card" style="padding:20px;display:flex;flex-direction:column;justify-content:space-between">
+      <div>
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+          <img src="/assets/images/sponsors/YUNCUN_logo.ico" alt="雲村" style="width:48px;height:48px;object-fit:contain;border-radius:8px;background:var(--md-sys-color-surface-container);padding:2px">
+          <div>
+            <div style="font-size:1.15rem;font-weight:700;color:var(--md-sys-color-on-surface)">雲村</div>
+            <div style="display:flex;gap:6px;margin-top:2px">
+              <span class="date-badge" style="font-size:0.7rem;padding:2px 6px">测速</span>
+              <span class="date-badge" style="font-size:0.7rem;padding:2px 6px">方案</span>
+              <span class="date-badge" style="font-size:0.7rem;padding:2px 6px">节点</span>
+            </div>
+          </div>
+        </div>
+        <p style="font-size:0.88rem;color:var(--md-sys-color-on-surface-variant);line-height:1.5;margin-bottom:16px;min-height:42px">
+          为每一个人，为每一个团队，提供优秀稳定的服务 欢迎加入我们的行列，开启您的加速之旅
+        </p>
+      </div>
+      <div style="display:flex;gap:8px">
+        <a href="/sponsor/sponsor_2.html" class="btn-primary" style="flex:1;justify-content:center;font-size:0.88rem;padding:8px 12px">
+          <span>查看详情</span>
+        </a>
+        <a href="https://s2.maiucun.me/#/register?code=Co0c8gA3" target="_blank" rel="noopener" class="btn-secondary" style="padding:8px 12px;border-radius:var(--radius-full)" title="直达官网">
+          <span class="material-symbols-outlined" style="font-size:18px">open_in_new</span>
+        </a>
+      </div>
+    </div>
+    
+    <div class="plan-card" style="padding:20px;display:flex;flex-direction:column;justify-content:space-between">
+      <div>
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+          <img src="/assets/images/sponsors/SausageCloud_logo.ico" alt="Sausage Cloud" style="width:48px;height:48px;object-fit:contain;border-radius:8px;background:var(--md-sys-color-surface-container);padding:2px">
+          <div>
+            <div style="font-size:1.15rem;font-weight:700;color:var(--md-sys-color-on-surface)">Sausage Cloud</div>
+            <div style="display:flex;gap:6px;margin-top:2px">
+              <span class="date-badge" style="font-size:0.7rem;padding:2px 6px">测速</span>
+              <span class="date-badge" style="font-size:0.7rem;padding:2px 6px">方案</span>
+              <span class="date-badge" style="font-size:0.7rem;padding:2px 6px">节点</span>
+            </div>
+          </div>
+        </div>
+        <p style="font-size:0.88rem;color:var(--md-sys-color-on-surface-variant);line-height:1.5;margin-bottom:16px;min-height:42px">
+          高性价比网络中继服务 随时随处尽情使用
+        </p>
+      </div>
+      <div style="display:flex;gap:8px">
+        <a href="/sponsor/sponsor_3.html" class="btn-primary" style="flex:1;justify-content:center;font-size:0.88rem;padding:8px 12px">
+          <span>查看详情</span>
+        </a>
+        <a href="https://reborn.kaochang.ltd/#/register?code=MPGb78LD" target="_blank" rel="noopener" class="btn-secondary" style="padding:8px 12px;border-radius:var(--radius-full)" title="直达官网">
+          <span class="material-symbols-outlined" style="font-size:18px">open_in_new</span>
+        </a>
+      </div>
+    </div>
+    
+    <div class="plan-card" style="padding:20px;display:flex;flex-direction:column;justify-content:space-between">
+      <div>
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+          <img src="/assets/images/sponsors/aoyoufei.png" alt="aoyoufei" style="width:48px;height:48px;object-fit:contain;border-radius:8px;background:var(--md-sys-color-surface-container);padding:2px">
+          <div>
+            <div style="font-size:1.15rem;font-weight:700;color:var(--md-sys-color-on-surface)">aoyoufei</div>
+            <div style="display:flex;gap:6px;margin-top:2px">
+              <span class="date-badge" style="font-size:0.7rem;padding:2px 6px">测速</span>
+              <span class="date-badge" style="font-size:0.7rem;padding:2px 6px">方案</span>
+              <span class="date-badge" style="font-size:0.7rem;padding:2px 6px">节点</span>
+            </div>
+          </div>
+        </div>
+        <p style="font-size:0.88rem;color:var(--md-sys-color-on-surface-variant);line-height:1.5;margin-bottom:16px;min-height:42px">
+          Beyond Limits, Keeping Safe！
+        </p>
+      </div>
+      <div style="display:flex;gap:8px">
+        <a href="/sponsor/sponsor_4.html" class="btn-primary" style="flex:1;justify-content:center;font-size:0.88rem;padding:8px 12px">
+          <span>查看详情</span>
+        </a>
+        <a href="https://zshixiog.kingdona.wiki/#/register?code=Sg30Z7h5" target="_blank" rel="noopener" class="btn-secondary" style="padding:8px 12px;border-radius:var(--radius-full)" title="直达官网">
+          <span class="material-symbols-outlined" style="font-size:18px">open_in_new</span>
+        </a>
+      </div>
+    </div>
+    
+    <div class="plan-card" style="padding:20px;display:flex;flex-direction:column;justify-content:space-between">
+      <div>
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+          <img src="/assets/images/sponsors/EdNovasCloud_logo.gif" alt="EdNovas云" style="width:48px;height:48px;object-fit:contain;border-radius:8px;background:var(--md-sys-color-surface-container);padding:2px">
+          <div>
+            <div style="font-size:1.15rem;font-weight:700;color:var(--md-sys-color-on-surface)">EdNovas云</div>
+            <div style="display:flex;gap:6px;margin-top:2px">
+              <span class="date-badge" style="font-size:0.7rem;padding:2px 6px">测速</span>
+              <span class="date-badge" style="font-size:0.7rem;padding:2px 6px">方案</span>
+              <span class="date-badge" style="font-size:0.7rem;padding:2px 6px">节点</span>
+            </div>
+          </div>
+        </div>
+        <p style="font-size:0.88rem;color:var(--md-sys-color-on-surface-variant);line-height:1.5;margin-bottom:16px;min-height:42px">
+          EdNovas is the best!
+        </p>
+      </div>
+      <div style="display:flex;gap:8px">
+        <a href="/sponsor/sponsor_5.html" class="btn-primary" style="flex:1;justify-content:center;font-size:0.88rem;padding:8px 12px">
+          <span>查看详情</span>
+        </a>
+        <a href="https://ednovas.org/#/register?code=1F6fox8Y" target="_blank" rel="noopener" class="btn-secondary" style="padding:8px 12px;border-radius:var(--radius-full)" title="直达官网">
+          <span class="material-symbols-outlined" style="font-size:18px">open_in_new</span>
+        </a>
+      </div>
+    </div>
+    
+    <div class="plan-card" style="padding:20px;display:flex;flex-direction:column;justify-content:space-between">
+      <div>
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+          <img src="/assets/images/sponsors/SPCLOUD_logo.ico" alt="V2云" style="width:48px;height:48px;object-fit:contain;border-radius:8px;background:var(--md-sys-color-surface-container);padding:2px">
+          <div>
+            <div style="font-size:1.15rem;font-weight:700;color:var(--md-sys-color-on-surface)">V2云</div>
+            <div style="display:flex;gap:6px;margin-top:2px">
+              <span class="date-badge" style="font-size:0.7rem;padding:2px 6px">测速</span>
+              <span class="date-badge" style="font-size:0.7rem;padding:2px 6px">方案</span>
+              <span class="date-badge" style="font-size:0.7rem;padding:2px 6px">节点</span>
+            </div>
+          </div>
+        </div>
+        <p style="font-size:0.88rem;color:var(--md-sys-color-on-surface-variant);line-height:1.5;margin-bottom:16px;min-height:42px">
+          开始探索新的世界
+        </p>
+      </div>
+      <div style="display:flex;gap:8px">
+        <a href="/sponsor/sponsor_6.html" class="btn-primary" style="flex:1;justify-content:center;font-size:0.88rem;padding:8px 12px">
+          <span>查看详情</span>
+        </a>
+        <a href="https://www.v2board.co/#/register?code=ghm3FpGN" target="_blank" rel="noopener" class="btn-secondary" style="padding:8px 12px;border-radius:var(--radius-full)" title="直达官网">
+          <span class="material-symbols-outlined" style="font-size:18px">open_in_new</span>
+        </a>
+      </div>
+    </div>
+    
+    <div class="plan-card" style="padding:20px;display:flex;flex-direction:column;justify-content:space-between">
+      <div>
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+          <img src="/assets/images/sponsors/Nanocloud_logo.png" alt="Nanocloud" style="width:48px;height:48px;object-fit:contain;border-radius:8px;background:var(--md-sys-color-surface-container);padding:2px">
+          <div>
+            <div style="font-size:1.15rem;font-weight:700;color:var(--md-sys-color-on-surface)">Nanocloud</div>
+            <div style="display:flex;gap:6px;margin-top:2px">
+              <span class="date-badge" style="font-size:0.7rem;padding:2px 6px">测速</span>
+              <span class="date-badge" style="font-size:0.7rem;padding:2px 6px">方案</span>
+              <span class="date-badge" style="font-size:0.7rem;padding:2px 6px">节点</span>
+            </div>
+          </div>
+        </div>
+        <p style="font-size:0.88rem;color:var(--md-sys-color-on-surface-variant);line-height:1.5;margin-bottom:16px;min-height:42px">
+          长期以来我们都是亏本运营！节点质量同价位找不到第二家,希望可以多向朋友推荐我们。
+        </p>
+      </div>
+      <div style="display:flex;gap:8px">
+        <a href="/sponsor/sponsor_7.html" class="btn-primary" style="flex:1;justify-content:center;font-size:0.88rem;padding:8px 12px">
+          <span>查看详情</span>
+        </a>
+        <a href="https://edu.yuque.men/#/register?code=OLC0tpNy" target="_blank" rel="noopener" class="btn-secondary" style="padding:8px 12px;border-radius:var(--radius-full)" title="直达官网">
+          <span class="material-symbols-outlined" style="font-size:18px">open_in_new</span>
+        </a>
+      </div>
+    </div>
+    
+    <div class="plan-card" style="padding:20px;display:flex;flex-direction:column;justify-content:space-between">
+      <div>
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+          <img src="/assets/images/sponsors/VMSSR_logo.png" alt="VMSSR" style="width:48px;height:48px;object-fit:contain;border-radius:8px;background:var(--md-sys-color-surface-container);padding:2px">
+          <div>
+            <div style="font-size:1.15rem;font-weight:700;color:var(--md-sys-color-on-surface)">VMSSR</div>
+            <div style="display:flex;gap:6px;margin-top:2px">
+              <span class="date-badge" style="font-size:0.7rem;padding:2px 6px">测速</span>
+              <span class="date-badge" style="font-size:0.7rem;padding:2px 6px">方案</span>
+              <span class="date-badge" style="font-size:0.7rem;padding:2px 6px">节点</span>
+            </div>
+          </div>
+        </div>
+        <p style="font-size:0.88rem;color:var(--md-sys-color-on-surface-variant);line-height:1.5;margin-bottom:16px;min-height:42px">
+          VMSSR - 全球中继网络
+        </p>
+      </div>
+      <div style="display:flex;gap:8px">
+        <a href="/sponsor/sponsor_8.html" class="btn-primary" style="flex:1;justify-content:center;font-size:0.88rem;padding:8px 12px">
+          <span>查看详情</span>
+        </a>
+        <a href="https://store.vmssr.cc/#/register?code=muM7RE3f" target="_blank" rel="noopener" class="btn-secondary" style="padding:8px 12px;border-radius:var(--radius-full)" title="直达官网">
+          <span class="material-symbols-outlined" style="font-size:18px">open_in_new</span>
+        </a>
+      </div>
+    </div>
+    
+    <div class="plan-card" style="padding:20px;display:flex;flex-direction:column;justify-content:space-between">
+      <div>
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+          <img src="/assets/images/sponsors/EteralNetwork_logo.png" alt="EteralNetwork" style="width:48px;height:48px;object-fit:contain;border-radius:8px;background:var(--md-sys-color-surface-container);padding:2px">
+          <div>
+            <div style="font-size:1.15rem;font-weight:700;color:var(--md-sys-color-on-surface)">EteralNetwork</div>
+            <div style="display:flex;gap:6px;margin-top:2px">
+              <span class="date-badge" style="font-size:0.7rem;padding:2px 6px">测速</span>
+              <span class="date-badge" style="font-size:0.7rem;padding:2px 6px">方案</span>
+              <span class="date-badge" style="font-size:0.7rem;padding:2px 6px">节点</span>
+            </div>
+          </div>
+        </div>
+        <p style="font-size:0.88rem;color:var(--md-sys-color-on-surface-variant);line-height:1.5;margin-bottom:16px;min-height:42px">
+          Eteral Network - 你的网络安全之选
+        </p>
+      </div>
+      <div style="display:flex;gap:8px">
+        <a href="/sponsor/sponsor_9.html" class="btn-primary" style="flex:1;justify-content:center;font-size:0.88rem;padding:8px 12px">
+          <span>查看详情</span>
+        </a>
+        <a href="https://etcloud.top/#/register?code=TDoLChjA" target="_blank" rel="noopener" class="btn-secondary" style="padding:8px 12px;border-radius:var(--radius-full)" title="直达官网">
+          <span class="material-symbols-outlined" style="font-size:18px">open_in_new</span>
+        </a>
+      </div>
+    </div>
+    
+    <div class="plan-card" style="padding:20px;display:flex;flex-direction:column;justify-content:space-between">
+      <div>
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+          <img src="/assets/images/sponsors/baimituanzi_logo.jpg" alt="米白云" style="width:48px;height:48px;object-fit:contain;border-radius:8px;background:var(--md-sys-color-surface-container);padding:2px">
+          <div>
+            <div style="font-size:1.15rem;font-weight:700;color:var(--md-sys-color-on-surface)">米白云</div>
+            <div style="display:flex;gap:6px;margin-top:2px">
+              <span class="date-badge" style="font-size:0.7rem;padding:2px 6px">测速</span>
+              <span class="date-badge" style="font-size:0.7rem;padding:2px 6px">方案</span>
+              <span class="date-badge" style="font-size:0.7rem;padding:2px 6px">节点</span>
+            </div>
+          </div>
+        </div>
+        <p style="font-size:0.88rem;color:var(--md-sys-color-on-surface-variant);line-height:1.5;margin-bottom:16px;min-height:42px">
+          米白云 - 致力于提供稳定高速的互联网服务
+        </p>
+      </div>
+      <div style="display:flex;gap:8px">
+        <a href="/sponsor/sponsor_10.html" class="btn-primary" style="flex:1;justify-content:center;font-size:0.88rem;padding:8px 12px">
+          <span>查看详情</span>
+        </a>
+        <a href="https://www.mibai.cloud/#/register?code=frLYhLyi" target="_blank" rel="noopener" class="btn-secondary" style="padding:8px 12px;border-radius:var(--radius-full)" title="直达官网">
+          <span class="material-symbols-outlined" style="font-size:18px">open_in_new</span>
+        </a>
+      </div>
+    </div>
+    
+    <div class="plan-card" style="padding:20px;display:flex;flex-direction:column;justify-content:space-between">
+      <div>
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+          <img src="/assets/images/sponsors/iocone_logo.png" alt="万达云" style="width:48px;height:48px;object-fit:contain;border-radius:8px;background:var(--md-sys-color-surface-container);padding:2px">
+          <div>
+            <div style="font-size:1.15rem;font-weight:700;color:var(--md-sys-color-on-surface)">万达云</div>
+            <div style="display:flex;gap:6px;margin-top:2px">
+              <span class="date-badge" style="font-size:0.7rem;padding:2px 6px">测速</span>
+              <span class="date-badge" style="font-size:0.7rem;padding:2px 6px">方案</span>
+              <span class="date-badge" style="font-size:0.7rem;padding:2px 6px">节点</span>
+            </div>
+          </div>
+        </div>
+        <p style="font-size:0.88rem;color:var(--md-sys-color-on-surface-variant);line-height:1.5;margin-bottom:16px;min-height:42px">
+          万达云 - 多地区自有硬件服务器，多种方案应对一切可能发生的网络中断问题
+        </p>
+      </div>
+      <div style="display:flex;gap:8px">
+        <a href="/sponsor/sponsor_11.html" class="btn-primary" style="flex:1;justify-content:center;font-size:0.88rem;padding:8px 12px">
+          <span>查看详情</span>
+        </a>
+        <a href="https://www.z1z1.top/zgq" target="_blank" rel="noopener" class="btn-secondary" style="padding:8px 12px;border-radius:var(--radius-full)" title="直达官网">
+          <span class="material-symbols-outlined" style="font-size:18px">open_in_new</span>
+        </a>
+      </div>
+    </div>
+    
+    <div class="plan-card" style="padding:20px;display:flex;flex-direction:column;justify-content:space-between">
+      <div>
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+          <img src="/assets/images/sponsors/qingwuyun_logo.png" alt="轻舞云" style="width:48px;height:48px;object-fit:contain;border-radius:8px;background:var(--md-sys-color-surface-container);padding:2px">
+          <div>
+            <div style="font-size:1.15rem;font-weight:700;color:var(--md-sys-color-on-surface)">轻舞云</div>
+            <div style="display:flex;gap:6px;margin-top:2px">
+              <span class="date-badge" style="font-size:0.7rem;padding:2px 6px">测速</span>
+              <span class="date-badge" style="font-size:0.7rem;padding:2px 6px">方案</span>
+              <span class="date-badge" style="font-size:0.7rem;padding:2px 6px">节点</span>
+            </div>
+          </div>
+        </div>
+        <p style="font-size:0.88rem;color:var(--md-sys-color-on-surface-variant);line-height:1.5;margin-bottom:16px;min-height:42px">
+          轻舞云 - 历经5年研发，为大中华地区用户保护私隐，逾越网路封锁。
+        </p>
+      </div>
+      <div style="display:flex;gap:8px">
+        <a href="/sponsor/sponsor_12.html" class="btn-primary" style="flex:1;justify-content:center;font-size:0.88rem;padding:8px 12px">
+          <span>查看详情</span>
+        </a>
+        <a href="https://www.qingwuyun.cc/#/register?code=0U0mAppB" target="_blank" rel="noopener" class="btn-secondary" style="padding:8px 12px;border-radius:var(--radius-full)" title="直达官网">
+          <span class="material-symbols-outlined" style="font-size:18px">open_in_new</span>
+        </a>
+      </div>
+    </div>
+    
+    <div class="plan-card" style="padding:20px;display:flex;flex-direction:column;justify-content:space-between">
+      <div>
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+          <img src="/assets/images/sponsors/qingyunti_logo.png" alt="青云梯" style="width:48px;height:48px;object-fit:contain;border-radius:8px;background:var(--md-sys-color-surface-container);padding:2px">
+          <div>
+            <div style="font-size:1.15rem;font-weight:700;color:var(--md-sys-color-on-surface)">青云梯</div>
+            <div style="display:flex;gap:6px;margin-top:2px">
+              <span class="date-badge" style="font-size:0.7rem;padding:2px 6px">测速</span>
+              <span class="date-badge" style="font-size:0.7rem;padding:2px 6px">方案</span>
+              <span class="date-badge" style="font-size:0.7rem;padding:2px 6px">节点</span>
+            </div>
+          </div>
+        </div>
+        <p style="font-size:0.88rem;color:var(--md-sys-color-on-surface-variant);line-height:1.5;margin-bottom:16px;min-height:42px">
+          青云梯：五年老牌专线，性价比高节点多，低至每个月八元的专线
+        </p>
+      </div>
+      <div style="display:flex;gap:8px">
+        <a href="/sponsor/sponsor_13.html" class="btn-primary" style="flex:1;justify-content:center;font-size:0.88rem;padding:8px 12px">
+          <span>查看详情</span>
+        </a>
+        <a href="https://zgqinc.qytvipaff.cc/register?aff=xogVOEJn" target="_blank" rel="noopener" class="btn-secondary" style="padding:8px 12px;border-radius:var(--radius-full)" title="直达官网">
+          <span class="material-symbols-outlined" style="font-size:18px">open_in_new</span>
+        </a>
+      </div>
+    </div>
+    
+    <div class="plan-card" style="padding:20px;display:flex;flex-direction:column;justify-content:space-between">
+      <div>
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+          <img src="/assets/images/sponsors/ctzcloud_logo.jpg" alt="奥创" style="width:48px;height:48px;object-fit:contain;border-radius:8px;background:var(--md-sys-color-surface-container);padding:2px">
+          <div>
+            <div style="font-size:1.15rem;font-weight:700;color:var(--md-sys-color-on-surface)">奥创</div>
+            <div style="display:flex;gap:6px;margin-top:2px">
+              <span class="date-badge" style="font-size:0.7rem;padding:2px 6px">测速</span>
+              <span class="date-badge" style="font-size:0.7rem;padding:2px 6px">方案</span>
+              <span class="date-badge" style="font-size:0.7rem;padding:2px 6px">节点</span>
+            </div>
+          </div>
+        </div>
+        <p style="font-size:0.88rem;color:var(--md-sys-color-on-surface-variant);line-height:1.5;margin-bottom:16px;min-height:42px">
+          全球网络中继服务，随时随处尽情使用
+        </p>
+      </div>
+      <div style="display:flex;gap:8px">
+        <a href="/sponsor/sponsor_14.html" class="btn-primary" style="flex:1;justify-content:center;font-size:0.88rem;padding:8px 12px">
+          <span>查看详情</span>
+        </a>
+        <a href="https://china.ctzcloud.org/auth/register?code=zmuY" target="_blank" rel="noopener" class="btn-secondary" style="padding:8px 12px;border-radius:var(--radius-full)" title="直达官网">
+          <span class="material-symbols-outlined" style="font-size:18px">open_in_new</span>
+        </a>
+      </div>
+    </div>
+    
+    <div class="plan-card" style="padding:20px;display:flex;flex-direction:column;justify-content:space-between">
+      <div>
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+          <img src="/assets/images/sponsors/" alt="瀚海舟" style="width:48px;height:48px;object-fit:contain;border-radius:8px;background:var(--md-sys-color-surface-container);padding:2px">
+          <div>
+            <div style="font-size:1.15rem;font-weight:700;color:var(--md-sys-color-on-surface)">瀚海舟</div>
+            <div style="display:flex;gap:6px;margin-top:2px">
+              <span class="date-badge" style="font-size:0.7rem;padding:2px 6px">测速</span>
+              <span class="date-badge" style="font-size:0.7rem;padding:2px 6px">方案</span>
+              <span class="date-badge" style="font-size:0.7rem;padding:2px 6px">节点</span>
+            </div>
+          </div>
+        </div>
+        <p style="font-size:0.88rem;color:var(--md-sys-color-on-surface-variant);line-height:1.5;margin-bottom:16px;min-height:42px">
+          瀚海舟，助您航行数据汪洋，安全隐匿，自由通达全球网络。
+        </p>
+      </div>
+      <div style="display:flex;gap:8px">
+        <a href="/sponsor/sponsor_15.html" class="btn-primary" style="flex:1;justify-content:center;font-size:0.88rem;padding:8px 12px">
+          <span>查看详情</span>
+        </a>
+        <a href="https://home5.sci-lab.top/#/register?code=qBENZD6K" target="_blank" rel="noopener" class="btn-secondary" style="padding:8px 12px;border-radius:var(--radius-full)" title="直达官网">
+          <span class="material-symbols-outlined" style="font-size:18px">open_in_new</span>
+        </a>
+      </div>
+    </div>
+    
+    <div class="plan-card" style="padding:20px;display:flex;flex-direction:column;justify-content:space-between">
+      <div>
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+          <img src="/assets/images/sponsors/galaxycloud_logo.png" alt="银河云" style="width:48px;height:48px;object-fit:contain;border-radius:8px;background:var(--md-sys-color-surface-container);padding:2px">
+          <div>
+            <div style="font-size:1.15rem;font-weight:700;color:var(--md-sys-color-on-surface)">银河云</div>
+            <div style="display:flex;gap:6px;margin-top:2px">
+              <span class="date-badge" style="font-size:0.7rem;padding:2px 6px">测速</span>
+              <span class="date-badge" style="font-size:0.7rem;padding:2px 6px">方案</span>
+              <span class="date-badge" style="font-size:0.7rem;padding:2px 6px">节点</span>
+            </div>
+          </div>
+        </div>
+        <p style="font-size:0.88rem;color:var(--md-sys-color-on-surface-variant);line-height:1.5;margin-bottom:16px;min-height:42px">
+          银河云：新加坡海外团队大机房产品，性价比专线
+        </p>
+      </div>
+      <div style="display:flex;gap:8px">
+        <a href="/sponsor/sponsor_16.html" class="btn-primary" style="flex:1;justify-content:center;font-size:0.88rem;padding:8px 12px">
+          <span>查看详情</span>
+        </a>
+        <a href="https://zgqinc.galaxyvipaff01.cc/register?aff=VaNJJsb8" target="_blank" rel="noopener" class="btn-secondary" style="padding:8px 12px;border-radius:var(--radius-full)" title="直达官网">
+          <span class="material-symbols-outlined" style="font-size:18px">open_in_new</span>
+        </a>
+      </div>
+    </div>
+    
+    <div class="plan-card" style="padding:20px;display:flex;flex-direction:column;justify-content:space-between">
+      <div>
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+          <img src="/assets/images/sponsors/tutuyun_logo.svg" alt="兔兔云" style="width:48px;height:48px;object-fit:contain;border-radius:8px;background:var(--md-sys-color-surface-container);padding:2px">
+          <div>
+            <div style="font-size:1.15rem;font-weight:700;color:var(--md-sys-color-on-surface)">兔兔云</div>
+            <div style="display:flex;gap:6px;margin-top:2px">
+              <span class="date-badge" style="font-size:0.7rem;padding:2px 6px">测速</span>
+              <span class="date-badge" style="font-size:0.7rem;padding:2px 6px">方案</span>
+              <span class="date-badge" style="font-size:0.7rem;padding:2px 6px">节点</span>
+            </div>
+          </div>
+        </div>
+        <p style="font-size:0.88rem;color:var(--md-sys-color-on-surface-variant);line-height:1.5;margin-bottom:16px;min-height:42px">
+          兔兔云：让信息流动无阻碍，让世界更紧密相连！
+        </p>
+      </div>
+      <div style="display:flex;gap:8px">
+        <a href="/sponsor/sponsor_17.html" class="btn-primary" style="flex:1;justify-content:center;font-size:0.88rem;padding:8px 12px">
+          <span>查看详情</span>
+        </a>
+        <a href="https://www.tutuyun.uk/auth/register?code=HXJfCG4B" target="_blank" rel="noopener" class="btn-secondary" style="padding:8px 12px;border-radius:var(--radius-full)" title="直达官网">
+          <span class="material-symbols-outlined" style="font-size:18px">open_in_new</span>
+        </a>
+      </div>
+    </div>
+    
+    <div class="plan-card" style="padding:20px;display:flex;flex-direction:column;justify-content:space-between">
+      <div>
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+          <img src="/assets/images/sponsors/FurYun_logo.png" alt="FurYun" style="width:48px;height:48px;object-fit:contain;border-radius:8px;background:var(--md-sys-color-surface-container);padding:2px">
+          <div>
+            <div style="font-size:1.15rem;font-weight:700;color:var(--md-sys-color-on-surface)">FurYun</div>
+            <div style="display:flex;gap:6px;margin-top:2px">
+              <span class="date-badge" style="font-size:0.7rem;padding:2px 6px">测速</span>
+              <span class="date-badge" style="font-size:0.7rem;padding:2px 6px">方案</span>
+              <span class="date-badge" style="font-size:0.7rem;padding:2px 6px">节点</span>
+            </div>
+          </div>
+        </div>
+        <p style="font-size:0.88rem;color:var(--md-sys-color-on-surface-variant);line-height:1.5;margin-bottom:16px;min-height:42px">
+          FurYun
+        </p>
+      </div>
+      <div style="display:flex;gap:8px">
+        <a href="/sponsor/sponsor_18.html" class="btn-primary" style="flex:1;justify-content:center;font-size:0.88rem;padding:8px 12px">
+          <span>查看详情</span>
+        </a>
+        <a href="https://www.furyun.org/#/register?code=ILy6UUUL" target="_blank" rel="noopener" class="btn-secondary" style="padding:8px 12px;border-radius:var(--radius-full)" title="直达官网">
+          <span class="material-symbols-outlined" style="font-size:18px">open_in_new</span>
+        </a>
+      </div>
+    </div>
+    
+    <div class="plan-card" style="padding:20px;display:flex;flex-direction:column;justify-content:space-between">
+      <div>
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+          <img src="/assets/images/sponsors/xvaypin_logo.png" alt="夏枫一汀" style="width:48px;height:48px;object-fit:contain;border-radius:8px;background:var(--md-sys-color-surface-container);padding:2px">
+          <div>
+            <div style="font-size:1.15rem;font-weight:700;color:var(--md-sys-color-on-surface)">夏枫一汀</div>
+            <div style="display:flex;gap:6px;margin-top:2px">
+              <span class="date-badge" style="font-size:0.7rem;padding:2px 6px">测速</span>
+              <span class="date-badge" style="font-size:0.7rem;padding:2px 6px">方案</span>
+              <span class="date-badge" style="font-size:0.7rem;padding:2px 6px">节点</span>
+            </div>
+          </div>
+        </div>
+        <p style="font-size:0.88rem;color:var(--md-sys-color-on-surface-variant);line-height:1.5;margin-bottom:16px;min-height:42px">
+          夏枫一汀
+        </p>
+      </div>
+      <div style="display:flex;gap:8px">
+        <a href="/sponsor/sponsor_19.html" class="btn-primary" style="flex:1;justify-content:center;font-size:0.88rem;padding:8px 12px">
+          <span>查看详情</span>
+        </a>
+        <a href="https://xvaypin778.ccwu.cc/#/register?code=UzrZy10W" target="_blank" rel="noopener" class="btn-secondary" style="padding:8px 12px;border-radius:var(--radius-full)" title="直达官网">
+          <span class="material-symbols-outlined" style="font-size:18px">open_in_new</span>
+        </a>
+      </div>
+    </div>
+    
+</div>
+
+<div class="disclaimer-card">
+  <strong>ℹ️ 选购建议与安全须知：</strong><br>
+  建议优先考虑月付/季付套餐体验，满意后再根据需求续费。保留两个不同服务商节点作为互补备份。
+</div>
+
+  </main>
+  
+  <div class="lightbox-modal" id="lightboxModal" onclick="this.classList.remove('active')">
+    <img id="lightboxImg" src="" alt="Speedtest Full">
+  </div>
+
+  <script>
+    // Theme Switcher
+    const savedTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    document.documentElement.setAttribute('data-theme', savedTheme);
+    const themeIcon = document.getElementById('themeIcon');
+    if (themeIcon) themeIcon.textContent = savedTheme === 'dark' ? 'light_mode' : 'dark_mode';
+
+    document.getElementById('themeToggleBtn')?.addEventListener('click', () => {
+      const current = document.documentElement.getAttribute('data-theme') || 'light';
+      const next = current === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('theme', next);
+      if (themeIcon) themeIcon.textContent = next === 'dark' ? 'light_mode' : 'dark_mode';
+    });
+
+    // Image Zoom Lightbox
+    document.querySelectorAll('.speedtest-img').forEach(img => {
+      img.addEventListener('click', () => {
+        const modal = document.getElementById('lightboxModal');
+        const mImg = document.getElementById('lightboxImg');
+        mImg.src = img.src;
+        modal.classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>

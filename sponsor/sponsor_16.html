@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>银河云 - 赞助商详情 - OverTheFirewall</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Noto+Sans+SC:wght@400;500;700&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined">
+  <style>
+    :root {
+      --md-sys-color-primary: #0061A4;
+      --md-sys-color-on-primary: #FFFFFF;
+      --md-sys-color-primary-container: #D1E4FF;
+      --md-sys-color-on-primary-container: #001D36;
+      --md-sys-color-secondary: #535F70;
+      --md-sys-color-secondary-container: #D7E3F7;
+      --md-sys-color-on-secondary-container: #101C2B;
+      --md-sys-color-surface: #FDFDFF;
+      --md-sys-color-on-surface: #1A1C1E;
+      --md-sys-color-surface-variant: #DFE2EB;
+      --md-sys-color-on-surface-variant: #43474E;
+      --md-sys-color-outline: #73777F;
+      --md-sys-color-outline-variant: #C3C7CF;
+      --md-sys-color-background: #F8F9FA;
+      --md-sys-color-on-background: #1A1C1E;
+      --md-sys-color-surface-container: #EDEDF1;
+      --md-sys-color-surface-container-high: #E7E8EC;
+      --md-sys-color-surface-container-low: #F3F3F7;
+      --radius-sm: 8px;
+      --radius-md: 16px;
+      --radius-lg: 24px;
+      --radius-full: 9999px;
+      --shadow-1: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.12);
+      --shadow-2: 0 4px 12px rgba(0,0,0,0.08), 0 2px 6px rgba(0,0,0,0.06);
+    }
+
+    [data-theme="dark"] {
+      --md-sys-color-primary: #9ECAFF;
+      --md-sys-color-on-primary: #003258;
+      --md-sys-color-primary-container: #00497D;
+      --md-sys-color-on-primary-container: #D1E4FF;
+      --md-sys-color-secondary: #BBC7DB;
+      --md-sys-color-secondary-container: #3B4858;
+      --md-sys-color-on-secondary-container: #D7E3F7;
+      --md-sys-color-surface: #1A1C1E;
+      --md-sys-color-on-surface: #E2E2E6;
+      --md-sys-color-surface-variant: #43474E;
+      --md-sys-color-on-surface-variant: #C3C7CF;
+      --md-sys-color-outline: #8D9199;
+      --md-sys-color-outline-variant: #43474E;
+      --md-sys-color-background: #121316;
+      --md-sys-color-on-background: #E2E2E6;
+      --md-sys-color-surface-container: #202224;
+      --md-sys-color-surface-container-high: #2B2D30;
+      --md-sys-color-surface-container-low: #1C1E20;
+      --shadow-1: 0 1px 3px rgba(0,0,0,0.3);
+      --shadow-2: 0 4px 16px rgba(0,0,0,0.4);
+      color-scheme: dark;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: 'Noto Sans SC', 'Roboto', system-ui, -apple-system, sans-serif;
+      background: var(--md-sys-color-background);
+      color: var(--md-sys-color-on-background);
+      min-height: 100vh;
+      line-height: 1.6;
+      padding-bottom: 60px;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    /* Top App Bar */
+    .top-app-bar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 64px;
+      padding: 0 16px;
+      background: color-mix(in srgb, var(--md-sys-color-surface) 88%, transparent);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 40%, transparent);
+    }
+
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      border-radius: var(--radius-full);
+      border: 1px solid var(--md-sys-color-outline-variant);
+      background: var(--md-sys-color-surface);
+      color: var(--md-sys-color-on-surface);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.2,0,0,1);
+    }
+    .back-btn:hover {
+      background: var(--md-sys-color-surface-container);
+      transform: translateX(-2px);
+    }
+
+    .theme-toggle-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: none;
+      background: var(--md-sys-color-surface-container);
+      color: var(--md-sys-color-on-surface);
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .theme-toggle-btn:hover {
+      background: var(--md-sys-color-surface-container-high);
+    }
+
+    /* Container */
+    .page-container {
+      max-width: 960px;
+      margin: 24px auto 0;
+      padding: 0 16px;
+    }
+
+    /* Hero Card */
+    .hero-card {
+      background: var(--md-sys-color-surface);
+      border-radius: var(--radius-lg);
+      padding: 32px 24px;
+      text-align: center;
+      box-shadow: var(--shadow-2);
+      border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 40%, transparent);
+      margin-bottom: 24px;
+    }
+
+    .sponsor-logo {
+      width: 96px;
+      height: 96px;
+      object-fit: contain;
+      border-radius: var(--radius-md);
+      padding: 6px;
+      background: var(--md-sys-color-surface-container);
+      margin-bottom: 16px;
+      box-shadow: var(--shadow-1);
+    }
+
+    .sponsor-title {
+      font-size: 1.85rem;
+      font-weight: 700;
+      color: var(--md-sys-color-on-surface);
+      margin-bottom: 8px;
+    }
+
+    .sponsor-slogan {
+      font-size: 1.05rem;
+      color: var(--md-sys-color-primary);
+      font-weight: 500;
+      max-width: 680px;
+      margin: 0 auto 20px;
+      line-height: 1.5;
+    }
+
+    .sponsor-intro-list {
+      text-align: left;
+      max-width: 720px;
+      margin: 0 auto 24px;
+      background: var(--md-sys-color-surface-container-low);
+      padding: 16px 20px;
+      border-radius: var(--radius-md);
+      font-size: 0.95rem;
+      color: var(--md-sys-color-on-surface-variant);
+    }
+    .sponsor-intro-list p {
+      margin-bottom: 8px;
+    }
+    .sponsor-intro-list p:last-child {
+      margin-bottom: 0;
+    }
+
+    .cta-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--md-sys-color-primary);
+      color: var(--md-sys-color-on-primary);
+      padding: 12px 28px;
+      border-radius: var(--radius-full);
+      font-size: 1.05rem;
+      font-weight: 700;
+      text-decoration: none;
+      box-shadow: 0 4px 12px color-mix(in srgb, var(--md-sys-color-primary) 40%, transparent);
+      transition: all 0.2s cubic-bezier(0.2,0,0,1);
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px color-mix(in srgb, var(--md-sys-color-primary) 50%, transparent);
+    }
+
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--md-sys-color-secondary-container);
+      color: var(--md-sys-color-on-secondary-container);
+      padding: 12px 20px;
+      border-radius: var(--radius-full);
+      font-size: 0.95rem;
+      font-weight: 500;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+    .btn-secondary:hover {
+      background: color-mix(in srgb, var(--md-sys-color-secondary-container) 85%, var(--md-sys-color-on-secondary-container) 15%);
+    }
+
+    /* Section Card */
+    .section-card {
+      background: var(--md-sys-color-surface);
+      border-radius: var(--radius-lg);
+      padding: 28px 24px;
+      margin-bottom: 24px;
+      box-shadow: var(--shadow-1);
+      border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 40%, transparent);
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 2px solid var(--md-sys-color-surface-container);
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: var(--md-sys-color-on-surface);
+    }
+    .section-title .material-symbols-outlined {
+      color: var(--md-sys-color-primary);
+    }
+
+    .date-badge {
+      font-size: 0.8rem;
+      padding: 4px 10px;
+      border-radius: var(--radius-full);
+      background: var(--md-sys-color-surface-container);
+      color: var(--md-sys-color-on-surface-variant);
+      font-weight: 500;
+    }
+
+    /* Speedtest */
+    .speedtest-container {
+      text-align: center;
+    }
+    .speedtest-img {
+      max-width: 100%;
+      height: auto;
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-1);
+      cursor: zoom-in;
+      transition: transform 0.2s;
+    }
+    .speedtest-img:hover {
+      transform: scale(1.01);
+    }
+
+    /* Plans Grid */
+    .plans-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px;
+    }
+
+    .plan-card {
+      background: var(--md-sys-color-surface-container-low);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 40%, transparent);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .plan-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-2);
+      border-color: var(--md-sys-color-primary);
+    }
+
+    .plan-name {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--md-sys-color-primary);
+      margin-bottom: 8px;
+    }
+
+    .plan-price {
+      font-size: 1.45rem;
+      font-weight: 800;
+      color: var(--md-sys-color-on-surface);
+      margin-bottom: 12px;
+    }
+    .plan-price small {
+      font-size: 0.85rem;
+      font-weight: 400;
+      color: var(--md-sys-color-on-surface-variant);
+    }
+
+    .plan-features {
+      list-style: none;
+      font-size: 0.88rem;
+      color: var(--md-sys-color-on-surface-variant);
+      margin-bottom: 16px;
+      line-height: 1.7;
+    }
+    .plan-features li {
+      display: flex;
+      align-items: flex-start;
+      gap: 6px;
+      margin-bottom: 4px;
+    }
+
+    /* Nodes Grid */
+    .nodes-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 10px;
+    }
+
+    .node-item {
+      background: var(--md-sys-color-surface-container-low);
+      padding: 10px 14px;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.88rem;
+      border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 30%, transparent);
+    }
+
+    .node-name {
+      font-weight: 500;
+      color: var(--md-sys-color-on-surface);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .node-rate {
+      font-size: 0.75rem;
+      font-weight: 700;
+      background: var(--md-sys-color-primary-container);
+      color: var(--md-sys-color-on-primary-container);
+      padding: 2px 6px;
+      border-radius: var(--radius-sm);
+      margin-left: 6px;
+      flex-shrink: 0;
+    }
+
+    /* Disclaimer */
+    .disclaimer-card {
+      background: var(--md-sys-color-surface-container-low);
+      padding: 16px 20px;
+      border-radius: var(--radius-md);
+      font-size: 0.85rem;
+      color: var(--md-sys-color-on-surface-variant);
+      line-height: 1.6;
+      border-left: 4px solid var(--md-sys-color-primary);
+    }
+
+    /* Lightbox modal */
+    .lightbox-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      background: rgba(0,0,0,0.85);
+      backdrop-filter: blur(8px);
+      align-items: center;
+      justify-content: center;
+      cursor: zoom-out;
+    }
+    .lightbox-modal.active {
+      display: flex;
+    }
+    .lightbox-modal img {
+      max-width: 92vw;
+      max-height: 92vh;
+      border-radius: var(--radius-md);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+    }
+
+    @media (max-width: 600px) {
+      .hero-card { padding: 24px 16px; }
+      .sponsor-title { font-size: 1.5rem; }
+      .btn-primary { width: 100%; justify-content: center; }
+      .plans-grid { grid-template-columns: 1fr; }
+      .nodes-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header class="top-app-bar">
+    <a href="javascript:void(0)" onclick="if(history.length>1){history.back()}else{window.location.href='/'}" class="back-btn">
+      <span class="material-symbols-outlined" style="font-size:1.2rem">arrow_back</span>
+      <span>返回</span>
+    </a>
+    <div style="display:flex;align-items:center;gap:8px">
+      <a href="/sponsor/" class="back-btn" style="border-radius:var(--radius-full)">
+        <span class="material-symbols-outlined" style="font-size:1.1rem">apps</span>
+        <span>赞助商大全</span>
+      </a>
+      <button class="theme-toggle-btn" id="themeToggleBtn" title="切换暗色/亮色模式">
+        <span class="material-symbols-outlined" id="themeIcon">dark_mode</span>
+      </button>
+    </div>
+  </header>
+  <main class="page-container">
+
+    <div class="hero-card">
+      <img class="sponsor-logo" src="/assets/images/sponsors/galaxycloud_logo.png" alt="银河云 Logo">
+      <h1 class="sponsor-title">银河云</h1>
+      <p class="sponsor-slogan">银河云：新加坡海外团队大机房产品，性价比专线</p>
+      
+      <div class="sponsor-intro-list"><p>付款方式：支付宝，微信，usdt（vx/usdt需要找官网客服）</p><p>专线协议：Shadowsocks</p><p>国际节点：香港x10、台湾x5、新加坡x5、日本X5、美国x5、马来西亚x2、越南x2、菲律宾x2、泰国x2、英国x2、阿根廷x2、土耳其X2</p><p>优缺点：
+    采用最新的超稳定trojan协议专线机场，全天候任何时期都稳定不掉线
+    测试油管4k高峰期无压力，多媒体全解锁，下载视频可以跑满带宽
+    超优质的流媒体和 ChatGPT 解锁能力。晚高峰可流畅观看 YouTube 4K视频。
+    性价比在专线机场里拉满了，可作主力机场，年付小包低使用率可选，换有不限时套餐，敏感期不掉线
+    节点丰富。</p></div>
+
+      <div class="cta-group">
+        <a href="https://zgqinc.galaxyvipaff01.cc/register?aff=VaNJJsb8" target="_blank" rel="noopener" class="btn-primary">
+          <span class="material-symbols-outlined">open_in_new</span>
+          <span>前往官网注册 / 选购</span>
+        </a>
+        
+      </div>
+    </div>
+
+    
+        <section class="section-card">
+          <div class="section-header">
+            <div class="section-title">
+              <span class="material-symbols-outlined">speed</span>
+              <span>实测网络测速与晚高峰表现</span>
+            </div>
+            <span class="date-badge">📅 2024年8月18日更新</span>
+          </div>
+          <div class="speedtest-container">
+            <img class="speedtest-img" src="/assets/images/sponsors/" alt="银河云 测速结果" loading="lazy" style="margin-bottom:12px">
+          </div>
+        </section>
+        
+
+    
+            <section class="section-card">
+              <div class="section-header">
+                <div class="section-title">
+                  <span class="material-symbols-outlined">inventory_2</span>
+                  <span>方案与价格列表</span>
+                </div>
+                <span class="date-badge">📅 2025年6月23日更新</span>
+              </div>
+              <div class="plans-grid">
+                
+                <div class="plan-card">
+                  <div>
+                    <div class="plan-name">轻量用户年付礼包套餐爆款限时热销</div>
+                    <div class="plan-price">¥98 / 年付</div>
+                    <ul class="plan-features"><li><span class='material-symbols-outlined' style='font-size:16px;color:var(--md-sys-color-primary)'>check_circle</span> <span>流量明细</span></li><li><span class='material-symbols-outlined' style='font-size:16px;color:var(--md-sys-color-primary)'>check_circle</span> <span>每月50G流量，全年有效，适用于低使用率用户</span></li><li><span class='material-symbols-outlined' style='font-size:16px;color:var(--md-sys-color-primary)'>check_circle</span> <span>线路优势</span></li><li><span class='material-symbols-outlined' style='font-size:16px;color:var(--md-sys-color-primary)'>check_circle</span> <span>全IPLC专线，不限速</span></li><li><span class='material-symbols-outlined' style='font-size:16px;color:var(--md-sys-color-primary)'>check_circle</span> <span>流媒体支持</span></li><li><span class='material-symbols-outlined' style='font-size:16px;color:var(--md-sys-color-primary)'>check_circle</span> <span>原生IP解锁流媒体</span></li><li><span class='material-symbols-outlined' style='font-size:16px;color:var(--md-sys-color-primary)'>check_circle</span> <span>套餐优势</span></li><li><span class='material-symbols-outlined' style='font-size:16px;color:var(--md-sys-color-primary)'>check_circle</span> <span>解锁 ChatGPT，Tiktok</span></li><li><span class='material-symbols-outlined' style='font-size:16px;color:var(--md-sys-color-primary)'>check_circle</span> <span>设备支持</span></li><li><span class='material-symbols-outlined' style='font-size:16px;color:var(--md-sys-color-primary)'>check_circle</span> <span>不限制客户端</span></li><li><span class='material-symbols-outlined' style='font-size:16px;color:var(--md-sys-color-primary)'>check_circle</span> <span>其他说明</span></li><li><span class='material-symbols-outlined' style='font-size:16px;color:var(--md-sys-color-primary)'>check_circle</span> <span>高效客服响应</span></li><li><span class='material-symbols-outlined' style='font-size:16px;color:var(--md-sys-color-primary)'>check_circle</span> <span>永久流量包不参与任何活动</span></li><li><span class='material-symbols-outlined' style='font-size:16px;color:var(--md-sys-color-primary)'>check_circle</span> <span>50GB 周期流量</span></li><li><span class='material-symbols-outlined' style='font-size:16px;color:var(--md-sys-color-primary)'>check_circle</span> <span>无限速 速率</span></li></ul>
+                  </div>
+                  <a href="https://zgqinc.galaxyvipaff01.cc/register?aff=VaNJJsb8" target="_blank" rel="noopener" class="btn-secondary" style="justify-content:center">
+                    <span>选购此方案</span>
+                    <span class="material-symbols-outlined" style="font-size:16px">arrow_forward</span>
+                  </a>
+                </div>
+                
+                <div class="plan-card">
+                  <div>
+                    <div class="plan-name">星尘套餐（Stardust Plan）</div>
+                    <div class="plan-price">¥18 / 月付</div>
+                    <ul class="plan-features"><li><span class='material-symbols-outlined' style='font-size:16px;color:var(--md-sys-color-primary)'>check_circle</span> <span>流量明细</span></li><li><span class='material-symbols-outlined' style='font-size:16px;color:var(--md-sys-color-primary)'>check_circle</span> <span>每月100G流量</span></li><li><span class='material-symbols-outlined' style='font-size:16px;color:var(--md-sys-color-primary)'>check_circle</span> <span>线路优势</span></li><li><span class='material-symbols-outlined' style='font-size:16px;color:var(--md-sys-color-primary)'>check_circle</span> <span>全IPLC专线，不限速</span></li><li><span class='material-symbols-outlined' style='font-size:16px;color:var(--md-sys-color-primary)'>check_circle</span> <span>流媒体支持</span></li><li><span class='material-symbols-outlined' style='font-size:16px;color:var(--md-sys-color-primary)'>check_circle</span> <span>原生IP解锁流媒体</span></li><li><span class='material-symbols-outlined' style='font-size:16px;color:var(--md-sys-color-primary)'>check_circle</span> <span>套餐优势</span></li><li><span class='material-symbols-outlined' style='font-size:16px;color:var(--md-sys-color-primary)'>check_circle</span> <span>解锁 ChatGPT，Tiktok</span></li><li><span class='material-symbols-outlined' style='font-size:16px;color:var(--md-sys-color-primary)'>check_circle</span> <span>设备支持</span></li><li><span class='material-symbols-outlined' style='font-size:16px;color:var(--md-sys-color-primary)'>check_circle</span> <span>不限制客户端</span></li><li><span class='material-symbols-outlined' style='font-size:16px;color:var(--md-sys-color-primary)'>check_circle</span> <span>其他说明</span></li><li><span class='material-symbols-outlined' style='font-size:16px;color:var(--md-sys-color-primary)'>check_circle</span> <span>高效客服响应</span></li><li><span class='material-symbols-outlined' style='font-size:16px;color:var(--md-sys-color-primary)'>check_circle</span> <span>季付9折、半年付8折、两年付7折、三年付6折</span></li><li><span class='material-symbols-outlined' style='font-size:16px;color:var(--md-sys-color-primary)'>check_circle</span> <span>100GB 周期流量</span></li><li><span class='material-symbols-outlined' style='font-size:16px;color:var(--md-sys-color-primary)'>check_circle</span> <span>无限速 速率</span></li></ul>
+                  </div>
+                  <a href="https://zgqinc.galaxyvipaff01.cc/register?aff=VaNJJsb8" target="_blank" rel="noopener" class="btn-secondary" style="justify-content:center">
+                    <span>选购此方案</span>
+                    <span class="material-symbols-outlined" style="font-size:16px">arrow_forward</span>
+                  </a>
+                </div>
+                
+                <div class="plan-card">
+                  <div>
+                    <div class="plan-name">行星套餐（Planet Plan）</div>
+                    <div class="plan-price">¥35 / 月付</div>
+                    <ul class="plan-features"><li><span class='material-symbols-outlined' style='font-size:16px;color:var(--md-sys-color-primary)'>check_circle</span> <span>流量明细</span></li><li><span class='material-symbols-outlined' style='font-size:16px;color:var(--md-sys-color-primary)'>check_circle</span> <span>每月200G流量</span></li><li><span class='material-symbols-outlined' style='font-size:16px;color:var(--md-sys-color-primary)'>check_circle</span> <span>线路优势</span></li><li><span class='material-symbols-outlined' style='font-size:16px;color:var(--md-sys-color-primary)'>check_circle</span> <span>全IPLC专线，不限速</span></li><li><span class='material-symbols-outlined' style='font-size:16px;color:var(--md-sys-color-primary)'>check_circle</span> <span>流媒体支持</span></li><li><span class='material-symbols-outlined' style='font-size:16px;color:var(--md-sys-color-primary)'>check_circle</span> <span>原生IP解锁流媒体</span></li><li><span class='material-symbols-outlined' style='font-size:16px;color:var(--md-sys-color-primary)'>check_circle</span> <span>套餐优势</span></li><li><span class='material-symbols-outlined' style='font-size:16px;color:var(--md-sys-color-primary)'>check_circle</span> <span>解锁 ChatGPT，Tiktok</span></li><li><span class='material-symbols-outlined' style='font-size:16px;color:var(--md-sys-color-primary)'>check_circle</span> <span>设备支持</span></li><li><span class='material-symbols-outlined' style='font-size:16px;color:var(--md-sys-color-primary)'>check_circle</span> <span>不限制客户端</span></li><li><span class='material-symbols-outlined' style='font-size:16px;color:var(--md-sys-color-primary)'>check_circle</span> <span>其他说明</span></li><li><span class='material-symbols-outlined' style='font-size:16px;color:var(--md-sys-color-primary)'>check_circle</span> <span>高效客服响应</span></li><li><span class='material-symbols-outlined' style='font-size:16px;color:var(--md-sys-color-primary)'>check_circle</span> <span>季付9折、半年付8折、两年付7折、三年付6折</span></li><li><span class='material-symbols-outlined' style='font-size:16px;color:var(--md-sys-color-primary)'>check_circle</span> <span>200GB 周期流量</span></li><li><span class='material-symbols-outlined' style='font-size:16px;color:var(--md-sys-color-primary)'>check_circle</span> <span>无限速 速率</span></li></ul>
+                  </div>
+                  <a href="https://zgqinc.galaxyvipaff01.cc/register?aff=VaNJJsb8" target="_blank" rel="noopener" class="btn-secondary" style="justify-content:center">
+                    <span>选购此方案</span>
+                    <span class="material-symbols-outlined" style="font-size:16px">arrow_forward</span>
+                  </a>
+                </div>
+                
+                <div class="plan-card">
+                  <div>
+                    <div class="plan-name">恒星套餐（Star Plan）</div>
+                    <div class="plan-price">¥70 / 月付</div>
+                    <ul class="plan-features"><li><span class='material-symbols-outlined' style='font-size:16px;color:var(--md-sys-color-primary)'>check_circle</span> <span>流量明细</span></li><li><span class='material-symbols-outlined' style='font-size:16px;color:var(--md-sys-color-primary)'>check_circle</span> <span>每月400G流量</span></li><li><span class='material-symbols-outlined' style='font-size:16px;color:var(--md-sys-color-primary)'>check_circle</span> <span>线路优势</span></li><li><span class='material-symbols-outlined' style='font-size:16px;color:var(--md-sys-color-primary)'>check_circle</span> <span>全IPLC专线，不限速</span></li><li><span class='material-symbols-outlined' style='font-size:16px;color:var(--md-sys-color-primary)'>check_circle</span> <span>流媒体支持</span></li><li><span class='material-symbols-outlined' style='font-size:16px;color:var(--md-sys-color-primary)'>check_circle</span> <span>原生IP解锁流媒体</span></li><li><span class='material-symbols-outlined' style='font-size:16px;color:var(--md-sys-color-primary)'>check_circle</span> <span>套餐优势</span></li><li><span class='material-symbols-outlined' style='font-size:16px;color:var(--md-sys-color-primary)'>check_circle</span> <span>解锁 ChatGPT，Tiktok</span></li><li><span class='material-symbols-outlined' style='font-size:16px;color:var(--md-sys-color-primary)'>check_circle</span> <span>设备支持</span></li><li><span class='material-symbols-outlined' style='font-size:16px;color:var(--md-sys-color-primary)'>check_circle</span> <span>不限制客户端</span></li><li><span class='material-symbols-outlined' style='font-size:16px;color:var(--md-sys-color-primary)'>check_circle</span> <span>其他说明</span></li><li><span class='material-symbols-outlined' style='font-size:16px;color:var(--md-sys-color-primary)'>check_circle</span> <span>高效客服响应</span></li><li><span class='material-symbols-outlined' style='font-size:16px;color:var(--md-sys-color-primary)'>check_circle</span> <span>季付9折、半年付8折、两年付7折、三年付6折</span></li><li><span class='material-symbols-outlined' style='font-size:16px;color:var(--md-sys-color-primary)'>check_circle</span> <span>400GB 周期流量</span></li><li><span class='material-symbols-outlined' style='font-size:16px;color:var(--md-sys-color-primary)'>check_circle</span> <span>无限速 速率</span></li></ul>
+                  </div>
+                  <a href="https://zgqinc.galaxyvipaff01.cc/register?aff=VaNJJsb8" target="_blank" rel="noopener" class="btn-secondary" style="justify-content:center">
+                    <span>选购此方案</span>
+                    <span class="material-symbols-outlined" style="font-size:16px">arrow_forward</span>
+                  </a>
+                </div>
+                
+                <div class="plan-card">
+                  <div>
+                    <div class="plan-name">星系套餐（Galaxy Plan）</div>
+                    <div class="plan-price">¥140 / 月付</div>
+                    <ul class="plan-features"><li><span class='material-symbols-outlined' style='font-size:16px;color:var(--md-sys-color-primary)'>check_circle</span> <span>流量明细</span></li><li><span class='material-symbols-outlined' style='font-size:16px;color:var(--md-sys-color-primary)'>check_circle</span> <span>每月800G流量</span></li><li><span class='material-symbols-outlined' style='font-size:16px;color:var(--md-sys-color-primary)'>check_circle</span> <span>线路优势</span></li><li><span class='material-symbols-outlined' style='font-size:16px;color:var(--md-sys-color-primary)'>check_circle</span> <span>全IPLC专线，不限速</span></li><li><span class='material-symbols-outlined' style='font-size:16px;color:var(--md-sys-color-primary)'>check_circle</span> <span>流媒体支持</span></li><li><span class='material-symbols-outlined' style='font-size:16px;color:var(--md-sys-color-primary)'>check_circle</span> <span>原生IP解锁各大流媒体</span></li><li><span class='material-symbols-outlined' style='font-size:16px;color:var(--md-sys-color-primary)'>check_circle</span> <span>套餐优势</span></li><li><span class='material-symbols-outlined' style='font-size:16px;color:var(--md-sys-color-primary)'>check_circle</span> <span>解锁 ChatGPT 等AI，Tiktok 等</span></li><li><span class='material-symbols-outlined' style='font-size:16px;color:var(--md-sys-color-primary)'>check_circle</span> <span>设备支持</span></li><li><span class='material-symbols-outlined' style='font-size:16px;color:var(--md-sys-color-primary)'>check_circle</span> <span>不限制客户端</span></li><li><span class='material-symbols-outlined' style='font-size:16px;color:var(--md-sys-color-primary)'>check_circle</span> <span>其他说明</span></li><li><span class='material-symbols-outlined' style='font-size:16px;color:var(--md-sys-color-primary)'>check_circle</span> <span>高效客服响应</span></li><li><span class='material-symbols-outlined' style='font-size:16px;color:var(--md-sys-color-primary)'>check_circle</span> <span>季付9折、半年付8折、两年付7折、三年付6折</span></li><li><span class='material-symbols-outlined' style='font-size:16px;color:var(--md-sys-color-primary)'>check_circle</span> <span>800GB 周期流量</span></li><li><span class='material-symbols-outlined' style='font-size:16px;color:var(--md-sys-color-primary)'>check_circle</span> <span>无限速 速率</span></li></ul>
+                  </div>
+                  <a href="https://zgqinc.galaxyvipaff01.cc/register?aff=VaNJJsb8" target="_blank" rel="noopener" class="btn-secondary" style="justify-content:center">
+                    <span>选购此方案</span>
+                    <span class="material-symbols-outlined" style="font-size:16px">arrow_forward</span>
+                  </a>
+                </div>
+                
+                <div class="plan-card">
+                  <div>
+                    <div class="plan-name">满足你，1T流量不限时（永久有效）限量</div>
+                    <div class="plan-price">¥680 / 一次性</div>
+                    <ul class="plan-features"><li><span class='material-symbols-outlined' style='font-size:16px;color:var(--md-sys-color-primary)'>check_circle</span> <span>流量明细</span></li><li><span class='material-symbols-outlined' style='font-size:16px;color:var(--md-sys-color-primary)'>check_circle</span> <span>永久不限时使用，用完可重置，性能一致</span></li><li><span class='material-symbols-outlined' style='font-size:16px;color:var(--md-sys-color-primary)'>check_circle</span> <span>线路优势</span></li><li><span class='material-symbols-outlined' style='font-size:16px;color:var(--md-sys-color-primary)'>check_circle</span> <span>全IPLC专线，不限速</span></li><li><span class='material-symbols-outlined' style='font-size:16px;color:var(--md-sys-color-primary)'>check_circle</span> <span>流媒体支持</span></li><li><span class='material-symbols-outlined' style='font-size:16px;color:var(--md-sys-color-primary)'>check_circle</span> <span>原生IP解锁流媒体</span></li><li><span class='material-symbols-outlined' style='font-size:16px;color:var(--md-sys-color-primary)'>check_circle</span> <span>套餐优势</span></li><li><span class='material-symbols-outlined' style='font-size:16px;color:var(--md-sys-color-primary)'>check_circle</span> <span>解锁 ChatGPT，Tiktok</span></li><li><span class='material-symbols-outlined' style='font-size:16px;color:var(--md-sys-color-primary)'>check_circle</span> <span>设备支持</span></li><li><span class='material-symbols-outlined' style='font-size:16px;color:var(--md-sys-color-primary)'>check_circle</span> <span>不限制客户端</span></li><li><span class='material-symbols-outlined' style='font-size:16px;color:var(--md-sys-color-primary)'>check_circle</span> <span>其他说明</span></li><li><span class='material-symbols-outlined' style='font-size:16px;color:var(--md-sys-color-primary)'>check_circle</span> <span>仅限前1万名用户，售完即止</span></li><li><span class='material-symbols-outlined' style='font-size:16px;color:var(--md-sys-color-primary)'>check_circle</span> <span>永久流量包不参与任何活动</span></li><li><span class='material-symbols-outlined' style='font-size:16px;color:var(--md-sys-color-primary)'>check_circle</span> <span>1000GB 周期流量</span></li><li><span class='material-symbols-outlined' style='font-size:16px;color:var(--md-sys-color-primary)'>check_circle</span> <span>无限速 速率</span></li></ul>
+                  </div>
+                  <a href="https://zgqinc.galaxyvipaff01.cc/register?aff=VaNJJsb8" target="_blank" rel="noopener" class="btn-secondary" style="justify-content:center">
+                    <span>选购此方案</span>
+                    <span class="material-symbols-outlined" style="font-size:16px">arrow_forward</span>
+                  </a>
+                </div>
+                
+              </div>
+            </section>
+            
+
+    
+            <section class="section-card">
+              <div class="section-header">
+                <div class="section-title">
+                  <span class="material-symbols-outlined">public</span>
+                  <span>节点分布列表（12 个节点）</span>
+                </div>
+                <span class="date-badge">📅 2025年6月23日更新</span>
+              </div>
+              <div class="nodes-grid">
+                
+            <div class="node-item">
+              <span class="node-name">香港</span>
+              <span class="node-rate">x10</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">台湾</span>
+              <span class="node-rate">x5</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">新加坡</span>
+              <span class="node-rate">x5</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">日本</span>
+              <span class="node-rate">X5</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">美国</span>
+              <span class="node-rate">x5</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">马来西亚</span>
+              <span class="node-rate">x2</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">越南</span>
+              <span class="node-rate">x2</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">菲律宾</span>
+              <span class="node-rate">x2</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">泰国</span>
+              <span class="node-rate">x2</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">英国</span>
+              <span class="node-rate">x2</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">阿根廷</span>
+              <span class="node-rate">x2</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">土耳其</span>
+              <span class="node-rate">X2</span>
+            </div>
+            
+              </div>
+            </section>
+            
+
+    <div class="disclaimer-card">
+      <strong>ℹ️ 免责声明与公益推广说明：</strong><br>
+      此页面为 <strong>OverTheFirewall</strong> 赞助商公益推广专栏。部分收益将捐赠给 SDGs 或用于开源社区服务器运维。网络加速服务请用于学术科研、正规商务与外语学习，请遵守相关法律法规。
+    </div>
+    
+  </main>
+  
+  <div class="lightbox-modal" id="lightboxModal" onclick="this.classList.remove('active')">
+    <img id="lightboxImg" src="" alt="Speedtest Full">
+  </div>
+
+  <script>
+    // Theme Switcher
+    const savedTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    document.documentElement.setAttribute('data-theme', savedTheme);
+    const themeIcon = document.getElementById('themeIcon');
+    if (themeIcon) themeIcon.textContent = savedTheme === 'dark' ? 'light_mode' : 'dark_mode';
+
+    document.getElementById('themeToggleBtn')?.addEventListener('click', () => {
+      const current = document.documentElement.getAttribute('data-theme') || 'light';
+      const next = current === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('theme', next);
+      if (themeIcon) themeIcon.textContent = next === 'dark' ? 'light_mode' : 'dark_mode';
+    });
+
+    // Image Zoom Lightbox
+    document.querySelectorAll('.speedtest-img').forEach(img => {
+      img.addEventListener('click', () => {
+        const modal = document.getElementById('lightboxModal');
+        const mImg = document.getElementById('lightboxImg');
+        mImg.src = img.src;
+        modal.classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>

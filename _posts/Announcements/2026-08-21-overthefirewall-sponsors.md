@@ -13,7 +13,9 @@ categories: [公告]
 ---
 
 > 本文为 **OverTheFirewall（科学上网指南）** 官方赞助商精选推荐合集。  
-> 感谢所有赞助商对开源项目的长期支持！部分推广收益将用于公益捐赠与服务器运维。通过下方的专属邀请码或链接注册购买，即可享受各商家的专属优惠与技术保障。
+> 感谢所有赞助商对开源项目的长期支持！部分推广收益将用于公益捐赠与服务器运维。
+> 
+> 💡 **全新上线**：每家赞助商均配有**独立专属详情页**（含晚高峰实测测速报告、方案价格清单与节点全景分布），点击下方对应的详情按钮即可查阅。
 
 ***
 
@@ -23,6 +25,7 @@ categories: [公告]
 * 🚀 **[经济适用 · 高性价比中转](#经济适用--高性价比中转)**（Sausage Cloud、FurYun、夏枫一汀、银河云、瀚海舟）
 * 🍜 **[便宜大碗 · 亲民首选](#便宜大碗--亲民首选)**（Nanocloud）
 * 🌐 **[全球覆盖 · 老牌稳定](#全球覆盖--老牌稳定)**（雲村 YUNCUN、EdNovas云、V2云、VMSSR、EteralNetwork、米白云、轻舞云、遨游服务）
+* 🌟 **[赞助商独立详情大厅（全部 19 家）](/sponsor/)**
 * 💡 **[选购建议与使用须知](#选购建议与使用须知)**
 
 ***
@@ -47,8 +50,16 @@ categories: [公告]
 * 🚀 **核心优势**：优质专线内网传输链路，晚高峰高速保障，全平台客户端完美兼容。
 * 📺 **流媒体**：全面支持 Netflix、Disney+、YouTube 4K 秒开。
 
-[👉 前往【天枢互联】官网注册 👈](https://tshl.work/auth/register?code=qeUkRYq515NDNKSSIWUqwedkex4VDeOK){: .action-btn .btn-filled style="display:inline-flex;margin-top:8px;" target="_blank" rel="noopener"}  
-*备用镜像站点：[tianshuhl.com](https://tianshuhl.com/auth/register?code=qeUkRYq515NDNKSSIWUqwedkex4VDeOK)*
+<div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:10px">
+  <a href="/sponsor/sponsor.html" class="action-btn btn-outlined" style="margin:0">
+    <span class="material-symbols-outlined">description</span>
+    <span>查看独立详情（方案·节点）</span>
+  </a>
+  <a href="https://tshl.work/auth/register?code=qeUkRYq515NDNKSSIWUqwedkex4VDeOK" target="_blank" rel="noopener" class="action-btn btn-filled" style="margin:0">
+    <span class="material-symbols-outlined">open_in_new</span>
+    <span>前往官网注册</span>
+  </a>
+</div>
 
 ---
 
@@ -65,7 +76,16 @@ categories: [公告]
 * 🚀 **核心优势**：三年稳定运营，企业级基础设施，高带宽低延迟，全平台设备支持。
 * 📺 **流媒体**：解锁 Netflix、Hulu、HBO、TVB、AbemaTV、Spotify 等多种流媒体。
 
-[👉 前往【奥创 CTZCloud】官网注册 👈](https://china.ctzcloud.org/auth/register?code=zmuY){: .action-btn .btn-filled style="display:inline-flex;margin-top:8px;" target="_blank" rel="noopener"}
+<div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:10px">
+  <a href="/sponsor/sponsor_14.html" class="action-btn btn-outlined" style="margin:0">
+    <span class="material-symbols-outlined">description</span>
+    <span>查看独立详情（测速·方案·节点）</span>
+  </a>
+  <a href="https://china.ctzcloud.org/auth/register?code=zmuY" target="_blank" rel="noopener" class="action-btn btn-filled" style="margin:0">
+    <span class="material-symbols-outlined">open_in_new</span>
+    <span>前往官网注册</span>
+  </a>
+</div>
 
 ---
 
@@ -82,7 +102,16 @@ categories: [公告]
 * 🚀 **核心优势**：除大陆外在多个地区搭建入口，多线路备份容灾，即使网络严峻时刻仍可保障连接。
 * 📺 **流媒体**：自研流媒体解锁方案，稳定高速。
 
-[👉 前往【万达云】官网注册 👈](https://www.z1z1.top/zgq){: .action-btn .btn-filled style="display:inline-flex;margin-top:8px;" target="_blank" rel="noopener"}
+<div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:10px">
+  <a href="/sponsor/sponsor_11.html" class="action-btn btn-outlined" style="margin:0">
+    <span class="material-symbols-outlined">description</span>
+    <span>查看独立详情（测速·方案·节点）</span>
+  </a>
+  <a href="https://www.z1z1.top/zgq" target="_blank" rel="noopener" class="action-btn btn-filled" style="margin:0">
+    <span class="material-symbols-outlined">open_in_new</span>
+    <span>前往官网注册</span>
+  </a>
+</div>
 
 ---
 
@@ -98,7 +127,16 @@ categories: [公告]
 
 * 🚀 **核心优势**：极速响应，高质量专线，稳定高速。
 
-[👉 前往【兔兔云】官网注册 👈](https://www.tutuyun.uk/auth/register?code=HXJfCG4B){: .action-btn .btn-filled style="display:inline-flex;margin-top:8px;" target="_blank" rel="noopener"}
+<div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:10px">
+  <a href="/sponsor/sponsor_17.html" class="action-btn btn-outlined" style="margin:0">
+    <span class="material-symbols-outlined">description</span>
+    <span>查看独立详情（测速·方案·节点）</span>
+  </a>
+  <a href="https://www.tutuyun.uk/auth/register?code=HXJfCG4B" target="_blank" rel="noopener" class="action-btn btn-filled" style="margin:0">
+    <span class="material-symbols-outlined">open_in_new</span>
+    <span>前往官网注册</span>
+  </a>
+</div>
 
 ---
 
@@ -115,7 +153,16 @@ categories: [公告]
 * 🚀 **核心优势**：覆盖港、台、日、新、美、韩、越、菲、泰、印、德、法、英、阿根廷等，高峰期不卡顿。
 * 📺 **解锁全家桶**：Netflix、Disney+、HBO、动画疯、ChatGPT、TikTok、NBA 等热门应用。
 
-[👉 前往【青云梯】官网注册 👈](https://zgqinc.qytvipaff.cc/register?aff=xogVOEJn){: .action-btn .btn-filled style="display:inline-flex;margin-top:8px;" target="_blank" rel="noopener"}
+<div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:10px">
+  <a href="/sponsor/sponsor_13.html" class="action-btn btn-outlined" style="margin:0">
+    <span class="material-symbols-outlined">description</span>
+    <span>查看独立详情（测速·方案·节点）</span>
+  </a>
+  <a href="https://zgqinc.qytvipaff.cc/register?aff=xogVOEJn" target="_blank" rel="noopener" class="action-btn btn-filled" style="margin:0">
+    <span class="material-symbols-outlined">open_in_new</span>
+    <span>前往官网注册</span>
+  </a>
+</div>
 
 ***
 
@@ -139,7 +186,16 @@ categories: [公告]
 * 🚀 **核心线路**：部署于全球 10+ 国家/地区，拥有 M247、移动 CMI、联通 9929、联通 4837、电信 CN2 等专业网络线路。
 * 📺 **流媒体**：轻松观看 Netflix、Disney+ 与 Spotify。
 
-[👉 前往【Sausage Cloud】官网注册 👈](https://reborn.kaochang.ltd/#/register?code=MPGb78LD){: .action-btn .btn-filled style="display:inline-flex;margin-top:8px;" target="_blank" rel="noopener"}
+<div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:10px">
+  <a href="/sponsor/sponsor_3.html" class="action-btn btn-outlined" style="margin:0">
+    <span class="material-symbols-outlined">description</span>
+    <span>查看独立详情（测速·方案·节点）</span>
+  </a>
+  <a href="https://reborn.kaochang.ltd/#/register?code=MPGb78LD" target="_blank" rel="noopener" class="action-btn btn-filled" style="margin:0">
+    <span class="material-symbols-outlined">open_in_new</span>
+    <span>前往官网注册</span>
+  </a>
+</div>
 
 ---
 
@@ -156,7 +212,16 @@ categories: [公告]
 * 🚀 **节点分布**：香港 x10、台湾 x5、新加坡 x5、日本 x5、美国 x5 及英/马/越/菲/泰/阿根廷/土耳其等丰富节点。
 * 📺 **流媒体与 AI**：ChatGPT / Netflix / YouTube 4K 流畅秒开。支持支付宝、微信、USDT。
 
-[👉 前往【银河云】官网注册 👈](https://zgqinc.galaxyvipaff01.cc/register?aff=VaNJJsb8){: .action-btn .btn-filled style="display:inline-flex;margin-top:8px;" target="_blank" rel="noopener"}
+<div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:10px">
+  <a href="/sponsor/sponsor_16.html" class="action-btn btn-outlined" style="margin:0">
+    <span class="material-symbols-outlined">description</span>
+    <span>查看独立详情（测速·方案·节点）</span>
+  </a>
+  <a href="https://zgqinc.galaxyvipaff01.cc/register?aff=VaNJJsb8" target="_blank" rel="noopener" class="action-btn btn-filled" style="margin:0">
+    <span class="material-symbols-outlined">open_in_new</span>
+    <span>前往官网注册</span>
+  </a>
+</div>
 
 ---
 
@@ -170,7 +235,16 @@ categories: [公告]
   </div>
 </div>
 
-[👉 前往【FurYun】官网注册 👈](https://www.furyun.org/#/register?code=ILy6UUUL){: .action-btn .btn-filled style="display:inline-flex;margin-top:8px;" target="_blank" rel="noopener"}
+<div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:10px">
+  <a href="/sponsor/sponsor_18.html" class="action-btn btn-outlined" style="margin:0">
+    <span class="material-symbols-outlined">description</span>
+    <span>查看独立详情（测速·方案·节点）</span>
+  </a>
+  <a href="https://www.furyun.org/#/register?code=ILy6UUUL" target="_blank" rel="noopener" class="action-btn btn-filled" style="margin:0">
+    <span class="material-symbols-outlined">open_in_new</span>
+    <span>前往官网注册</span>
+  </a>
+</div>
 
 ---
 
@@ -184,7 +258,16 @@ categories: [公告]
   </div>
 </div>
 
-[👉 前往【夏枫一汀】官网注册 👈](https://xvaypin778.ccwu.cc/#/register?code=UzrZy10W){: .action-btn .btn-filled style="display:inline-flex;margin-top:8px;" target="_blank" rel="noopener"}
+<div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:10px">
+  <a href="/sponsor/sponsor_19.html" class="action-btn btn-outlined" style="margin:0">
+    <span class="material-symbols-outlined">description</span>
+    <span>查看独立详情（测速·方案·节点）</span>
+  </a>
+  <a href="https://xvaypin778.ccwu.cc/#/register?code=UzrZy10W" target="_blank" rel="noopener" class="action-btn btn-filled" style="margin:0">
+    <span class="material-symbols-outlined">open_in_new</span>
+    <span>前往官网注册</span>
+  </a>
+</div>
 
 ---
 
@@ -197,7 +280,16 @@ categories: [公告]
   </div>
 </div>
 
-[👉 前往【瀚海舟】官网注册 👈](https://home5.sci-lab.top/#/register?code=qBENZD6K){: .action-btn .btn-filled style="display:inline-flex;margin-top:8px;" target="_blank" rel="noopener"}
+<div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:10px">
+  <a href="/sponsor/sponsor_15.html" class="action-btn btn-outlined" style="margin:0">
+    <span class="material-symbols-outlined">description</span>
+    <span>查看独立详情（测速·方案·节点）</span>
+  </a>
+  <a href="https://home5.sci-lab.top/#/register?code=qBENZD6K" target="_blank" rel="noopener" class="action-btn btn-filled" style="margin:0">
+    <span class="material-symbols-outlined">open_in_new</span>
+    <span>前往官网注册</span>
+  </a>
+</div>
 
 ***
 
@@ -219,7 +311,16 @@ categories: [公告]
 * 🚀 **核心优势**：价格极其亲民，适合大流量下载与学生党日常使用。
 * 🎁 **福利**：注册提供免费试用 2 天！
 
-[👉 前往【Nanocloud】官网注册 👈](https://edu.yuque.men/#/register?code=OLC0tpNy){: .action-btn .btn-filled style="display:inline-flex;margin-top:8px;" target="_blank" rel="noopener"}
+<div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:10px">
+  <a href="/sponsor/sponsor_7.html" class="action-btn btn-outlined" style="margin:0">
+    <span class="material-symbols-outlined">description</span>
+    <span>查看独立详情（测速·方案·节点）</span>
+  </a>
+  <a href="https://edu.yuque.men/#/register?code=OLC0tpNy" target="_blank" rel="noopener" class="action-btn btn-filled" style="margin:0">
+    <span class="material-symbols-outlined">open_in_new</span>
+    <span>前往官网注册</span>
+  </a>
+</div>
 
 ***
 
@@ -240,8 +341,16 @@ categories: [公告]
 
 * 📱 **全平台支持**：全面支持 macOS、Windows、Android、iOS、iPadOS、Linux、路由器等。
 
-[👉 前往【雲村】官网注册 👈](https://s2.maiucun.me/#/register?code=Co0c8gA3){: .action-btn .btn-filled style="display:inline-flex;margin-top:8px;" target="_blank" rel="noopener"}  
-*备用镜像：[v50.ucun.me](https://v50.ucun.me/#/register?code=Co0c8gA3)*
+<div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:10px">
+  <a href="/sponsor/sponsor_2.html" class="action-btn btn-outlined" style="margin:0">
+    <span class="material-symbols-outlined">description</span>
+    <span>查看独立详情（测速·方案·节点）</span>
+  </a>
+  <a href="https://s2.maiucun.me/#/register?code=Co0c8gA3" target="_blank" rel="noopener" class="action-btn btn-filled" style="margin:0">
+    <span class="material-symbols-outlined">open_in_new</span>
+    <span>前往官网注册</span>
+  </a>
+</div>
 
 ---
 
@@ -258,7 +367,16 @@ categories: [公告]
 * 🌍 **覆盖区域**：美国、加拿大、土耳其、香港、台湾、韩国、日本、俄罗斯、印度、马来西亚、荷兰、法国、英国、德国、南非等。
 * 🛡️ **保障**：不满意可按比例退款，工单/Telegram 快速响应。
 
-[👉 前往【EdNovas云】官网注册 👈](https://ednovas.org/#/register?code=1F6fox8Y){: .action-btn .btn-filled style="display:inline-flex;margin-top:8px;" target="_blank" rel="noopener"}
+<div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:10px">
+  <a href="/sponsor/sponsor_5.html" class="action-btn btn-outlined" style="margin:0">
+    <span class="material-symbols-outlined">description</span>
+    <span>查看独立详情（测速·方案·节点）</span>
+  </a>
+  <a href="https://ednovas.org/#/register?code=1F6fox8Y" target="_blank" rel="noopener" class="action-btn btn-filled" style="margin:0">
+    <span class="material-symbols-outlined">open_in_new</span>
+    <span>前往官网注册</span>
+  </a>
+</div>
 
 ---
 
@@ -272,7 +390,16 @@ categories: [公告]
   </div>
 </div>
 
-[👉 前往【V2云】官网注册 👈](https://www.v2board.co/#/register?code=ghm3FpGN){: .action-btn .btn-filled style="display:inline-flex;margin-top:8px;" target="_blank" rel="noopener"}
+<div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:10px">
+  <a href="/sponsor/sponsor_6.html" class="action-btn btn-outlined" style="margin:0">
+    <span class="material-symbols-outlined">description</span>
+    <span>查看独立详情（测速·方案·节点）</span>
+  </a>
+  <a href="https://www.v2board.co/#/register?code=ghm3FpGN" target="_blank" rel="noopener" class="action-btn btn-filled" style="margin:0">
+    <span class="material-symbols-outlined">open_in_new</span>
+    <span>前往官网注册</span>
+  </a>
+</div>
 
 ---
 
@@ -286,7 +413,16 @@ categories: [公告]
   </div>
 </div>
 
-[👉 前往【VMSSR】官网注册 👈](https://store.vmssr.cc/#/register?code=muM7RE3f){: .action-btn .btn-filled style="display:inline-flex;margin-top:8px;" target="_blank" rel="noopener"}
+<div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:10px">
+  <a href="/sponsor/sponsor_8.html" class="action-btn btn-outlined" style="margin:0">
+    <span class="material-symbols-outlined">description</span>
+    <span>查看独立详情（测速·方案·节点）</span>
+  </a>
+  <a href="https://store.vmssr.cc/#/register?code=muM7RE3f" target="_blank" rel="noopener" class="action-btn btn-filled" style="margin:0">
+    <span class="material-symbols-outlined">open_in_new</span>
+    <span>前往官网注册</span>
+  </a>
+</div>
 
 ---
 
@@ -302,7 +438,16 @@ categories: [公告]
 
 * 🍰 **超值套餐**：焦糖布丁 (¥6/月 · 55GB)、芒果布丁 (¥10/月 · 120GB) 等多种高性价比组合。
 
-[👉 前往【EteralNetwork】官网注册 👈](https://etcloud.top/#/register?code=TDoLChjA){: .action-btn .btn-filled style="display:inline-flex;margin-top:8px;" target="_blank" rel="noopener"}
+<div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:10px">
+  <a href="/sponsor/sponsor_9.html" class="action-btn btn-outlined" style="margin:0">
+    <span class="material-symbols-outlined">description</span>
+    <span>查看独立详情（测速·方案·节点）</span>
+  </a>
+  <a href="https://etcloud.top/#/register?code=TDoLChjA" target="_blank" rel="noopener" class="action-btn btn-filled" style="margin:0">
+    <span class="material-symbols-outlined">open_in_new</span>
+    <span>前往官网注册</span>
+  </a>
+</div>
 
 ---
 
@@ -316,7 +461,16 @@ categories: [公告]
   </div>
 </div>
 
-[👉 前往【米白云】官网注册 👈](https://www.mibai.cloud/#/register?code=frLYhLyi){: .action-btn .btn-filled style="display:inline-flex;margin-top:8px;" target="_blank" rel="noopener"}
+<div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:10px">
+  <a href="/sponsor/sponsor_10.html" class="action-btn btn-outlined" style="margin:0">
+    <span class="material-symbols-outlined">description</span>
+    <span>查看独立详情（测速·方案·节点）</span>
+  </a>
+  <a href="https://www.mibai.cloud/#/register?code=frLYhLyi" target="_blank" rel="noopener" class="action-btn btn-filled" style="margin:0">
+    <span class="material-symbols-outlined">open_in_new</span>
+    <span>前往官网注册</span>
+  </a>
+</div>
 
 ---
 
@@ -330,7 +484,16 @@ categories: [公告]
   </div>
 </div>
 
-[👉 前往【轻舞云】官网注册 👈](https://www.qingwuyun.cc/#/register?code=0U0mAppB){: .action-btn .btn-filled style="display:inline-flex;margin-top:8px;" target="_blank" rel="noopener"}
+<div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:10px">
+  <a href="/sponsor/sponsor_12.html" class="action-btn btn-outlined" style="margin:0">
+    <span class="material-symbols-outlined">description</span>
+    <span>查看独立详情（测速·方案·节点）</span>
+  </a>
+  <a href="https://www.qingwuyun.cc/#/register?code=0U0mAppB" target="_blank" rel="noopener" class="action-btn btn-filled" style="margin:0">
+    <span class="material-symbols-outlined">open_in_new</span>
+    <span>前往官网注册</span>
+  </a>
+</div>
 
 ---
 
@@ -344,7 +507,16 @@ categories: [公告]
   </div>
 </div>
 
-[👉 前往【遨游服务】官网注册 👈](https://zshixiog.kingdona.wiki/#/register?code=Sg30Z7h5){: .action-btn .btn-filled style="display:inline-flex;margin-top:8px;" target="_blank" rel="noopener"}
+<div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:10px">
+  <a href="/sponsor/sponsor_4.html" class="action-btn btn-outlined" style="margin:0">
+    <span class="material-symbols-outlined">description</span>
+    <span>查看独立详情（测速·方案·节点）</span>
+  </a>
+  <a href="https://zshixiog.kingdona.wiki/#/register?code=Sg30Z7h5" target="_blank" rel="noopener" class="action-btn btn-filled" style="margin:0">
+    <span class="material-symbols-outlined">open_in_new</span>
+    <span>前往官网注册</span>
+  </a>
+</div>
 
 ***
 

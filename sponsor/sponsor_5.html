@@ -1,0 +1,1846 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EdNovas云 - 赞助商详情 - OverTheFirewall</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Noto+Sans+SC:wght@400;500;700&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined">
+  <style>
+    :root {
+      --md-sys-color-primary: #0061A4;
+      --md-sys-color-on-primary: #FFFFFF;
+      --md-sys-color-primary-container: #D1E4FF;
+      --md-sys-color-on-primary-container: #001D36;
+      --md-sys-color-secondary: #535F70;
+      --md-sys-color-secondary-container: #D7E3F7;
+      --md-sys-color-on-secondary-container: #101C2B;
+      --md-sys-color-surface: #FDFDFF;
+      --md-sys-color-on-surface: #1A1C1E;
+      --md-sys-color-surface-variant: #DFE2EB;
+      --md-sys-color-on-surface-variant: #43474E;
+      --md-sys-color-outline: #73777F;
+      --md-sys-color-outline-variant: #C3C7CF;
+      --md-sys-color-background: #F8F9FA;
+      --md-sys-color-on-background: #1A1C1E;
+      --md-sys-color-surface-container: #EDEDF1;
+      --md-sys-color-surface-container-high: #E7E8EC;
+      --md-sys-color-surface-container-low: #F3F3F7;
+      --radius-sm: 8px;
+      --radius-md: 16px;
+      --radius-lg: 24px;
+      --radius-full: 9999px;
+      --shadow-1: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.12);
+      --shadow-2: 0 4px 12px rgba(0,0,0,0.08), 0 2px 6px rgba(0,0,0,0.06);
+    }
+
+    [data-theme="dark"] {
+      --md-sys-color-primary: #9ECAFF;
+      --md-sys-color-on-primary: #003258;
+      --md-sys-color-primary-container: #00497D;
+      --md-sys-color-on-primary-container: #D1E4FF;
+      --md-sys-color-secondary: #BBC7DB;
+      --md-sys-color-secondary-container: #3B4858;
+      --md-sys-color-on-secondary-container: #D7E3F7;
+      --md-sys-color-surface: #1A1C1E;
+      --md-sys-color-on-surface: #E2E2E6;
+      --md-sys-color-surface-variant: #43474E;
+      --md-sys-color-on-surface-variant: #C3C7CF;
+      --md-sys-color-outline: #8D9199;
+      --md-sys-color-outline-variant: #43474E;
+      --md-sys-color-background: #121316;
+      --md-sys-color-on-background: #E2E2E6;
+      --md-sys-color-surface-container: #202224;
+      --md-sys-color-surface-container-high: #2B2D30;
+      --md-sys-color-surface-container-low: #1C1E20;
+      --shadow-1: 0 1px 3px rgba(0,0,0,0.3);
+      --shadow-2: 0 4px 16px rgba(0,0,0,0.4);
+      color-scheme: dark;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: 'Noto Sans SC', 'Roboto', system-ui, -apple-system, sans-serif;
+      background: var(--md-sys-color-background);
+      color: var(--md-sys-color-on-background);
+      min-height: 100vh;
+      line-height: 1.6;
+      padding-bottom: 60px;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    /* Top App Bar */
+    .top-app-bar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 64px;
+      padding: 0 16px;
+      background: color-mix(in srgb, var(--md-sys-color-surface) 88%, transparent);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 40%, transparent);
+    }
+
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      border-radius: var(--radius-full);
+      border: 1px solid var(--md-sys-color-outline-variant);
+      background: var(--md-sys-color-surface);
+      color: var(--md-sys-color-on-surface);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.2,0,0,1);
+    }
+    .back-btn:hover {
+      background: var(--md-sys-color-surface-container);
+      transform: translateX(-2px);
+    }
+
+    .theme-toggle-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: none;
+      background: var(--md-sys-color-surface-container);
+      color: var(--md-sys-color-on-surface);
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .theme-toggle-btn:hover {
+      background: var(--md-sys-color-surface-container-high);
+    }
+
+    /* Container */
+    .page-container {
+      max-width: 960px;
+      margin: 24px auto 0;
+      padding: 0 16px;
+    }
+
+    /* Hero Card */
+    .hero-card {
+      background: var(--md-sys-color-surface);
+      border-radius: var(--radius-lg);
+      padding: 32px 24px;
+      text-align: center;
+      box-shadow: var(--shadow-2);
+      border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 40%, transparent);
+      margin-bottom: 24px;
+    }
+
+    .sponsor-logo {
+      width: 96px;
+      height: 96px;
+      object-fit: contain;
+      border-radius: var(--radius-md);
+      padding: 6px;
+      background: var(--md-sys-color-surface-container);
+      margin-bottom: 16px;
+      box-shadow: var(--shadow-1);
+    }
+
+    .sponsor-title {
+      font-size: 1.85rem;
+      font-weight: 700;
+      color: var(--md-sys-color-on-surface);
+      margin-bottom: 8px;
+    }
+
+    .sponsor-slogan {
+      font-size: 1.05rem;
+      color: var(--md-sys-color-primary);
+      font-weight: 500;
+      max-width: 680px;
+      margin: 0 auto 20px;
+      line-height: 1.5;
+    }
+
+    .sponsor-intro-list {
+      text-align: left;
+      max-width: 720px;
+      margin: 0 auto 24px;
+      background: var(--md-sys-color-surface-container-low);
+      padding: 16px 20px;
+      border-radius: var(--radius-md);
+      font-size: 0.95rem;
+      color: var(--md-sys-color-on-surface-variant);
+    }
+    .sponsor-intro-list p {
+      margin-bottom: 8px;
+    }
+    .sponsor-intro-list p:last-child {
+      margin-bottom: 0;
+    }
+
+    .cta-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--md-sys-color-primary);
+      color: var(--md-sys-color-on-primary);
+      padding: 12px 28px;
+      border-radius: var(--radius-full);
+      font-size: 1.05rem;
+      font-weight: 700;
+      text-decoration: none;
+      box-shadow: 0 4px 12px color-mix(in srgb, var(--md-sys-color-primary) 40%, transparent);
+      transition: all 0.2s cubic-bezier(0.2,0,0,1);
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px color-mix(in srgb, var(--md-sys-color-primary) 50%, transparent);
+    }
+
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--md-sys-color-secondary-container);
+      color: var(--md-sys-color-on-secondary-container);
+      padding: 12px 20px;
+      border-radius: var(--radius-full);
+      font-size: 0.95rem;
+      font-weight: 500;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+    .btn-secondary:hover {
+      background: color-mix(in srgb, var(--md-sys-color-secondary-container) 85%, var(--md-sys-color-on-secondary-container) 15%);
+    }
+
+    /* Section Card */
+    .section-card {
+      background: var(--md-sys-color-surface);
+      border-radius: var(--radius-lg);
+      padding: 28px 24px;
+      margin-bottom: 24px;
+      box-shadow: var(--shadow-1);
+      border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 40%, transparent);
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 2px solid var(--md-sys-color-surface-container);
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: var(--md-sys-color-on-surface);
+    }
+    .section-title .material-symbols-outlined {
+      color: var(--md-sys-color-primary);
+    }
+
+    .date-badge {
+      font-size: 0.8rem;
+      padding: 4px 10px;
+      border-radius: var(--radius-full);
+      background: var(--md-sys-color-surface-container);
+      color: var(--md-sys-color-on-surface-variant);
+      font-weight: 500;
+    }
+
+    /* Speedtest */
+    .speedtest-container {
+      text-align: center;
+    }
+    .speedtest-img {
+      max-width: 100%;
+      height: auto;
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-1);
+      cursor: zoom-in;
+      transition: transform 0.2s;
+    }
+    .speedtest-img:hover {
+      transform: scale(1.01);
+    }
+
+    /* Plans Grid */
+    .plans-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px;
+    }
+
+    .plan-card {
+      background: var(--md-sys-color-surface-container-low);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 40%, transparent);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .plan-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-2);
+      border-color: var(--md-sys-color-primary);
+    }
+
+    .plan-name {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--md-sys-color-primary);
+      margin-bottom: 8px;
+    }
+
+    .plan-price {
+      font-size: 1.45rem;
+      font-weight: 800;
+      color: var(--md-sys-color-on-surface);
+      margin-bottom: 12px;
+    }
+    .plan-price small {
+      font-size: 0.85rem;
+      font-weight: 400;
+      color: var(--md-sys-color-on-surface-variant);
+    }
+
+    .plan-features {
+      list-style: none;
+      font-size: 0.88rem;
+      color: var(--md-sys-color-on-surface-variant);
+      margin-bottom: 16px;
+      line-height: 1.7;
+    }
+    .plan-features li {
+      display: flex;
+      align-items: flex-start;
+      gap: 6px;
+      margin-bottom: 4px;
+    }
+
+    /* Nodes Grid */
+    .nodes-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 10px;
+    }
+
+    .node-item {
+      background: var(--md-sys-color-surface-container-low);
+      padding: 10px 14px;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.88rem;
+      border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 30%, transparent);
+    }
+
+    .node-name {
+      font-weight: 500;
+      color: var(--md-sys-color-on-surface);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .node-rate {
+      font-size: 0.75rem;
+      font-weight: 700;
+      background: var(--md-sys-color-primary-container);
+      color: var(--md-sys-color-on-primary-container);
+      padding: 2px 6px;
+      border-radius: var(--radius-sm);
+      margin-left: 6px;
+      flex-shrink: 0;
+    }
+
+    /* Disclaimer */
+    .disclaimer-card {
+      background: var(--md-sys-color-surface-container-low);
+      padding: 16px 20px;
+      border-radius: var(--radius-md);
+      font-size: 0.85rem;
+      color: var(--md-sys-color-on-surface-variant);
+      line-height: 1.6;
+      border-left: 4px solid var(--md-sys-color-primary);
+    }
+
+    /* Lightbox modal */
+    .lightbox-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      background: rgba(0,0,0,0.85);
+      backdrop-filter: blur(8px);
+      align-items: center;
+      justify-content: center;
+      cursor: zoom-out;
+    }
+    .lightbox-modal.active {
+      display: flex;
+    }
+    .lightbox-modal img {
+      max-width: 92vw;
+      max-height: 92vh;
+      border-radius: var(--radius-md);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+    }
+
+    @media (max-width: 600px) {
+      .hero-card { padding: 24px 16px; }
+      .sponsor-title { font-size: 1.5rem; }
+      .btn-primary { width: 100%; justify-content: center; }
+      .plans-grid { grid-template-columns: 1fr; }
+      .nodes-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header class="top-app-bar">
+    <a href="javascript:void(0)" onclick="if(history.length>1){history.back()}else{window.location.href='/'}" class="back-btn">
+      <span class="material-symbols-outlined" style="font-size:1.2rem">arrow_back</span>
+      <span>返回</span>
+    </a>
+    <div style="display:flex;align-items:center;gap:8px">
+      <a href="/sponsor/" class="back-btn" style="border-radius:var(--radius-full)">
+        <span class="material-symbols-outlined" style="font-size:1.1rem">apps</span>
+        <span>赞助商大全</span>
+      </a>
+      <button class="theme-toggle-btn" id="themeToggleBtn" title="切换暗色/亮色模式">
+        <span class="material-symbols-outlined" id="themeIcon">dark_mode</span>
+      </button>
+    </div>
+  </header>
+  <main class="page-container">
+
+    <div class="hero-card">
+      <img class="sponsor-logo" src="/assets/images/sponsors/EdNovasCloud_logo.gif" alt="EdNovas云 Logo">
+      <h1 class="sponsor-title">EdNovas云</h1>
+      <p class="sponsor-slogan">EdNovas is the best!</p>
+      
+      <div class="sponsor-intro-list"><p>目前节点分布于80+国家，包括美国、加拿大、土耳其、香港、台湾、韩国、日本、俄罗斯、印度、马来西亚、荷兰、法国、英国、德国、南非等地。部分节点奈飞解锁。提供最高G口的优质线路。</p><p>我们只会收集您的注册邮箱，不会设置任何后门查看您的浏览记录等。当然，在审计规则内的违反规则是不受允许的。</p><p>Windows/Mac/Linux/安卓/IOS/路由器全平台支持。</p><p>用户群内或者TG私聊会在12小时内答复（最长48小时）。</p><p>每位客户做到尽力而为,任何意见和建议只要合理都会考虑采纳。此外不满意还可以提供按未使用比例退款或者补偿套餐等。</p><p>节点出现任何问题将会在12小时内整修完毕（最长48小时），尽力不影响您的畅快体验。</p><p>价格实惠，性价比高
+    随买随用，随心所欲
+    解流媒体，畅快体验
+    多国地区，多种体验</p></div>
+
+      <div class="cta-group">
+        <a href="https://ednovas.org/#/register?code=1F6fox8Y" target="_blank" rel="noopener" class="btn-primary">
+          <span class="material-symbols-outlined">open_in_new</span>
+          <span>前往官网注册 / 选购</span>
+        </a>
+        
+      </div>
+    </div>
+
+    
+        <section class="section-card">
+          <div class="section-header">
+            <div class="section-title">
+              <span class="material-symbols-outlined">speed</span>
+              <span>实测网络测速与晚高峰表现</span>
+            </div>
+            <span class="date-badge">📅 2022年12月18日更新</span>
+          </div>
+          <div class="speedtest-container">
+            <img class="speedtest-img" src="/assets/images/sponsors/EdNovasCloud_speedtest.jpg" alt="EdNovas云 测速结果" loading="lazy" style="margin-bottom:12px">
+          </div>
+        </section>
+        
+
+    
+            <section class="section-card">
+              <div class="section-header">
+                <div class="section-title">
+                  <span class="material-symbols-outlined">inventory_2</span>
+                  <span>方案与价格列表</span>
+                </div>
+                <span class="date-badge">📅 2022年12月25日更新</span>
+              </div>
+              <div class="plans-grid">
+                
+                <div class="plan-card">
+                  <div>
+                    <div class="plan-name">窥</div>
+                    <div class="plan-price">注意！！！本套餐并没有冷门节点，仅美国、香港、日本、韩国、新加坡、澳大利亚等常用节点 月付25g流量</div>
+                    <ul class="plan-features"><li><span class='material-symbols-outlined' style='font-size:16px;color:var(--md-sys-color-primary)'>check_circle</span> <span>25 GB ￥5/每月</span></li></ul>
+                  </div>
+                  <a href="https://ednovas.org/#/register?code=1F6fox8Y" target="_blank" rel="noopener" class="btn-secondary" style="justify-content:center">
+                    <span>选购此方案</span>
+                    <span class="material-symbols-outlined" style="font-size:16px">arrow_forward</span>
+                  </a>
+                </div>
+                
+                <div class="plan-card">
+                  <div>
+                    <div class="plan-name">探囊</div>
+                    <div class="plan-price">注意！！！本套餐并没有冷门节点，仅美国、香港、日本、韩国、新加坡、澳大利亚等常用节点 月付50g流量</div>
+                    <ul class="plan-features"><li><span class='material-symbols-outlined' style='font-size:16px;color:var(--md-sys-color-primary)'>check_circle</span> <span>50 GB ￥10/每月</span></li></ul>
+                  </div>
+                  <a href="https://ednovas.org/#/register?code=1F6fox8Y" target="_blank" rel="noopener" class="btn-secondary" style="justify-content:center">
+                    <span>选购此方案</span>
+                    <span class="material-symbols-outlined" style="font-size:16px">arrow_forward</span>
+                  </a>
+                </div>
+                
+                <div class="plan-card">
+                  <div>
+                    <div class="plan-name">轻风</div>
+                    <div class="plan-price">注意！！！本套餐并没有冷门节点，仅美国、香港、日本、韩国、新加坡、澳大利亚等常用节点 月付100g流量</div>
+                    <ul class="plan-features"><li><span class='material-symbols-outlined' style='font-size:16px;color:var(--md-sys-color-primary)'>check_circle</span> <span>100 GB ￥19/每月</span></li></ul>
+                  </div>
+                  <a href="https://ednovas.org/#/register?code=1F6fox8Y" target="_blank" rel="noopener" class="btn-secondary" style="justify-content:center">
+                    <span>选购此方案</span>
+                    <span class="material-symbols-outlined" style="font-size:16px">arrow_forward</span>
+                  </a>
+                </div>
+                
+                <div class="plan-card">
+                  <div>
+                    <div class="plan-name">寸丝</div>
+                    <div class="plan-price">注意！！！本套餐并没有冷门节点，仅美国、香港、日本、韩国、新加坡、澳大利亚等常用节点 月付200g流量</div>
+                    <ul class="plan-features"><li><span class='material-symbols-outlined' style='font-size:16px;color:var(--md-sys-color-primary)'>check_circle</span> <span>200 GB ￥36/每月</span></li></ul>
+                  </div>
+                  <a href="https://ednovas.org/#/register?code=1F6fox8Y" target="_blank" rel="noopener" class="btn-secondary" style="justify-content:center">
+                    <span>选购此方案</span>
+                    <span class="material-symbols-outlined" style="font-size:16px">arrow_forward</span>
+                  </a>
+                </div>
+                
+                <div class="plan-card">
+                  <div>
+                    <div class="plan-name">权宜</div>
+                    <div class="plan-price">全部节点 月付200g流量</div>
+                    <ul class="plan-features"><li><span class='material-symbols-outlined' style='font-size:16px;color:var(--md-sys-color-primary)'>check_circle</span> <span>200 GB ￥42/每月</span></li></ul>
+                  </div>
+                  <a href="https://ednovas.org/#/register?code=1F6fox8Y" target="_blank" rel="noopener" class="btn-secondary" style="justify-content:center">
+                    <span>选购此方案</span>
+                    <span class="material-symbols-outlined" style="font-size:16px">arrow_forward</span>
+                  </a>
+                </div>
+                
+                <div class="plan-card">
+                  <div>
+                    <div class="plan-name">鸿儒</div>
+                    <div class="plan-price">全部节点 月付500g流量</div>
+                    <ul class="plan-features"><li><span class='material-symbols-outlined' style='font-size:16px;color:var(--md-sys-color-primary)'>check_circle</span> <span>500 GB ￥102/每月</span></li></ul>
+                  </div>
+                  <a href="https://ednovas.org/#/register?code=1F6fox8Y" target="_blank" rel="noopener" class="btn-secondary" style="justify-content:center">
+                    <span>选购此方案</span>
+                    <span class="material-symbols-outlined" style="font-size:16px">arrow_forward</span>
+                  </a>
+                </div>
+                
+                <div class="plan-card">
+                  <div>
+                    <div class="plan-name">大雅</div>
+                    <div class="plan-price">全部节点 月付1000g流量</div>
+                    <ul class="plan-features"><li><span class='material-symbols-outlined' style='font-size:16px;color:var(--md-sys-color-primary)'>check_circle</span> <span>1000 GB ￥193/每月</span></li></ul>
+                  </div>
+                  <a href="https://ednovas.org/#/register?code=1F6fox8Y" target="_blank" rel="noopener" class="btn-secondary" style="justify-content:center">
+                    <span>选购此方案</span>
+                    <span class="material-symbols-outlined" style="font-size:16px">arrow_forward</span>
+                  </a>
+                </div>
+                
+                <div class="plan-card">
+                  <div>
+                    <div class="plan-name">200G Monthly Plan is for Foreign Customers Outside China</div>
+                    <div class="plan-price">特惠套餐</div>
+                    <ul class="plan-features"><li><span class='material-symbols-outlined' style='font-size:16px;color:var(--md-sys-color-primary)'>check_circle</span> <span>200 GB ￥24/每月</span></li><li><span class='material-symbols-outlined' style='font-size:16px;color:var(--md-sys-color-primary)'>check_circle</span> <span>200 GB Traffic per month Including tons of European country nodes Works in Russia, Iran, and Kazakhstan</span></li><li><span class='material-symbols-outlined' style='font-size:16px;color:var(--md-sys-color-primary)'>check_circle</span> <span>纯直连节点，中国大陆用户请勿购买此套餐（不做任何中国大陆直连可用性保证）！</span></li></ul>
+                  </div>
+                  <a href="https://ednovas.org/#/register?code=1F6fox8Y" target="_blank" rel="noopener" class="btn-secondary" style="justify-content:center">
+                    <span>选购此方案</span>
+                    <span class="material-symbols-outlined" style="font-size:16px">arrow_forward</span>
+                  </a>
+                </div>
+                
+                <div class="plan-card">
+                  <div>
+                    <div class="plan-name">500G Monthly Plan is for Foreign Customers Outside China</div>
+                    <div class="plan-price">特惠套餐</div>
+                    <ul class="plan-features"><li><span class='material-symbols-outlined' style='font-size:16px;color:var(--md-sys-color-primary)'>check_circle</span> <span>500 GB ￥61/每月</span></li><li><span class='material-symbols-outlined' style='font-size:16px;color:var(--md-sys-color-primary)'>check_circle</span> <span>500 GB Traffic per month Including tons of European country nodes Works in Russia, Iran, and Kazakhstan</span></li><li><span class='material-symbols-outlined' style='font-size:16px;color:var(--md-sys-color-primary)'>check_circle</span> <span>纯直连节点，中国大陆用户请勿购买此套餐（不做任何中国大陆直连可用性保证）！</span></li></ul>
+                  </div>
+                  <a href="https://ednovas.org/#/register?code=1F6fox8Y" target="_blank" rel="noopener" class="btn-secondary" style="justify-content:center">
+                    <span>选购此方案</span>
+                    <span class="material-symbols-outlined" style="font-size:16px">arrow_forward</span>
+                  </a>
+                </div>
+                
+                <div class="plan-card">
+                  <div>
+                    <div class="plan-name">拮据</div>
+                    <div class="plan-price">特惠套餐</div>
+                    <ul class="plan-features"><li><span class='material-symbols-outlined' style='font-size:16px;color:var(--md-sys-color-primary)'>check_circle</span> <span>200 GB ￥13/每月</span></li><li><span class='material-symbols-outlined' style='font-size:16px;color:var(--md-sys-color-primary)'>check_circle</span> <span>全节点套餐 一年200g流量（不会每月重置）</span></li></ul>
+                  </div>
+                  <a href="https://ednovas.org/#/register?code=1F6fox8Y" target="_blank" rel="noopener" class="btn-secondary" style="justify-content:center">
+                    <span>选购此方案</span>
+                    <span class="material-symbols-outlined" style="font-size:16px">arrow_forward</span>
+                  </a>
+                </div>
+                
+                <div class="plan-card">
+                  <div>
+                    <div class="plan-name">锦衣</div>
+                    <div class="plan-price">特惠套餐</div>
+                    <ul class="plan-features"><li><span class='material-symbols-outlined' style='font-size:16px;color:var(--md-sys-color-primary)'>check_circle</span> <span>600 GB ￥35/每月</span></li><li><span class='material-symbols-outlined' style='font-size:16px;color:var(--md-sys-color-primary)'>check_circle</span> <span>全节点套餐 一年600g流量（不会每月重置）</span></li></ul>
+                  </div>
+                  <a href="https://ednovas.org/#/register?code=1F6fox8Y" target="_blank" rel="noopener" class="btn-secondary" style="justify-content:center">
+                    <span>选购此方案</span>
+                    <span class="material-symbols-outlined" style="font-size:16px">arrow_forward</span>
+                  </a>
+                </div>
+                
+                <div class="plan-card">
+                  <div>
+                    <div class="plan-name">This 200G One Year Plan is for Foreign Customers Outside China</div>
+                    <div class="plan-price">特惠套餐</div>
+                    <ul class="plan-features"><li><span class='material-symbols-outlined' style='font-size:16px;color:var(--md-sys-color-primary)'>check_circle</span> <span>200 GB ￥6/每月</span></li><li><span class='material-symbols-outlined' style='font-size:16px;color:var(--md-sys-color-primary)'>check_circle</span> <span>200 GB Traffic with one year Including tons of European country nodes Works in Russia, Iran, and Kazakhstan</span></li><li><span class='material-symbols-outlined' style='font-size:16px;color:var(--md-sys-color-primary)'>check_circle</span> <span>纯直连节点，中国大陆用户请勿购买此套餐（不做任何中国大陆直连可用性保证）！</span></li></ul>
+                  </div>
+                  <a href="https://ednovas.org/#/register?code=1F6fox8Y" target="_blank" rel="noopener" class="btn-secondary" style="justify-content:center">
+                    <span>选购此方案</span>
+                    <span class="material-symbols-outlined" style="font-size:16px">arrow_forward</span>
+                  </a>
+                </div>
+                
+                <div class="plan-card">
+                  <div>
+                    <div class="plan-name">This 500G One Year Plan is for Foreign Customers Outside China</div>
+                    <div class="plan-price">特惠套餐</div>
+                    <ul class="plan-features"><li><span class='material-symbols-outlined' style='font-size:16px;color:var(--md-sys-color-primary)'>check_circle</span> <span>500 GB ￥16/每月</span></li><li><span class='material-symbols-outlined' style='font-size:16px;color:var(--md-sys-color-primary)'>check_circle</span> <span>500 GB Traffic within one year Including tons of European country nodes Works in Russia, Iran, and Kazakhstan</span></li><li><span class='material-symbols-outlined' style='font-size:16px;color:var(--md-sys-color-primary)'>check_circle</span> <span>纯直连节点，中国大陆用户请勿购买此套餐（不做任何中国大陆直连可用性保证）！</span></li></ul>
+                  </div>
+                  <a href="https://ednovas.org/#/register?code=1F6fox8Y" target="_blank" rel="noopener" class="btn-secondary" style="justify-content:center">
+                    <span>选购此方案</span>
+                    <span class="material-symbols-outlined" style="font-size:16px">arrow_forward</span>
+                  </a>
+                </div>
+                
+                <div class="plan-card">
+                  <div>
+                    <div class="plan-name">玲珑</div>
+                    <div class="plan-price">特惠套餐</div>
+                    <ul class="plan-features"><li><span class='material-symbols-outlined' style='font-size:16px;color:var(--md-sys-color-primary)'>check_circle</span> <span>999999999 GB ￥9999999/不限时</span></li><li><span class='material-symbols-outlined' style='font-size:16px;color:var(--md-sys-color-primary)'>check_circle</span> <span>高端高自由定制</span></li></ul>
+                  </div>
+                  <a href="https://ednovas.org/#/register?code=1F6fox8Y" target="_blank" rel="noopener" class="btn-secondary" style="justify-content:center">
+                    <span>选购此方案</span>
+                    <span class="material-symbols-outlined" style="font-size:16px">arrow_forward</span>
+                  </a>
+                </div>
+                
+              </div>
+            </section>
+            
+
+    
+            <section class="section-card">
+              <div class="section-header">
+                <div class="section-title">
+                  <span class="material-symbols-outlined">public</span>
+                  <span>节点分布列表（226 个节点）</span>
+                </div>
+                <span class="date-badge">📅 2022年12月25日更新</span>
+              </div>
+              <div class="nodes-grid">
+                
+            <div class="node-item">
+              <span class="node-name">0.8X 🇺🇸 美国1 | 0.8 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.8X 🇺🇸 美国2 | 0.8 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">1.0X 🇺🇸 美国3 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">1.3X 🇺🇸 美国4 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">1.0X 🇺🇸 美国5 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">1.0X 🇺🇸 美国6 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">1.0X 🇺🇸 美国7 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">1.3X 🇺🇸 美国8 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">1.3X 🇺🇸 美国9 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.5X 🇺🇸 美国10 | 0.2 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.5X 🇺🇸 美国11 | 0.2 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.5X 🇺🇸 美国12 | 0.2 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.1X 🇺🇸 美国13 | 0.2 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">2.0X 🇺🇸 美国14 | 2 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.7X 🇺🇸 美国15 | 0.7 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.7X 🇺🇸 美国16 | 0.7 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.7X 🇺🇸 美国17 | 0.7 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.3X 🇺🇸 美国18 | 0.3 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">1.0X 🇺🇸 美国19 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">1.0X 🇺🇸 美国20 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.8X 🇺🇸 美国21 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">1.0X 🇺🇸 美国22 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">2.0X 🇺🇸 美国23 | 2 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">2.0X 🇺🇸 美国24 | 2 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">1.2X 🇺🇸 美国25 | 1.2 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">1.2X 🇺🇸 美国26 | 1.2 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">2.0X 🇺🇸 美国27 | 2 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">3.0X 🇺🇸 美国28 | 3 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.5X 🇨🇦 加拿大1 | 0.5 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.5X 🇨🇦 加拿大2 | 0.5 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.8X 🇨🇦 加拿大3 | 0.8 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.8X 🇨🇦 加拿大4 | 0.8 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.5X 🇨🇷 哥斯达黎加 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.7X 🇵🇷 波多黎各 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.6X 🇲🇽 墨西哥 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">1.0X 🇧🇸 巴哈马 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">1.0X 🇧🇿 伯利兹 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">1.0X 🇧🇴 玻利维亚 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">1.0X 🇵🇾 巴拉圭 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">1.0X 🇬🇹 危地马拉 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.7X 🇧🇧 巴巴多斯 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.7X 🇰🇾 开曼群岛 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.7X 🇧🇲 百慕大 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.7X 🇦🇼 阿鲁巴 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.8X 🇨🇱 智利 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">1.2X 🇨🇴 哥伦比亚 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">1.0X 🇵🇦 巴拿马 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">1.0X 🇪🇨 厄瓜多尔 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">1.0X 🇵🇪 秘鲁 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">1.0X 🇺🇾 乌拉圭 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">10X 🇧🇷 巴西 | 10 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">15X 🇦🇷 阿根廷 | 15 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">30X 🇻🇪 委内瑞拉 | 30 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.7X 🇳🇴 挪威 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.5X 🇮🇸 冰岛 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.2X 🇫🇮 芬兰 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.5X 🇯🇪 泽西岛 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.6X 🇨🇭 瑞士1 | 2 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.2X 🇨🇭 瑞士2 | 2 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.8X 🇸🇪 瑞典 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.5X 🇬🇱 格陵兰岛 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.8X 🇬🇧 英国1 | 1 x | BBC</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.2X 🇬🇧 英国2 | 1 x | BBC</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.1X 🇬🇧 英国3 | 1 x | BBC</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.2X 🇮🇲 马恩岛 | 1 x | BBC</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.7X 🇻🇬 英属维尔京群岛 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">1.5X 🇮🇪 爱尔兰岛 | 1.5 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.2X 🇩🇰 丹麦 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">1.5X 🇩🇪 德国1 | 1 x | HBO GO,BBC iplayer,Disney+</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.2X 🇩🇪 德国2 | 0.2 x | HBO GO,BBC iplayer,Disney+</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">1.5X 🇩🇪 德国3 | 0.2 x | HBO GO,BBC iplayer,Disney+</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.3X 🇳🇱 荷兰1 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.1X 🇳🇱 荷兰2 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">1.0X 🇳🇱 荷兰3 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.7X 🇮🇹 意大利 | 1 x | server.it</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.5X 🇪🇸 西班牙 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.7X 🇫🇷 法国 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.5X 🇦🇩 安道尔 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.5X 🇲🇨 摩纳哥 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.5X 🇱🇺 卢森堡 | 0.5 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.6X 🇵🇹 葡萄牙 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.6X 🇬🇷 希腊 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.8X 🇦🇹 奥地利 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.5X 🇱🇮 列支敦士登 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.6X 🇷🇴 罗马尼亚 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.6X 🇧🇬 保加利亚 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.6X 🇭🇷 克罗地亚 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.6X 🇱🇻 拉脱维亚 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.6X 🇲🇰 北马其顿 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">1.0X 🇲🇹 马耳他 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.6X 🇸🇮 斯洛文尼亚 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">1.0X 🇧🇪 比利时 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.6X 🇷🇸 塞尔维亚 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.6X 🇨🇾 塞浦路斯 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.6X 🇨🇿 捷克 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.5X 🇸🇰 斯洛伐克 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.6X 🇭🇺 匈牙利 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.2X 🇧🇦 波斯尼亚和黑塞哥维那 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.5X 🇲🇪 黑山 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">5.0X 🇦🇱 阿尔巴尼亚 | 5 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.5X 🇱🇹 立陶宛 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.5X 🇮🇱 以色列1 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">1.0X 🇮🇱 以色列2 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.7X 🇹🇷 土耳其 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">1.0X 🇲🇩 摩尔多瓦 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.5X 🇵🇱 波兰 | 1.5 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.2X 🇪🇪 爱沙尼亚 | 2 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">10X 🇵🇰 巴基斯坦 | 12 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.2X 🇰🇬 吉尔吉斯斯坦 | 0.2 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.6X 🇦🇿 阿塞拜疆 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">1.0X 🇬🇪 格鲁吉亚 | 2 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.8X 🇰🇿 哈萨克斯坦 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.8X 🇺🇿 乌兹别克斯坦 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.2X 🇷🇺 俄罗斯 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.2X 🇧🇾 白俄罗斯 | 0.2 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.1X 🇺🇦 乌克兰1 | 0.1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.1X 🇺🇦 乌克兰2 | 0.1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.8X 🇦🇪 阿拉伯联合酋长国1 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.8X 🇦🇪 阿拉伯联合酋长国2 | 0.8 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">1.0X 🇸🇦 沙特阿拉伯 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.7X 🇶🇦 卡塔尔 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.5X 🇯🇴 约旦 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">1.0X 🇮🇷 伊朗 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.7X 🇦🇫 阿富汗 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">1.0X 🇧🇭 巴林 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.7X 🇴🇲 也门 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.8X 🇿🇦 南非 | 1 x | Justg</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.6X 🇳🇬 尼日利亚 | 1 x | 法国奈飞</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">10X 🇬🇭 加纳 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.5X 🇩🇿 阿尔及利亚 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">3.0X 🇲🇺 毛里求斯 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">1.0X 🇩🇯 吉布提 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.5X 🇲🇦 摩洛哥 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.7X 🇦🇴 安哥拉 | 1 x | 法国奈飞</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">1.0X 🇹🇳 突尼斯 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">1.0X 🇪🇬 埃及 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">1.0X 🇰🇪 肯尼亚 | 3 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">1.0X 🇵🇭 菲律宾1 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">1.0X 🇵🇭 菲律宾2 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.8X 🇻🇳 越南1 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.5X 🇦🇲 亚美尼亚 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.2X 🇻🇳 越南2 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.5X 🇹🇭 泰国1 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">1.0X 🇹🇭 泰国2 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.7X 🇱🇰 斯里兰卡 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.2X 🇰🇭 柬埔寨 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.7X 🇲🇲 缅甸 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.8X 🇧🇩 孟加拉国 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.7X 🇱🇦 老挝 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.5X 🇳🇵 尼泊尔 | 2 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.7X 🇧🇹 不丹 | 2 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">1.2X 🇲🇾 马来西亚 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.2X 🇮🇩 印度尼西亚 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.5X 🇮🇳 印度1 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">1.0X 🇮🇳 印度2 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">1.0X 🇸🇬 新加坡1 | 2 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.5X 🇸🇬 新加坡2 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.5X 🇸🇬 新加坡3 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">1.0X 🇸🇬 新加坡4 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.2X 🇸🇬 新加坡5 | 0.2 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.1X 🇸🇬 新加坡6 | 0.2 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.8X 🇳🇿 新西兰 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.7X 🇧🇳 文莱 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.8X 🇦🇺 澳大利亚1 | 0.8 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.8X 🇦🇺 澳大利亚2 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.8X 🇦🇺 澳大利亚3 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.7X 🇰🇷 韩国1 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.7X 🇰🇷 韩国2 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.5X 🇰🇷 韩国3 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">1.0X 🇯🇵 日本1 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">1.0X 🇯🇵 日本2 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">1.0X 🇯🇵 日本3 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">1.0X 🇯🇵 日本4 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">1.0X 🇯🇵 日本5 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">1.0X 🇯🇵 日本6 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">1.0X 🇯🇵 日本7 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">1.0X 🇯🇵 日本8 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">2X 🇯🇵 日本9 | 2 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.2X[Tunnel]AZ 🇯🇵 Japan Tokyo 1-2 | 0.5 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.2X[Tunnel]AZ 🇯🇵 Japan Tokyo 1-3 | 0.5 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">1.5X 🇯🇵 日本10 | 1.5 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">4.0X 🇯🇵 日本11 | 4 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.2X 🇲🇳 蒙古 | 4 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">3.0X 🇲🇴 澳门 | 3 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">1.0X 🇹🇼 台湾1 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">3.0X 🇹🇼 台湾2 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">1.0X 🇹🇼 台湾3 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">2.0X 🇹🇼 台湾4 | 1 x | 巴哈姆特动画疯,Netflix,Disney+</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">2.0X 🇹🇼 台湾5 | 2 x | Netflix,Disney+</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">1.0X 🇭🇰 香港1 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.5X 🇭🇰 香港2 | 1.5 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.5X 🇭🇰 香港3 | 1.5 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.5X 🇭🇰 香港4 | 1.5 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.2X 🇭🇰 香港5 | 1.5 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">4.0X 🇭🇰 香港6 | 4 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">3.0X 🇭🇰 香港7 | 3 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">3.0X 🇭🇰 香港8 | 3 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">3.0X 🇭🇰 香港9 | 3 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">5.0X 🇭🇰 香港10 | 5 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">5.0X 🇭🇰 香港11 | 5 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">5.0X 🇭🇰 香港12 | 5 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">5.0X 🇭🇰 香港13 | 5 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">5.0X 🇭🇰 香港14 | 5 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">2.0X 🇭🇰 香港15 | 2 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">2.0X 🇭🇰 香港16 | 2 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">2.0X 🇭🇰 香港17 | 2 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">2.0X 🇭🇰 香港18 | 2 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">2.0X 🇭🇰 香港19 | 2 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">2.0X 🇭🇰 香港20 | 2 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">2.0X 🇭🇰 香港21 | 2 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">2.0X 🇭🇰 香港22 | 2 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.2X[Tunnel] AZ 🇭🇰 Hong Kong 1-1 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.2X[Tunnel] AZ 🇭🇰 Hong Kong 1-2 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.2X[Tunnel] AZ 🇭🇰 Hong Kong 1-3 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.2X[Tunnel] AZ 🇭🇰 Hong Kong 2-1 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.2X[Tunnel] AZ 🇭🇰 Hong Kong 2-2 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.2X[Tunnel] AZ 🇭🇰 Hong Kong 2-3 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.2X[Tunnel] AZ 🇭🇰 Hong Kong 3-1 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.2X[Tunnel] AZ 🇭🇰 Hong Kong 3-2 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.2X[Tunnel] AZ 🇭🇰 Hong Kong 3-3 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.2X[Tunnel] AZ 🇭🇰 Hong Kong 4-1 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.2X[Tunnel] AZ 🇭🇰 Hong Kong 4-2 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.2X[Tunnel] AZ 🇭🇰 Hong Kong 4-3 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.2X[LoadBalance][Tunnel] AZ 🇭🇰 Hong Kong 2 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">0.2X[LoadBalance][Tunnel] AZ 🇭🇰 Hong Kong 3 | 1 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+            <div class="node-item">
+              <span class="node-name">15X ❓随机136个国家 | 10 x | -</span>
+              <span class="node-rate">x1</span>
+            </div>
+            
+              </div>
+            </section>
+            
+
+    <div class="disclaimer-card">
+      <strong>ℹ️ 免责声明与公益推广说明：</strong><br>
+      此页面为 <strong>OverTheFirewall</strong> 赞助商公益推广专栏。部分收益将捐赠给 SDGs 或用于开源社区服务器运维。网络加速服务请用于学术科研、正规商务与外语学习，请遵守相关法律法规。
+    </div>
+    
+  </main>
+  
+  <div class="lightbox-modal" id="lightboxModal" onclick="this.classList.remove('active')">
+    <img id="lightboxImg" src="" alt="Speedtest Full">
+  </div>
+
+  <script>
+    // Theme Switcher
+    const savedTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    document.documentElement.setAttribute('data-theme', savedTheme);
+    const themeIcon = document.getElementById('themeIcon');
+    if (themeIcon) themeIcon.textContent = savedTheme === 'dark' ? 'light_mode' : 'dark_mode';
+
+    document.getElementById('themeToggleBtn')?.addEventListener('click', () => {
+      const current = document.documentElement.getAttribute('data-theme') || 'light';
+      const next = current === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('theme', next);
+      if (themeIcon) themeIcon.textContent = next === 'dark' ? 'light_mode' : 'dark_mode';
+    });
+
+    // Image Zoom Lightbox
+    document.querySelectorAll('.speedtest-img').forEach(img => {
+      img.addEventListener('click', () => {
+        const modal = document.getElementById('lightboxModal');
+        const mImg = document.getElementById('lightboxImg');
+        mImg.src = img.src;
+        modal.classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>
