@@ -1,5 +1,6 @@
 {% assign parts = include.name | split: '.' %}
-{% assign ext = parts | last | downcase | strip %}
+{% assign raw_ext = parts | last | default: "" %}
+{% assign ext = raw_ext | split: '(' | first | split: '（' | first | downcase | strip %}
 
 {% assign file_color = "primary" %}
 {% assign file_icon = "insert_drive_file" %}
@@ -95,9 +96,15 @@
   {% comment %} Name Keyword Fallback for non-standard extension titles {% endcomment %}
   {% else %}
     {% assign lname = include.name | downcase %}
-    {% if lname contains 'zip' or lname contains 'rar' or lname contains '7z' or lname contains 'tar' or lname contains '合集' or lname contains '资源包' or lname contains '压缩包' %}
+    {% if lname contains 'zip' or lname contains 'rar' or lname contains '7z' or lname contains 'tar' or lname contains '合集' or lname contains '资源包' or lname contains '压缩包' or lname contains '备份' %}
       {% assign file_color = "tertiary" %}
       {% assign file_icon = "folder_zip" %}
+    {% elsif lname contains '音乐' or lname contains '音频' or lname contains '歌曲' or lname contains '铃声' or lname contains '原声' or lname contains 'sound' or lname contains 'bgm' or lname contains 'ost' or lname contains 'horizon' %}
+      {% assign file_color = "secondary" %}
+      {% assign file_icon = "audio_file" %}
+    {% elsif lname contains '字体' or lname contains 'font' or lname contains 'ttf' or lname contains 'otf' %}
+      {% assign file_color = "secondary" %}
+      {% assign file_icon = "font_download" %}
     {% elsif lname contains 'apk' or lname contains '安卓' or lname contains 'android' %}
       {% assign file_color = "primary" %}
       {% assign file_icon = "android" %}
@@ -117,39 +124,60 @@
 {% if include.icon and include.icon != "" %}
   {% assign raw_icon = include.icon | downcase | strip %}
   {% case raw_icon %}
-    {% when 'file-zip' or 'zip' or 'archive' or 'rar' or '7z' or 'tar' or 'gz' or 'file_zip' or 'folder-zip' %}
+    {% when 'file-zip' or 'file_zip' or 'zip' or 'archive' or 'file-archive' or 'rar' or '7z' or 'tar' or 'gz' or 'folder_zip' or 'folder-zip' or 'package' or 'backup' %}
       {% assign file_icon = "folder_zip" %}
       {% assign file_color = "tertiary" %}
-    {% when 'file-pdf' or 'pdf' or 'file_pdf' %}
-      {% assign file_icon = "picture_as_pdf" %}
-      {% assign file_color = "error" %}
-    {% when 'file-code' or 'code' or 'script' or 'file_code' %}
-      {% assign file_icon = "code" %}
-      {% assign file_color = "tertiary" %}
-    {% when 'file-text' or 'text' or 'txt' or 'document' or 'doc' or 'docx' or 'file_text' %}
-      {% assign file_icon = "description" %}
-      {% assign file_color = "secondary" %}
-    {% when 'file-excel' or 'excel' or 'sheet' or 'csv' or 'xls' or 'xlsx' %}
-      {% assign file_icon = "table" %}
-      {% assign file_color = "secondary" %}
-    {% when 'file-ppt' or 'ppt' or 'powerpoint' %}
-      {% assign file_icon = "co_present" %}
-      {% assign file_color = "error" %}
-    {% when 'file-image' or 'image' or 'img' or 'pic' or 'photo' %}
-      {% assign file_icon = "image" %}
-      {% assign file_color = "tertiary" %}
-    {% when 'file-audio' or 'audio' or 'music' or 'sound' %}
+    {% when 'file-music' or 'file_music' or 'music' or 'file-audio' or 'file_audio' or 'audio' or 'sound' or 'song' or 'audio_file' or 'music_note' or 'headphones' or 'ringtone' or 'voice' %}
       {% assign file_icon = "audio_file" %}
       {% assign file_color = "secondary" %}
-    {% when 'file-video' or 'video' or 'movie' %}
+    {% when 'file-font' or 'file_font' or 'font' or 'fonts' or 'font_download' or 'text_fields' or 'ttf' or 'otf' or 'woff' or 'woff2' %}
+      {% assign file_icon = "font_download" %}
+      {% assign file_color = "secondary" %}
+    {% when 'file-book' or 'file_book' or 'book' or 'books' or 'ebook' or 'novel' or 'menu_book' or 'read' or 'epub' or 'mobi' %}
+      {% assign file_icon = "menu_book" %}
+      {% assign file_color = "tertiary" %}
+    {% when 'file-pdf' or 'file_pdf' or 'pdf' or 'picture_as_pdf' %}
+      {% assign file_icon = "picture_as_pdf" %}
+      {% assign file_color = "error" %}
+    {% when 'file-code' or 'file_code' or 'code' or 'script' or 'source' or 'dev' or 'program' %}
+      {% assign file_icon = "code" %}
+      {% assign file_color = "tertiary" %}
+    {% when 'file-text' or 'file_text' or 'text' or 'txt' or 'document' or 'doc' or 'docx' or 'file-doc' or 'file_doc' or 'article' or 'description' or 'note' or 'notes' or 'markdown' or 'md' %}
+      {% assign file_icon = "description" %}
+      {% assign file_color = "secondary" %}
+    {% when 'file-excel' or 'file_excel' or 'excel' or 'sheet' or 'sheets' or 'csv' or 'tsv' or 'xls' or 'xlsx' or 'table' or 'spreadsheet' %}
+      {% assign file_icon = "table" %}
+      {% assign file_color = "secondary" %}
+    {% when 'file-ppt' or 'file_ppt' or 'ppt' or 'pptx' or 'powerpoint' or 'presentation' or 'co_present' or 'slides' or 'keynote' %}
+      {% assign file_icon = "co_present" %}
+      {% assign file_color = "error" %}
+    {% when 'file-image' or 'file_image' or 'image' or 'img' or 'pic' or 'photo' or 'picture' or 'wallpaper' or 'palette' or 'art' %}
+      {% assign file_icon = "image" %}
+      {% assign file_color = "tertiary" %}
+    {% when 'file-video' or 'file_video' or 'video' or 'movie' or 'film' or 'video_file' or 'media' or 'clip' %}
       {% assign file_icon = "video_file" %}
       {% assign file_color = "primary" %}
-    {% when 'file-apk' or 'apk' or 'android' or 'app' %}
+    {% when 'file-apk' or 'file_apk' or 'apk' or 'apks' or 'xapk' or 'android' or 'app' %}
       {% assign file_icon = "android" %}
       {% assign file_color = "primary" %}
-    {% when 'file-exe' or 'exe' or 'binary' or 'terminal' %}
+    {% when 'file-exe' or 'file_exe' or 'exe' or 'msi' or 'binary' or 'terminal' or 'bat' or 'cmd' or 'software' or 'installer' %}
       {% assign file_icon = "terminal" %}
       {% assign file_color = "error" %}
+    {% when 'file-game' or 'file_game' or 'game' or 'games' or 'sports_esports' or 'save' or 'sav' or 'rom' or 'emulator' %}
+      {% assign file_icon = "sports_esports" %}
+      {% assign file_color = "primary" %}
+    {% when 'file-cloud' or 'file_cloud' or 'cloud' or 'cloud_download' or 'drive' or 'pan' or 'torrent' or 'magnet' or 'download' or 'share' or 'link' %}
+      {% assign file_icon = "cloud_download" %}
+      {% assign file_color = "tertiary" %}
+    {% when 'file-plugin' or 'file_plugin' or 'plugin' or 'extension' or 'mod' or 'addon' or 'theme' %}
+      {% assign file_icon = "extension" %}
+      {% assign file_color = "primary" %}
+    {% when 'file-data' or 'file_data' or 'data' or 'data_object' or 'json' or 'xml' or 'yaml' or 'yml' or 'toml' or 'config' or 'conf' or 'ini' or 'reg' %}
+      {% assign file_icon = "data_object" %}
+      {% assign file_color = "secondary" %}
+    {% when 'file-key' or 'file_key' or 'key' or 'lock' or 'vpn_key' or 'password' or 'cert' or 'certificate' %}
+      {% assign file_icon = "key" %}
+      {% assign file_color = "tertiary" %}
     {% else %}
       {% assign file_icon = include.icon %}
   {% endcase %}
