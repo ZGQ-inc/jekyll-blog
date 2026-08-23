@@ -1158,7 +1158,11 @@ function initGlobalAnchorHeadings() {
       // Don't intercept if clicking an interactive inner element (like buttons or outer links)
       if (e.target.tagName.toLowerCase() === 'a' && e.target !== iconSpan && !e.target.classList.contains('header-title')) return;
 
-      const fullUrl = window.location.href.split('#')[0] + '#' + encodeURIComponent(id);
+      let cleanId = id;
+      try { cleanId = decodeURIComponent(id); } catch (e) {}
+      let baseUrl = window.location.href.split('#')[0];
+      try { baseUrl = decodeURI(baseUrl); } catch (e) {}
+      const fullUrl = baseUrl + '#' + cleanId;
       
       navigator.clipboard.writeText(fullUrl).then(() => {
         const originalText = iconSpan.textContent;
