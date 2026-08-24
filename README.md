@@ -141,6 +141,54 @@ git push origin main
 5. **发布到频道**：网站更新完成后，在 Telegram 机器人中输入 `/link <文章ID> [摘要内容]`。Bot 会自动提取头图，并将这篇文章排版成精美的卡片推送至你的公开频道（图片在下、文字在上、自带链接预览），同时触发自动关联频道评论区！
    - *补充说明：后续如果修改了文章封面或摘要，可直接发送 `/sync <文章ID>`，Bot 会同步更新频道里那条历史消息的展示内容。*
 
-## 📄 许可证 (License)
+## 📦 开源依赖与技术栈 (Dependencies & Tech Stack)
 
-本项目采用 [MIT License](LICENSE) 许可协议。
+本项目在构建与运行时依赖了以下优秀的开源项目与软件包，向开源社区致敬：
+
+### 1. 静态构建与插件 (Ruby Gems)
+| 软件包 (Gem) | 版本约束 | 开源协议 | 用途说明 |
+| :--- | :--- | :--- | :--- |
+| **[Jekyll](https://github.com/jekyll/jekyll)** | `~> 4.3` | [MIT](https://github.com/jekyll/jekyll/blob/master/LICENSE) | 核心静态网站生成引擎 |
+| **[jekyll-feed](https://github.com/jekyll/jekyll-feed)** | `~> 0.17` | [MIT](https://github.com/jekyll/jekyll-feed/blob/master/LICENSE.txt) | 全站 Atom / RSS 订阅源自动生成 |
+| **[jekyll-sitemap](https://github.com/jekyll/jekyll-sitemap)** | 默认 | [MIT](https://github.com/jekyll/jekyll-sitemap/blob/master/LICENSE.txt) | 搜索引擎 Sitemap XML 生成 |
+| **[jekyll-seo-tag](https://github.com/jekyll/jekyll-seo-tag)** | `~> 2.8` | [MIT](https://github.com/jekyll/jekyll-seo-tag/blob/master/LICENSE.txt) | 结构化 SEO 元数据与 Open Graph 标签优化 |
+| **[rouge](https://github.com/rouge-ruby/rouge)** | `~> 4.2` | [MIT / BSD-2](https://github.com/rouge-ruby/rouge/blob/master/LICENSE) | 纯 Ruby 高性能代码语法高亮 |
+| **[kramdown-parser-gfm](https://github.com/kramdown/parser-gfm)** | 默认 | [MIT](https://github.com/kramdown/parser-gfm/blob/master/COPYING) | GitHub 风格 Markdown (GFM) 语法解析器 |
+| **[nokogiri](https://github.com/sparklemotion/nokogiri)** | 默认 | [MIT](https://github.com/sparklemotion/nokogiri/blob/main/LICENSE.md) | HTML/XML DOM 解析与自定义 AST 语法转换 |
+| **[tzinfo](https://github.com/tzinfo/tzinfo)** | `>= 1, < 3` | [MIT](https://github.com/tzinfo/tzinfo/blob/master/LICENSE) | IANA 时区数据库支持 |
+
+### 2. 服务端与云原生 (Cloudflare Worker & Node.js)
+| 软件包 (Package) | 版本约束 | 开源协议 | 用途说明 |
+| :--- | :--- | :--- | :--- |
+| **[Wrangler](https://github.com/cloudflare/workers-sdk)** | `^3.80.0` | [MIT / Apache-2.0](https://github.com/cloudflare/workers-sdk/blob/main/LICENSE-MIT) | Cloudflare 开发者平台与 Worker 部署 CLI |
+| **[@cloudflare/workers-types](https://github.com/cloudflare/workers-types)** | `^4.20241022.0` | [MIT / Apache-2.0](https://github.com/cloudflare/workers-types/blob/main/LICENSE) | Cloudflare Workers & D1 & R2 TypeScript 类型声明 |
+| **[TypeScript](https://github.com/microsoft/TypeScript)** | `^5.5.4` | [Apache-2.0](https://github.com/microsoft/TypeScript/blob/main/LICENSE.txt) | 服务端静态类型检查与编译 |
+
+### 3. 前端组件与交互库 (Frontend & Web Modules)
+| 组件 / 库 | 分发渠道 / 版本 | 开源协议 | 用途说明 |
+| :--- | :--- | :--- | :--- |
+| **[@material/web](https://github.com/material-components/material-web)** | ESM CDN | [Apache-2.0](https://github.com/material-components/material-web/blob/main/LICENSE) | Google 官方 Material Design 3 Web 原生组件 |
+| **[Fuse.js](https://github.com/krisk/Fuse)** | `v7.0.0` | [Apache-2.0](https://github.com/krisk/Fuse/blob/master/LICENSE) | 客户端轻量级全文模糊搜索 |
+| **[MathJax](https://github.com/mathjax/MathJax)** | `v3` | [Apache-2.0](https://github.com/mathjax/MathJax/blob/master/LICENSE) | LaTeX 数学公式渲染引擎 |
+| **[Mermaid.js](https://github.com/mermaid-js/mermaid)** | `v10` ESM | [MIT](https://github.com/mermaid-js/mermaid/blob/develop/LICENSE) | 流程图、时序图与架构图动态渲染 |
+| **[Three.js](https://github.com/mrdoob/three.js)** | `r158` ESM | [MIT](https://github.com/mrdoob/three.js/blob/dev/LICENSE) | 3D WebGL 渲染引擎 (STL 模型在线交互查看) |
+| **[Leaflet](https://github.com/Leaflet/Leaflet)** | `v1.9.4` | [BSD-2-Clause](https://github.com/Leaflet/Leaflet/blob/main/LICENSE) | GeoJSON / TopoJSON 地图数据交互渲染 |
+
+### 4. 字体与图标资产 (Typography & Icons)
+| 资源名称 | 授权许可 | 用途说明 |
+| :--- | :--- | :--- |
+| **[Material Symbols Outlined](https://github.com/google/material-design-icons)** | [Apache-2.0](https://github.com/google/material-design-icons/blob/master/LICENSE) | 站点核心 Material Design 3 图标集 |
+| **[Noto Sans SC](https://fonts.google.com/specimen/Noto+Sans+SC)** | [OFL-1.1 (SIL Open Font License)](https://openfontlicense.org/) | 默认中文字体族 |
+| **[Inter](https://rsms.me/inter/)** | [OFL-1.1 (SIL Open Font License)](https://openfontlicense.org/) | 现代化 UI 英文无衬线字体 |
+| **[JetBrains Mono](https://www.jetbrains.com/lp/mono/)** | [OFL-1.1 (SIL Open Font License)](https://openfontlicense.org/) | 等宽代码字体 |
+
+---
+
+## 📄 许可证与开源协议合规 (License & Compliance)
+
+本项目源码整体采用 **[MIT License](LICENSE)** 许可协议开源。
+
+* **协议继承与兼容性说明**：
+  * 本项目引用的所有 Ruby Gems、Node.js 依赖及前端 JavaScript 库均采用宽松自由的开源协议（**MIT、Apache 2.0、BSD-2-Clause**），与本项目的 MIT 协议完全兼容且无传染性风险。
+  * 本项目引入的所有 Web 字体均遵循 **SIL Open Font License 1.1 (OFL-1.1)**，允许与本开源项目一同分发与网络嵌入使用。
+  * 地图瓦片服务遵循 **CARTO** 及 **[OpenStreetMap](https://www.openstreetmap.org/copyright)** (ODbL) 署名规范。
