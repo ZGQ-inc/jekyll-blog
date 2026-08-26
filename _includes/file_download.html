@@ -99,6 +99,9 @@
     {% if lname contains 'zip' or lname contains 'rar' or lname contains '7z' or lname contains 'tar' or lname contains '合集' or lname contains '资源包' or lname contains '压缩包' or lname contains '备份' %}
       {% assign file_color = "tertiary" %}
       {% assign file_icon = "folder_zip" %}
+    {% elsif lname contains '文件夹' or lname contains '目录' or lname contains 'folder' or lname contains 'directory' %}
+      {% assign file_color = "primary" %}
+      {% assign file_icon = "folder" %}
     {% elsif lname contains '音乐' or lname contains '音频' or lname contains '歌曲' or lname contains '铃声' or lname contains '原声' or lname contains 'sound' or lname contains 'bgm' or lname contains 'ost' or lname contains 'horizon' %}
       {% assign file_color = "secondary" %}
       {% assign file_icon = "audio_file" %}
@@ -124,6 +127,9 @@
 {% if include.icon and include.icon != "" %}
   {% assign raw_icon = include.icon | downcase | strip %}
   {% case raw_icon %}
+    {% when 'file-folder' or 'file_folder' or 'folder' or 'folders' or 'dir' or 'directory' or 'folder-open' or 'folder_open' %}
+      {% assign file_icon = "folder" %}
+      {% assign file_color = "primary" %}
     {% when 'file-zip' or 'file_zip' or 'zip' or 'archive' or 'file-archive' or 'rar' or '7z' or 'tar' or 'gz' or 'folder_zip' or 'folder-zip' or 'package' or 'backup' %}
       {% assign file_icon = "folder_zip" %}
       {% assign file_color = "tertiary" %}
