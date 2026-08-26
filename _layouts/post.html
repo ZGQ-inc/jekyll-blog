@@ -22,9 +22,10 @@ layout: default
     <h1 class="hero-title">{{ post.title }}</h1>
 
     <div class="hero-meta">
-      <span>
+      <span class="hero-date-item" data-time="{{ post.date | date: '%H:%M:%S' }}" data-full-date="{{ post.date | date: '%Y年%m月%d日 %H:%M:%S' }}" role="button" tabindex="0" title="发布时间：{{ post.date | date: '%Y-%m-%d %H:%M:%S' }}">
         <span class="material-symbols-outlined">calendar_month</span>
-        {{ post.date | date: "%Y年%m月%d日" }}
+        <span>{{ post.date | date: "%Y年%m月%d日" }}</span>
+        <span class="date-time-bubble">{{ post.date | date: "%H:%M:%S" }}</span>
       </span>
       <span>
         <span class="material-symbols-outlined">person</span>
@@ -51,9 +52,10 @@ layout: default
     <h1 class="hero-title">{{ post.title }}</h1>
     
     <div class="hero-meta">
-      <span>
+      <span class="hero-date-item" data-time="{{ post.date | date: '%H:%M:%S' }}" data-full-date="{{ post.date | date: '%Y年%m月%d日 %H:%M:%S' }}" role="button" tabindex="0" title="发布时间：{{ post.date | date: '%Y-%m-%d %H:%M:%S' }}">
         <span class="material-symbols-outlined">calendar_month</span>
-        {{ post.date | date: "%Y年%m月%d日" }}
+        <span>{{ post.date | date: "%Y年%m月%d日" }}</span>
+        <span class="date-time-bubble">{{ post.date | date: "%H:%M:%S" }}</span>
       </span>
       <span>
         <span class="material-symbols-outlined">person</span>

@@ -88,5 +88,30 @@ document.addEventListener('DOMContentLoaded', () => {
       }, 2000);
     });
   });
+
+  // Hero date exact time bubble toggle & mobile toast
+  const dateItems = document.querySelectorAll('.hero-date-item');
+  dateItems.forEach(item => {
+    item.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const isActive = item.classList.contains('active');
+      
+      dateItems.forEach(d => d.classList.remove('active'));
+      
+      if (!isActive) {
+        item.classList.add('active');
+        const fullTime = item.getAttribute('data-full-date') || item.getAttribute('data-time');
+        if (window.showToast && window.innerWidth <= 768) {
+          window.showToast(`发布时间：${fullTime}`);
+        }
+      }
+    });
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.hero-date-item')) {
+      dateItems.forEach(d => d.classList.remove('active'));
+    }
+  });
 });
 
