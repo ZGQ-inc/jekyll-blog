@@ -1850,68 +1850,76 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
     }
 
     .hero-date-item {
-      position: relative;
-      cursor: pointer;
-      user-select: none;
-      border-radius: var(--shape-small);
-      padding: 2px 6px;
-      margin: -2px -6px;
-      transition: background-color var(--dur-short3) var(--motion-standard), transform var(--dur-short3);
-
       &:hover, &:focus-visible, &.active {
         background-color: rgba(255, 255, 255, 0.18);
-        
-        .date-time-bubble {
-          opacity: 1;
-          visibility: visible;
-          transform: translateX(-50%) translateY(0);
-          pointer-events: auto;
-        }
-      }
-
-      &:active {
-        transform: scale(0.96);
-      }
-    }
-
-    .date-time-bubble {
-      position: absolute;
-      bottom: calc(100% + 8px);
-      left: 50%;
-      transform: translateX(-50%) translateY(6px);
-      background: color-mix(in srgb, var(--md-sys-color-inverse-surface) 90%, transparent);
-      color: var(--md-sys-color-inverse-on-surface);
-      padding: 5px 10px;
-      border-radius: var(--shape-small);
-      font-size: 0.8125rem;
-      font-weight: 600;
-      font-family: 'JetBrains Mono', monospace;
-      white-space: nowrap;
-      box-shadow: var(--elev-3);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border: 1px solid color-mix(in srgb, var(--md-sys-color-outline) 20%, transparent);
-      opacity: 0;
-      visibility: hidden;
-      pointer-events: none;
-      transition: opacity var(--dur-short4) var(--motion-emphasized-decel),
-                  transform var(--dur-short4) var(--motion-emphasized-decel),
-                  visibility var(--dur-short4);
-      z-index: 1000;
-
-      &::after {
-        content: "";
-        position: absolute;
-        top: 100%;
-        left: 50%;
-        transform: translateX(-50%);
-        border-width: 5px 5px 0 5px;
-        border-style: solid;
-        border-color: color-mix(in srgb, var(--md-sys-color-inverse-surface) 90%, transparent) transparent transparent transparent;
       }
     }
 
     .material-symbols-outlined { font-size: 16px; }
+  }
+}
+
+// Global hero date item & time bubble
+.hero-date-item {
+  position: relative;
+  cursor: pointer;
+  user-select: none;
+  border-radius: var(--shape-small);
+  padding: 2px 6px;
+  margin: -2px -6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: background-color var(--dur-short3) var(--motion-standard), transform var(--dur-short3);
+
+  &:hover, &:focus-visible, &.active {
+    .date-time-bubble {
+      opacity: 1;
+      visibility: visible;
+      transform: translateX(-50%) translateY(0);
+      pointer-events: auto;
+    }
+  }
+
+  &:active {
+    transform: scale(0.96);
+  }
+}
+
+.date-time-bubble {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%) translateY(6px);
+  background: color-mix(in srgb, var(--md-sys-color-inverse-surface) 92%, transparent);
+  color: var(--md-sys-color-inverse-on-surface);
+  padding: 5px 10px;
+  border-radius: var(--shape-small);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  font-family: 'JetBrains Mono', monospace;
+  white-space: nowrap;
+  box-shadow: var(--elev-3);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid color-mix(in srgb, var(--md-sys-color-outline) 20%, transparent);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity var(--dur-short4) var(--motion-emphasized-decel),
+              transform var(--dur-short4) var(--motion-emphasized-decel),
+              visibility var(--dur-short4);
+  z-index: 1000;
+
+  &::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 5px 5px 0 5px;
+    border-style: solid;
+    border-color: color-mix(in srgb, var(--md-sys-color-inverse-surface) 92%, transparent) transparent transparent transparent;
   }
 }
 
@@ -1955,27 +1963,8 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
     }
 
     .hero-date-item {
-      position: relative;
-      cursor: pointer;
-      user-select: none;
-      border-radius: var(--shape-small);
-      padding: 2px 6px;
-      margin: -2px -6px;
-      transition: background-color var(--dur-short3) var(--motion-standard), transform var(--dur-short3);
-
       &:hover, &:focus-visible, &.active {
         background-color: color-mix(in srgb, var(--md-sys-color-primary) 14%, transparent);
-        
-        .date-time-bubble {
-          opacity: 1;
-          visibility: visible;
-          transform: translateX(-50%) translateY(0);
-          pointer-events: auto;
-        }
-      }
-
-      &:active {
-        transform: scale(0.96);
       }
     }
 

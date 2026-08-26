@@ -27,31 +27,66 @@ module Jekyll
       end
     end
 
+    def fix_doc_date(doc)
+      # 1. Direct regex extraction from the actual file source front matter
+      time = extract_raw_date_from_file(doc)
+
+      # 2. Fallback to doc.data['date']
+      if time.nil? && doc.data.key?('date')
+        raw = doc.data['date']
+        time = parse_date_literal(raw)
+      end
+
+      if time
+        doc.data['date'] = time
+        doc.date = time if doc.respond_to?(:date=)
+        doc.instance_variable_set(:@date, time)
+      end
+    end
+
     private
 
-    def fix_doc_date(doc)
-      return unless doc.data.key?('date')
+    def extract_raw_date_from_file(doc)
+      path = doc.respond_to?(:path) ? doc.path : nil
+      return nil unless path && File.exist?(path)
 
-      raw = doc.data['date']
+      # Read head of the file containing YAML front matter
+      head = File.read(path, 2048, encoding: 'utf-8') rescue nil
+      return nil unless head
 
-      cst_time = nil
+      if head =~ /^---\s*\n(.*?)\n---/m
+        fm = $1
+        # Extract date value from front matter
+        if fm =~ /^date:\s*["']?(\d{4})-(\d{2})-(\d{2})(?:[ T](\d{2}):(\d{2})(?::(\d{2}))?)?["']?\s*$/m
+          y = $1.to_i
+          m = $2.to_i
+          d = $3.to_i
+          h = ($4 || 0).to_i
+          min = ($5 || 0).to_i
+          s = ($6 || 0).to_i
+          return Time.new(y, m, d, h, min, s, "+08:00")
+        end
+      end
+      nil
+    end
+
+    def parse_date_literal(raw)
       if raw.is_a?(Time)
         if raw.utc? || raw.utc_offset == 0
-          cst_time = Time.new(raw.year, raw.month, raw.day, raw.hour, raw.min, raw.sec, "+08:00")
+          Time.new(raw.year, raw.month, raw.day, raw.hour, raw.min, raw.sec, "+08:00")
+        else
+          raw
         end
       elsif raw.is_a?(Date)
-        cst_time = Time.new(raw.year, raw.month, raw.day, 0, 0, 0, "+08:00")
+        Time.new(raw.year, raw.month, raw.day, 0, 0, 0, "+08:00")
       elsif raw.is_a?(String)
         if raw =~ /^(\d{4})-(\d{2})-(\d{2})(?:[ T](\d{2}):(\d{2})(?::(\d{2}))?)?/
           y, m, d = $1.to_i, $2.to_i, $3.to_i
           h, min, s = ($4 || 0).to_i, ($5 || 0).to_i, ($6 || 0).to_i
-          cst_time = Time.new(y, m, d, h, min, s, "+08:00")
+          Time.new(y, m, d, h, min, s, "+08:00")
+        else
+          Time.parse(raw) rescue raw
         end
-      end
-
-      if cst_time
-        doc.data['date'] = cst_time
-        doc.instance_variable_set(:@date, cst_time)
       end
     end
   end
@@ -63,11 +98,7 @@ module Jekyll
 
       time = nil
       if input.is_a?(Time)
-        if input.utc? || input.utc_offset == 0
-          time = Time.new(input.year, input.month, input.day, input.hour, input.min, input.sec, "+08:00")
-        else
-          time = input
-        end
+        time = input
       elsif input.is_a?(Date)
         time = Time.new(input.year, input.month, input.day, 0, 0, 0, "+08:00")
       elsif input.is_a?(String)
@@ -103,46 +134,12 @@ end
 Liquid::Template.register_filter(Jekyll::Utc8DateFilter)
 
 # Lifecycle hooks
+fixer = Jekyll::TimezoneUtc8Fix.new
+
 Jekyll::Hooks.register [:posts, :documents, :pages], :post_init do |doc|
-  next unless doc.data.key?('date')
-  raw = doc.data['date']
-  cst_time = nil
-
-  if raw.is_a?(Time)
-    if raw.utc? || raw.utc_offset == 0
-      cst_time = Time.new(raw.year, raw.month, raw.day, raw.hour, raw.min, raw.sec, "+08:00")
-    end
-  elsif raw.is_a?(Date)
-    cst_time = Time.new(raw.year, raw.month, raw.day, 0, 0, 0, "+08:00")
-  elsif raw.is_a?(String)
-    if raw =~ /^(\d{4})-(\d{2})-(\d{2})(?:[ T](\d{2}):(\d{2})(?::(\d{2}))?)?/
-      y, m, d = $1.to_i, $2.to_i, $3.to_i
-      h, min, s = ($4 || 0).to_i, ($5 || 0).to_i, ($6 || 0).to_i
-      cst_time = Time.new(y, m, d, h, min, s, "+08:00")
-    end
-  end
-
-  if cst_time
-    doc.data['date'] = cst_time
-    doc.instance_variable_set(:@date, cst_time)
-  end
+  fixer.fix_doc_date(doc)
 end
 
 Jekyll::Hooks.register [:posts, :documents, :pages], :pre_render do |doc|
-  next unless doc.data.key?('date')
-  raw = doc.data['date']
-  cst_time = nil
-
-  if raw.is_a?(Time)
-    if raw.utc? || raw.utc_offset == 0
-      cst_time = Time.new(raw.year, raw.month, raw.day, raw.hour, raw.min, raw.sec, "+08:00")
-    end
-  elsif raw.is_a?(Date)
-    cst_time = Time.new(raw.year, raw.month, raw.day, 0, 0, 0, "+08:00")
-  end
-
-  if cst_time
-    doc.data['date'] = cst_time
-    doc.instance_variable_set(:@date, cst_time)
-  end
+  fixer.fix_doc_date(doc)
 end
