@@ -4,7 +4,7 @@ description: "博客原型。"
 url: "https://blog.zgqinc.gq"
 baseurl: ""
 lang: "zh-CN"
-timezone: UTC
+timezone: Asia/Shanghai
 
 # Author
 author:
