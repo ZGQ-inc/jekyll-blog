@@ -58,6 +58,7 @@ worker_api_url: "https://api.zgqinc.gq"
 # Build & Markdown
 markdown: kramdown
 highlighter: rouge
+future: true
 
 kramdown:
   input: GFM

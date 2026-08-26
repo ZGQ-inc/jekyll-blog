@@ -168,6 +168,17 @@ export default {
   }
 };
 
+// Helper to calculate Beijing Time (UTC+8)
+function getBeijingTime(): { today: string; dateStr: string; yearMonth: string } {
+  const beijingMs = Date.now() + 8 * 60 * 60 * 1000;
+  const beijingDate = new Date(beijingMs);
+  const iso = beijingDate.toISOString();
+  const today = iso.split('T')[0];
+  const dateStr = iso.replace('T', ' ').substring(0, 19);
+  const yearMonth = today.substring(0, 7);
+  return { today, dateStr, yearMonth };
+}
+
 // ================================================================
 // ZGQ Blog Cloudflare Worker - Telegram Webhook
 // Trigger CF Worker CI Test
@@ -311,11 +322,10 @@ async function handleCallbackQuery(callbackQuery: TgCallbackQuery, env: Env): Pr
   }
 
   const id = Math.random().toString(36).substring(2, 8);
-  const today = new Date().toISOString().split('T')[0];
+  const { today, dateStr } = getBeijingTime();
   const slug = `${today}-${id}`;
   
   try {
-    const dateStr = new Date().toISOString().replace('T', ' ').substring(0, 19);
     const mdContent = [
       '---',
       `layout: post`,
@@ -735,11 +745,11 @@ async function handleMediaUpload(message: TgMessage, env: Env): Promise<void> {
     let postId = 'shared';
     const caption = message.caption || '';
     const uploadMatch = caption.match(/^\/upload\s+([a-zA-Z0-9_-]+)/s);
+    const { today, yearMonth } = getBeijingTime();
     if (uploadMatch) {
       postId = uploadMatch[1];
     } else {
-      const date = new Date();
-      postId = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+      postId = yearMonth;
     }
 
     const r2Url = await uploadMediaToR2(env, postId, fileId, mimeType, fileName);
@@ -755,7 +765,6 @@ async function handleMediaUpload(message: TgMessage, env: Env): Promise<void> {
     }
 
     const formattedSize = formatBytes(fileSize);
-    const today = new Date().toISOString().split('T')[0];
     const ext = fileName.split('.').pop() || '';
     const icon = getExactFileIcon(ext);
     
