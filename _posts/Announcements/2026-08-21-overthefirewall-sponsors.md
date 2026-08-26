@@ -2,7 +2,7 @@
 layout: post
 title: "优质网络加速与赞助商精选合集（OverTheFirewall 专栏）"
 id: "overthefirewall-sponsors"
-date: 2026-08-21 18:00:00 +0800
+date: 2026-08-21 18:00:00
 summary: "汇聚 OverTheFirewall 赞助商精选列表：涵盖尊贵轻奢专线、经济适用中转、便宜大碗直连及高可用全球加速服务，一站式获取最新优惠与推荐！"
 # image: "/assets/images/banner-wesen.png"
 announcement: true

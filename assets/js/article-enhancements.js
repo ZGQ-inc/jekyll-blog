@@ -89,7 +89,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Hero date exact time bubble toggle & mobile toast
+  // Hero date exact time bubble toggle on click / touch
   const dateItems = document.querySelectorAll('.hero-date-item');
   dateItems.forEach(item => {
     item.addEventListener('click', (e) => {
@@ -100,10 +100,6 @@ document.addEventListener('DOMContentLoaded', () => {
       
       if (!isActive) {
         item.classList.add('active');
-        const fullTime = item.getAttribute('data-full-date') || item.getAttribute('data-time');
-        if (window.showToast && window.innerWidth <= 768) {
-          window.showToast(`发布时间：${fullTime}`);
-        }
       }
     });
   });
