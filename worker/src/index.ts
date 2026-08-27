@@ -1025,10 +1025,19 @@ async function uploadMediaToR2(
     }
   });
 
-  // Encode path segments so spaces and special characters form a valid, clickable, real URL
+  // Keep Chinese/Unicode characters readable, but encode spaces as %20 so Liquid and Markdown syntax won't break
   const cleanBase = env.ASSETS_URL.replace(/\/+$/, '');
-  const encodedPath = r2Key.split('/').map(segment => encodeURIComponent(segment)).join('/');
-  return `${cleanBase}/${encodedPath}`;
+  const friendlyPath = r2Key.split('/').map(segment => {
+    let clean = segment;
+    try {
+      clean = decodeURIComponent(segment);
+    } catch {
+      clean = segment;
+    }
+    return clean.replace(/ /g, '%20');
+  }).join('/');
+
+  return `${cleanBase}/${friendlyPath}`;
 }
 
 // ================================================================
