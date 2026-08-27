@@ -766,6 +766,7 @@ async function handleMediaUpload(message: TgMessage, env: Env): Promise<void> {
 
     const formattedSize = formatBytes(fileSize);
     const ext = fileName.split('.').pop() || '';
+    const icon = getExactFileIcon(ext);
     const safeName = fileName.replace(/"/g, '\\"');
     // Liquid file download card format
     const liquidSnippet = [
