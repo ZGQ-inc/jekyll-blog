@@ -766,12 +766,11 @@ async function handleMediaUpload(message: TgMessage, env: Env): Promise<void> {
 
     const formattedSize = formatBytes(fileSize);
     const ext = fileName.split('.').pop() || '';
-    const icon = getExactFileIcon(ext);
-    
+    const safeName = fileName.replace(/"/g, '\\"');
     // Liquid file download card format
     const liquidSnippet = [
       `{% include file_download.html`,
-      `   name="${fileName}"`,
+      `   name="${safeName}"`,
       `   size="${formattedSize}"`,
       `   date="${today}"`,
       `   icon="${icon}"`,
@@ -1021,11 +1020,15 @@ async function uploadMediaToR2(
   await env.R2.put(r2Key, blob, {
     httpMetadata: {
       contentType: mimeType || 'application/octet-stream',
-      cacheControl: 'public, max-age=31536000'
+      cacheControl: 'public, max-age=31536000',
+      contentDisposition: fileName ? `inline; filename*=UTF-8''${encodeURIComponent(fileName)}` : undefined
     }
   });
 
-  return `${env.ASSETS_URL}/${r2Key}`;
+  // Encode path segments so spaces and special characters form a valid, clickable, real URL
+  const cleanBase = env.ASSETS_URL.replace(/\/+$/, '');
+  const encodedPath = r2Key.split('/').map(segment => encodeURIComponent(segment)).join('/');
+  return `${cleanBase}/${encodedPath}`;
 }
 
 // ================================================================
