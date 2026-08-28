@@ -3010,8 +3010,6 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
     align-items: center;
     justify-content: space-between;
     margin-bottom: 16px;
-    flex-wrap: wrap;
-    gap: 8px;
 
     .comments-title {
       display: flex;
@@ -3023,20 +3021,6 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
       margin: 0;
 
       .material-symbols-outlined { font-size: 22px; color: var(--md-sys-color-primary); }
-    }
-
-    .comments-subtitle {
-      font-size: 0.8rem;
-      color: var(--md-sys-color-on-surface-variant);
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      user-select: none;
-
-      .material-symbols-outlined {
-        font-size: 14px;
-        color: var(--md-sys-color-primary);
-      }
     }
   }
 
