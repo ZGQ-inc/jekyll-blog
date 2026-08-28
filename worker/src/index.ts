@@ -1599,6 +1599,27 @@ async function handleTelegramProxy(path: string, request: Request, _env: Env): P
     }
   }
 
+  // 5. /tg/api/* (telescope/TG discussion API calls)
+  if (path.startsWith('/tg/api/')) {
+    const subPath = path.replace('/tg/api/', '');
+    const upstreamUrl = `https://t.me/api/${subPath}${url.search}`;
+    try {
+      const res = await fetch(upstreamUrl, {
+        method: request.method,
+        headers: {
+          'User-Agent': request.headers.get('User-Agent') || 'Mozilla/5.0',
+          'Content-Type': request.headers.get('Content-Type') || 'application/x-www-form-urlencoded'
+        },
+        body: request.method === 'POST' ? await request.arrayBuffer() : undefined
+      });
+      const headers = new Headers(res.headers);
+      headers.set('Access-Control-Allow-Origin', '*');
+      return new Response(res.body, { status: res.status, headers });
+    } catch (e) {
+      return new Response('API proxy error', { status: 502 });
+    }
+  }
+
   return jsonResponse({ error: 'Proxy route not found' }, 404);
 }
 
@@ -1629,6 +1650,7 @@ async function handleTelegramEmbedProxy(path: string, request: Request, _env: En
       .replace(/https:\/\/oauth\.tg\.dev\/js\/telegram-widget\.js[^\"]*/g, `${workerOrigin}/tg/oauth-widget.js`)
       .replace(/https:\/\/oauth\.telegram\.org\/js\/telegram-widget\.js[^\"]*/g, `${workerOrigin}/tg/oauth-widget.js`)
       .replace(/https:\/\/oauth\.tg\.dev/g, 'https://oauth.telegram.org')
+      .replace(/https:\/\/t\.me\/api\//g, `${workerOrigin}/tg/api/`)
       .replace(/https:\/\/telegram\.org\/css\//g, `${workerOrigin}/tg/css/`)
       .replace(/\/\/telegram\.org\/css\//g, `${workerOrigin}/tg/css/`)
       .replace(/https:\/\/telegram\.org\/js\//g, `${workerOrigin}/tg/js/`)
@@ -1662,16 +1684,33 @@ async function handleTelegramOAuthProxy(request: Request, _env: Env): Promise<Re
 
   try {
     const res = await fetch(oauthUrl, {
+      method: request.method,
       headers: {
         'User-Agent': request.headers.get('User-Agent') || 'Mozilla/5.0',
-        'Accept-Language': request.headers.get('Accept-Language') || 'en'
-      }
+        'Accept-Language': request.headers.get('Accept-Language') || 'en',
+        'Content-Type': request.headers.get('Content-Type') || 'application/x-www-form-urlencoded'
+      },
+      body: request.method === 'POST' ? await request.arrayBuffer() : undefined
     });
 
     const headers = new Headers(res.headers);
     headers.set('Access-Control-Allow-Origin', '*');
     headers.delete('X-Frame-Options');
     headers.delete('Content-Security-Policy');
+
+    const contentType = res.headers.get('content-type') || '';
+    if (contentType.includes('text/html')) {
+      let html = await res.text();
+      html = html
+        .replace(/https:\/\/telegram\.org\/css\//g, `${url.origin}/tg/css/`)
+        .replace(/\/\/telegram\.org\/css\//g, `${url.origin}/tg/css/`)
+        .replace(/https:\/\/telegram\.org\/js\//g, `${url.origin}/tg/js/`)
+        .replace(/\/\/telegram\.org\/js\//g, `${url.origin}/tg/js/`)
+        .replace(/https:\/\/telegram\.org\/fonts\//g, `${url.origin}/tg/fonts/`)
+        .replace(/https:\/\/oauth\.telegram\.org\/js\//g, `${url.origin}/tg/`)
+        .replace(/https:\/\/oauth\.tg\.dev\/js\//g, `${url.origin}/tg/`);
+      return new Response(html, { status: res.status, headers });
+    }
 
     return new Response(res.body, { status: res.status, headers });
   } catch (err) {

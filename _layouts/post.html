@@ -243,7 +243,7 @@ layout: default
           btn.href = 'https://t.me/' + channelName;
         }
         if (commentsContainer) {
-          commentsContainer.innerHTML = '<div class="comments-empty-notice"><span class="material-symbols-outlined">sync_problem</span><p>评论区加载失败，请检查网络连接。</p></div>';
+          commentsContainer.innerHTML = '<div class="comments-empty-notice"><span class="material-symbols-outlined">sync_problem</span><p>评论区加载失败，请检查网络连接。</p><button class="btn-retry" onclick="location.reload()"><span class="material-symbols-outlined">refresh</span><span>重新加载</span></button></div>';
         }
       });
   });
