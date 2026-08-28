@@ -2288,6 +2288,8 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
       overflow-x: auto;
       max-width: 100%;
       background: transparent;
+      margin: 0 !important;
+      padding: 0 !important;
       scrollbar-width: thin;
       scrollbar-color: var(--md-sys-color-outline-variant) transparent;
 
@@ -2302,22 +2304,27 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
           background-color: var(--md-sys-color-outline);
         }
       }
+
+      > pre {
+        background: transparent;
+        border: none;
+        margin: 0 !important;
+        padding: 0 !important;
+        border-radius: 0;
+        font-family: 'JetBrains Mono', 'Fira Code', monospace;
+        font-size: 0.8125rem;
+        line-height: 1.6;
+        color: var(--md-sys-color-on-surface);
+        white-space: pre;
+        word-break: normal;
+        overflow-wrap: normal;
+        max-width: 100%;
+      }
     }
 
-    pre {
-      background: transparent;
-      border: none;
-      margin: 0;
-      padding: 10px 14px;
-      border-radius: 0;
-      font-family: 'JetBrains Mono', 'Fira Code', monospace;
-      font-size: 0.8125rem;
-      line-height: 1.6;
-      color: var(--md-sys-color-on-surface);
-      white-space: pre;
-      word-break: normal;
-      overflow-wrap: normal;
-      max-width: 100%;
+    // Code blocks without line numbers
+    > pre, .highlight > pre:not(:has(table.rouge-table)) {
+      padding: 10px 14px !important;
     }
 
     code {
@@ -2332,6 +2339,7 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
 
     table.rouge-table {
       margin: 0 !important;
+      padding: 0 !important;
       border: none !important;
       width: 100% !important;
       display: table !important;
@@ -2342,15 +2350,20 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
       
       tbody {
         background: transparent !important;
+        margin: 0 !important;
+        padding: 0 !important;
       }
 
       tr {
         background: transparent !important;
         border: none !important;
+        margin: 0 !important;
+        padding: 0 !important;
       }
 
       td {
         padding: 0 !important;
+        margin: 0 !important;
         border: none !important;
         vertical-align: top !important;
       }
@@ -2362,10 +2375,12 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
         background: color-mix(in srgb, var(--md-sys-color-surface-container-high) 45%, transparent) !important;
         user-select: none !important;
         text-align: right !important;
+        margin: 0 !important;
+        padding: 0 !important;
         
         pre, .lineno { 
           margin: 0 !important;
-          padding: 10px 12px 10px 14px !important; 
+          padding: 8px 10px 8px 12px !important; 
           color: var(--md-sys-color-outline) !important;
           font-family: 'JetBrains Mono', 'Fira Code', monospace !important;
           font-size: 0.8125rem !important;
@@ -2377,10 +2392,12 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
       
       .rouge-code {
         width: auto !important;
+        margin: 0 !important;
+        padding: 0 !important;
         
         pre { 
           margin: 0 !important;
-          padding: 10px 16px 10px 14px !important; 
+          padding: 8px 14px 8px 12px !important; 
           color: var(--md-sys-color-on-surface) !important;
           font-family: 'JetBrains Mono', 'Fira Code', monospace !important;
           font-size: 0.8125rem !important;
