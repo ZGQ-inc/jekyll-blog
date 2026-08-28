@@ -1533,7 +1533,32 @@ async function handleTelegramProxy(path: string, request: Request, _env: Env): P
     }
   }
 
-  // 2. /tg/js/* or /tg/css/* or /tg/fonts/* or /tg/img/*
+  // 2. /tg/oauth-widget.js
+  if (path === '/tg/oauth-widget.js' || path === '/tg/oauth/js/telegram-widget.js') {
+    try {
+      const res = await fetch('https://oauth.telegram.org/js/telegram-widget.js?24', {
+        headers: { 'User-Agent': 'Mozilla/5.0' },
+        cf: { cacheTtl: 86400, cacheEverything: true }
+      });
+      if (!res.ok) return new Response('Error loading oauth widget', { status: 502 });
+      let js = await res.text();
+      // Force OAuth origin to https://t.me so Telegram DiscussBot (1288099309) accepts login without Bot domain invalid error
+      js = js
+        .replace(/Telegram\.Login\.widgetsOrigin\s*=\s*getWidgetsOrigin\([^)]+\)/g, "Telegram.Login.widgetsOrigin = 'https://oauth.telegram.org'")
+        .replace(/location\.origin\s*\|\|\s*location\.protocol\s*\+\s*'\/\/'\s*\+\s*location\.hostname/g, "'https://t.me'");
+      return corsResponse(new Response(js, {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/javascript; charset=utf-8',
+          'Cache-Control': 'public, max-age=86400'
+        }
+      }));
+    } catch (e) {
+      return new Response('Fetch error', { status: 502 });
+    }
+  }
+
+  // 3. /tg/js/* or /tg/css/* or /tg/fonts/* or /tg/img/*
   if (path.startsWith('/tg/js/') || path.startsWith('/tg/css/') || path.startsWith('/tg/fonts/') || path.startsWith('/tg/img/')) {
     const subPath = path.replace('/tg/', '');
     const upstreamUrl = `https://telegram.org/${subPath}${url.search}`;
@@ -1552,7 +1577,7 @@ async function handleTelegramProxy(path: string, request: Request, _env: Env): P
     }
   }
 
-  // 3. /tg/file/* (telescope media CDN)
+  // 4. /tg/file/* (telescope media CDN)
   if (path.startsWith('/tg/file/')) {
     const subPath = path.replace('/tg/file/', '');
     const upstreamUrl = `https://cdn5.telesco.pe/file/${subPath}${url.search}`;
@@ -1594,8 +1619,11 @@ async function handleTelegramEmbedProxy(path: string, request: Request, _env: En
     }
 
     let html = await res.text();
-    // Rewrite asset URLs to proxy through this worker
+    // Rewrite asset URLs and OAuth to proxy through this worker & production OAuth
     html = html
+      .replace(/https:\/\/oauth\.tg\.dev\/js\/telegram-widget\.js[^\"]*/g, `${workerOrigin}/tg/oauth-widget.js`)
+      .replace(/https:\/\/oauth\.telegram\.org\/js\/telegram-widget\.js[^\"]*/g, `${workerOrigin}/tg/oauth-widget.js`)
+      .replace(/https:\/\/oauth\.tg\.dev/g, 'https://oauth.telegram.org')
       .replace(/https:\/\/telegram\.org\/css\//g, `${workerOrigin}/tg/css/`)
       .replace(/\/\/telegram\.org\/css\//g, `${workerOrigin}/tg/css/`)
       .replace(/https:\/\/telegram\.org\/js\//g, `${workerOrigin}/tg/js/`)
