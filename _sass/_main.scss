@@ -2459,55 +2459,7 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
     }
   }
 
-  // Syntax Highlighting Tokens (Light Mode Default)
-  .highlight {
-    .c, .c1, .cm, .cp, .cs { color: #57606a; font-style: italic; }
-    .k, .kd, .kn, .kp, .kr, .kt, .kv { color: #cf222e; font-weight: 600; }
-    .s, .s1, .s2, .sb, .sc, .sd, .se, .sh, .si, .sx, .sr, .ss { color: #0a3069; }
-    .m, .mf, .mh, .mi, .mo, .il { color: #0550ae; }
-    .na { color: #116329; }
-    .nb, .bp { color: #953800; }
-    .nc, .nn { color: #953800; font-weight: 600; }
-    .no, .kc { color: #0550ae; font-weight: 600; }
-    .nd { color: #8250df; font-weight: 600; }
-    .ne { color: #cf222e; font-weight: 600; }
-    .nf, .fm { color: #8250df; }
-    .nl { color: #0550ae; }
-    .nt { color: #116329; font-weight: 600; }
-    .nv, .vc, .vg, .vi { color: #953800; }
-    .o, .ow { color: #cf222e; }
-    .p { color: var(--md-sys-color-on-surface); }
-    .gh { color: #0550ae; font-weight: bold; }
-    .gu { color: #57606a; font-weight: bold; }
-    .gd { color: #82071e; background-color: #ffebe9; }
-    .gi { color: #116329; background-color: #dafbe1; }
-    .err { color: #cf222e; }
-  }
 
-  // Syntax Highlighting Tokens (Dark Mode)
-  html[data-theme="dark"] .highlight {
-    .c, .c1, .cm, .cp, .cs { color: #8b949e; font-style: italic; }
-    .k, .kd, .kn, .kp, .kr, .kt, .kv { color: #ff7b72; font-weight: 600; }
-    .s, .s1, .s2, .sb, .sc, .sd, .se, .sh, .si, .sx, .sr, .ss { color: #a5d6ff; }
-    .m, .mf, .mh, .mi, .mo, .il { color: #79c0ff; }
-    .na { color: #79c0ff; }
-    .nb, .bp { color: #ffa657; }
-    .nc, .nn { color: #ffa657; font-weight: 600; }
-    .no, .kc { color: #79c0ff; font-weight: 600; }
-    .nd { color: #d2a8ff; font-weight: 600; }
-    .ne { color: #ffa657; font-weight: 600; }
-    .nf, .fm { color: #d2a8ff; }
-    .nl { color: #79c0ff; }
-    .nt { color: #7ee787; font-weight: 600; }
-    .nv, .vc, .vg, .vi { color: #ffa657; }
-    .o, .ow { color: #ff7b72; }
-    .p { color: #e6edf3; }
-    .gh { color: #79c0ff; font-weight: bold; }
-    .gu { color: #8b949e; font-weight: bold; }
-    .gd { color: #ffa198; background-color: rgba(255, 129, 130, 0.15); }
-    .gi { color: #56d364; background-color: rgba(46, 160, 67, 0.15); }
-    .err { color: #f85149; }
-  }
 
   blockquote {
     border-left: 4px solid var(--md-sys-color-primary);
