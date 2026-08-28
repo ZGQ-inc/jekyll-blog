@@ -162,7 +162,7 @@ layout: default
     fetch(apiUrl + '/api/posts/' + encodeURIComponent(postId) + '/tg')
       .then(function(r) { return r.ok ? r.json() : null; })
       .then(function(data) {
-        if (data && data.ok && data.tg_message_id) {
+        if (data && data.tg_message_id) {
           if (btn && data.tg_post_url) {
             btn.href = data.tg_post_url;
           }

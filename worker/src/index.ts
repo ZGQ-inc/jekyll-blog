@@ -890,6 +890,7 @@ async function handleGetPostTg(postId: string, env: Env): Promise<Response> {
   const tgPostUrl = `https://t.me/${channelId}/${row.tg_message_id}`;
 
   return jsonResponse({
+    ok: true,
     post_id: row.post_id,
     tg_message_id: row.tg_message_id,
     tg_channel_id: row.tg_channel_id,
