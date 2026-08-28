@@ -36,28 +36,44 @@ document.addEventListener('DOMContentLoaded', () => {
     const header = document.createElement('div');
     header.className = 'code-block-header';
     
+    // Left: Terminal icon + Language Title
     const leftDiv = document.createElement('div');
     leftDiv.className = 'code-header-left';
+    leftDiv.innerHTML = `
+      <span class="material-symbols-outlined code-win-icon" aria-hidden="true">terminal</span>
+      <span class="code-lang">${lang}</span>
+    `;
 
-    const dotsWrapper = document.createElement('div');
-    dotsWrapper.className = 'code-dots-wrapper';
-    dotsWrapper.innerHTML = '<span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span>';
-
-    const langSpan = document.createElement('span');
-    langSpan.className = 'code-lang';
-    langSpan.textContent = lang;
-    
-    leftDiv.appendChild(dotsWrapper);
-    leftDiv.appendChild(langSpan);
+    // Right: Copy action + Windows Window Control Buttons
+    const rightDiv = document.createElement('div');
+    rightDiv.className = 'code-header-right';
 
     const copyBtn = document.createElement('button');
     copyBtn.className = 'code-copy-btn';
     copyBtn.innerHTML = '<span class="material-symbols-outlined">content_copy</span><span class="copy-text">复制</span>';
     copyBtn.title = '复制代码';
     copyBtn.setAttribute('aria-label', '复制代码');
-    
+
+    const winControls = document.createElement('div');
+    winControls.className = 'code-win-controls';
+    winControls.setAttribute('aria-hidden', 'true');
+    winControls.innerHTML = `
+      <span class="code-win-btn win-min" title="最小化">
+        <svg width="10" height="10" viewBox="0 0 10 10"><path d="M1 8h8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+      </span>
+      <span class="code-win-btn win-max" title="最大化">
+        <svg width="10" height="10" viewBox="0 0 10 10"><rect x="1.5" y="1.5" width="7" height="7" fill="none" stroke="currentColor" stroke-width="1.2" rx="1"/></svg>
+      </span>
+      <span class="code-win-btn win-close" title="关闭">
+        <svg width="10" height="10" viewBox="0 0 10 10"><path d="M2 2l6 6M8 2l-6 6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+      </span>
+    `;
+
+    rightDiv.appendChild(copyBtn);
+    rightDiv.appendChild(winControls);
+
     header.appendChild(leftDiv);
-    header.appendChild(copyBtn);
+    header.appendChild(rightDiv);
     
     block.insertBefore(header, block.firstChild);
     

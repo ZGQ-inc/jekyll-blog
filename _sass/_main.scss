@@ -2217,78 +2217,104 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 6px 12px;
-      background: #181b22;
+      padding: 4px 6px 4px 12px;
+      background: linear-gradient(180deg, #181d26 0%, #12161e 100%);
       border-bottom: 1px solid rgba(255, 255, 255, 0.07);
       user-select: none;
       
       .code-header-left {
         display: inline-flex;
         align-items: center;
-        gap: 10px;
-      }
+        gap: 8px;
 
-      .code-dots-wrapper {
-        display: inline-flex;
-        align-items: center;
-        gap: 5px;
+        .code-win-icon {
+          font-size: 15px;
+          color: var(--md-sys-color-primary, #79c0ff);
+          opacity: 0.9;
+        }
 
-        .code-dot {
-          width: 9px;
-          height: 9px;
-          border-radius: 50%;
-          display: inline-block;
-
-          &.red    { background: #ff5f56; opacity: 0.85; }
-          &.yellow { background: #ffbd2e; opacity: 0.85; }
-          &.green  { background: #27c93f; opacity: 0.85; }
+        .code-lang {
+          font-family: 'JetBrains Mono', 'Fira Code', monospace;
+          font-size: 0.725rem;
+          color: #9ba6b5;
+          font-weight: 700;
+          letter-spacing: 0.04em;
         }
       }
 
-      .code-lang {
-        font-family: 'JetBrains Mono', 'Fira Code', monospace;
-        font-size: 0.725rem;
-        color: #8b949e;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.06em;
+      .code-header-right {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
       }
 
       .code-copy-btn {
-        background: transparent;
-        border: none;
-        color: #8b949e;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        color: #9ba6b5;
         cursor: pointer;
-        padding: 4px 8px;
-        border-radius: var(--shape-small);
+        padding: 3px 8px;
+        border-radius: var(--shape-xs);
         display: inline-flex;
         align-items: center;
         gap: 4px;
-        font-size: 0.75rem;
+        font-size: 0.725rem;
         font-family: inherit;
         transition: all var(--dur-short4) var(--motion-standard);
 
         .material-symbols-outlined {
-          font-size: 15px;
+          font-size: 13px;
         }
 
         .copy-text {
-          font-size: 0.725rem;
+          font-size: 0.7rem;
           font-weight: 600;
         }
 
         &:hover {
-          background: rgba(255, 255, 255, 0.1);
+          background: rgba(255, 255, 255, 0.12);
           color: #f0f6fc;
+          border-color: rgba(255, 255, 255, 0.15);
         }
 
         &.copied {
           color: #56d364;
-          background: rgba(86, 211, 100, 0.12);
+          background: rgba(86, 211, 100, 0.15);
+          border-color: rgba(86, 211, 100, 0.3);
         }
 
         &:active {
           transform: scale(0.96);
+        }
+      }
+
+      .code-win-controls {
+        display: inline-flex;
+        align-items: center;
+        gap: 2px;
+        padding-left: 2px;
+
+        .code-win-btn {
+          width: 24px;
+          height: 20px;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          border-radius: 4px;
+          color: #7d8590;
+          background: transparent;
+          cursor: default;
+          transition: background-color var(--dur-short3), color var(--dur-short3);
+
+          &:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #e6edf3;
+          }
+
+          &.win-close:hover {
+            background: #e81123;
+            color: #ffffff;
+          }
         }
       }
     }
