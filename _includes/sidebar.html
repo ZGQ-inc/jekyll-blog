@@ -47,6 +47,8 @@
 
     <!-- Stats -->
     {% assign total_posts_count = site.posts.size %}
+    {% assign unarchived_posts = site.posts | where_exp: "item", "item.archive != true" %}
+    {% assign active_posts_count = unarchived_posts.size %}
     {% assign total_tags_count = site.tags.size %}
     {% assign total_cats_count = site.categories.size %}
     {% assign archived_posts = site.posts | where_exp: "item", "item.archive == true" %}
@@ -78,7 +80,7 @@
        id="nav-{{ item.icon }}">
       <span class="material-symbols-outlined" aria-hidden="true">{{ item.icon }}</span>
       <span class="nav-label">{{ item.title }}</span>
-      {% if item.title == '文章' %}<span class="nav-badge">{{ total_posts_count }}</span>{% endif %}
+      {% if item.title == '文章' %}<span class="nav-badge">{{ active_posts_count }}</span>{% endif %}
       {% if item.title == '标签' %}<span class="nav-badge">{{ total_tags_count }}</span>{% endif %}
       {% if item.title == '分类' %}<span class="nav-badge">{{ total_cats_count }}</span>{% endif %}
       {% if item.title == '归档' %}<span class="nav-badge">{{ total_archives_count }}</span>{% endif %}
