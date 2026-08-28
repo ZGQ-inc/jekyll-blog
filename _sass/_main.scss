@@ -3029,27 +3029,41 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
   }
 
   #tg-comments-container {
-    min-height: 120px;
+    min-height: 140px;
     width: 100%;
     position: relative;
+    transition: min-height 0.4s cubic-bezier(0.2, 0, 0, 1);
 
     iframe {
       width: 100% !important;
       border: none;
       display: block;
       color-scheme: light dark;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity 0.45s cubic-bezier(0.2, 0, 0, 1), transform 0.45s cubic-bezier(0.2, 0, 0, 1);
+
+      &.is-ready {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
   }
 
   .comments-loading-placeholder {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     gap: 14px;
-    padding: 40px 20px;
+    padding: 36px 20px;
     color: var(--md-sys-color-on-surface-variant);
     font-size: 0.875rem;
+    pointer-events: none;
+    transition: opacity 0.35s cubic-bezier(0.2, 0, 0, 1), transform 0.35s cubic-bezier(0.2, 0, 0, 1);
 
     .md3-circular-progress {
       width: 36px;
