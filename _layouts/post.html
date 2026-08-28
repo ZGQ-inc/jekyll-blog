@@ -147,7 +147,7 @@ layout: default
     </a>
   </div>
 
-  <!-- Fetch TG message ID and update discussion card button -->
+  <!-- Fetch TG message ID, update discussion card and load official Telegram widget via CF proxy -->
   <script>
   document.addEventListener('DOMContentLoaded', function() {
     var postId = {{ post.slug | jsonify }};
@@ -155,69 +155,113 @@ layout: default
     var channelName = {{ site.social.telegram_channel | jsonify }};
     var btn = document.getElementById('tgDiscussBtn');
     var card = document.getElementById('tgDiscussCard');
+    var commentsContainer = document.getElementById('tg-comments-container');
 
-    if (!postId || !apiUrl || !btn) return;
+    if (!postId || !apiUrl) return;
 
     fetch(apiUrl + '/api/posts/' + encodeURIComponent(postId) + '/tg')
       .then(function(r) { return r.ok ? r.json() : null; })
       .then(function(data) {
-        if (data && data.tg_post_url) {
-          btn.href = data.tg_post_url;
+        if (data && data.ok && data.tg_message_id) {
+          if (btn && data.tg_post_url) {
+            btn.href = data.tg_post_url;
+          }
+
+          if (commentsContainer) {
+            var cleanChannel = (data.tg_channel_id || channelName || '').replace('@', '');
+            var script = document.createElement('script');
+            script.async = true;
+            // Use Cloudflare reverse proxy to bypass network restrictions
+            script.src = apiUrl + '/tg/telegram-widget.js?22';
+            script.setAttribute('data-telegram-discussion', cleanChannel + '/' + data.tg_message_id);
+            script.setAttribute('data-comments-limit', '20');
+            script.setAttribute('data-colorful', '1');
+
+            var isDark = document.documentElement.classList.contains('dark') ||
+                         (!document.documentElement.classList.contains('light') && window.matchMedia('(prefers-color-scheme: dark)').matches);
+            if (isDark) {
+              script.setAttribute('data-dark', '1');
+            }
+
+            // Append script into container (keeping placeholder visible while loading)
+            commentsContainer.appendChild(script);
+
+            // Listen for Telegram iframe ready/resize event to dismiss loading placeholder
+            var onTgMessage = function(event) {
+              try {
+                var msg = typeof event.data === 'string' ? JSON.parse(event.data) : event.data;
+                if (msg && msg.event === 'resize' && msg.height > 0) {
+                  var loader = document.getElementById('comments-loading-indicator');
+                  if (loader) {
+                    loader.style.opacity = '0';
+                    loader.style.transition = 'opacity 0.3s ease';
+                    setTimeout(function() {
+                      if (loader && loader.parentNode) {
+                        loader.parentNode.removeChild(loader);
+                      }
+                    }, 300);
+                  }
+                  window.removeEventListener('message', onTgMessage);
+                }
+              } catch(e) {}
+            };
+            window.addEventListener('message', onTgMessage);
+
+            // Safety timeout to clean up loader
+            setTimeout(function() {
+              var loader = document.getElementById('comments-loading-indicator');
+              if (loader && loader.parentNode) {
+                loader.parentNode.removeChild(loader);
+              }
+            }, 6000);
+
+            document.addEventListener('themechange', function(e) {
+              if (window.Telegram && window.Telegram.setWidgetOptions) {
+                window.Telegram.setWidgetOptions({ dark: e.detail && e.detail.isDark ? 1 : 0 });
+              }
+            });
+          }
         } else if (channelName) {
-          btn.href = 'https://t.me/' + channelName;
-        } else if (card) {
-          card.style.display = 'none';
+          if (btn) btn.href = 'https://t.me/' + channelName;
+          if (commentsContainer) {
+            commentsContainer.innerHTML = '<div class="comments-empty-notice"><span class="material-symbols-outlined">mark_chat_unread</span><p>本文尚未关联 Telegram 讨论组，请在频道中发表评论。</p></div>';
+          }
+        } else {
+          if (card) card.style.display = 'none';
+          if (commentsContainer) {
+            commentsContainer.innerHTML = '<div class="comments-empty-notice"><span class="material-symbols-outlined">chat_bubble_outline</span><p>暂未开启评论区</p></div>';
+          }
         }
       })
-      .catch(function() {
-        if (channelName) {
+      .catch(function(err) {
+        console.error('Comments load error:', err);
+        if (channelName && btn) {
           btn.href = 'https://t.me/' + channelName;
+        }
+        if (commentsContainer) {
+          commentsContainer.innerHTML = '<div class="comments-empty-notice"><span class="material-symbols-outlined">sync_problem</span><p>评论区加载失败，请检查网络连接。</p></div>';
         }
       });
   });
   </script>
   {% endif %}
 
-  <!-- Native Material Design 3 Comments -->
+  <!-- Telegram Official Comments Section -->
   {% if post.comments != false %}
   <section class="comments-section" aria-label="评论区">
     <div class="comments-header">
-      <div class="comments-title-wrap">
-        <h3 class="comments-title">
-          <span class="material-symbols-outlined">forum</span>
-          评论区
-        </h3>
-        <span class="comments-count-badge" id="comments-count-badge" style="display: none;">0 条讨论</span>
-      </div>
-      <a href="#" id="downloadCommentsBtn" class="btn-download-archive" style="display: none;" title="下载本篇文章全部评论数据存档（JSON）">
-        <span class="material-symbols-outlined">download</span>
-        <span>下载存档</span>
-      </a>
+      <h3 class="comments-title">
+        <span class="material-symbols-outlined">forum</span>
+        评论区
+      </h3>
     </div>
-    <div id="tg-comments-container"
-         data-post-id="{{ post.slug | escape }}"
-         data-api-url="{{ site.worker_api_url | escape }}"
-         data-channel-name="{{ site.social.telegram_channel | escape }}">
-      <div class="md3-comments-skeleton">
-        <div class="md3-skeleton-card">
-          <div class="md3-skeleton-avatar"></div>
-          <div class="md3-skeleton-content">
-            <div class="md3-skeleton-line" style="width: 25%;"></div>
-            <div class="md3-skeleton-line" style="width: 85%;"></div>
-            <div class="md3-skeleton-line" style="width: 55%;"></div>
-          </div>
-        </div>
-        <div class="md3-skeleton-card">
-          <div class="md3-skeleton-avatar"></div>
-          <div class="md3-skeleton-content">
-            <div class="md3-skeleton-line" style="width: 20%;"></div>
-            <div class="md3-skeleton-line" style="width: 75%;"></div>
-          </div>
-        </div>
+    <div id="tg-comments-container">
+      <div class="comments-loading-placeholder" id="comments-loading-indicator">
+        <div class="md3-circular-progress"></div>
+        <span class="loading-text">正在加载评论区...</span>
       </div>
     </div>
   </section>
-  <script src="{{ '/assets/js/comments.js' | relative_url }}" defer></script>
   {% endif %}
 
 </article>

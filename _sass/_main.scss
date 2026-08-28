@@ -2989,525 +2989,96 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
 .comments-section {
   position: relative;
   z-index: 1;
-  border-radius: var(--shape-extra-large, 28px);
-  padding: 32px 28px;
-  margin-top: 56px;
-  background: var(--md-sys-color-surface-container);
-  border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 60%, transparent);
-  box-shadow: var(--elev-1);
-  transition: background-color var(--dur-short4), border-color var(--dur-short4);
+  border-radius: var(--shape-large);
+  padding: 24px;
+  margin-top: 48px;
 
-  @media (max-width: 768px) {
-    padding: 20px 16px;
-    border-radius: var(--shape-large, 20px);
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    background: color-mix(in srgb, var(--md-sys-color-surface-container) 45%, transparent);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 30%, transparent);
   }
 
   .comments-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 24px;
-    padding-bottom: 16px;
-    border-bottom: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 40%, transparent);
+    margin-bottom: 20px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 25%, transparent);
+    flex-wrap: wrap;
+    gap: 10px;
 
-    .comments-title-wrap {
-      display: inline-flex;
+    .comments-title {
+      display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 8px;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--md-sys-color-on-surface);
+      margin: 0;
 
-      .comments-title {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        font-size: 1.35rem;
-        font-weight: 700;
-        color: var(--md-sys-color-on-surface);
-        margin: 0;
-
-        .material-symbols-outlined {
-          font-size: 28px;
-          color: var(--md-sys-color-primary);
-        }
-      }
-
-      .comments-count-badge {
-        font-size: 0.8125rem;
-        font-weight: 700;
-        padding: 3px 12px;
-        border-radius: 50px;
-        background: var(--md-sys-color-secondary-container);
-        color: var(--md-sys-color-on-secondary-container);
-        letter-spacing: 0.02em;
-      }
-    }
-
-    .btn-download-archive {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 6px 14px;
-      border-radius: 50px;
-      background: var(--md-sys-color-surface);
-      color: var(--md-sys-color-on-surface-variant);
-      border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 60%, transparent);
-      font-size: 0.8125rem;
-      font-weight: 600;
-      text-decoration: none;
-      box-shadow: var(--elev-1);
-      transition: all 0.2s cubic-bezier(0.2, 0, 0, 1);
-
-      .material-symbols-outlined {
-        font-size: 16px;
-        color: var(--md-sys-color-primary);
-      }
-
-      &:hover {
-        background: var(--md-sys-color-primary-container);
-        color: var(--md-sys-color-on-primary-container);
-        border-color: var(--md-sys-color-primary);
-        transform: translateY(-1px);
-        box-shadow: var(--elev-2);
-      }
+      .material-symbols-outlined { font-size: 24px; color: var(--md-sys-color-primary); }
     }
   }
 
   #tg-comments-container {
+    min-height: 120px;
     width: 100%;
     position: relative;
-  }
 
-  // Load More Button
-  .md3-load-more-wrap {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 20px;
-
-    .btn-load-more {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 10px 22px;
-      border-radius: 50px;
-      background: var(--md-sys-color-surface);
-      border: 1px solid var(--md-sys-color-outline-variant);
-      color: var(--md-sys-color-on-surface);
-      font-size: 0.875rem;
-      font-weight: 700;
-      cursor: pointer;
-      box-shadow: var(--elev-1);
-      transition: all 0.25s cubic-bezier(0.2, 0, 0, 1);
-
-      .material-symbols-outlined {
-        font-size: 18px;
-        color: var(--md-sys-color-primary);
-      }
-
-      .rotating {
-        animation: md3Spin 1s linear infinite;
-      }
-
-      &:hover:not(:disabled) {
-        background: var(--md-sys-color-secondary-container);
-        color: var(--md-sys-color-on-secondary-container);
-        border-color: var(--md-sys-color-secondary-container);
-        transform: translateY(-2px);
-        box-shadow: var(--elev-3);
-      }
-
-      &:disabled {
-        opacity: 0.7;
-        cursor: not-allowed;
-      }
+    iframe {
+      width: 100% !important;
+      border: none;
+      display: block;
+      color-scheme: light dark;
     }
   }
 
-  // Comments List Stream
-  .md3-comments-list {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-  }
-
-  // Single Comment Card (MD3 Elevated Card)
-  .md3-comment-card {
-    background-color: var(--md-sys-color-surface);
-    color: var(--md-sys-color-on-surface);
-    padding: 20px 24px;
-    border-radius: var(--shape-large, 20px);
-    border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 50%, transparent);
-    box-shadow: var(--elev-1);
-    transition: all 0.25s cubic-bezier(0.2, 0, 0, 1);
-    position: relative;
-
-    &:hover {
-      background-color: var(--md-sys-color-surface-container-high);
-      border-color: var(--md-sys-color-outline-variant);
-      transform: translateY(-2px);
-      box-shadow: var(--elev-2);
-    }
-
-    &.is-highlighted {
-      background-color: color-mix(in srgb, var(--md-sys-color-primary-container) 40%, transparent);
-      border-color: var(--md-sys-color-primary);
-      box-shadow: 0 0 0 2px var(--md-sys-color-primary);
-    }
-
-    .md3-card-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      margin-bottom: 12px;
-
-      .md3-user-info {
-        display: flex;
-        align-items: center;
-        gap: 14px;
-        min-width: 0;
-
-        .md3-card-avatar {
-          width: 42px;
-          height: 42px;
-          border-radius: 50%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          overflow: hidden;
-          text-decoration: none;
-          box-shadow: var(--elev-1);
-          font-weight: 700;
-          color: #ffffff;
-          font-size: 1rem;
-          user-select: none;
-          flex-shrink: 0;
-          transition: transform 0.2s ease;
-
-          &:hover {
-            transform: scale(1.06);
-          }
-
-          .md3-avatar-img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
-          }
-
-          // Telegram avatar colors
-          &.bgcolor1 { background: #e17076; }
-          &.bgcolor2 { background: #eda86c; }
-          &.bgcolor3 { background: #a695e7; }
-          &.bgcolor4 { background: #7bc862; }
-          &.bgcolor5 { background: #6ec9cb; }
-          &.bgcolor6 { background: #65aadd; }
-          &.bgcolor7 { background: #ee7aae; }
-          &.bgcolor8 { background: #e57e3f; }
-        }
-
-        .md3-user-meta {
-          display: flex;
-          flex-direction: column;
-          gap: 2px;
-          min-width: 0;
-
-          .md3-name-row {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            flex-wrap: wrap;
-
-            .md3-card-author {
-              font-size: 0.95rem;
-              font-weight: 700;
-              color: var(--md-sys-color-on-surface);
-              text-decoration: none;
-              white-space: nowrap;
-              overflow: hidden;
-              text-overflow: ellipsis;
-
-              &:hover {
-                color: var(--md-sys-color-primary);
-                text-decoration: underline;
-              }
-            }
-
-            .md3-author-chip {
-              font-size: 0.6875rem;
-              font-weight: 700;
-              padding: 1px 8px;
-              border-radius: 50px;
-              background: var(--md-sys-color-primary-container);
-              color: var(--md-sys-color-on-primary-container);
-              letter-spacing: 0.04em;
-            }
-          }
-
-          .md3-card-time {
-            font-size: 0.75rem;
-            color: var(--md-sys-color-on-surface-variant);
-            user-select: none;
-          }
-        }
-      }
-
-      .btn-reply {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        height: 34px;
-        padding: 0 14px;
-        border-radius: 50px;
-        background: var(--md-sys-color-surface-container);
-        color: var(--md-sys-color-primary);
-        font-size: 0.8125rem;
-        font-weight: 700;
-        text-decoration: none;
-        box-shadow: var(--elev-1);
-        transition: all 0.2s cubic-bezier(0.2, 0, 0, 1);
-        flex-shrink: 0;
-
-        .material-symbols-outlined {
-          font-size: 16px;
-        }
-
-        &:hover {
-          background-color: var(--md-sys-color-primary-container);
-          color: var(--md-sys-color-on-primary-container);
-          transform: scale(1.04);
-          box-shadow: var(--elev-2);
-        }
-      }
-    }
-
-    // Reply Quote Card (clean nested block)
-    .md3-reply-quote-card {
-      background-color: var(--md-sys-color-surface-container);
-      border-left: 4px solid var(--md-sys-color-primary);
-      border-radius: 4px 14px 14px 4px;
-      padding: 10px 14px;
-      margin: 8px 0 12px;
-      cursor: pointer;
-      transition: all 0.2s ease;
-
-      &:hover {
-        background-color: color-mix(in srgb, var(--md-sys-color-primary-container) 35%, var(--md-sys-color-surface-container));
-        border-left-color: var(--md-sys-color-tertiary);
-      }
-
-      .md3-quote-meta {
-        display: flex;
-        align-items: center;
-        gap: 4px;
-        margin-bottom: 3px;
-
-        .quote-icon {
-          font-size: 16px;
-          color: var(--md-sys-color-primary);
-        }
-
-        .md3-quote-author {
-          font-size: 0.8125rem;
-          font-weight: 700;
-          color: var(--md-sys-color-primary);
-        }
-      }
-
-      .md3-quote-text {
-        font-size: 0.8125rem;
-        color: var(--md-sys-color-on-surface-variant);
-        line-height: 1.5;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
-    }
-
-    .md3-card-content {
-      .md3-card-text {
-        font-size: 0.9375rem;
-        line-height: 1.7;
-        color: var(--md-sys-color-on-surface);
-        word-break: break-word;
-
-        a {
-          color: var(--md-sys-color-primary);
-          text-decoration: underline;
-          font-weight: 600;
-          &:hover { color: var(--md-sys-color-secondary); }
-        }
-
-        code {
-          font-family: var(--font-mono);
-          font-size: 0.85em;
-          padding: 2px 6px;
-          background: var(--md-sys-color-surface-container);
-          color: var(--md-sys-color-on-surface);
-          border-radius: var(--shape-xs);
-        }
-      }
-
-      .md3-card-media-grid {
-        margin-top: 12px;
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-
-        .md3-media-sticker img {
-          max-width: 140px;
-          max-height: 140px;
-          object-fit: contain;
-          display: block;
-        }
-
-        .md3-media-photo img {
-          max-width: 100%;
-          max-height: 380px;
-          border-radius: var(--shape-medium);
-          display: block;
-          box-shadow: var(--elev-1);
-        }
-
-        .md3-media-audio {
-          display: inline-flex;
-          align-items: center;
-          gap: 6px;
-          padding: 6px 14px;
-          border-radius: 50px;
-          background: var(--md-sys-color-secondary-container);
-          color: var(--md-sys-color-on-secondary-container);
-          font-size: 0.8125rem;
-          font-weight: 700;
-        }
-      }
-    }
-  }
-
-  // Bottom CTA Card (flying-fish slogan-card style)
-  .md3-comments-cta-card {
-    background-color: var(--md-sys-color-secondary-container);
-    color: var(--md-sys-color-on-secondary-container);
-    padding: 28px 32px;
-    border-radius: var(--shape-extra-large, 28px);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 20px;
-    flex-wrap: wrap;
-    margin-top: 28px;
-    box-shadow: var(--elev-1);
-
-    @media (max-width: 768px) {
-      padding: 20px;
-      border-radius: var(--shape-large, 20px);
-    }
-
-    .md3-cta-content {
-      flex: 1;
-      min-width: 220px;
-
-      h4 {
-        margin: 0;
-        font-size: 1.15rem;
-        font-weight: 700;
-        color: var(--md-sys-color-on-secondary-container);
-        line-height: 1.4;
-      }
-
-      p {
-        margin: 4px 0 0;
-        font-size: 0.875rem;
-        opacity: 0.85;
-      }
-    }
-
-    .btn-booking {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      height: 48px;
-      padding: 0 28px;
-      background-color: var(--md-sys-color-primary);
-      color: var(--md-sys-color-on-primary);
-      font-size: 0.9375rem;
-      font-weight: 700;
-      border-radius: 50px;
-      box-shadow: var(--elev-1);
-      transition: all 0.3s ease;
-      text-decoration: none;
-      flex-shrink: 0;
-
-      .material-symbols-outlined {
-        font-size: 20px;
-      }
-
-      &:hover {
-        transform: scale(1.05);
-        filter: brightness(0.95);
-        box-shadow: var(--elev-3);
-      }
-    }
-  }
-
-  // Empty State
-  .md3-comments-empty {
+  .comments-loading-placeholder {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 12px;
-    padding: 48px 20px;
+    gap: 14px;
+    padding: 40px 20px;
+    color: var(--md-sys-color-on-surface-variant);
+    font-size: 0.875rem;
+
+    .md3-circular-progress {
+      width: 36px;
+      height: 36px;
+      border: 3px solid color-mix(in srgb, var(--md-sys-color-primary) 20%, transparent);
+      border-top-color: var(--md-sys-color-primary);
+      border-radius: 50%;
+      animation: md3Spin 0.8s linear infinite;
+    }
+  }
+
+  .comments-empty-notice {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 32px 16px;
     text-align: center;
     color: var(--md-sys-color-on-surface-variant);
 
     .material-symbols-outlined {
-      font-size: 40px;
+      font-size: 32px;
       color: var(--md-sys-color-outline);
     }
 
     p {
       margin: 0;
-      font-size: 0.9375rem;
-      color: var(--md-sys-color-on-surface-variant);
-    }
-  }
-
-  // Skeleton Card Loading
-  .md3-comments-skeleton {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-
-    .md3-skeleton-card {
-      background: var(--md-sys-color-surface);
-      border-radius: var(--shape-large, 20px);
-      padding: 20px 24px;
-      border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 40%, transparent);
-      display: flex;
-      gap: 16px;
-      align-items: flex-start;
-
-      .md3-skeleton-avatar {
-        width: 42px;
-        height: 42px;
-        border-radius: 50%;
-        background: var(--md-sys-color-surface-container-high);
-        flex-shrink: 0;
-        animation: md3Shimmer 1.5s infinite linear;
-      }
-
-      .md3-skeleton-content {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-
-        .md3-skeleton-line {
-          height: 14px;
-          border-radius: 6px;
-          background: var(--md-sys-color-surface-container-high);
-          animation: md3Shimmer 1.5s infinite linear;
-        }
-      }
+      font-size: 0.875rem;
     }
   }
 }
