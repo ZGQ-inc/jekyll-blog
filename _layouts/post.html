@@ -180,9 +180,38 @@ layout: default
               script.setAttribute('data-dark', '1');
             }
             
-            // Clear loading placeholder once widget script takes over
-            commentsContainer.innerHTML = '';
+            // Append script into container (keeping placeholder visible while loading)
             commentsContainer.appendChild(script);
+
+            // Listen for Telegram iframe ready/resize event to dismiss loading placeholder
+            var onTgMessage = function(event) {
+              if (event.origin !== 'https://t.me') return;
+              try {
+                var msg = JSON.parse(event.data);
+                if (msg.event === 'resize' && msg.height > 0) {
+                  var loader = document.getElementById('comments-loading-indicator');
+                  if (loader) {
+                    loader.style.opacity = '0';
+                    loader.style.transition = 'opacity 0.3s ease';
+                    setTimeout(function() {
+                      if (loader && loader.parentNode) {
+                        loader.parentNode.removeChild(loader);
+                      }
+                    }, 300);
+                  }
+                  window.removeEventListener('message', onTgMessage);
+                }
+              } catch(e) {}
+            };
+            window.addEventListener('message', onTgMessage);
+
+            // Safety timeout to clean up loader
+            setTimeout(function() {
+              var loader = document.getElementById('comments-loading-indicator');
+              if (loader && loader.parentNode) {
+                loader.parentNode.removeChild(loader);
+              }
+            }, 6000);
 
             document.addEventListener('themechange', function(e) {
               if (window.Telegram && window.Telegram.setWidgetOptions) {
@@ -228,7 +257,7 @@ layout: default
       </span>
     </div>
     <div id="tg-comments-container">
-      <div class="comments-loading-placeholder">
+      <div class="comments-loading-placeholder" id="comments-loading-indicator">
         <div class="md3-circular-progress"></div>
         <span class="loading-text">正在加载评论区...</span>
       </div>
