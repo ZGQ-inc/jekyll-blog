@@ -167,29 +167,24 @@ layout: default
           
           if (commentsContainer && data.tg_message_id && data.tg_channel_id) {
             var cleanChannel = data.tg_channel_id.replace('@', '');
-            var isDark = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? '&dark=1' : '';
-            var iframeUrl = 'https://t.me/' + cleanChannel + '/' + data.tg_message_id + '?embed=1&discussion=1&comments_limit=10' + isDark;
-            
-            var iframe = document.createElement('iframe');
-            iframe.id = 'telegram-discussion-iframe';
-            iframe.src = iframeUrl;
-            iframe.frameBorder = '0';
-            iframe.scrolling = 'no';
-            iframe.style.width = '100%';
-            iframe.style.height = '150px';
-            iframe.style.border = 'none';
-            iframe.style.overflow = 'hidden';
-            
-            commentsContainer.appendChild(iframe);
+            var isDark = (document.documentElement.getAttribute('data-theme') === 'dark' || 
+                         (!document.documentElement.getAttribute('data-theme') && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches));
 
-            window.addEventListener('message', function(event) {
-              if (event.origin !== 'https://t.me') return;
-              try {
-                var msg = JSON.parse(event.data);
-                if (msg.event === 'resize' && msg.height) {
-                  iframe.style.height = msg.height + 'px';
-                }
-              } catch(e) {}
+            var script = document.createElement('script');
+            script.async = true;
+            script.src = 'https://telegram.org/js/telegram-widget.js?22';
+            script.setAttribute('data-telegram-discussion', cleanChannel + '/' + data.tg_message_id);
+            script.setAttribute('data-comments-limit', '10');
+            if (isDark) {
+              script.setAttribute('data-dark', '1');
+            }
+            commentsContainer.innerHTML = '';
+            commentsContainer.appendChild(script);
+
+            document.addEventListener('themechange', function(e) {
+              if (window.Telegram && window.Telegram.setWidgetOptions) {
+                window.Telegram.setWidgetOptions({ dark: e.detail && e.detail.isDark ? 1 : 0 });
+              }
             });
           }
         } else if (channelName) {
