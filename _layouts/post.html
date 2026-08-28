@@ -171,8 +171,8 @@ layout: default
             var cleanChannel = (data.tg_channel_id || channelName || '').replace('@', '');
             var script = document.createElement('script');
             script.async = true;
-            // Use Cloudflare reverse proxy to bypass network restrictions
-            script.src = apiUrl + '/tg/telegram-widget.js?22';
+            // Load official Telegram Discussion widget
+            script.src = 'https://telegram.org/js/telegram-widget.js?22';
             script.setAttribute('data-telegram-discussion', cleanChannel + '/' + data.tg_message_id);
             script.setAttribute('data-comments-limit', '20');
             script.setAttribute('data-colorful', '1');
