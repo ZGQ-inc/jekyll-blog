@@ -166,6 +166,11 @@ export default {
         return handleGetPostComments(commentsQuery[1], request, env);
       }
 
+      // Telegram OAuth endpoint proxy (/auth and /auth/get)
+      if ((path === '/auth' || path === '/auth/get' || path.startsWith('/auth/')) && method === 'GET') {
+        return handleTelegramOAuthProxy(request, env);
+      }
+
       // Telegram Reverse Proxy for widget & assets (solves network/blocking issues)
       if (path.startsWith('/tg/') && method === 'GET') {
         return handleTelegramProxy(path, request, env);
@@ -1542,10 +1547,10 @@ async function handleTelegramProxy(path: string, request: Request, _env: Env): P
       });
       if (!res.ok) return new Response('Error loading oauth widget', { status: 502 });
       let js = await res.text();
-      // Force OAuth origin to https://t.me so Telegram DiscussBot (1288099309) accepts login without Bot domain invalid error
+      // Force OAuth widgetsOrigin to https://oauth.telegram.org and origin to https://t.me for DiscussBot
       js = js
-        .replace(/Telegram\.Login\.widgetsOrigin\s*=\s*getWidgetsOrigin\([^)]+\)/g, "Telegram.Login.widgetsOrigin = 'https://oauth.telegram.org'")
-        .replace(/location\.origin\s*\|\|\s*location\.protocol\s*\+\s*'\/\/'\s*\+\s*location\.hostname/g, "'https://t.me'");
+        .replace(/getWidgetsOrigin\s*\(\s*['"]https:\/\/oauth\.telegram\.org['"][^)]*\)/g, "'https://oauth.telegram.org'")
+        .replace(/location\.origin\s*\|\|\s*location\.protocol\s*\+\s*['"]\/\/['"]\s*\+\s*location\.hostname/g, "'https://t.me'");
       return corsResponse(new Response(js, {
         status: 200,
         headers: {
@@ -1642,6 +1647,36 @@ async function handleTelegramEmbedProxy(path: string, request: Request, _env: En
   } catch (err) {
     console.error('Embed proxy error:', err);
     return new Response('Internal error proxying embed', { status: 500 });
+  }
+}
+
+/**
+ * Telegram OAuth Proxy Handler
+ * Proxies /auth and /auth/get to official oauth.telegram.org
+ */
+async function handleTelegramOAuthProxy(request: Request, _env: Env): Promise<Response> {
+  const url = new URL(request.url);
+  // Ensure origin is https://t.me
+  url.searchParams.set('origin', 'https://t.me');
+  const oauthUrl = `https://oauth.telegram.org${url.pathname}${url.search}`;
+
+  try {
+    const res = await fetch(oauthUrl, {
+      headers: {
+        'User-Agent': request.headers.get('User-Agent') || 'Mozilla/5.0',
+        'Accept-Language': request.headers.get('Accept-Language') || 'en'
+      }
+    });
+
+    const headers = new Headers(res.headers);
+    headers.set('Access-Control-Allow-Origin', '*');
+    headers.delete('X-Frame-Options');
+    headers.delete('Content-Security-Policy');
+
+    return new Response(res.body, { status: res.status, headers });
+  } catch (err) {
+    console.error('OAuth proxy error:', err);
+    return new Response('OAuth proxy failed', { status: 502 });
   }
 }
 

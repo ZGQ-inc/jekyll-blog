@@ -3066,12 +3066,20 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
     transition: opacity 0.35s cubic-bezier(0.2, 0, 0, 1), transform 0.35s cubic-bezier(0.2, 0, 0, 1);
 
     .md3-circular-progress {
-      width: 36px;
-      height: 36px;
-      border: 3px solid color-mix(in srgb, var(--md-sys-color-primary) 20%, transparent);
+      width: 32px;
+      height: 32px;
+      min-width: 32px;
+      min-height: 32px;
+      max-width: 32px;
+      max-height: 32px;
+      aspect-ratio: 1 / 1;
+      box-sizing: border-box;
+      flex-shrink: 0;
+      border: 3.5px solid color-mix(in srgb, var(--md-sys-color-primary) 20%, transparent);
       border-top-color: var(--md-sys-color-primary);
       border-radius: 50%;
-      animation: md3Spin 0.8s linear infinite;
+      transform-origin: center center;
+      animation: md3Spin 0.85s linear infinite;
     }
   }
 
