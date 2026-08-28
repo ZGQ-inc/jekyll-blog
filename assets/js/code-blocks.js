@@ -36,17 +36,27 @@ document.addEventListener('DOMContentLoaded', () => {
     const header = document.createElement('div');
     header.className = 'code-block-header';
     
+    const leftDiv = document.createElement('div');
+    leftDiv.className = 'code-header-left';
+
+    const dotsWrapper = document.createElement('div');
+    dotsWrapper.className = 'code-dots-wrapper';
+    dotsWrapper.innerHTML = '<span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span>';
+
     const langSpan = document.createElement('span');
     langSpan.className = 'code-lang';
     langSpan.textContent = lang;
     
+    leftDiv.appendChild(dotsWrapper);
+    leftDiv.appendChild(langSpan);
+
     const copyBtn = document.createElement('button');
     copyBtn.className = 'code-copy-btn';
-    copyBtn.innerHTML = '<span class="material-symbols-outlined">content_copy</span>';
+    copyBtn.innerHTML = '<span class="material-symbols-outlined">content_copy</span><span class="copy-text">复制</span>';
     copyBtn.title = '复制代码';
     copyBtn.setAttribute('aria-label', '复制代码');
     
-    header.appendChild(langSpan);
+    header.appendChild(leftDiv);
     header.appendChild(copyBtn);
     
     block.insertBefore(header, block.firstChild);
@@ -68,12 +78,11 @@ document.addEventListener('DOMContentLoaded', () => {
         textToCopy = textToCopy.replace(/\n$/, '');
         
         navigator.clipboard.writeText(textToCopy).then(() => {
-          if (window.showToast) {
-            window.showToast('代码已复制！');
-          }
-          copyBtn.innerHTML = '<span class="material-symbols-outlined">check</span>';
+          copyBtn.innerHTML = '<span class="material-symbols-outlined">check</span><span class="copy-text">已复制</span>';
+          copyBtn.classList.add('copied');
           setTimeout(() => {
-            copyBtn.innerHTML = '<span class="material-symbols-outlined">content_copy</span>';
+            copyBtn.innerHTML = '<span class="material-symbols-outlined">content_copy</span><span class="copy-text">复制</span>';
+            copyBtn.classList.remove('copied');
           }, 2000);
         }).catch(err => {
           console.error('Copy failed: ', err);
