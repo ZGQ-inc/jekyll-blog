@@ -166,11 +166,6 @@ export default {
         return handleGetPostComments(commentsQuery[1], request, env);
       }
 
-      // Telegram OAuth endpoint proxy (/auth and /auth/get)
-      if ((path === '/auth' || path === '/auth/get' || path.startsWith('/auth/')) && method === 'GET') {
-        return handleTelegramOAuthProxy(request, env);
-      }
-
       // Telegram Reverse Proxy for widget & assets (solves network/blocking issues)
       if (path.startsWith('/tg/') && method === 'GET') {
         return handleTelegramProxy(path, request, env);
@@ -1538,32 +1533,7 @@ async function handleTelegramProxy(path: string, request: Request, _env: Env): P
     }
   }
 
-  // 2. /tg/oauth-widget.js
-  if (path === '/tg/oauth-widget.js' || path === '/tg/oauth/js/telegram-widget.js') {
-    try {
-      const res = await fetch('https://oauth.telegram.org/js/telegram-widget.js?24', {
-        headers: { 'User-Agent': 'Mozilla/5.0' },
-        cf: { cacheTtl: 86400, cacheEverything: true }
-      });
-      if (!res.ok) return new Response('Error loading oauth widget', { status: 502 });
-      let js = await res.text();
-      // Force OAuth widgetsOrigin to https://oauth.telegram.org and origin to https://t.me for DiscussBot
-      js = js
-        .replace(/getWidgetsOrigin\s*\(\s*['"]https:\/\/oauth\.telegram\.org['"][^)]*\)/g, "'https://oauth.telegram.org'")
-        .replace(/location\.origin\s*\|\|\s*location\.protocol\s*\+\s*['"]\/\/['"]\s*\+\s*location\.hostname/g, "'https://t.me'");
-      return corsResponse(new Response(js, {
-        status: 200,
-        headers: {
-          'Content-Type': 'application/javascript; charset=utf-8',
-          'Cache-Control': 'public, max-age=86400'
-        }
-      }));
-    } catch (e) {
-      return new Response('Fetch error', { status: 502 });
-    }
-  }
-
-  // 3. /tg/js/* or /tg/css/* or /tg/fonts/* or /tg/img/*
+  // 2. /tg/js/* or /tg/css/* or /tg/fonts/* or /tg/img/*
   if (path.startsWith('/tg/js/') || path.startsWith('/tg/css/') || path.startsWith('/tg/fonts/') || path.startsWith('/tg/img/')) {
     const subPath = path.replace('/tg/', '');
     const upstreamUrl = `https://telegram.org/${subPath}${url.search}`;
@@ -1582,7 +1552,7 @@ async function handleTelegramProxy(path: string, request: Request, _env: Env): P
     }
   }
 
-  // 4. /tg/file/* (telescope media CDN)
+  // 3. /tg/file/* (telescope media CDN)
   if (path.startsWith('/tg/file/')) {
     const subPath = path.replace('/tg/file/', '');
     const upstreamUrl = `https://cdn5.telesco.pe/file/${subPath}${url.search}`;
@@ -1599,38 +1569,19 @@ async function handleTelegramProxy(path: string, request: Request, _env: Env): P
     }
   }
 
-  // 5. /tg/api/* (telescope/TG discussion API calls)
-  if (path.startsWith('/tg/api/')) {
-    const subPath = path.replace('/tg/api/', '');
-    const upstreamUrl = `https://t.me/api/${subPath}${url.search}`;
-    try {
-      const res = await fetch(upstreamUrl, {
-        method: request.method,
-        headers: {
-          'User-Agent': request.headers.get('User-Agent') || 'Mozilla/5.0',
-          'Content-Type': request.headers.get('Content-Type') || 'application/x-www-form-urlencoded'
-        },
-        body: request.method === 'POST' ? await request.arrayBuffer() : undefined
-      });
-      const headers = new Headers(res.headers);
-      headers.set('Access-Control-Allow-Origin', '*');
-      return new Response(res.body, { status: res.status, headers });
-    } catch (e) {
-      return new Response('API proxy error', { status: 502 });
-    }
-  }
-
   return jsonResponse({ error: 'Proxy route not found' }, 404);
 }
 
 /**
  * Telegram Embed Discussion Proxy Handler
- * Proxies Telegram iframe discussions and rewrites asset URLs
+ * Proxies Telegram iframe discussions for smooth viewing without VPN,
+ * while directing reply/comment actions directly to official Telegram.
  */
 async function handleTelegramEmbedProxy(path: string, request: Request, _env: Env): Promise<Response> {
   const url = new URL(request.url);
   const workerOrigin = url.origin;
   const upstreamUrl = `https://t.me${path}${url.search}`;
+  const tmePostUrl = `https://t.me${path.split('?')[0]}`;
 
   try {
     const res = await fetch(upstreamUrl, {
@@ -1645,12 +1596,13 @@ async function handleTelegramEmbedProxy(path: string, request: Request, _env: En
     }
 
     let html = await res.text();
-    // Rewrite asset URLs and OAuth to proxy through this worker & production OAuth
+
+    // Replace login button with direct link to official Telegram discussion
+    const directReplyButton = `<a href="${tmePostUrl}" target="_blank" rel="noopener noreferrer" class="tgme_post_discussion_login_btn accent_bghover" style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center; cursor:pointer;">在 Telegram 中发表回复</a>`;
+    html = html.replace(/<div class="tgme_post_discussion_login_btn[^"]*"[^>]*>[\s\S]*?<\/div>/g, directReplyButton);
+
+    // Rewrite viewing assets (CSS, JS, Fonts, and Media) to proxy through Cloudflare Edge
     html = html
-      .replace(/https:\/\/oauth\.tg\.dev\/js\/telegram-widget\.js[^\"]*/g, `${workerOrigin}/tg/oauth-widget.js`)
-      .replace(/https:\/\/oauth\.telegram\.org\/js\/telegram-widget\.js[^\"]*/g, `${workerOrigin}/tg/oauth-widget.js`)
-      .replace(/https:\/\/oauth\.tg\.dev/g, 'https://oauth.telegram.org')
-      .replace(/https:\/\/t\.me\/api\//g, `${workerOrigin}/tg/api/`)
       .replace(/https:\/\/telegram\.org\/css\//g, `${workerOrigin}/tg/css/`)
       .replace(/\/\/telegram\.org\/css\//g, `${workerOrigin}/tg/css/`)
       .replace(/https:\/\/telegram\.org\/js\//g, `${workerOrigin}/tg/js/`)
@@ -1669,53 +1621,6 @@ async function handleTelegramEmbedProxy(path: string, request: Request, _env: En
   } catch (err) {
     console.error('Embed proxy error:', err);
     return new Response('Internal error proxying embed', { status: 500 });
-  }
-}
-
-/**
- * Telegram OAuth Proxy Handler
- * Proxies /auth and /auth/get to official oauth.telegram.org
- */
-async function handleTelegramOAuthProxy(request: Request, _env: Env): Promise<Response> {
-  const url = new URL(request.url);
-  // Ensure origin is https://t.me
-  url.searchParams.set('origin', 'https://t.me');
-  const oauthUrl = `https://oauth.telegram.org${url.pathname}${url.search}`;
-
-  try {
-    const res = await fetch(oauthUrl, {
-      method: request.method,
-      headers: {
-        'User-Agent': request.headers.get('User-Agent') || 'Mozilla/5.0',
-        'Accept-Language': request.headers.get('Accept-Language') || 'en',
-        'Content-Type': request.headers.get('Content-Type') || 'application/x-www-form-urlencoded'
-      },
-      body: request.method === 'POST' ? await request.arrayBuffer() : undefined
-    });
-
-    const headers = new Headers(res.headers);
-    headers.set('Access-Control-Allow-Origin', '*');
-    headers.delete('X-Frame-Options');
-    headers.delete('Content-Security-Policy');
-
-    const contentType = res.headers.get('content-type') || '';
-    if (contentType.includes('text/html')) {
-      let html = await res.text();
-      html = html
-        .replace(/https:\/\/telegram\.org\/css\//g, `${url.origin}/tg/css/`)
-        .replace(/\/\/telegram\.org\/css\//g, `${url.origin}/tg/css/`)
-        .replace(/https:\/\/telegram\.org\/js\//g, `${url.origin}/tg/js/`)
-        .replace(/\/\/telegram\.org\/js\//g, `${url.origin}/tg/js/`)
-        .replace(/https:\/\/telegram\.org\/fonts\//g, `${url.origin}/tg/fonts/`)
-        .replace(/https:\/\/oauth\.telegram\.org\/js\//g, `${url.origin}/tg/`)
-        .replace(/https:\/\/oauth\.tg\.dev\/js\//g, `${url.origin}/tg/`);
-      return new Response(html, { status: res.status, headers });
-    }
-
-    return new Response(res.body, { status: res.status, headers });
-  } catch (err) {
-    console.error('OAuth proxy error:', err);
-    return new Response('OAuth proxy failed', { status: 502 });
   }
 }
 
