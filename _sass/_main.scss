@@ -3040,11 +3040,85 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
         letter-spacing: 0.02em;
       }
     }
+
+    .btn-download-archive {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border-radius: 50px;
+      background: var(--md-sys-color-surface);
+      color: var(--md-sys-color-on-surface-variant);
+      border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 60%, transparent);
+      font-size: 0.8125rem;
+      font-weight: 600;
+      text-decoration: none;
+      box-shadow: var(--elev-1);
+      transition: all 0.2s cubic-bezier(0.2, 0, 0, 1);
+
+      .material-symbols-outlined {
+        font-size: 16px;
+        color: var(--md-sys-color-primary);
+      }
+
+      &:hover {
+        background: var(--md-sys-color-primary-container);
+        color: var(--md-sys-color-on-primary-container);
+        border-color: var(--md-sys-color-primary);
+        transform: translateY(-1px);
+        box-shadow: var(--elev-2);
+      }
+    }
   }
 
   #tg-comments-container {
     width: 100%;
     position: relative;
+  }
+
+  // Load More Button
+  .md3-load-more-wrap {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+
+    .btn-load-more {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 22px;
+      border-radius: 50px;
+      background: var(--md-sys-color-surface);
+      border: 1px solid var(--md-sys-color-outline-variant);
+      color: var(--md-sys-color-on-surface);
+      font-size: 0.875rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: var(--elev-1);
+      transition: all 0.25s cubic-bezier(0.2, 0, 0, 1);
+
+      .material-symbols-outlined {
+        font-size: 18px;
+        color: var(--md-sys-color-primary);
+      }
+
+      .rotating {
+        animation: md3Spin 1s linear infinite;
+      }
+
+      &:hover:not(:disabled) {
+        background: var(--md-sys-color-secondary-container);
+        color: var(--md-sys-color-on-secondary-container);
+        border-color: var(--md-sys-color-secondary-container);
+        transform: translateY(-2px);
+        box-shadow: var(--elev-3);
+      }
+
+      &:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
+      }
+    }
   }
 
   // Comments List Stream

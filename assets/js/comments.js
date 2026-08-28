@@ -17,6 +17,8 @@
     if (!postId || !apiUrl) return;
 
     let tgPostUrl = '';
+    let beforeCursor = null;
+    const commentsMap = new Map();
 
     // Helper: format date
     function formatDate(dateStr) {
@@ -123,20 +125,56 @@
 
     // Render component
     function renderComponent(data) {
-      const comments = data.comments || [];
+      if (data.comments && Array.isArray(data.comments)) {
+        data.comments.forEach(c => {
+          if (c && c.id) {
+            commentsMap.set(String(c.id), c);
+          }
+        });
+      }
+
       tgPostUrl = data.tg_post_url || `https://t.me/${channelName}`;
+      beforeCursor = data.before_cursor;
 
       // Update header badge count
       const countEl = document.getElementById('comments-count-badge');
       if (countEl) {
-        countEl.textContent = data.count > 0 ? `${data.count} 条讨论` : '0 条讨论';
+        const totalCount = data.count || commentsMap.size;
+        countEl.textContent = totalCount > 0 ? `${totalCount} 条讨论` : '0 条讨论';
         countEl.style.display = 'inline-flex';
+      }
+
+      // Update download archive button
+      const downloadBtn = document.getElementById('downloadCommentsBtn');
+      if (downloadBtn) {
+        downloadBtn.href = `${apiUrl}/api/posts/${encodeURIComponent(postId)}/comments?download=1`;
+        downloadBtn.style.display = 'inline-flex';
       }
 
       let html = '';
 
+      // Load more button (if there are earlier comments)
+      if (data.has_more && beforeCursor) {
+        html += `
+          <div class="md3-load-more-wrap">
+            <button class="btn-load-more" id="loadMoreCommentsBtn" data-before="${escapeHtml(beforeCursor)}">
+              <span class="material-symbols-outlined">history</span>
+              <span>加载更早的历史评论</span>
+            </button>
+          </div>
+        `;
+      }
+
+      // Sort comments in chronological order (ID ascending)
+      const sortedComments = Array.from(commentsMap.values()).sort((a, b) => {
+        const numA = parseInt(a.id, 10);
+        const numB = parseInt(b.id, 10);
+        if (!isNaN(numA) && !isNaN(numB)) return numA - numB;
+        return 0;
+      });
+
       // Comments list
-      if (comments.length === 0) {
+      if (sortedComments.length === 0) {
         html += `
           <div class="md3-comments-empty">
             <span class="material-symbols-outlined">chat_bubble_outline</span>
@@ -145,7 +183,7 @@
         `;
       } else {
         html += '<div class="md3-comments-list">';
-        comments.forEach(c => {
+        sortedComments.forEach(c => {
           html += renderCommentCard(c);
         });
         html += '</div>';
@@ -182,18 +220,33 @@
           }
         });
       });
+
+      // Attach Load More listener
+      const loadMoreBtn = document.getElementById('loadMoreCommentsBtn');
+      if (loadMoreBtn) {
+        loadMoreBtn.addEventListener('click', () => {
+          const cursor = loadMoreBtn.getAttribute('data-before');
+          if (!cursor) return;
+          loadMoreBtn.disabled = true;
+          loadMoreBtn.innerHTML = '<span class="material-symbols-outlined rotating">sync</span><span>正在加载历史评论...</span>';
+          fetchComments(cursor);
+        });
+      }
     }
 
     // Fetch comments API
-    function fetchComments() {
-      const url = `${apiUrl}/api/posts/${encodeURIComponent(postId)}/comments`;
+    function fetchComments(before = null) {
+      let url = `${apiUrl}/api/posts/${encodeURIComponent(postId)}/comments`;
+      if (before) {
+        url += `?before=${encodeURIComponent(before)}`;
+      }
 
       fetch(url)
         .then(r => r.ok ? r.json() : null)
         .then(data => {
           if (data && data.ok) {
             renderComponent(data);
-          } else if (channelName) {
+          } else if (channelName && commentsMap.size === 0) {
             container.innerHTML = `
               <div class="md3-comments-empty">
                 <span class="material-symbols-outlined">forum</span>
@@ -208,16 +261,18 @@
         })
         .catch(err => {
           console.error('Comments load error:', err);
-          container.innerHTML = `
-            <div class="md3-comments-empty">
-              <span class="material-symbols-outlined">cloud_off</span>
-              <p>加载评论区失败，请检查网络连接</p>
-              <button class="btn-reply" onclick="location.reload()" style="margin-top:16px;">
-                <span class="material-symbols-outlined">refresh</span>
-                <span>重试</span>
-              </button>
-            </div>
-          `;
+          if (commentsMap.size === 0) {
+            container.innerHTML = `
+              <div class="md3-comments-empty">
+                <span class="material-symbols-outlined">cloud_off</span>
+                <p>加载评论区失败，请检查网络连接</p>
+                <button class="btn-reply" onclick="location.reload()" style="margin-top:16px;">
+                  <span class="material-symbols-outlined">refresh</span>
+                  <span>重试</span>
+                </button>
+              </div>
+            `;
+          }
         });
     }
 

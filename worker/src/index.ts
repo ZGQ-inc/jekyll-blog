@@ -898,6 +898,7 @@ async function handleGetPostComments(postId: string, request: Request, env: Env)
   const paramChannel = url.searchParams.get('channel');
   const paramMsgId = url.searchParams.get('msg_id');
   const before = url.searchParams.get('before');
+  const isDownload = url.searchParams.get('download') === '1' || url.searchParams.get('download') === 'json';
 
   let tgMessageId: number | null = null;
   let tgChannelId: string | null = null;
@@ -924,7 +925,7 @@ async function handleGetPostComments(postId: string, request: Request, env: Env)
   const cleanChannel = tgChannelId.replace('@', '');
   const tgPostUrl = `https://t.me/${cleanChannel}/${tgMessageId}`;
 
-  // Fetch Telegram embed discussion page with comments_limit=100 to load all comments
+  // Fetch Telegram embed discussion page with comments_limit=100
   let tmeUrl = `https://t.me/${cleanChannel}/${tgMessageId}?embed=1&discussion=1&comments_limit=100`;
   if (before) {
     tmeUrl += `&before=${encodeURIComponent(before)}`;
@@ -942,6 +943,17 @@ async function handleGetPostComments(postId: string, request: Request, env: Env)
     });
 
     if (!tmeRes.ok) {
+      // Fallback: try reading from D1 archive
+      try {
+        const archived = await env.DB.prepare(
+          `SELECT comments_json FROM post_comments_archive WHERE post_id = ?`
+        ).bind(postId).first();
+        if (archived && archived.comments_json) {
+          const parsedArchive = JSON.parse(String(archived.comments_json));
+          return jsonResponse({ ok: true, post_id: postId, tg_post_url: tgPostUrl, ...parsedArchive, archived: true }, 200);
+        }
+      } catch (e) {}
+
       return jsonResponse({
         ok: false,
         error: 'Failed to fetch discussion from Telegram',
@@ -955,14 +967,52 @@ async function handleGetPostComments(postId: string, request: Request, env: Env)
     const html = await tmeRes.text();
     const parsed = parseTelegramDiscussionHtml(html, cleanChannel);
 
-    return jsonResponse({
+    const resultData = {
       ok: true,
       post_id: postId,
       tg_post_url: tgPostUrl,
       tg_channel: cleanChannel,
       tg_message_id: tgMessageId,
-      ...parsed
-    }, 200);
+      ...parsed,
+      exported_at: new Date().toISOString()
+    };
+
+    // Asynchronously update D1 archive
+    if (env.DB && parsed.comments.length > 0 && !before) {
+      env.DB.prepare(
+        `CREATE TABLE IF NOT EXISTS post_comments_archive (
+           post_id TEXT PRIMARY KEY,
+           tg_message_id INTEGER,
+           comments_count INTEGER,
+           comments_json TEXT,
+           updated_at TEXT
+         )`
+      ).run().then(() => {
+        return env.DB.prepare(
+          `INSERT INTO post_comments_archive (post_id, tg_message_id, comments_count, comments_json, updated_at)
+           VALUES (?, ?, ?, ?, datetime('now'))
+           ON CONFLICT(post_id) DO UPDATE SET
+             comments_count = excluded.comments_count,
+             comments_json = excluded.comments_json,
+             updated_at = datetime('now')`
+        ).bind(postId, tgMessageId, parsed.count, JSON.stringify(resultData)).run();
+      }).catch(err => console.warn('Failed to archive comments to D1:', err));
+    }
+
+    // If download requested, return downloadable JSON file
+    if (isDownload) {
+      return corsResponse(
+        new Response(JSON.stringify(resultData, null, 2), {
+          status: 200,
+          headers: {
+            'Content-Type': 'application/json; charset=utf-8',
+            'Content-Disposition': `attachment; filename="${postId}-comments-archive.json"`
+          }
+        })
+      );
+    }
+
+    return jsonResponse(resultData, 200);
   } catch (err) {
     console.error('Error fetching TG comments:', err);
     return jsonResponse({
