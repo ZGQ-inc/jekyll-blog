@@ -174,10 +174,13 @@ layout: default
             script.async = true;
             script.src = 'https://telegram.org/js/telegram-widget.js?22';
             script.setAttribute('data-telegram-discussion', cleanChannel + '/' + data.tg_message_id);
-            script.setAttribute('data-comments-limit', '10');
+            script.setAttribute('data-comments-limit', '20');
+            script.setAttribute('data-colorful', '1');
             if (isDark) {
               script.setAttribute('data-dark', '1');
             }
+            
+            // Clear loading placeholder once widget script takes over
             commentsContainer.innerHTML = '';
             commentsContainer.appendChild(script);
 
@@ -190,15 +193,21 @@ layout: default
         } else if (channelName) {
           btn.href = 'https://t.me/' + channelName;
           if (commentsContainer) {
-            commentsContainer.innerHTML = '<p style="text-align:center;color:var(--md-sys-color-on-surface-variant);padding:20px;">本文尚未关联 Telegram 频道讨论。请等待推送。</p>';
+            commentsContainer.innerHTML = '<div class="comments-empty-notice"><span class="material-symbols-outlined">mark_chat_unread</span><p>本文尚未关联 Telegram 讨论组，请在频道中发表评论。</p></div>';
           }
         } else {
           card.style.display = 'none';
+          if (commentsContainer) {
+            commentsContainer.innerHTML = '<div class="comments-empty-notice"><span class="material-symbols-outlined">chat_bubble_outline</span><p>暂未开启评论区</p></div>';
+          }
         }
       })
       .catch(function() {
         if (channelName) {
           btn.href = 'https://t.me/' + channelName;
+        }
+        if (commentsContainer) {
+          commentsContainer.innerHTML = '<div class="comments-empty-notice"><span class="material-symbols-outlined">sync_problem</span><p>评论区加载失败，请检查网络连接。</p></div>';
         }
       });
   });
@@ -207,12 +216,23 @@ layout: default
 
   <!-- Native Telegram Comments -->
   {% if post.comments != false %}
-  <div class="comments-section" style="margin-top: 40px;">
-    <h3 class="comments-title" style="display:flex;align-items:center;gap:8px;margin-bottom:16px;">
-      <span class="material-symbols-outlined">forum</span>
-      评论区
-    </h3>
-    <div id="tg-comments-container" style="min-height: 150px;"></div>
+  <div class="comments-section">
+    <div class="comments-header">
+      <h3 class="comments-title">
+        <span class="material-symbols-outlined">forum</span>
+        评论区
+      </h3>
+      <span class="comments-subtitle">
+        <span class="material-symbols-outlined">sync</span>
+        实时同步 Telegram 讨论组
+      </span>
+    </div>
+    <div id="tg-comments-container">
+      <div class="comments-loading-placeholder">
+        <div class="md3-circular-progress"></div>
+        <span class="loading-text">正在加载评论区...</span>
+      </div>
+    </div>
   </div>
   {% endif %}
 
