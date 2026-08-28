@@ -160,6 +160,12 @@ export default {
         return handleGetPostTg(tgQuery[1], env);
       }
 
+      // Query TG comments for a post (parsed as clean JSON)
+      const commentsQuery = path.match(/^\/api\/posts\/([^/]+)\/comments$/);
+      if (commentsQuery && method === 'GET') {
+        return handleGetPostComments(commentsQuery[1], request, env);
+      }
+
       return jsonResponse({ error: 'Not Found' }, 404);
     } catch (err) {
       console.error('Unhandled error:', err);
@@ -881,6 +887,261 @@ async function handleGetPostTg(postId: string, env: Env): Promise<Response> {
     post_url: row.post_url,
     created_at: row.created_at
   });
+}
+
+// ================================================================
+// Handler: Get Post Comments from Telegram Discussion
+// ================================================================
+
+async function handleGetPostComments(postId: string, request: Request, env: Env): Promise<Response> {
+  const url = new URL(request.url);
+  const paramChannel = url.searchParams.get('channel');
+  const paramMsgId = url.searchParams.get('msg_id');
+  const before = url.searchParams.get('before');
+
+  let tgMessageId: number | null = null;
+  let tgChannelId: string | null = null;
+
+  if (paramChannel && paramMsgId) {
+    tgChannelId = paramChannel;
+    tgMessageId = Number(paramMsgId);
+  } else {
+    const row = await env.DB.prepare(
+      `SELECT post_id, tg_message_id, tg_channel_id, post_url
+       FROM post_tg_map WHERE post_id = ?`
+    ).bind(postId).first();
+
+    if (row) {
+      tgMessageId = Number(row.tg_message_id);
+      tgChannelId = String(row.tg_channel_id);
+    }
+  }
+
+  if (!tgMessageId || !tgChannelId) {
+    return jsonResponse({ error: 'Discussion not found for this post', count: 0, comments: [] }, 404);
+  }
+
+  const cleanChannel = tgChannelId.replace('@', '');
+  const tgPostUrl = `https://t.me/${cleanChannel}/${tgMessageId}`;
+
+  // Fetch Telegram embed discussion page
+  let tmeUrl = `https://t.me/${cleanChannel}/${tgMessageId}?embed=1&discussion=1`;
+  if (before) {
+    tmeUrl += `&before=${encodeURIComponent(before)}`;
+  }
+
+  try {
+    const tmeRes = await fetch(tmeUrl, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+      },
+      cf: {
+        cacheTtl: 60,
+        cacheEverything: true
+      }
+    });
+
+    if (!tmeRes.ok) {
+      return jsonResponse({
+        ok: false,
+        error: 'Failed to fetch discussion from Telegram',
+        post_id: postId,
+        tg_post_url: tgPostUrl,
+        count: 0,
+        comments: []
+      }, 502);
+    }
+
+    const html = await tmeRes.text();
+    const parsed = parseTelegramDiscussionHtml(html, cleanChannel);
+
+    return jsonResponse({
+      ok: true,
+      post_id: postId,
+      tg_post_url: tgPostUrl,
+      tg_channel: cleanChannel,
+      tg_message_id: tgMessageId,
+      ...parsed
+    }, 200);
+  } catch (err) {
+    console.error('Error fetching TG comments:', err);
+    return jsonResponse({
+      ok: false,
+      error: 'Internal error while processing comments',
+      post_id: postId,
+      tg_post_url: tgPostUrl,
+      count: 0,
+      comments: []
+    }, 500);
+  }
+}
+
+interface ParsedComment {
+  id: string;
+  author: string;
+  author_url: string;
+  avatar: string;
+  initial: string;
+  bg_class: string;
+  is_channel: boolean;
+  text_html: string;
+  text_plain: string;
+  datetime: string;
+  time: string;
+  reply_to?: {
+    reply_id: string;
+    author: string;
+    text: string;
+  } | null;
+  media: {
+    type: 'sticker' | 'photo' | 'video' | 'audio' | 'document';
+    src?: string;
+    thumb?: string;
+    title?: string;
+  }[];
+}
+
+function parseTelegramDiscussionHtml(html: string, channelName: string): {
+  header: string;
+  count: number;
+  has_more: boolean;
+  before_cursor: string | null;
+  comments: ParsedComment[];
+} {
+  // Extract header (e.g. "15 comments on this post")
+  const headerMatch = html.match(/<span class="js-header">([^<]+)<\/span>/);
+  const header = headerMatch ? headerMatch[1].trim() : '';
+
+  // Extract count from header
+  let count = 0;
+  const countMatch = header.match(/(\d+)/);
+  if (countMatch) {
+    count = parseInt(countMatch[1], 10);
+  }
+
+  // Extract "Show more comments" pagination cursor
+  const moreMatch = html.match(/<div class="[^"]*tme_messages_more[^"]*"[^>]*data-before="([^"]+)"/);
+  const has_more = Boolean(moreMatch);
+  const before_cursor = moreMatch ? moreMatch[1] : null;
+
+  const comments: ParsedComment[] = [];
+
+  // Split messages by `.tgme_widget_message_wrap`
+  const chunks = html.split('<div class="tgme_widget_message_wrap');
+  for (let i = 1; i < chunks.length; i++) {
+    const chunk = chunks[i];
+
+    // Message ID
+    const idMatch = chunk.match(/data-post-id="([^"]+)"/);
+    const id = idMatch ? idMatch[1] : `msg_${i}`;
+
+    // Author
+    const authorMatch = chunk.match(/<a class="tgme_widget_message_author_name"[^>]*href="([^"]+)"[^>]*>([\s\S]*?)<\/a>/) ||
+                        chunk.match(/<div class="tgme_widget_message_author[^"]*"><a[^>]*href="([^"]+)"[^>]*>([\s\S]*?)<\/a>/);
+    let author_url = '';
+    let author = 'Anonymous';
+    if (authorMatch) {
+      author_url = authorMatch[1];
+      author = authorMatch[2].replace(/<[^>]+>/g, '').trim();
+    }
+
+    // Avatar (video poster / img / initial letter)
+    let avatar = '';
+    const videoPoster = chunk.match(/<video[^>]*poster="([^"]+)"/);
+    const videoSrc = chunk.match(/<video[^>]*src="([^"]+)"/);
+    const imgSrc = chunk.match(/<i class="tgme_widget_message_user_photo[^"]*"[^>]*>\s*<img[^>]*src="([^"]+)"/);
+    if (videoPoster) avatar = videoPoster[1];
+    else if (imgSrc) avatar = imgSrc[1];
+    else if (videoSrc) avatar = videoSrc[1];
+
+    const initialMatch = chunk.match(/<i class="tgme_widget_message_user_photo([^"]*)"[^>]*data-content="([^"]*)"/);
+    let initial = '';
+    let bg_class = 'bgcolor5';
+    if (initialMatch) {
+      initial = initialMatch[2].trim();
+      const classes = initialMatch[1];
+      const bgMatch = classes.match(/bgcolor\d+/);
+      if (bgMatch) bg_class = bgMatch[0];
+    }
+
+    // Reply-to quote
+    let reply_to = null;
+    const replyChunkMatch = chunk.match(/<div class="tgme_widget_message_reply_template js-reply_tpl">([\s\S]*?)<\/div>\s*<\/div>/);
+    if (replyChunkMatch) {
+      const replyChunk = replyChunkMatch[1];
+      const replyIdMatch = replyChunk.match(/name="reply_to_id"\s+value="([^"]+)"/);
+      const replyAuthorMatch = replyChunk.match(/<span class="tgme_widget_message_author_name"[^>]*>([\s\S]*?)<\/span>/);
+      const replyTextMatch = replyChunk.match(/<div class="[^"]*js-message_reply_text"[^>]*>([\s\S]*?)<\/div>/);
+      reply_to = {
+        reply_id: replyIdMatch ? replyIdMatch[1] : '',
+        author: replyAuthorMatch ? replyAuthorMatch[1].replace(/<[^>]+>/g, '').trim() : '',
+        text: replyTextMatch ? replyTextMatch[1].replace(/<[^>]+>/g, '').trim() : ''
+      };
+    }
+
+    // Message text
+    const textMatch = chunk.match(/<div class="tgme_widget_message_text[^"]*"[^>]*>([\s\S]*?)<\/div>\s*<div class="tgme_widget_message_footer/);
+    let text_html = '';
+    let text_plain = '';
+    if (textMatch) {
+      text_html = textMatch[1].trim();
+      text_plain = text_html.replace(/<br\s*\/?>/gi, '\n').replace(/<[^>]+>/g, '').trim();
+    }
+
+    // Date & Time
+    const timeMatch = chunk.match(/<time datetime="([^"]+)"[^>]*>([\s\S]*?)<\/time>/);
+    const datetime = timeMatch ? timeMatch[1] : '';
+    const time = timeMatch ? timeMatch[2].trim() : '';
+
+    // Media (stickers, photos, video, audio)
+    const media: ParsedComment['media'] = [];
+
+    // Sticker
+    const stickerMatch = chunk.match(/<div class="tgme_widget_message_sticker[^"]*"[^>]*>[\s\S]*?<img[^>]*src="([^"]+)"/);
+    if (stickerMatch) {
+      media.push({ type: 'sticker', src: stickerMatch[1] });
+    }
+
+    // Photo
+    const photoMatches = chunk.matchAll(/background-image:\s*url\('([^']+)'\)/g);
+    for (const pm of photoMatches) {
+      media.push({ type: 'photo', src: pm[1] });
+    }
+
+    // Audio / Voice
+    const voiceMatch = chunk.match(/class="tgme_widget_message_voice/);
+    if (voiceMatch) {
+      media.push({ type: 'audio', title: '语音消息' });
+    }
+
+    const is_channel = author_url.includes(channelName) || author.includes('ZGQ');
+
+    if (author || text_plain || media.length > 0) {
+      comments.push({
+        id,
+        author,
+        author_url,
+        avatar,
+        initial,
+        bg_class,
+        is_channel,
+        text_html,
+        text_plain,
+        datetime,
+        time,
+        reply_to,
+        media
+      });
+    }
+  }
+
+  return {
+    header,
+    count: count || comments.length,
+    has_more,
+    before_cursor,
+    comments
+  };
 }
 
 // ================================================================
