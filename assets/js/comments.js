@@ -1,6 +1,6 @@
 /**
  * Material Design 3 Native Telegram Comments Renderer
- * Connects to Cloudflare Worker /api/posts/:id/comments
+ * Built with MD3 elevated card design system
  */
 
 (function () {
@@ -17,8 +17,6 @@
     if (!postId || !apiUrl) return;
 
     let tgPostUrl = '';
-    let beforeCursor = null;
-    let allComments = [];
 
     // Helper: format date
     function formatDate(dateStr) {
@@ -45,26 +43,27 @@
       return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
     }
 
-    // Render single comment
-    function renderCommentItem(comment) {
+    // Render single comment card
+    function renderCommentCard(comment) {
       const isOwner = comment.is_channel;
       const avatarContent = comment.avatar
         ? `<img src="${escapeHtml(comment.avatar)}" alt="${escapeHtml(comment.author)}" class="md3-avatar-img" loading="lazy" />`
         : `<span class="md3-avatar-letter">${escapeHtml(comment.initial || comment.author.charAt(0) || 'U')}</span>`;
 
-      const authorBadge = isOwner ? `<span class="md3-owner-chip">博主</span>` : '';
+      const authorBadge = isOwner ? `<span class="md3-author-chip">博主</span>` : '';
+      const authorUrl = escapeHtml(comment.author_url || `https://t.me/${channelName}`);
       const replyLink = comment.id && tgPostUrl ? `${tgPostUrl}?comment=${encodeURIComponent(comment.id)}` : tgPostUrl;
 
-      // Reply-to snippet
+      // Reply-to quote card
       let replyHtml = '';
-      if (comment.reply_to) {
+      if (comment.reply_to && (comment.reply_to.text || comment.reply_to.author)) {
         replyHtml = `
-          <div class="md3-reply-quote" data-reply-id="${escapeHtml(comment.reply_to.reply_id)}">
-            <div class="md3-reply-quote-bar"></div>
-            <div class="md3-reply-quote-content">
-              <span class="md3-reply-quote-author">${escapeHtml(comment.reply_to.author)}</span>
-              <span class="md3-reply-quote-text">${escapeHtml(comment.reply_to.text)}</span>
+          <div class="md3-reply-quote-card" data-reply-id="${escapeHtml(comment.reply_to.reply_id)}" title="点击定位到被回复的消息">
+            <div class="md3-quote-meta">
+              <span class="material-symbols-outlined quote-icon">format_quote</span>
+              <span class="md3-quote-author">${escapeHtml(comment.reply_to.author)}</span>
             </div>
+            ${comment.reply_to.text ? `<div class="md3-quote-text">${escapeHtml(comment.reply_to.text)}</div>` : ''}
           </div>
         `;
       }
@@ -72,7 +71,7 @@
       // Media attachments
       let mediaHtml = '';
       if (comment.media && comment.media.length > 0) {
-        mediaHtml = '<div class="md3-comment-media-list">';
+        mediaHtml = '<div class="md3-card-media-grid">';
         comment.media.forEach(m => {
           if (m.type === 'sticker' && m.src) {
             mediaHtml += `<div class="md3-media-sticker"><img src="${escapeHtml(m.src)}" alt="贴纸" loading="lazy" /></div>`;
@@ -88,50 +87,44 @@
       const textHtml = comment.text_html || escapeHtml(comment.text_plain || '');
 
       return `
-        <div class="md3-comment-item ${isOwner ? 'is-owner' : ''}" id="tg-msg-${escapeHtml(comment.id)}">
-          <div class="md3-comment-avatar-wrap">
-            <a href="${escapeHtml(comment.author_url || '#')}" target="_blank" rel="noopener noreferrer" class="md3-comment-avatar ${escapeHtml(comment.bg_class || 'bgcolor5')}">
-              ${avatarContent}
+        <div class="md3-comment-card ${isOwner ? 'is-owner-card' : ''}" id="tg-msg-${escapeHtml(comment.id)}">
+          <div class="md3-card-header">
+            <div class="md3-user-info">
+              <a href="${authorUrl}" target="_blank" rel="noopener noreferrer" class="md3-card-avatar ${escapeHtml(comment.bg_class || 'bgcolor5')}">
+                ${avatarContent}
+              </a>
+              <div class="md3-user-meta">
+                <div class="md3-name-row">
+                  <a href="${authorUrl}" target="_blank" rel="noopener noreferrer" class="md3-card-author">
+                    ${escapeHtml(comment.author)}
+                  </a>
+                  ${authorBadge}
+                </div>
+                <time class="md3-card-time" datetime="${escapeHtml(comment.datetime)}" title="${escapeHtml(comment.datetime)}">
+                  ${formatDate(comment.datetime) || escapeHtml(comment.time)}
+                </time>
+              </div>
+            </div>
+            <a href="${escapeHtml(replyLink)}" target="_blank" rel="noopener noreferrer" class="btn-reply" title="在 Telegram 中回复此条消息">
+              <span class="material-symbols-outlined">reply</span>
+              <span>回复</span>
             </a>
           </div>
-          <div class="md3-comment-body">
-            <div class="md3-comment-header-row">
-              <a href="${escapeHtml(comment.author_url || '#')}" target="_blank" rel="noopener noreferrer" class="md3-comment-author-name">
-                ${escapeHtml(comment.author)}
-              </a>
-              ${authorBadge}
-              <time class="md3-comment-time" datetime="${escapeHtml(comment.datetime)}" title="${escapeHtml(comment.datetime)}">
-                ${formatDate(comment.datetime) || escapeHtml(comment.time)}
-              </time>
-            </div>
-            
-            <div class="md3-comment-bubble">
-              ${replyHtml}
-              ${textHtml ? `<div class="md3-comment-text">${textHtml}</div>` : ''}
-              ${mediaHtml}
-            </div>
 
-            <div class="md3-comment-actions">
-              <a href="${escapeHtml(replyLink)}" target="_blank" rel="noopener noreferrer" class="md3-reply-btn" title="在 Telegram 中回复此条消息">
-                <span class="material-symbols-outlined">reply</span>
-                <span>回复</span>
-              </a>
-            </div>
+          ${replyHtml}
+
+          <div class="md3-card-content">
+            ${textHtml ? `<div class="md3-card-text">${textHtml}</div>` : ''}
+            ${mediaHtml}
           </div>
         </div>
       `;
     }
 
-    // Render full comments component
-    function renderComponent(data, prepend = false) {
-      if (!prepend) {
-        allComments = data.comments || [];
-      } else {
-        allComments = (data.comments || []).concat(allComments);
-      }
-
+    // Render component
+    function renderComponent(data) {
+      const comments = data.comments || [];
       tgPostUrl = data.tg_post_url || `https://t.me/${channelName}`;
-      beforeCursor = data.before_cursor;
 
       // Update header badge count
       const countEl = document.getElementById('comments-count-badge');
@@ -140,29 +133,10 @@
         countEl.style.display = 'inline-flex';
       }
 
-      // Update header discuss button
-      const topDiscussBtn = document.getElementById('topDiscussBtn');
-      if (topDiscussBtn) {
-        topDiscussBtn.href = tgPostUrl;
-        topDiscussBtn.style.display = 'inline-flex';
-      }
-
       let html = '';
 
-      // Load more button (if there are earlier comments)
-      if (data.has_more && beforeCursor) {
-        html += `
-          <div class="md3-load-more-wrap">
-            <button class="md3-load-more-btn" id="loadMoreCommentsBtn" data-before="${escapeHtml(beforeCursor)}">
-              <span class="material-symbols-outlined">history</span>
-              <span>加载更早的历史评论</span>
-            </button>
-          </div>
-        `;
-      }
-
-      // Comments stream
-      if (allComments.length === 0) {
+      // Comments list
+      if (comments.length === 0) {
         html += `
           <div class="md3-comments-empty">
             <span class="material-symbols-outlined">chat_bubble_outline</span>
@@ -170,24 +144,21 @@
           </div>
         `;
       } else {
-        html += '<div class="md3-comments-stream">';
-        allComments.forEach(c => {
-          html += renderCommentItem(c);
+        html += '<div class="md3-comments-list">';
+        comments.forEach(c => {
+          html += renderCommentCard(c);
         });
         html += '</div>';
       }
 
-      // Bottom CTA bar
+      // Bottom CTA banner (MD3 Booking / CTA style)
       html += `
-        <div class="md3-comment-cta-bar">
-          <div class="md3-cta-icon-wrap">
-            <span class="material-symbols-outlined">edit_note</span>
-          </div>
-          <div class="md3-cta-text">
+        <div class="md3-comments-cta-card">
+          <div class="md3-cta-content">
             <h4>参与话题讨论</h4>
-            <p>在 Telegram 频道中发送回复，将自动同步展示于博客评论区</p>
+            <p>在 Telegram 频道中发送回复，将自动同步展示于此</p>
           </div>
-          <a href="${escapeHtml(tgPostUrl)}" target="_blank" rel="noopener noreferrer" class="md3-cta-btn">
+          <a href="${escapeHtml(tgPostUrl)}" target="_blank" rel="noopener noreferrer" class="btn-booking">
             <span class="material-symbols-outlined">send</span>
             <span>发表回复</span>
           </a>
@@ -197,7 +168,7 @@
       container.innerHTML = html;
 
       // Attach Reply quote scroll-to listener
-      container.querySelectorAll('.md3-reply-quote').forEach(quoteEl => {
+      container.querySelectorAll('.md3-reply-quote-card').forEach(quoteEl => {
         quoteEl.addEventListener('click', (e) => {
           e.preventDefault();
           const targetId = quoteEl.getAttribute('data-reply-id');
@@ -206,43 +177,28 @@
             if (targetEl) {
               targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
               targetEl.classList.add('is-highlighted');
-              setTimeout(() => targetEl.classList.remove('is-highlighted'), 2000);
+              setTimeout(() => targetEl.classList.remove('is-highlighted'), 2200);
             }
           }
         });
       });
-
-      // Attach Load More listener
-      const loadMoreBtn = document.getElementById('loadMoreCommentsBtn');
-      if (loadMoreBtn) {
-        loadMoreBtn.addEventListener('click', () => {
-          const cursor = loadMoreBtn.getAttribute('data-before');
-          if (!cursor) return;
-          loadMoreBtn.disabled = true;
-          loadMoreBtn.innerHTML = '<div class="md3-mini-spinner"></div><span>正在加载历史消息...</span>';
-          fetchComments(cursor, true);
-        });
-      }
     }
 
     // Fetch comments API
-    function fetchComments(before = null, prepend = false) {
-      let url = `${apiUrl}/api/posts/${encodeURIComponent(postId)}/comments`;
-      if (before) {
-        url += `?before=${encodeURIComponent(before)}`;
-      }
+    function fetchComments() {
+      const url = `${apiUrl}/api/posts/${encodeURIComponent(postId)}/comments`;
 
       fetch(url)
         .then(r => r.ok ? r.json() : null)
         .then(data => {
           if (data && data.ok) {
-            renderComponent(data, prepend);
+            renderComponent(data);
           } else if (channelName) {
             container.innerHTML = `
               <div class="md3-comments-empty">
                 <span class="material-symbols-outlined">forum</span>
                 <p>本文尚未开启 Telegram 讨论组，您可以在 Telegram 频道中参与互动。</p>
-                <a href="https://t.me/${escapeHtml(channelName)}" target="_blank" class="md3-cta-btn" style="margin-top:12px;">
+                <a href="https://t.me/${escapeHtml(channelName)}" target="_blank" class="btn-booking" style="margin-top:16px;">
                   <span class="material-symbols-outlined">open_in_new</span>
                   <span>前往频道</span>
                 </a>
@@ -256,7 +212,7 @@
             <div class="md3-comments-empty">
               <span class="material-symbols-outlined">cloud_off</span>
               <p>加载评论区失败，请检查网络连接</p>
-              <button class="md3-load-more-btn" onclick="location.reload()" style="margin-top:12px;">
+              <button class="btn-reply" onclick="location.reload()" style="margin-top:16px;">
                 <span class="material-symbols-outlined">refresh</span>
                 <span>重试</span>
               </button>

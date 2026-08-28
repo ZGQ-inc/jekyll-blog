@@ -924,8 +924,8 @@ async function handleGetPostComments(postId: string, request: Request, env: Env)
   const cleanChannel = tgChannelId.replace('@', '');
   const tgPostUrl = `https://t.me/${cleanChannel}/${tgMessageId}`;
 
-  // Fetch Telegram embed discussion page
-  let tmeUrl = `https://t.me/${cleanChannel}/${tgMessageId}?embed=1&discussion=1`;
+  // Fetch Telegram embed discussion page with comments_limit=100 to load all comments
+  let tmeUrl = `https://t.me/${cleanChannel}/${tgMessageId}?embed=1&discussion=1&comments_limit=100`;
   if (before) {
     tmeUrl += `&before=${encodeURIComponent(before)}`;
   }
@@ -1064,14 +1064,14 @@ function parseTelegramDiscussionHtml(html: string, channelName: string): {
       if (bgMatch) bg_class = bgMatch[0];
     }
 
-    // Reply-to quote
+    // Reply-to quote (distinct from actual message body)
     let reply_to = null;
-    const replyChunkMatch = chunk.match(/<div class="tgme_widget_message_reply_template js-reply_tpl">([\s\S]*?)<\/div>\s*<\/div>/);
+    const replyChunkMatch = chunk.match(/<div class="[^"]*tgme_widget_message_reply_template[^"]*"[^>]*>([\s\S]*?)<\/div>\s*<div[^>]*class="[^"]*js-message_text/);
     if (replyChunkMatch) {
       const replyChunk = replyChunkMatch[1];
       const replyIdMatch = replyChunk.match(/name="reply_to_id"\s+value="([^"]+)"/);
-      const replyAuthorMatch = replyChunk.match(/<span class="tgme_widget_message_author_name"[^>]*>([\s\S]*?)<\/span>/);
-      const replyTextMatch = replyChunk.match(/<div class="[^"]*js-message_reply_text"[^>]*>([\s\S]*?)<\/div>/);
+      const replyAuthorMatch = replyChunk.match(/<span[^>]*class="[^"]*tgme_widget_message_author_name[^"]*"[^>]*>([\s\S]*?)<\/span>/);
+      const replyTextMatch = replyChunk.match(/<div[^>]*class="[^"]*js-message_reply_text[^"]*"[^>]*>([\s\S]*?)<\/div>/);
       reply_to = {
         reply_id: replyIdMatch ? replyIdMatch[1] : '',
         author: replyAuthorMatch ? replyAuthorMatch[1].replace(/<[^>]+>/g, '').trim() : '',
@@ -1079,8 +1079,8 @@ function parseTelegramDiscussionHtml(html: string, channelName: string): {
       };
     }
 
-    // Message text
-    const textMatch = chunk.match(/<div class="tgme_widget_message_text[^"]*"[^>]*>([\s\S]*?)<\/div>\s*<div class="tgme_widget_message_footer/);
+    // Actual Message text (specifically matching js-message_text)
+    const textMatch = chunk.match(/<div[^>]*class="[^"]*js-message_text[^"]*"[^>]*>([\s\S]*?)<\/div>/);
     let text_html = '';
     let text_plain = '';
     if (textMatch) {
