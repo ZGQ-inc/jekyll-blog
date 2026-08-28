@@ -2201,25 +2201,26 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
     }
   }
 
-  // Kramdown / Rouge Code Blocks
+  // Material Design 3 Code Blocks
   .highlighter-rouge, figure.highlight {
-    background: #11141a;
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: var(--md-sys-color-surface-container);
+    border: 1px solid var(--md-sys-color-outline-variant);
     border-radius: var(--shape-medium);
-    margin: 1.1em 0;
-    font-size: 0.825rem;
+    margin: 1.2em 0;
+    font-size: 0.8125rem;
     line-height: 1.6;
     position: relative;
     overflow: hidden;
-    box-shadow: 0 4px 16px -2px rgba(0, 0, 0, 0.22);
+    box-shadow: var(--elev-1);
+    transition: background-color var(--dur-short4), border-color var(--dur-short4);
 
     .code-block-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 4px 6px 4px 12px;
-      background: linear-gradient(180deg, #181d26 0%, #12161e 100%);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+      padding: 6px 10px 6px 14px;
+      background: var(--md-sys-color-surface-container-high);
+      border-bottom: 1px solid var(--md-sys-color-outline-variant);
       user-select: none;
       
       .code-header-left {
@@ -2227,94 +2228,58 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
         align-items: center;
         gap: 8px;
 
-        .code-win-icon {
-          font-size: 15px;
-          color: var(--md-sys-color-primary, #79c0ff);
-          opacity: 0.9;
+        .code-lang-icon {
+          font-size: 16px;
+          color: var(--md-sys-color-primary);
         }
 
         .code-lang {
           font-family: 'JetBrains Mono', 'Fira Code', monospace;
-          font-size: 0.725rem;
-          color: #9ba6b5;
+          font-size: 0.75rem;
+          color: var(--md-sys-color-on-surface-variant);
           font-weight: 700;
-          letter-spacing: 0.04em;
+          letter-spacing: 0.05em;
+          text-transform: uppercase;
         }
-      }
-
-      .code-header-right {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
       }
 
       .code-copy-btn {
-        background: rgba(255, 255, 255, 0.05);
-        border: 1px solid rgba(255, 255, 255, 0.06);
-        color: #9ba6b5;
+        background: color-mix(in srgb, var(--md-sys-color-surface-container-highest) 75%, transparent);
+        border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 50%, transparent);
+        color: var(--md-sys-color-on-surface-variant);
         cursor: pointer;
-        padding: 3px 8px;
-        border-radius: var(--shape-xs);
+        padding: 4px 10px;
+        border-radius: var(--shape-small);
         display: inline-flex;
         align-items: center;
-        gap: 4px;
-        font-size: 0.725rem;
+        gap: 5px;
+        font-size: 0.75rem;
         font-family: inherit;
-        transition: all var(--dur-short4) var(--motion-standard);
+        transition: all var(--dur-short3) var(--motion-standard);
 
         .material-symbols-outlined {
-          font-size: 13px;
+          font-size: 15px;
         }
 
         .copy-text {
-          font-size: 0.7rem;
+          font-size: 0.725rem;
           font-weight: 600;
         }
 
         &:hover {
-          background: rgba(255, 255, 255, 0.12);
-          color: #f0f6fc;
-          border-color: rgba(255, 255, 255, 0.15);
+          background: var(--md-sys-color-secondary-container);
+          color: var(--md-sys-color-on-secondary-container);
+          border-color: transparent;
         }
 
         &.copied {
-          color: #56d364;
-          background: rgba(86, 211, 100, 0.15);
-          border-color: rgba(86, 211, 100, 0.3);
+          color: var(--md-sys-color-on-primary-container);
+          background: var(--md-sys-color-primary-container);
+          border-color: transparent;
         }
 
         &:active {
           transform: scale(0.96);
-        }
-      }
-
-      .code-win-controls {
-        display: inline-flex;
-        align-items: center;
-        gap: 2px;
-        padding-left: 2px;
-
-        .code-win-btn {
-          width: 24px;
-          height: 20px;
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-          border-radius: 4px;
-          color: #7d8590;
-          background: transparent;
-          cursor: default;
-          transition: background-color var(--dur-short3), color var(--dur-short3);
-
-          &:hover {
-            background: rgba(255, 255, 255, 0.1);
-            color: #e6edf3;
-          }
-
-          &.win-close:hover {
-            background: #e81123;
-            color: #ffffff;
-          }
         }
       }
     }
@@ -2324,17 +2289,17 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
       max-width: 100%;
       background: transparent;
       scrollbar-width: thin;
-      scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
+      scrollbar-color: var(--md-sys-color-outline-variant) transparent;
 
       &::-webkit-scrollbar {
         height: 5px;
         width: 5px;
       }
       &::-webkit-scrollbar-thumb {
-        background-color: rgba(255, 255, 255, 0.15);
+        background-color: var(--md-sys-color-outline-variant);
         border-radius: 4px;
         &:hover {
-          background-color: rgba(255, 255, 255, 0.28);
+          background-color: var(--md-sys-color-outline);
         }
       }
     }
@@ -2348,7 +2313,7 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
       font-family: 'JetBrains Mono', 'Fira Code', monospace;
       font-size: 0.8125rem;
       line-height: 1.6;
-      color: #e6edf3;
+      color: var(--md-sys-color-on-surface);
       white-space: pre;
       word-break: normal;
       overflow-wrap: normal;
@@ -2358,7 +2323,7 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
     code {
       background: none;
       padding: 0;
-      color: #e6edf3;
+      color: var(--md-sys-color-on-surface);
       font-family: 'JetBrains Mono', 'Fira Code', monospace;
       white-space: pre;
       word-break: normal;
@@ -2393,15 +2358,15 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
       .rouge-gutter {
         width: 1px !important;
         white-space: nowrap !important;
-        border-right: 1px solid rgba(255, 255, 255, 0.08) !important;
-        background: rgba(0, 0, 0, 0.16) !important;
+        border-right: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 40%, transparent) !important;
+        background: color-mix(in srgb, var(--md-sys-color-surface-container-high) 45%, transparent) !important;
         user-select: none !important;
         text-align: right !important;
         
         pre, .lineno { 
           margin: 0 !important;
           padding: 10px 12px 10px 14px !important; 
-          color: #586069 !important;
+          color: var(--md-sys-color-outline) !important;
           font-family: 'JetBrains Mono', 'Fira Code', monospace !important;
           font-size: 0.8125rem !important;
           line-height: 1.6 !important;
@@ -2416,7 +2381,7 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
         pre { 
           margin: 0 !important;
           padding: 10px 16px 10px 14px !important; 
-          color: #e6edf3 !important;
+          color: var(--md-sys-color-on-surface) !important;
           font-family: 'JetBrains Mono', 'Fira Code', monospace !important;
           font-size: 0.8125rem !important;
           line-height: 1.6 !important;
@@ -2429,28 +2394,28 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
   }
 
   > pre {
-    background: #11141a;
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: var(--md-sys-color-surface-container);
+    border: 1px solid var(--md-sys-color-outline-variant);
     border-radius: var(--shape-medium);
     padding: 12px 16px;
     overflow-x: auto;
     max-width: 100%;
-    margin: 1.1em 0;
-    font-size: 0.825rem;
+    margin: 1.2em 0;
+    font-size: 0.8125rem;
     line-height: 1.6;
-    color: #e6edf3;
+    color: var(--md-sys-color-on-surface);
     font-family: 'JetBrains Mono', 'Fira Code', monospace;
     white-space: pre;
     word-break: normal;
     overflow-wrap: normal;
-    box-shadow: 0 4px 16px -2px rgba(0, 0, 0, 0.22);
+    box-shadow: var(--elev-1);
     scrollbar-width: thin;
-    scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
+    scrollbar-color: var(--md-sys-color-outline-variant) transparent;
 
     code { 
       background: none; 
       padding: 0; 
-      color: #e6edf3;
+      color: var(--md-sys-color-on-surface);
       font-family: 'JetBrains Mono', 'Fira Code', monospace;
       white-space: pre;
       word-break: normal;
@@ -2458,8 +2423,52 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
     }
   }
 
-  // Rouge Highlighting Color Palette (Modern Dark Pro)
+  // Dark Mode Overrides for Code Blocks
+  html[data-theme="dark"] {
+    .highlighter-rouge, figure.highlight, > pre {
+      background: var(--md-sys-color-surface-container-lowest);
+      border-color: color-mix(in srgb, var(--md-sys-color-outline-variant) 35%, transparent);
+      box-shadow: 0 4px 16px -2px rgba(0, 0, 0, 0.35);
+
+      .code-block-header {
+        background: var(--md-sys-color-surface-container-low);
+        border-bottom-color: color-mix(in srgb, var(--md-sys-color-outline-variant) 30%, transparent);
+      }
+
+      table.rouge-table .rouge-gutter {
+        background: color-mix(in srgb, var(--md-sys-color-surface-container-low) 50%, transparent) !important;
+        border-right-color: color-mix(in srgb, var(--md-sys-color-outline-variant) 25%, transparent) !important;
+      }
+    }
+  }
+
+  // Syntax Highlighting Tokens (Light Mode Default)
   .highlight {
+    .c, .c1, .cm, .cp, .cs { color: #57606a; font-style: italic; }
+    .k, .kd, .kn, .kp, .kr, .kt, .kv { color: #cf222e; font-weight: 600; }
+    .s, .s1, .s2, .sb, .sc, .sd, .se, .sh, .si, .sx, .sr, .ss { color: #0a3069; }
+    .m, .mf, .mh, .mi, .mo, .il { color: #0550ae; }
+    .na { color: #116329; }
+    .nb, .bp { color: #953800; }
+    .nc, .nn { color: #953800; font-weight: 600; }
+    .no, .kc { color: #0550ae; font-weight: 600; }
+    .nd { color: #8250df; font-weight: 600; }
+    .ne { color: #cf222e; font-weight: 600; }
+    .nf, .fm { color: #8250df; }
+    .nl { color: #0550ae; }
+    .nt { color: #116329; font-weight: 600; }
+    .nv, .vc, .vg, .vi { color: #953800; }
+    .o, .ow { color: #cf222e; }
+    .p { color: var(--md-sys-color-on-surface); }
+    .gh { color: #0550ae; font-weight: bold; }
+    .gu { color: #57606a; font-weight: bold; }
+    .gd { color: #82071e; background-color: #ffebe9; }
+    .gi { color: #116329; background-color: #dafbe1; }
+    .err { color: #cf222e; }
+  }
+
+  // Syntax Highlighting Tokens (Dark Mode)
+  html[data-theme="dark"] .highlight {
     .c, .c1, .cm, .cp, .cs { color: #8b949e; font-style: italic; }
     .k, .kd, .kn, .kp, .kr, .kt, .kv { color: #ff7b72; font-weight: 600; }
     .s, .s1, .s2, .sb, .sc, .sd, .se, .sh, .si, .sx, .sr, .ss { color: #a5d6ff; }
@@ -2480,8 +2489,6 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
     .gu { color: #8b949e; font-weight: bold; }
     .gd { color: #ffa198; background-color: rgba(255, 129, 130, 0.15); }
     .gi { color: #56d364; background-color: rgba(46, 160, 67, 0.15); }
-    .ge { font-style: italic; }
-    .gs { font-weight: bold; }
     .err { color: #f85149; }
   }
 
