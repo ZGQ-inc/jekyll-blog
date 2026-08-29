@@ -147,7 +147,7 @@ layout: default
     </a>
   </div>
 
-  <!-- Fetch TG message ID, update discussion card and load official Telegram widget via CF proxy -->
+  <!-- Fetch TG message ID, update discussion card and load official Telegram widget -->
   <script>
   document.addEventListener('DOMContentLoaded', function() {
     var postId = {{ post.slug | jsonify }};
@@ -156,96 +156,160 @@ layout: default
     var btn = document.getElementById('tgDiscussBtn');
     var card = document.getElementById('tgDiscussCard');
     var commentsContainer = document.getElementById('tg-comments-container');
+    var refreshBtn = document.getElementById('commentsRefreshBtn');
 
     if (!postId || !apiUrl) return;
 
-    fetch(apiUrl + '/api/posts/' + encodeURIComponent(postId) + '/tg')
-      .then(function(r) { return r.ok ? r.json() : null; })
-      .then(function(data) {
-        if (data && data.tg_message_id) {
-          if (btn && data.tg_post_url) {
-            btn.href = data.tg_post_url;
-          }
+    var cachedTgData = null;
+    var currentMsgListener = null;
 
-          if (commentsContainer) {
-            var cleanChannel = (data.tg_channel_id || channelName || '').replace('@', '');
-            var script = document.createElement('script');
-            script.async = true;
-            // Load official Telegram Discussion widget
-            script.src = 'https://telegram.org/js/telegram-widget.js?22';
-            script.setAttribute('data-telegram-discussion', cleanChannel + '/' + data.tg_message_id);
-            script.setAttribute('data-comments-limit', '20');
-            script.setAttribute('data-colorful', '1');
+    function renderLoading() {
+      if (!commentsContainer) return;
+      commentsContainer.innerHTML =
+        '<div class="comments-loading-placeholder" id="comments-loading-indicator">' +
+          '<div class="md3-circular-progress"></div>' +
+          '<span class="loading-text">正在加载评论区...</span>' +
+        '</div>';
+    }
 
-            var isDark = document.documentElement.classList.contains('dark') ||
-                         (!document.documentElement.classList.contains('light') && window.matchMedia('(prefers-color-scheme: dark)').matches);
-            if (isDark) {
-              script.setAttribute('data-dark', '1');
+    function renderError(msg) {
+      if (!commentsContainer) return;
+      commentsContainer.innerHTML =
+        '<div class="comments-empty-notice">' +
+          '<span class="material-symbols-outlined">sync_problem</span>' +
+          '<p>' + (msg || '评论区加载失败，请检查网络连接。') + '</p>' +
+          '<button class="btn-retry" id="commentsRetryBtn">' +
+            '<span class="material-symbols-outlined">refresh</span>' +
+            '<span>重新加载</span>' +
+          '</button>' +
+        '</div>';
+      var retryBtn = document.getElementById('commentsRetryBtn');
+      if (retryBtn) {
+        retryBtn.addEventListener('click', function() {
+          loadComments(true);
+        });
+      }
+    }
+
+    function injectTelegramWidget(data) {
+      if (!commentsContainer) return;
+      renderLoading();
+
+      if (currentMsgListener) {
+        window.removeEventListener('message', currentMsgListener);
+        currentMsgListener = null;
+      }
+
+      var cleanChannel = (data.tg_channel_id || channelName || '').replace('@', '');
+      var script = document.createElement('script');
+      script.async = true;
+      script.src = 'https://telegram.org/js/telegram-widget.js?22';
+      script.setAttribute('data-telegram-discussion', cleanChannel + '/' + data.tg_message_id);
+      script.setAttribute('data-comments-limit', '20');
+      script.setAttribute('data-colorful', '1');
+
+      var isDark = document.documentElement.classList.contains('dark') ||
+                   (!document.documentElement.classList.contains('light') && window.matchMedia('(prefers-color-scheme: dark)').matches);
+      if (isDark) {
+        script.setAttribute('data-dark', '1');
+      }
+
+      commentsContainer.appendChild(script);
+
+      currentMsgListener = function(event) {
+        try {
+          var msg = typeof event.data === 'string' ? JSON.parse(event.data) : event.data;
+          if (msg && msg.event === 'resize' && msg.height > 0) {
+            var iframe = commentsContainer.querySelector('iframe');
+            if (iframe) {
+              iframe.classList.add('is-ready');
             }
-
-            // Append script into container (keeping placeholder visible while loading)
-            commentsContainer.appendChild(script);
-
-            // Listen for Telegram iframe ready/resize event to dismiss loading placeholder with smooth crossfade
-            var onTgMessage = function(event) {
-              try {
-                var msg = typeof event.data === 'string' ? JSON.parse(event.data) : event.data;
-                if (msg && msg.event === 'resize' && msg.height > 0) {
-                  var iframe = commentsContainer.querySelector('iframe');
-                  if (iframe) {
-                    iframe.classList.add('is-ready');
-                  }
-                  var loader = document.getElementById('comments-loading-indicator');
-                  if (loader) {
-                    loader.style.opacity = '0';
-                    loader.style.transform = 'scale(0.92)';
-                    setTimeout(function() {
-                      if (loader && loader.parentNode) {
-                        loader.parentNode.removeChild(loader);
-                      }
-                    }, 350);
-                  }
-                  window.removeEventListener('message', onTgMessage);
+            var loader = document.getElementById('comments-loading-indicator');
+            if (loader) {
+              loader.style.opacity = '0';
+              loader.style.transform = 'scale(0.92)';
+              setTimeout(function() {
+                if (loader && loader.parentNode) {
+                  loader.parentNode.removeChild(loader);
                 }
-              } catch(e) {}
-            };
-            window.addEventListener('message', onTgMessage);
+              }, 350);
+            }
+            if (refreshBtn) refreshBtn.classList.remove('is-spinning');
+            if (currentMsgListener) {
+              window.removeEventListener('message', currentMsgListener);
+              currentMsgListener = null;
+            }
+          }
+        } catch(e) {}
+      };
+      window.addEventListener('message', currentMsgListener);
 
-            // Safety timeout to clean up loader
-            setTimeout(function() {
-              var loader = document.getElementById('comments-loading-indicator');
-              if (loader && loader.parentNode) {
-                loader.parentNode.removeChild(loader);
-              }
-            }, 6000);
+      // Safety timeout to clean up loader / refresh spinning state
+      setTimeout(function() {
+        var loader = document.getElementById('comments-loading-indicator');
+        if (loader && loader.parentNode) {
+          loader.parentNode.removeChild(loader);
+        }
+        if (refreshBtn) refreshBtn.classList.remove('is-spinning');
+      }, 6000);
+    }
 
-            document.addEventListener('themechange', function(e) {
-              if (window.Telegram && window.Telegram.setWidgetOptions) {
-                window.Telegram.setWidgetOptions({ dark: e.detail && e.detail.isDark ? 1 : 0 });
-              }
-            });
+    function loadComments(isRefresh) {
+      if (refreshBtn) refreshBtn.classList.add('is-spinning');
+      renderLoading();
+
+      if (isRefresh && cachedTgData && cachedTgData.tg_message_id) {
+        injectTelegramWidget(cachedTgData);
+        return;
+      }
+
+      fetch(apiUrl + '/api/posts/' + encodeURIComponent(postId) + '/tg')
+        .then(function(r) { return r.ok ? r.json() : null; })
+        .then(function(data) {
+          if (data && data.tg_message_id) {
+            cachedTgData = data;
+            if (btn && data.tg_post_url) {
+              btn.href = data.tg_post_url;
+            }
+            injectTelegramWidget(data);
+          } else if (channelName) {
+            if (refreshBtn) refreshBtn.classList.remove('is-spinning');
+            if (btn) btn.href = 'https://t.me/' + channelName;
+            if (commentsContainer) {
+              commentsContainer.innerHTML = '<div class="comments-empty-notice"><span class="material-symbols-outlined">mark_chat_unread</span><p>本文尚未关联 Telegram 讨论组，请在频道中发表评论。</p></div>';
+            }
+          } else {
+            if (refreshBtn) refreshBtn.classList.remove('is-spinning');
+            if (card) card.style.display = 'none';
+            if (commentsContainer) {
+              commentsContainer.innerHTML = '<div class="comments-empty-notice"><span class="material-symbols-outlined">chat_bubble_outline</span><p>暂未开启评论区</p></div>';
+            }
           }
-        } else if (channelName) {
-          if (btn) btn.href = 'https://t.me/' + channelName;
-          if (commentsContainer) {
-            commentsContainer.innerHTML = '<div class="comments-empty-notice"><span class="material-symbols-outlined">mark_chat_unread</span><p>本文尚未关联 Telegram 讨论组，请在频道中发表评论。</p></div>';
+        })
+        .catch(function(err) {
+          console.error('Comments load error:', err);
+          if (refreshBtn) refreshBtn.classList.remove('is-spinning');
+          if (channelName && btn) {
+            btn.href = 'https://t.me/' + channelName;
           }
-        } else {
-          if (card) card.style.display = 'none';
-          if (commentsContainer) {
-            commentsContainer.innerHTML = '<div class="comments-empty-notice"><span class="material-symbols-outlined">chat_bubble_outline</span><p>暂未开启评论区</p></div>';
-          }
-        }
-      })
-      .catch(function(err) {
-        console.error('Comments load error:', err);
-        if (channelName && btn) {
-          btn.href = 'https://t.me/' + channelName;
-        }
-        if (commentsContainer) {
-          commentsContainer.innerHTML = '<div class="comments-empty-notice"><span class="material-symbols-outlined">sync_problem</span><p>评论区加载失败，请检查网络连接。</p><button class="btn-retry" onclick="location.reload()"><span class="material-symbols-outlined">refresh</span><span>重新加载</span></button></div>';
-        }
+          renderError();
+        });
+    }
+
+    if (refreshBtn) {
+      refreshBtn.addEventListener('click', function() {
+        loadComments(true);
       });
+    }
+
+    // Initial load
+    loadComments(false);
+
+    document.addEventListener('themechange', function(e) {
+      if (window.Telegram && window.Telegram.setWidgetOptions) {
+        window.Telegram.setWidgetOptions({ dark: e.detail && e.detail.isDark ? 1 : 0 });
+      }
+    });
   });
   </script>
   {% endif %}
@@ -258,6 +322,9 @@ layout: default
         <span class="material-symbols-outlined">forum</span>
         评论区
       </h3>
+      <button class="comments-refresh-btn" id="commentsRefreshBtn" title="刷新评论区" aria-label="刷新评论区">
+        <span class="material-symbols-outlined">refresh</span>
+      </button>
     </div>
     <div id="tg-comments-container">
       <div class="comments-loading-placeholder" id="comments-loading-indicator">

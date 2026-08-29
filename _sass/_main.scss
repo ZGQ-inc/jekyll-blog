@@ -3026,6 +3026,48 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
 
       .material-symbols-outlined { font-size: 24px; color: var(--md-sys-color-primary); }
     }
+
+    .comments-refresh-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 35%, transparent);
+      background: var(--md-sys-color-surface-container-low);
+      color: var(--md-sys-color-on-surface-variant);
+      cursor: pointer;
+      padding: 0;
+      transition: all 0.25s cubic-bezier(0.2, 0, 0, 1);
+
+      .material-symbols-outlined {
+        font-size: 20px;
+        color: inherit;
+        transition: transform 0.4s cubic-bezier(0.2, 0, 0, 1);
+      }
+
+      &:hover {
+        background: var(--md-sys-color-surface-container-high);
+        color: var(--md-sys-color-primary);
+        border-color: var(--md-sys-color-primary);
+        transform: rotate(45deg);
+      }
+
+      &:active {
+        transform: scale(0.92);
+      }
+
+      &.is-spinning {
+        pointer-events: none;
+        color: var(--md-sys-color-primary);
+        border-color: var(--md-sys-color-primary);
+
+        .material-symbols-outlined {
+          animation: md3Spin 0.85s linear infinite;
+        }
+      }
+    }
   }
 
   #tg-comments-container {
