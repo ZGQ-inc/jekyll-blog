@@ -933,7 +933,42 @@ function initBackToTop() {
       behavior: 'smooth'
     });
   });
+// Global Page Loader (MD3 Circular Progress)
+function initPageLoader() {
+  const dismissLoader = () => {
+    const loader = document.getElementById('pageLoader');
+    if (!loader || loader.classList.contains('is-loaded')) return;
+    
+    loader.classList.add('is-loaded');
+    setTimeout(() => {
+      if (loader && loader.parentNode) {
+        loader.style.display = 'none';
+      }
+    }, 360);
+  };
+
+  if (document.readyState === 'complete') {
+    setTimeout(dismissLoader, 80);
+  } else {
+    window.addEventListener('load', () => setTimeout(dismissLoader, 80));
+    document.addEventListener('DOMContentLoaded', () => {
+      setTimeout(dismissLoader, 500);
+    });
+  }
+
+  // Safety fallback timeout: max 2.5s
+  setTimeout(dismissLoader, 2500);
+
+  // bfcache navigation support
+  window.addEventListener('pageshow', e => {
+    if (e.persisted) {
+      dismissLoader();
+    }
+  });
+
+  window.dismissPageLoader = dismissLoader;
 }
+initPageLoader();
 
 document.addEventListener('DOMContentLoaded', () => {
   window.themeManager.init();

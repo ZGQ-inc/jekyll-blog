@@ -20,11 +20,51 @@
 <!-- Canonical -->
 <link rel="canonical" href="{{ page.url | absolute_url }}">
 
-<!-- Preload Transition Lock -->
+<!-- Critical Page Loader & Preload Styles -->
 <style>
-  .preload * {
+  .preload *:not(#pageLoader, #pageLoader *) {
     transition: none !important;
     animation-play-state: paused !important;
+  }
+  #pageLoader {
+    position: fixed;
+    inset: 0;
+    z-index: 999999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--md-sys-color-surface, #FDFCFF);
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 0.35s cubic-bezier(0.2, 0, 0, 1), visibility 0.35s cubic-bezier(0.2, 0, 0, 1);
+    pointer-events: auto;
+  }
+  html[data-theme="dark"] #pageLoader {
+    background-color: var(--md-sys-color-surface, #1A1C1E);
+  }
+  #pageLoader.is-loaded {
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }
+  .page-loader-spinner {
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    min-height: 44px;
+    max-width: 44px;
+    max-height: 44px;
+    aspect-ratio: 1 / 1;
+    box-sizing: border-box;
+    border: 4px solid color-mix(in srgb, var(--md-sys-color-primary, #0061A4) 18%, transparent);
+    border-top-color: var(--md-sys-color-primary, #0061A4);
+    border-radius: 50%;
+    transform-origin: center center;
+    animation: pageLoaderSpin 0.85s linear infinite !important;
+  }
+  @keyframes pageLoaderSpin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
   }
 </style>
 
