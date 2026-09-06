@@ -933,6 +933,8 @@ function initBackToTop() {
       behavior: 'smooth'
     });
   });
+}
+
 // Global Page Loader (MD3 Circular Progress)
 function initPageLoader() {
   const dismissLoader = () => {
