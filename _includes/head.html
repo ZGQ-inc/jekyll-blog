@@ -7,9 +7,31 @@
   Repository: https://github.com/ZGQ-inc/jekyll-blog
   ======================================================
 -->
+<!-- Instant Anti-FOUC Dark Mode & Canvas Setup (Must be first in head) -->
+<script>
+  (function() {
+    var color = 'blue', mode = 'system';
+    var validColors = ['blue', 'purple', 'green', 'orange', 'rose', 'teal'];
+    try {
+      var saved = localStorage.getItem('zgq-blog-theme');
+      if (saved) {
+        var parsed = JSON.parse(saved);
+        if (parsed.color && validColors.indexOf(parsed.color) !== -1) color = parsed.color;
+        if (parsed.mode === 'light' || parsed.mode === 'dark') mode = parsed.mode;
+      }
+    } catch(e) {}
+    var isDark = mode === 'dark' || (mode === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    var doc = document.documentElement;
+    doc.setAttribute('data-theme', isDark ? 'dark' : 'light');
+    doc.setAttribute('data-color', color);
+    doc.style.colorScheme = isDark ? 'dark' : 'light';
+    doc.style.backgroundColor = isDark ? '#1A1C1E' : '#FDFCFF';
+  })();
+</script>
+
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="color-scheme" content="dark light">
+<meta name="color-scheme" content="light dark">
 <link rel="icon" type="image/x-icon" href="{{ '/favicon.ico' | relative_url }}">
 <link rel="apple-touch-icon" href="{{ '/assets/images/avatar.png' | relative_url }}">
 <link rel="manifest" href="{{ '/manifest.json' | relative_url }}">
@@ -20,8 +42,23 @@
 <!-- Canonical -->
 <link rel="canonical" href="{{ page.url | absolute_url }}">
 
-<!-- Critical Page Loader & Preload Styles -->
+<!-- Critical Page Loader & Canvas Styles -->
 <style>
+  :root {
+    color-scheme: light dark;
+  }
+  html {
+    background-color: #FDFCFF;
+    color-scheme: light;
+  }
+  html[data-theme="dark"] {
+    background-color: #1A1C1E !important;
+    color-scheme: dark !important;
+  }
+  body {
+    background-color: inherit;
+    margin: 0;
+  }
   .preload *:not(#pageLoader, #pageLoader *) {
     transition: none !important;
     animation-play-state: paused !important;
@@ -33,14 +70,14 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: var(--md-sys-color-surface, #FDFCFF);
+    background-color: #FDFCFF;
     opacity: 1;
     visibility: visible;
     transition: opacity 0.35s cubic-bezier(0.2, 0, 0, 1), visibility 0.35s cubic-bezier(0.2, 0, 0, 1);
     pointer-events: auto;
   }
   html[data-theme="dark"] #pageLoader {
-    background-color: var(--md-sys-color-surface, #1A1C1E);
+    background-color: #1A1C1E !important;
   }
   #pageLoader.is-loaded {
     opacity: 0 !important;
@@ -56,36 +93,21 @@
     max-height: 44px;
     aspect-ratio: 1 / 1;
     box-sizing: border-box;
-    border: 4px solid color-mix(in srgb, var(--md-sys-color-primary, #0061A4) 18%, transparent);
-    border-top-color: var(--md-sys-color-primary, #0061A4);
+    border: 4px solid rgba(0, 97, 164, 0.18);
+    border-top-color: #0061A4;
     border-radius: 50%;
     transform-origin: center center;
     animation: pageLoaderSpin 0.85s linear infinite !important;
+  }
+  html[data-theme="dark"] .page-loader-spinner {
+    border-color: rgba(158, 202, 255, 0.18);
+    border-top-color: #9ECAFF;
   }
   @keyframes pageLoaderSpin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
   }
 </style>
-
-<!-- Anti-FOUC Theme Script -->
-<script>
-  (function() {
-    var color = 'blue', mode = 'system';
-    var validColors = ['blue', 'purple', 'green', 'orange', 'rose', 'teal'];
-    try {
-      var saved = localStorage.getItem('zgq-blog-theme');
-      if (saved) {
-        var parsed = JSON.parse(saved);
-        if (parsed.color && validColors.indexOf(parsed.color) !== -1) color = parsed.color;
-        if (parsed.mode === 'light' || parsed.mode === 'dark') mode = parsed.mode;
-      }
-    } catch(e) {}
-    var isDark = mode === 'dark' || (mode === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
-    document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
-    document.documentElement.setAttribute('data-color', color);
-  })();
-</script>
 
 <!-- Main Stylesheet -->
 <link rel="stylesheet" href="{{ '/assets/css/style.css' | relative_url }}?v={{ site.time | date: '%s' }}">
