@@ -218,6 +218,41 @@ async function handleTelegramWebhook(request: Request, env: Env): Promise<Respon
 
   const text = message.text || message.caption || '';
 
+  // Handle Cancel from Reply Keyboard Menu
+  if (text === '❌ 取消创建') {
+    await sendTelegramMessage(env.TELEGRAM_BOT_TOKEN, {
+      chat_id: message.chat.id,
+      text: '已取消创建草稿。',
+      parse_mode: 'HTML',
+      reply_markup: { remove_keyboard: true }
+    });
+    return jsonResponse({ ok: true });
+  }
+
+  // Handle Channel Selection from Reply Keyboard Menu (e.g. "📁 主频道 (ZGQincLiqun)" or "📁 个人频道 (CopyRightZGQInc)")
+  const channelMenuMatch = text.match(/^📁\s*(.+?)(?:\s*\((.+?)\))?$/);
+  if (channelMenuMatch) {
+    let channels: any[] = [];
+    try {
+      channels = JSON.parse(env.CHANNELS_CONFIG || '[]');
+    } catch (e) {}
+
+    const selectedNameOrFolder = (channelMenuMatch[2] || channelMenuMatch[1]).trim();
+    const matchedChannel = channels.find((c: any) => c.folder === selectedNameOrFolder || c.name === channelMenuMatch[1].trim());
+    const folder = matchedChannel ? matchedChannel.folder : selectedNameOrFolder;
+
+    // Extract title from replied message if available
+    let title = '未命名文章';
+    const repliedText = message.reply_to_message?.text || '';
+    const titleMatch = repliedText.match(/文章标题[:：]\s*(.+)/) || repliedText.match(/请从下方.+?文章标题.+?<code>(.+?)<\/code>/s);
+    if (titleMatch && titleMatch[1]) {
+      title = titleMatch[1].trim();
+    }
+
+    await createDraftAndCommit(env, title, folder, message.chat.id);
+    return jsonResponse({ ok: true });
+  }
+
   // Parse /new command
   const newMatch = text.match(/^\/new\s+(.+)/s) || text.match(/^\/new$/);
   if (newMatch) {
@@ -260,16 +295,43 @@ async function handleTelegramWebhook(request: Request, env: Env): Promise<Respon
     return jsonResponse({ ok: true });
   }
 
-  // Help command
+  // Help / Start command
   if (text.startsWith('/start') || text.startsWith('/help')) {
+    // Register official Telegram Bot Command Menu
+    await setupBotCommands(env.TELEGRAM_BOT_TOKEN);
+
     await sendTelegramMessage(env.TELEGRAM_BOT_TOKEN, {
       chat_id: message.chat.id,
-      text: buildHelpText(),
-      parse_mode: 'MarkdownV2'
+      text: buildHelpHtml(),
+      parse_mode: 'HTML'
     });
+    return jsonResponse({ ok: true });
   }
 
   return jsonResponse({ ok: true });
+}
+
+/**
+ * Register Telegram official Command Menu List API (setMyCommands & setChatMenuButton)
+ */
+async function setupBotCommands(token: string): Promise<void> {
+  try {
+    await callTelegramApi(token, 'setMyCommands', {
+      commands: [
+        { command: 'new', description: '📝 新建文章草稿' },
+        { command: 'link', description: '🔗 关联发布到频道' },
+        { command: 'sync', description: '🔄 重新同步文章内容' },
+        { command: 'bind', description: '📌 手动绑定已有频道消息' },
+        { command: 'cancel', description: '🗑️ 取消并删除草稿' },
+        { command: 'help', description: '❓ 查看使用指南与菜单' }
+      ]
+    });
+    await callTelegramApi(token, 'setChatMenuButton', {
+      menu_button: { type: 'commands' }
+    });
+  } catch (e) {
+    console.warn('Failed to setup bot commands menu:', e);
+  }
 }
 
 async function handleNewCommand(message: TgMessage, title: string, env: Env): Promise<void> {
@@ -283,23 +345,31 @@ async function handleNewCommand(message: TgMessage, title: string, env: Env): Pr
   if (channels.length === 0) {
     await sendTelegramMessage(env.TELEGRAM_BOT_TOKEN, {
       chat_id: message.chat.id,
-      text: `❌ 未配置任何频道 (CHANNELS_CONFIG)，无法创建草稿。`
+      text: `❌ 未配置任何频道 (CHANNELS_CONFIG)，无法创建草稿。`,
+      parse_mode: 'HTML'
     });
     return;
   }
 
-  const buttons = channels.map((c: any) => ([{
-    text: `${c.name} (${c.id})`,
-    callback_data: `new_draft:${c.folder}`
+  // Reply Keyboard Menu (底部菜单列表)
+  const keyboard = channels.map((c: any) => ([{
+    text: `📁 ${c.name} (${c.folder})`
   }]));
+  keyboard.push([{ text: '❌ 取消创建' }]);
 
   await sendTelegramMessage(env.TELEGRAM_BOT_TOKEN, {
     chat_id: message.chat.id,
-    text: `请选择要将 <b>${title.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</b> 发布到哪个频道：`,
+    text: [
+      `请从下方<b>菜单列表</b>中选择目标发布频道：\n`,
+      `📌 <b>文章标题</b>: <code>${escapeHtml(title)}</code>`
+    ].join('\n'),
     parse_mode: 'HTML',
     reply_to_message_id: message.message_id,
     reply_markup: {
-      inline_keyboard: buttons
+      keyboard: keyboard,
+      resize_keyboard: true,
+      one_time_keyboard: true,
+      input_field_placeholder: '点击下方菜单选择目标频道...'
     }
   });
 }
@@ -308,29 +378,46 @@ async function handleCallbackQuery(callbackQuery: TgCallbackQuery, env: Env): Pr
   const data = callbackQuery.data;
   if (!data || !data.startsWith('new_draft:')) return;
 
-  const folder = data.split(':')[1];
-  const originalMessage = callbackQuery.message?.reply_to_message?.text || '';
-  
-  const newMatch = originalMessage.match(/^\/new\s+(.+)/s) || originalMessage.match(/^\/new$/);
-  const title = newMatch && newMatch[1] ? newMatch[1].trim() : '未命名文章';
+  const folder = data.replace('new_draft:', '').trim();
 
-  await callTelegramApi(env.TELEGRAM_BOT_TOKEN, 'answerCallbackQuery', {
-    callback_query_id: callbackQuery.id
-  });
+  // Answer callback query immediately to dismiss client loading spinner
+  try {
+    await callTelegramApi(env.TELEGRAM_BOT_TOKEN, 'answerCallbackQuery', {
+      callback_query_id: callbackQuery.id
+    });
+  } catch (e) {}
+
+  // Extract title from bot message text
+  let title = '未命名文章';
+  const msgText = callbackQuery.message?.text || '';
+  const titleMatch = msgText.match(/请选择要将\s*(.+?)\s*发布到哪个频道/) || msgText.match(/文章标题[:：]\s*(.+)/) || msgText.match(/文章标题.+?<code>(.+?)<\/code>/s);
+  if (titleMatch && titleMatch[1]) {
+    title = titleMatch[1].trim();
+  }
 
   if (callbackQuery.message) {
     await callTelegramApi(env.TELEGRAM_BOT_TOKEN, 'editMessageText', {
       chat_id: callbackQuery.message.chat.id,
       message_id: callbackQuery.message.message_id,
-      text: `⏳ 正在为您创建草稿到 \`${folder}\`，请稍候...`,
-      parse_mode: 'Markdown'
+      text: `⏳ 正在为您创建草稿到 <code>${escapeHtml(folder || '默认')}</code>，请稍候...`,
+      parse_mode: 'HTML'
     });
-  }
 
+    await createDraftAndCommit(env, title, folder, callbackQuery.message.chat.id, callbackQuery.message.message_id);
+  }
+}
+
+async function createDraftAndCommit(
+  env: Env,
+  title: string,
+  folder: string,
+  chatId: number,
+  messageIdToEdit?: number
+): Promise<void> {
   const id = Math.random().toString(36).substring(2, 8);
   const { today, dateStr } = getBeijingTime();
   const slug = `${today}-${id}`;
-  
+
   try {
     const mdContent = [
       '---',
@@ -353,20 +440,46 @@ async function handleCallbackQuery(callbackQuery: TgCallbackQuery, env: Env): Pr
 
     await commitToGitHub(env, slug, mdContent, folder);
 
-    if (callbackQuery.message) {
+    const successHtml = [
+      `✅ <b>草稿已成功生成并提交至 GitHub！</b>\n`,
+      `📁 <b>目标频道</b>: <code>${escapeHtml(folder || '默认')}</code>`,
+      `📄 <b>文件名称</b>: <code>${escapeHtml(slug)}.md</code>`,
+      `🆔 <b>文章 ID</b>: <code>${escapeHtml(id)}</code>\n`,
+      `提交发布后，请使用以下命令关联 Telegram 频道：`,
+      `<code>/link ${id} 文章摘要</code>`
+    ].join('\n');
+
+    if (messageIdToEdit) {
       await callTelegramApi(env.TELEGRAM_BOT_TOKEN, 'editMessageText', {
-        chat_id: callbackQuery.message.chat.id,
-        message_id: callbackQuery.message.message_id,
-        text: `✅ 草稿已生成！\n\n**频道**: \`${folder}\`\n**文件名**: \`${slug}.md\`\n**文章 ID**: \`${id}\`\n\n提交发布后，请使用以下命令关联：\n\n\`/link ${id} 文章摘要\``,
-        parse_mode: 'Markdown'
+        chat_id: chatId,
+        message_id: messageIdToEdit,
+        text: successHtml,
+        parse_mode: 'HTML'
+      });
+    } else {
+      await sendTelegramMessage(env.TELEGRAM_BOT_TOKEN, {
+        chat_id: chatId,
+        text: successHtml,
+        parse_mode: 'HTML',
+        reply_markup: { remove_keyboard: true }
       });
     }
   } catch (err) {
-    if (callbackQuery.message) {
+    console.error('Draft creation error:', err);
+    const errorHtml = `❌ <b>草稿创建失败</b>: <code>${escapeHtml(String(err))}</code>`;
+    if (messageIdToEdit) {
       await callTelegramApi(env.TELEGRAM_BOT_TOKEN, 'editMessageText', {
-        chat_id: callbackQuery.message.chat.id,
-        message_id: callbackQuery.message.message_id,
-        text: `❌ 草稿创建失败: ${String(err)}`
+        chat_id: chatId,
+        message_id: messageIdToEdit,
+        text: errorHtml,
+        parse_mode: 'HTML'
+      });
+    } else {
+      await sendTelegramMessage(env.TELEGRAM_BOT_TOKEN, {
+        chat_id: chatId,
+        text: errorHtml,
+        parse_mode: 'HTML',
+        reply_markup: { remove_keyboard: true }
       });
     }
   }
@@ -461,8 +574,8 @@ async function handleLinkCommand(message: TgMessage, id: string, providedSummary
     if (!summary) {
       await sendTelegramMessage(env.TELEGRAM_BOT_TOKEN, {
         chat_id: message.chat.id,
-        text: `❌ 请提供摘要内容。文章头部未找到 summary 字段。格式: \`/link ${id} 摘要\``,
-        parse_mode: 'Markdown'
+        text: `❌ 请提供摘要内容。文章头部未找到 summary 字段。\n格式: <code>/link ${escapeHtml(id)} 摘要</code>`,
+        parse_mode: 'HTML'
       });
       return;
     }
@@ -514,7 +627,7 @@ async function handleLinkCommand(message: TgMessage, id: string, providedSummary
 
       await sendTelegramMessage(env.TELEGRAM_BOT_TOKEN, {
         chat_id: message.chat.id,
-        text: `✅ 关联成功！已推送到频道。\n\n<b>文章</b>: ${title}\n<b>博客</b>: ${postUrl}${channelLink}`,
+        text: `✅ 关联成功！已推送到频道。\n\n<b>文章</b>: ${escapeHtml(title)}\n<b>博客</b>: ${postUrl}${channelLink}`,
         parse_mode: 'HTML'
       });
     } else {
@@ -523,7 +636,8 @@ async function handleLinkCommand(message: TgMessage, id: string, providedSummary
   } catch (err) {
     await sendTelegramMessage(env.TELEGRAM_BOT_TOKEN, {
       chat_id: message.chat.id,
-      text: `❌ 关联失败: ${String(err)}`
+      text: `❌ 关联失败: <code>${escapeHtml(String(err))}</code>`,
+      parse_mode: 'HTML'
     });
   }
 }
@@ -532,6 +646,7 @@ async function handleSyncCommand(message: TgMessage, id: string, providedSummary
   await sendTelegramMessage(env.TELEGRAM_BOT_TOKEN, {
     chat_id: message.chat.id,
     text: `⏳ 正在查询数据库和 GitHub 以同步文章信息...`,
+    parse_mode: 'HTML'
   });
 
   try {
@@ -539,8 +654,8 @@ async function handleSyncCommand(message: TgMessage, id: string, providedSummary
     if (!row) {
       await sendTelegramMessage(env.TELEGRAM_BOT_TOKEN, {
         chat_id: message.chat.id,
-        text: `⚠️ 找不到 ID 为 \`${id}\` 的关联频道消息，请确认是否已发布过。`,
-        parse_mode: 'Markdown'
+        text: `⚠️ 找不到 ID 为 <code>${escapeHtml(id)}</code> 的关联频道消息，请确认是否已发布过。`,
+        parse_mode: 'HTML'
       });
       return;
     }
@@ -550,8 +665,8 @@ async function handleSyncCommand(message: TgMessage, id: string, providedSummary
     if (!postInfo) {
       await sendTelegramMessage(env.TELEGRAM_BOT_TOKEN, {
         chat_id: message.chat.id,
-        text: `❌ 在 GitHub 上找不到 ID 为 \`${id}\` 的文章源文件。`,
-        parse_mode: 'Markdown'
+        text: `❌ 在 GitHub 上找不到 ID 为 <code>${escapeHtml(id)}</code> 的文章源文件。`,
+        parse_mode: 'HTML'
       });
       return;
     }
@@ -565,8 +680,8 @@ async function handleSyncCommand(message: TgMessage, id: string, providedSummary
     if (!summary) {
       await sendTelegramMessage(env.TELEGRAM_BOT_TOKEN, {
         chat_id: message.chat.id,
-        text: `❌ 文章头部未找到 summary，且未提供新摘要。格式: \`/sync ${id} 这是一段新摘要\``,
-        parse_mode: 'Markdown'
+        text: `❌ 文章头部未找到 summary，且未提供新摘要。\n格式: <code>/sync ${escapeHtml(id)} 这是一段新摘要</code>`,
+        parse_mode: 'HTML'
       });
       return;
     }
@@ -579,9 +694,9 @@ async function handleSyncCommand(message: TgMessage, id: string, providedSummary
     const tagsLine = [idTag, otherTags].filter(Boolean).join(' ');
 
     const text = [
-      `<b>${title.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</b>`,
+      `<b>${escapeHtml(title)}</b>`,
       '',
-      summary.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'),
+      escapeHtml(summary),
       '',
       `📖 <a href="${postUrl}">阅读完整文章</a>`,
       '',
@@ -621,7 +736,7 @@ async function handleSyncCommand(message: TgMessage, id: string, providedSummary
     if (editRes.ok) {
       await sendTelegramMessage(env.TELEGRAM_BOT_TOKEN, {
         chat_id: message.chat.id,
-        text: `✅ 频道消息已成功同步更新！\n\n<b>文章</b>: ${title}`,
+        text: `✅ 频道消息已成功同步更新！\n\n<b>文章</b>: ${escapeHtml(title)}`,
         parse_mode: 'HTML'
       });
       // Optionally update local DB title
@@ -633,7 +748,8 @@ async function handleSyncCommand(message: TgMessage, id: string, providedSummary
   } catch (err) {
     await sendTelegramMessage(env.TELEGRAM_BOT_TOKEN, {
       chat_id: message.chat.id,
-      text: `❌ 同步失败: ${String(err)}`
+      text: `❌ 同步失败: <code>${escapeHtml(String(err))}</code>`,
+      parse_mode: 'HTML'
     });
   }
 }
@@ -644,8 +760,8 @@ async function handleCancelCommand(message: TgMessage, id: string, env: Env): Pr
     if (!row) {
       await sendTelegramMessage(env.TELEGRAM_BOT_TOKEN, {
         chat_id: message.chat.id,
-        text: `⚠️ 找不到 ID 为 \`${id}\` 的关联频道消息。`,
-        parse_mode: 'Markdown'
+        text: `⚠️ 找不到 ID 为 <code>${escapeHtml(id)}</code> 的关联频道消息。`,
+        parse_mode: 'HTML'
       });
       return;
     }
@@ -653,7 +769,7 @@ async function handleCancelCommand(message: TgMessage, id: string, env: Env): Pr
     const tgMessageId = row.tg_message_id as number;
     const delRes = await callTelegramApi(env.TELEGRAM_BOT_TOKEN, 'deleteMessage', {
       chat_id: env.TELEGRAM_CHANNEL_ID,
-    message_id: tgMessageId
+      message_id: tgMessageId
     });
 
     if (delRes.ok || (delRes.description && delRes.description.includes('message to delete not found'))) {
@@ -661,8 +777,8 @@ async function handleCancelCommand(message: TgMessage, id: string, env: Env): Pr
 
       await sendTelegramMessage(env.TELEGRAM_BOT_TOKEN, {
         chat_id: message.chat.id,
-        text: `✅ 关联已成功取消！你现在可以重新使用 \`/link\` 命令关联新的频道消息了。`,
-        parse_mode: 'Markdown'
+        text: `✅ 关联已成功取消！你现在可以重新使用 <code>/link</code> 命令关联新的频道消息了。`,
+        parse_mode: 'HTML'
       });
     } else {
       throw new Error(delRes.description || 'Unknown Telegram API error');
@@ -670,7 +786,8 @@ async function handleCancelCommand(message: TgMessage, id: string, env: Env): Pr
   } catch (err) {
     await sendTelegramMessage(env.TELEGRAM_BOT_TOKEN, {
       chat_id: message.chat.id,
-      text: `❌ 取消关联失败: ${String(err)}`
+      text: `❌ 取消关联失败: <code>${escapeHtml(String(err))}</code>`,
+      parse_mode: 'HTML'
     });
   }
 }
@@ -1411,18 +1528,25 @@ async function commitToGitHub(env: Env, slug: string, content: string, folder: s
 // Utility Functions
 // ================================================================
 
-/** Escape special characters for Telegram MarkdownV2 */
+function escapeHtml(str: string): string {
+  if (!str) return '';
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
 
-
-function buildHelpText(): string {
+function buildHelpHtml(): string {
   return [
-    '*使用指南*',
-    '',
-    '1\\. 新建草稿: `/new [文章标题]`',
-    '2\\. 关联频道: `/link <id> [摘要内容]`',
-    '3\\. 同步频道: `/sync <id> [新摘要内容]`',
-    '4\\. 取消关联: `/cancel <id>`',
-    '5\\. 手动绑定: `/bind <id> <url>`',
+    '📖 <b>博客管理机器人使用指南</b>\n',
+    '1️⃣ <b>新建草稿</b>: <code>/new [文章标题]</code>',
+    '2️⃣ <b>关联频道</b>: <code>/link &lt;id&gt; [摘要内容]</code>',
+    '3️⃣ <b>同步文章</b>: <code>/sync &lt;id&gt; [新摘要内容]</code>',
+    '4️⃣ <b>手动绑定</b>: <code>/bind &lt;id&gt; &lt;频道消息链接&gt;</code>',
+    '5️⃣ <b>取消草稿</b>: <code>/cancel &lt;id&gt;</code>',
+    '6️⃣ <b>媒体上传</b>: 直接向机器人发送图片/视频/音频/文件',
+    '\n💡 <i>点击聊天窗口左下角的 [Menu] 菜单即可快捷使用所有命令。</i>'
   ].join('\n');
 }
 
