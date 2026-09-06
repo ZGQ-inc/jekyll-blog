@@ -4835,16 +4835,29 @@ md-navigation-drawer {
 // ================================================================
 .page-loader-overlay {
   position: fixed;
-  inset: 0;
-  z-index: 999999;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: var(--nav-drawer-width);
+  z-index: 90;
   display: flex;
   align-items: center;
   justify-content: center;
   background-color: var(--md-sys-color-surface);
   opacity: 1;
   visibility: visible;
-  transition: opacity 0.35s cubic-bezier(0.2, 0, 0, 1), visibility 0.35s cubic-bezier(0.2, 0, 0, 1);
+  transition: opacity 0.22s cubic-bezier(0.2, 0, 0, 1), visibility 0.22s cubic-bezier(0.2, 0, 0, 1);
   pointer-events: auto;
+
+  @media (max-width: 1100px) and (min-width: 769px) {
+    left: var(--nav-rail-width);
+    top: 0;
+  }
+
+  @media (max-width: 768px) {
+    left: 0;
+    top: 64px;
+  }
 
   &.is-loaded {
     opacity: 0 !important;

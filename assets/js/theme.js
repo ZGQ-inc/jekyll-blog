@@ -946,20 +946,20 @@ function initPageLoader() {
       if (loader && loader.parentNode) {
         loader.style.display = 'none';
       }
-    }, 360);
+    }, 240);
   };
 
-  if (document.readyState === 'complete') {
-    setTimeout(dismissLoader, 80);
+  if (document.readyState === 'complete' || document.readyState === 'interactive') {
+    requestAnimationFrame(dismissLoader);
   } else {
-    window.addEventListener('load', () => setTimeout(dismissLoader, 80));
+    window.addEventListener('load', () => requestAnimationFrame(dismissLoader));
     document.addEventListener('DOMContentLoaded', () => {
-      setTimeout(dismissLoader, 500);
+      requestAnimationFrame(dismissLoader);
     });
   }
 
-  // Safety fallback timeout: max 2.5s
-  setTimeout(dismissLoader, 2500);
+  // Safety fallback timeout: max 1.5s
+  setTimeout(dismissLoader, 1500);
 
   // bfcache navigation support
   window.addEventListener('pageshow', e => {

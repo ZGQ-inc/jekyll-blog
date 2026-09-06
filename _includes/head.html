@@ -65,16 +65,31 @@
   }
   #pageLoader {
     position: fixed;
-    inset: 0;
-    z-index: 999999;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: var(--nav-drawer-width, 360px);
+    z-index: 90;
     display: flex;
     align-items: center;
     justify-content: center;
     background-color: #FDFCFF;
     opacity: 1;
     visibility: visible;
-    transition: opacity 0.35s cubic-bezier(0.2, 0, 0, 1), visibility 0.35s cubic-bezier(0.2, 0, 0, 1);
+    transition: opacity 0.22s cubic-bezier(0.2, 0, 0, 1), visibility 0.22s cubic-bezier(0.2, 0, 0, 1);
     pointer-events: auto;
+  }
+  @media (max-width: 1100px) and (min-width: 769px) {
+    #pageLoader {
+      left: var(--nav-rail-width, 80px);
+      top: 0;
+    }
+  }
+  @media (max-width: 768px) {
+    #pageLoader {
+      left: 0;
+      top: 64px;
+    }
   }
   html[data-theme="dark"] #pageLoader {
     background-color: #1A1C1E !important;

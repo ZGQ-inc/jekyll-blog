@@ -12,35 +12,6 @@
 </head>
 <body class="preload">
 
-<!-- Global Page Loader (MD3 Circular Progress) -->
-<div id="pageLoader" class="page-loader-overlay" aria-label="页面加载中" role="status">
-  <div class="page-loader-spinner" aria-hidden="true"></div>
-</div>
-<script>
-  (function() {
-    var dismissed = false;
-    function dismiss() {
-      if (dismissed) return;
-      var el = document.getElementById('pageLoader');
-      if (!el) return;
-      dismissed = true;
-      el.classList.add('is-loaded');
-      setTimeout(function() {
-        if (el && el.parentNode) el.style.display = 'none';
-      }, 360);
-    }
-    if (document.readyState === 'complete') {
-      setTimeout(dismiss, 40);
-    } else {
-      window.addEventListener('load', function() { setTimeout(dismiss, 40); });
-      document.addEventListener('DOMContentLoaded', function() { setTimeout(dismiss, 300); });
-    }
-    setTimeout(dismiss, 2000);
-    window.addEventListener('pageshow', function(e) { if (e.persisted) dismiss(); });
-    window.dismissPageLoader = dismiss;
-  })();
-</script>
-
 <!-- Reading Progress Bar -->
 <div id="readingProgress" aria-hidden="true"></div>
 
@@ -64,6 +35,35 @@
         <span class="material-symbols-outlined">menu_open</span>
       </button>
     </header>
+
+    <!-- Content Area Loader (MD3 Circular Progress) -->
+    <div id="pageLoader" class="page-loader-overlay" aria-label="页面加载中" role="status">
+      <div class="page-loader-spinner" aria-hidden="true"></div>
+    </div>
+    <script>
+      (function() {
+        var dismissed = false;
+        function dismiss() {
+          if (dismissed) return;
+          var el = document.getElementById('pageLoader');
+          if (!el) return;
+          dismissed = true;
+          el.classList.add('is-loaded');
+          setTimeout(function() {
+            if (el && el.parentNode) el.style.display = 'none';
+          }, 240);
+        }
+        if (document.readyState === 'complete' || document.readyState === 'interactive') {
+          requestAnimationFrame(dismiss);
+        } else {
+          window.addEventListener('load', function() { requestAnimationFrame(dismiss); });
+          document.addEventListener('DOMContentLoaded', function() { requestAnimationFrame(dismiss); });
+        }
+        setTimeout(dismiss, 1200);
+        window.addEventListener('pageshow', function(e) { if (e.persisted) dismiss(); });
+        window.dismissPageLoader = dismiss;
+      })();
+    </script>
 
     <!-- Page Content -->
     {{ content }}
