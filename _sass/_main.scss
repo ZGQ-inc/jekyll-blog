@@ -822,8 +822,12 @@ ul, ol { list-style: none; }
   position: sticky;
   top: 0;
   z-index: 100;
-  height: 64px;
-  padding: 0 4px;
+  min-height: calc(64px + env(safe-area-inset-top, 0px));
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-left: max(4px, env(safe-area-inset-left, 0px));
+  padding-right: max(4px, env(safe-area-inset-right, 0px));
+  padding-bottom: 0;
+  box-sizing: border-box;
   align-items: center;
   gap: 4px;
   flex-shrink: 0;
@@ -4856,7 +4860,7 @@ md-navigation-drawer {
 
   @media (max-width: 768px) {
     left: 0;
-    top: 64px;
+    top: calc(64px + env(safe-area-inset-top, 0px));
   }
 
   &.is-loaded {

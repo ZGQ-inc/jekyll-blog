@@ -466,10 +466,21 @@ class ThemeManager {
 
     root.setAttribute('data-theme', isDark ? 'dark' : 'light');
     root.setAttribute('data-color', color);
+    root.style.colorScheme = isDark ? 'dark' : 'light';
 
     const palette = THEMES[color]?.[isDark ? 'dark' : 'light'] ?? THEMES.blue.light;
-    const meta = document.querySelector('meta[name="theme-color"]');
-    if (meta) meta.setAttribute('content', palette['--md-sys-color-surface'] ?? '#FDFCFF');
+    const surfaceColor = palette['--md-sys-color-surface'] ?? (isDark ? '#1A1C1E' : '#FDFCFF');
+    root.style.backgroundColor = surfaceColor;
+
+    let meta = document.querySelector('meta[name="theme-color"]');
+    if (meta) {
+      meta.setAttribute('content', surfaceColor);
+    } else {
+      meta = document.createElement('meta');
+      meta.name = 'theme-color';
+      meta.content = surfaceColor;
+      document.head.appendChild(meta);
+    }
   }
 
   applyTheme(color = this.currentSettings.color, mode = this.currentSettings.mode) {

@@ -26,12 +26,24 @@
     doc.setAttribute('data-color', color);
     doc.style.colorScheme = isDark ? 'dark' : 'light';
     doc.style.backgroundColor = isDark ? '#1A1C1E' : '#FDFCFF';
+
+    var themeColor = isDark ? '#1A1C1E' : '#FDFCFF';
+    var metaTheme = document.querySelector('meta[name="theme-color"]');
+    if (metaTheme) metaTheme.setAttribute('content', themeColor);
   })();
 </script>
 
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
+
+<!-- PWA & Mobile Status Bar Immersion -->
+<meta name="theme-color" content="#FDFCFF" id="themeColorMeta">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="{{ site.title }}">
+
 <link rel="icon" type="image/x-icon" href="{{ '/favicon.ico' | relative_url }}">
 <link rel="apple-touch-icon" href="{{ '/assets/images/avatar.png' | relative_url }}">
 <link rel="manifest" href="{{ '/manifest.json' | relative_url }}">
@@ -88,7 +100,7 @@
   @media (max-width: 768px) {
     #pageLoader {
       left: 0;
-      top: 64px;
+      top: calc(64px + env(safe-area-inset-top, 0px));
     }
   }
   html[data-theme="dark"] #pageLoader {
