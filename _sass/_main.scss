@@ -4887,34 +4887,43 @@ md-navigation-drawer {
 }
 
 // ================================================================
-// Anchor Jump Target Highlight Animation
+// Anchor Jump Target Highlight Animation (Zero Layout Shift & Smooth Bloom)
 // ================================================================
 @keyframes anchorHighlightGlow {
   0% {
-    background-color: color-mix(in srgb, var(--md-sys-color-primary-container) 90%, transparent);
-    box-shadow: 0 0 0 1.5px color-mix(in srgb, var(--md-sys-color-primary) 40%, transparent),
-                0 4px 18px color-mix(in srgb, var(--md-sys-color-primary) 25%, transparent);
+    background-color: transparent;
+    box-shadow: 0 0 0 0 transparent,
+                0 0 0 0 transparent,
+                0 0 0 0 transparent;
     border-radius: var(--shape-large, 16px);
   }
-  50% {
-    background-color: color-mix(in srgb, var(--md-sys-color-primary-container) 70%, transparent);
-    box-shadow: 0 0 0 1px color-mix(in srgb, var(--md-sys-color-primary) 20%, transparent),
-                0 2px 10px color-mix(in srgb, var(--md-sys-color-primary) 12%, transparent);
+  16% {
+    background-color: color-mix(in srgb, var(--md-sys-color-primary-container) 85%, transparent);
+    box-shadow: 0 0 0 6px color-mix(in srgb, var(--md-sys-color-primary-container) 85%, transparent),
+                0 0 0 7.5px color-mix(in srgb, var(--md-sys-color-primary) 38%, transparent),
+                0 4px 20px color-mix(in srgb, var(--md-sys-color-primary) 20%, transparent);
+    border-radius: var(--shape-large, 16px);
+  }
+  45% {
+    background-color: color-mix(in srgb, var(--md-sys-color-primary-container) 80%, transparent);
+    box-shadow: 0 0 0 6px color-mix(in srgb, var(--md-sys-color-primary-container) 80%, transparent),
+                0 0 0 7.5px color-mix(in srgb, var(--md-sys-color-primary) 28%, transparent),
+                0 3px 12px color-mix(in srgb, var(--md-sys-color-primary) 15%, transparent);
     border-radius: var(--shape-large, 16px);
   }
   100% {
     background-color: transparent;
-    box-shadow: none;
+    box-shadow: 0 0 0 0 transparent,
+                0 0 0 0 transparent,
+                0 0 0 0 transparent;
     border-radius: var(--shape-large, 16px);
   }
 }
 
 .anchor-target-highlight {
   border-radius: var(--shape-large, 16px) !important;
-  padding: 6px 14px !important;
-  margin-left: -14px !important;
-  margin-right: -14px !important;
   box-sizing: border-box !important;
-  animation: anchorHighlightGlow 2.4s cubic-bezier(0.2, 0, 0, 1) forwards !important;
+  animation: anchorHighlightGlow 2.5s cubic-bezier(0.2, 0, 0, 1) forwards !important;
   transition: border-radius var(--dur-medium2) var(--motion-standard);
 }
+

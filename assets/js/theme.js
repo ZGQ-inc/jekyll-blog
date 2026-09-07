@@ -1186,7 +1186,7 @@ window.executeGlobalAnchorJump = function(hash) {
 
     setTimeout(() => {
       window.highlightAnchorTarget(targetEl);
-    }, 350);
+    }, 260);
 
     if (window._originalScrollRestoration !== undefined && 'scrollRestoration' in history) {
       setTimeout(() => { history.scrollRestoration = window._originalScrollRestoration; }, 1000);

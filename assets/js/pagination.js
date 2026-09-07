@@ -322,7 +322,7 @@ class BlogPaginationManager {
           headerEl.classList.add('anchor-target-highlight');
           setTimeout(() => headerEl.classList.remove('anchor-target-highlight'), 2600);
         }
-      }, 350);
+      }, 260);
     };
 
     setTimeout(doScrollToAnchor, 60);
