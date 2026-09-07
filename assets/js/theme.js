@@ -1123,6 +1123,18 @@ function initTagCloudCollapse() {
   topBtn.addEventListener('click', () => toggleExpand());
 }
 
+// Global Helper to Highlight Anchor Target
+window.highlightAnchorTarget = function(targetEl) {
+  if (!targetEl) return;
+  targetEl.classList.remove('anchor-target-highlight');
+  // Trigger reflow to restart animation cleanly
+  void targetEl.offsetWidth;
+  targetEl.classList.add('anchor-target-highlight');
+  setTimeout(() => {
+    targetEl.classList.remove('anchor-target-highlight');
+  }, 2600);
+};
+
 // Global Unified Anchor Jump Executor (Works across all pages, with or without pagination)
 window.executeGlobalAnchorJump = function(hash) {
   if (!hash || hash === '#') return;
@@ -1172,10 +1184,9 @@ window.executeGlobalAnchorJump = function(hash) {
     window.scrollTo({ top: targetTop, behavior: 'smooth' });
     try { history.replaceState(null, null, '#' + targetId); } catch (err) {}
 
-    targetEl.animate([
-      { background: 'color-mix(in srgb, var(--md-sys-color-primary-container) 85%, transparent)', borderRadius: '12px', paddingLeft: '12px' },
-      { background: 'transparent', borderRadius: '', paddingLeft: '' }
-    ], { duration: 2200, easing: 'cubic-bezier(0.2, 0, 0, 1)' });
+    setTimeout(() => {
+      window.highlightAnchorTarget(targetEl);
+    }, 350);
 
     if (window._originalScrollRestoration !== undefined && 'scrollRestoration' in history) {
       setTimeout(() => { history.scrollRestoration = window._originalScrollRestoration; }, 1000);

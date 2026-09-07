@@ -300,6 +300,7 @@ class BlogPaginationManager {
       }
     }
 
+    let highlightTimer = null;
     const doScrollToAnchor = () => {
       headerEl.style.display = '';
       const main = document.querySelector('.main-content') || document.querySelector('main');
@@ -311,10 +312,17 @@ class BlogPaginationManager {
       if (window._originalScrollRestoration !== undefined && 'scrollRestoration' in history) {
         setTimeout(() => { history.scrollRestoration = window._originalScrollRestoration; }, 1000);
       }
-      headerEl.animate([
-        { background: 'color-mix(in srgb, var(--md-sys-color-primary-container) 85%, transparent)', borderRadius: '12px', paddingLeft: '12px' },
-        { background: 'transparent', borderRadius: '', paddingLeft: '' }
-      ], { duration: 2000, easing: 'cubic-bezier(0.2, 0, 0, 1)' });
+      if (highlightTimer) clearTimeout(highlightTimer);
+      highlightTimer = setTimeout(() => {
+        if (typeof window.highlightAnchorTarget === 'function') {
+          window.highlightAnchorTarget(headerEl);
+        } else {
+          headerEl.classList.remove('anchor-target-highlight');
+          void headerEl.offsetWidth;
+          headerEl.classList.add('anchor-target-highlight');
+          setTimeout(() => headerEl.classList.remove('anchor-target-highlight'), 2600);
+        }
+      }, 350);
     };
 
     setTimeout(doScrollToAnchor, 60);
