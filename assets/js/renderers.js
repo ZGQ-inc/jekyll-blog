@@ -226,21 +226,48 @@ async function initSTL() {
   }
 }
 
-function loadLeaflet() {
-  return new Promise((resolve, reject) => {
-    if (window.L) return resolve(window.L);
-    
-    const link = document.createElement('link');
-    link.rel = 'stylesheet';
-    link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
-    document.head.appendChild(link);
+let mapLibrariesPromise = null;
 
+function loadScript(src) {
+  return new Promise((resolve, reject) => {
     const script = document.createElement('script');
-    script.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
-    script.onload = () => resolve(window.L);
+    script.src = src;
+    script.async = true;
+    script.onload = resolve;
     script.onerror = reject;
     document.body.appendChild(script);
   });
+}
+
+function loadStyle(href) {
+  if (document.querySelector(`link[href="${href}"]`)) return;
+  const link = document.createElement('link');
+  link.rel = 'stylesheet';
+  link.href = href;
+  document.head.appendChild(link);
+}
+
+function loadMapLibraries() {
+  if (window.L && window.L.maplibreGL) return Promise.resolve(window.L);
+  if (mapLibrariesPromise) return mapLibrariesPromise;
+
+  mapLibrariesPromise = (async () => {
+    loadStyle('https://unpkg.com/leaflet@1.9.4/dist/leaflet.css');
+    loadStyle('https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css');
+
+    if (!window.L) {
+      await loadScript('https://unpkg.com/leaflet@1.9.4/dist/leaflet.js');
+    }
+    if (!window.maplibregl) {
+      await loadScript('https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js');
+    }
+    if (!window.L.maplibreGL) {
+      await loadScript('https://unpkg.com/@maplibre/maplibre-gl-leaflet@0.0.21/leaflet-maplibre-gl.js');
+    }
+    return window.L;
+  })();
+
+  return mapLibrariesPromise;
 }
 
 async function initGeoJSON() {
@@ -248,7 +275,7 @@ async function initGeoJSON() {
   if (blocks.length === 0) return;
 
   try {
-    const L = await loadLeaflet();
+    const L = await loadMapLibraries();
     const geojsonLayers = [];
 
     blocks.forEach(({ wrapper, codeText }) => {
@@ -261,14 +288,13 @@ async function initGeoJSON() {
         const map = L.map(container);
         
         const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-        const tileUrl = isDark ? 
-          'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png' : 
-          'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png';
+        const styleUrl = isDark ? 
+          'https://tiles.openfreemap.org/styles/dark' : 
+          'https://tiles.openfreemap.org/styles/positron';
           
-        const tileLayer = L.tileLayer(tileUrl, {
-          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-          subdomains: 'abcd',
-          maxZoom: 20
+        const glLayer = L.maplibreGL({
+          style: styleUrl,
+          attribution: '<a href="https://openfreemap.org" target="_blank">OpenFreeMap</a> &copy; <a href="https://www.openmaptiles.org/" target="_blank">OpenMapTiles</a> &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a>'
         }).addTo(map);
 
         const getStyle = () => {
@@ -307,7 +333,7 @@ async function initGeoJSON() {
 
         map.fitBounds(geojsonLayer.getBounds(), { padding: [20, 20], maxZoom: 14 });
         
-        geojsonLayers.push({ layer: geojsonLayer, map: map, getStyle: getStyle, tileLayer: tileLayer });
+        geojsonLayers.push({ layer: geojsonLayer, map: map, getStyle: getStyle, glLayer: glLayer });
       } catch (e) {
         console.error("Failed to parse GeoJSON:", e);
         container.textContent = "Error rendering GeoJSON map.";
@@ -317,13 +343,18 @@ async function initGeoJSON() {
     document.addEventListener('themechange', (e) => {
       setTimeout(() => {
         const isDark = e.detail?.isDark ?? (document.documentElement.getAttribute('data-theme') === 'dark');
-        const tileUrl = isDark ? 
-          'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png' : 
-          'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png';
+        const styleUrl = isDark ? 
+          'https://tiles.openfreemap.org/styles/dark' : 
+          'https://tiles.openfreemap.org/styles/positron';
         const primary = getComputedStyle(document.documentElement).getPropertyValue('--md-sys-color-primary').trim() || '#0061A4';
         
-        geojsonLayers.forEach(({ layer, getStyle, tileLayer }) => {
-          tileLayer.setUrl(tileUrl);
+        geojsonLayers.forEach(({ layer, getStyle, glLayer }) => {
+          if (glLayer && typeof glLayer.getMaplibreMap === 'function') {
+            const mbMap = glLayer.getMaplibreMap();
+            if (mbMap && typeof mbMap.setStyle === 'function') {
+              mbMap.setStyle(styleUrl);
+            }
+          }
           layer.setStyle(getStyle());
           layer.eachLayer((childLayer) => {
             if (childLayer instanceof L.CircleMarker) {
@@ -338,7 +369,7 @@ async function initGeoJSON() {
     });
 
   } catch (err) {
-    console.error("Leaflet loading failed:", err);
+    console.error("Map loading failed:", err);
   }
 }
 

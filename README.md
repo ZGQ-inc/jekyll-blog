@@ -191,4 +191,4 @@ git push origin main
 * **协议继承与兼容性说明**：
   * 本项目引用的所有 Ruby Gems、Node.js 依赖及前端 JavaScript 库均采用宽松自由的开源协议（**MIT、Apache 2.0、BSD-2-Clause**），与本项目的 MIT 协议完全兼容且无传染性风险。
   * 本项目引入的所有 Web 字体均遵循 **SIL Open Font License 1.1 (OFL-1.1)**，允许与本开源项目一同分发与网络嵌入使用。
-  * 地图瓦片服务遵循 **CARTO** 及 **[OpenStreetMap](https://www.openstreetmap.org/copyright)** (ODbL) 署名规范。
+  * 地图瓦片服务遵循 **[OpenFreeMap](https://openfreemap.org/)**、**[OpenMapTiles](https://www.openmaptiles.org/)** 及 **[OpenStreetMap](https://www.openstreetmap.org/copyright)** (ODbL) 署名规范。
