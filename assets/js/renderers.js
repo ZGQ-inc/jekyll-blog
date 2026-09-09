@@ -87,6 +87,35 @@ async function initMermaid() {
       setTimeout(renderMermaid, 50);
     });
 
+    const bindMermaidLightbox = () => {
+      document.querySelectorAll('.mermaid').forEach(container => {
+        const svg = container.querySelector('svg');
+        if (!svg) return;
+
+        if (!container.querySelector('.mermaid-badge')) {
+          const badge = document.createElement('div');
+          badge.className = 'render-overlay-badge mermaid-badge';
+          badge.innerHTML = '<span class="material-symbols-outlined">zoom_in</span><span>点击查看大图 (支持缩放拖动)</span>';
+          container.appendChild(badge);
+        }
+
+        container.onclick = (e) => {
+          e.stopPropagation();
+          const currentSvg = container.querySelector('svg');
+          if (!currentSvg) return;
+          if (typeof window.openLightboxWithElement === 'function') {
+            window.openLightboxWithElement(currentSvg);
+          }
+        };
+      });
+    };
+
+    bindMermaidLightbox();
+    // Also bind after theme changes
+    document.addEventListener('themechange', () => {
+      setTimeout(bindMermaidLightbox, 100);
+    });
+
   } catch (err) {
     console.error("Mermaid loading failed:", err);
   }
@@ -140,6 +169,9 @@ async function initSTL() {
       controls.dampingFactor = 0.05;
       controls.autoRotate = true;
       controls.autoRotateSpeed = 1.0;
+      controls.enabled = false; // Disable inline interaction to prevent trapping page scroll
+
+      let initialCameraZ = 100;
 
       const hemiLight = new THREE.HemisphereLight(0xffffff, 0x444444, 1.0);
       hemiLight.position.set(0, 200, 0);
@@ -162,8 +194,110 @@ async function initSTL() {
         let cameraZ = Math.abs(maxDim / 2 / Math.tan(fov / 2));
         cameraZ *= 1.5;
         camera.position.z = cameraZ;
+        initialCameraZ = cameraZ;
 
         scene.add(mesh);
+      };
+
+      const resetCameraView = () => {
+        camera.position.set(0, 0, initialCameraZ);
+        camera.lookAt(0, 0, 0);
+        controls.target.set(0, 0, 0);
+        controls.update();
+      };
+
+      // Preview overlay for inline viewing
+      const previewOverlay = document.createElement('div');
+      previewOverlay.className = 'render-preview-overlay';
+      previewOverlay.innerHTML = `
+        <div class="render-overlay-badge">
+          <span class="material-symbols-outlined">view_in_ar</span>
+          <span>点击全屏交互 (360° 旋转 · 滚轮缩放)</span>
+        </div>
+      `;
+      container.appendChild(previewOverlay);
+
+      // Fullscreen floating toolbar
+      const toolbar = document.createElement('div');
+      toolbar.className = 'lightbox-toolbar render-fullscreen-toolbar';
+      toolbar.innerHTML = `
+        <button class="icon-btn zoom-in-btn" title="放大"><span class="material-symbols-outlined">zoom_in</span></button>
+        <button class="icon-btn zoom-reset-btn" title="重置视角"><span class="material-symbols-outlined">search</span></button>
+        <button class="icon-btn zoom-out-btn" title="缩小"><span class="material-symbols-outlined">zoom_out</span></button>
+        <button class="icon-btn rotate-toggle-btn" title="切换自动旋转"><span class="material-symbols-outlined">sync</span></button>
+        <button class="icon-btn close-btn" title="关闭全屏"><span class="material-symbols-outlined">close</span></button>
+      `;
+      container.appendChild(toolbar);
+
+      const titleBadge = document.createElement('div');
+      titleBadge.className = 'render-fullscreen-title';
+      titleBadge.innerHTML = `
+        <span class="material-symbols-outlined">view_in_ar</span>
+        <span>3D 模型预览 (拖拽旋转 · 滚轮缩放)</span>
+      `;
+      container.appendChild(titleBadge);
+
+      const enterFullscreen = () => {
+        const placeholder = document.createElement('div');
+        placeholder.className = 'render-placeholder';
+        placeholder.style.height = `${container.offsetHeight}px`;
+        container.parentNode.insertBefore(placeholder, container);
+        container._placeholder = placeholder;
+
+        container.classList.add('is-fullscreen-lightbox');
+        document.body.style.overflow = 'hidden';
+
+        controls.enabled = true;
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+      };
+
+      const exitFullscreen = () => {
+        if (!container.classList.contains('is-fullscreen-lightbox')) return;
+        container.classList.remove('is-fullscreen-lightbox');
+        document.body.style.overflow = '';
+
+        if (container._placeholder) {
+          container._placeholder.remove();
+          delete container._placeholder;
+        }
+
+        controls.enabled = false;
+        controls.autoRotate = true;
+        const syncIcon = toolbar.querySelector('.rotate-toggle-btn .material-symbols-outlined');
+        if (syncIcon) syncIcon.textContent = 'sync';
+
+        const w = container.clientWidth || 800;
+        const h = container.clientHeight || 400;
+        camera.aspect = w / h;
+        camera.updateProjectionMatrix();
+        renderer.setSize(w, h);
+        resetCameraView();
+      };
+
+      container._exitFullscreen = exitFullscreen;
+      previewOverlay.onclick = enterFullscreen;
+      toolbar.querySelector('.close-btn').onclick = exitFullscreen;
+      toolbar.querySelector('.zoom-in-btn').onclick = (e) => {
+        e.stopPropagation();
+        camera.position.multiplyScalar(0.8);
+        controls.update();
+      };
+      toolbar.querySelector('.zoom-out-btn').onclick = (e) => {
+        e.stopPropagation();
+        camera.position.multiplyScalar(1.25);
+        controls.update();
+      };
+      toolbar.querySelector('.zoom-reset-btn').onclick = (e) => {
+        e.stopPropagation();
+        resetCameraView();
+      };
+      toolbar.querySelector('.rotate-toggle-btn').onclick = (e) => {
+        e.stopPropagation();
+        controls.autoRotate = !controls.autoRotate;
+        const syncIcon = toolbar.querySelector('.rotate-toggle-btn .material-symbols-outlined');
+        if (syncIcon) syncIcon.textContent = controls.autoRotate ? 'sync' : 'sync_disabled';
       };
 
       try {
@@ -285,7 +419,15 @@ async function initGeoJSON() {
 
       try {
         const data = JSON.parse(codeText);
-        const map = L.map(container);
+        const map = L.map(container, {
+          zoomControl: false,
+          dragging: false,
+          touchZoom: false,
+          doubleClickZoom: false,
+          scrollWheelZoom: false,
+          boxZoom: false,
+          keyboard: false
+        });
         
         const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
         const styleUrl = isDark ? 
@@ -296,6 +438,36 @@ async function initGeoJSON() {
           style: styleUrl,
           attribution: '<a href="https://openfreemap.org" target="_blank">OpenFreeMap</a> &copy; <a href="https://www.openmaptiles.org/" target="_blank">OpenMapTiles</a> &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a>'
         }).addTo(map);
+
+        // Preview overlay for inline viewing
+        const previewOverlay = document.createElement('div');
+        previewOverlay.className = 'render-preview-overlay';
+        previewOverlay.innerHTML = `
+          <div class="render-overlay-badge">
+            <span class="material-symbols-outlined">fullscreen</span>
+            <span>点击全屏浏览地图 (支持拖拽与缩放)</span>
+          </div>
+        `;
+        container.appendChild(previewOverlay);
+
+        // Fullscreen floating toolbar
+        const toolbar = document.createElement('div');
+        toolbar.className = 'lightbox-toolbar render-fullscreen-toolbar';
+        toolbar.innerHTML = `
+          <button class="icon-btn zoom-in-btn" title="放大"><span class="material-symbols-outlined">zoom_in</span></button>
+          <button class="icon-btn zoom-reset-btn" title="还原视角"><span class="material-symbols-outlined">center_focus_strong</span></button>
+          <button class="icon-btn zoom-out-btn" title="缩小"><span class="material-symbols-outlined">zoom_out</span></button>
+          <button class="icon-btn close-btn" title="关闭全屏"><span class="material-symbols-outlined">close</span></button>
+        `;
+        container.appendChild(toolbar);
+
+        const titleBadge = document.createElement('div');
+        titleBadge.className = 'render-fullscreen-title';
+        titleBadge.innerHTML = `
+          <span class="material-symbols-outlined">map</span>
+          <span>交互式地图 (已启用拖拽与缩放)</span>
+        `;
+        container.appendChild(titleBadge);
 
         const getStyle = () => {
           const primary = getComputedStyle(document.documentElement).getPropertyValue('--md-sys-color-primary').trim() || '#0061A4';
@@ -332,6 +504,57 @@ async function initGeoJSON() {
         }).addTo(map);
 
         map.fitBounds(geojsonLayer.getBounds(), { padding: [20, 20], maxZoom: 14 });
+
+        const enterFullscreen = () => {
+          const placeholder = document.createElement('div');
+          placeholder.className = 'render-placeholder';
+          placeholder.style.height = `${container.offsetHeight}px`;
+          container.parentNode.insertBefore(placeholder, container);
+          container._placeholder = placeholder;
+
+          container.classList.add('is-fullscreen-lightbox');
+          document.body.style.overflow = 'hidden';
+
+          map.dragging.enable();
+          map.touchZoom.enable();
+          map.doubleClickZoom.enable();
+          map.scrollWheelZoom.enable();
+          map.boxZoom.enable();
+          map.keyboard.enable();
+
+          map.invalidateSize();
+        };
+
+        const exitFullscreen = () => {
+          if (!container.classList.contains('is-fullscreen-lightbox')) return;
+          container.classList.remove('is-fullscreen-lightbox');
+          document.body.style.overflow = '';
+
+          if (container._placeholder) {
+            container._placeholder.remove();
+            delete container._placeholder;
+          }
+
+          map.dragging.disable();
+          map.touchZoom.disable();
+          map.doubleClickZoom.disable();
+          map.scrollWheelZoom.disable();
+          map.boxZoom.disable();
+          map.keyboard.disable();
+
+          map.invalidateSize();
+          map.fitBounds(geojsonLayer.getBounds(), { padding: [20, 20], maxZoom: 14 });
+        };
+
+        container._exitFullscreen = exitFullscreen;
+        previewOverlay.onclick = enterFullscreen;
+        toolbar.querySelector('.close-btn').onclick = exitFullscreen;
+        toolbar.querySelector('.zoom-in-btn').onclick = (e) => { e.stopPropagation(); map.zoomIn(); };
+        toolbar.querySelector('.zoom-out-btn').onclick = (e) => { e.stopPropagation(); map.zoomOut(); };
+        toolbar.querySelector('.zoom-reset-btn').onclick = (e) => {
+          e.stopPropagation();
+          map.fitBounds(geojsonLayer.getBounds(), { padding: [40, 40], maxZoom: 14 });
+        };
         
         geojsonLayers.push({ layer: geojsonLayer, map: map, getStyle: getStyle, glLayer: glLayer });
       } catch (e) {
@@ -378,3 +601,16 @@ document.addEventListener('DOMContentLoaded', () => {
   initSTL();
   initGeoJSON();
 });
+
+if (!window._renderFullscreenEscListenerAdded) {
+  window._renderFullscreenEscListenerAdded = true;
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      document.querySelectorAll('.is-fullscreen-lightbox').forEach(el => {
+        if (typeof el._exitFullscreen === 'function') {
+          el._exitFullscreen();
+        }
+      });
+    }
+  });
+}

@@ -1,8 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
   const postContent = document.querySelector('.article-content');
-  if (!postContent) return;
-
-  const childNodes = Array.from(postContent.children);
+  const childNodes = postContent ? Array.from(postContent.children) : [];
   const mediaGroups = [];
   let currentGroup = [];
 
@@ -171,8 +169,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  if (allMediaArray.length === 0) return;
-
   const lightbox = document.createElement('div');
   lightbox.className = 'md3-lightbox';
   lightbox.innerHTML = `
@@ -233,6 +229,25 @@ document.addEventListener('DOMContentLoaded', () => {
     resetZoom();
   }
 
+  window.openLightboxWithElement = function(mediaEl) {
+    if (!mediaEl) return;
+    currentLightboxIndex = -1;
+    contentWrapper.innerHTML = '';
+    const clone = mediaEl.cloneNode(true);
+    clone.removeAttribute('width');
+    clone.removeAttribute('height');
+    clone.draggable = false;
+    contentWrapper.appendChild(clone);
+
+    lightbox.classList.add('open');
+    document.body.style.overflow = 'hidden';
+
+    prevBtn.style.display = 'none';
+    nextBtn.style.display = 'none';
+
+    resetZoom();
+  };
+
   function closeLightbox() {
     lightbox.classList.remove('open');
     document.body.style.overflow = '';
@@ -244,7 +259,7 @@ document.addEventListener('DOMContentLoaded', () => {
   
   lightbox.querySelector('.lightbox-content-container').addEventListener('click', (e) => {
     if (isPanDragging) return;
-    if (e.target.tagName === 'IMG') return;
+    if (e.target.tagName === 'IMG' || e.target.tagName === 'VIDEO' || e.target.closest('svg') || e.target.closest('.lightbox-content-wrapper > *')) return;
     
     const wrapper = lightbox.querySelector('.lightbox-content-wrapper');
     if (e.target === e.currentTarget || e.target === wrapper) {

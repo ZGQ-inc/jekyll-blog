@@ -2743,7 +2743,42 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
     }
   }
 
-  // 3D & Map Renderers
+  // 3D & Map Renderers & Mermaid
+  .mermaid {
+    position: relative;
+    text-align: center;
+    margin: 1.5em 0;
+    cursor: zoom-in;
+    user-select: none;
+    transition: filter var(--dur-short4) var(--motion-standard);
+
+    svg {
+      max-width: 100%;
+      height: auto;
+      display: inline-block;
+      transition: transform var(--dur-short3) var(--motion-standard);
+    }
+
+    &:hover {
+      svg {
+        transform: scale(1.01);
+      }
+      .mermaid-badge {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .mermaid-badge {
+      position: absolute;
+      bottom: 8px;
+      right: 8px;
+      opacity: 0;
+      transform: translateY(6px);
+      z-index: 5;
+    }
+  }
+
   .stl-viewer, .geojson-map {
     width: 100%;
     height: 400px;
@@ -2760,6 +2795,157 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
       margin: 0;
       box-shadow: none;
     }
+
+    &.is-fullscreen-lightbox {
+      position: fixed !important;
+      inset: 0 !important;
+      width: 100vw !important;
+      height: 100vh !important;
+      margin: 0 !important;
+      border-radius: 0 !important;
+      border: none !important;
+      z-index: 4500 !important;
+      background-color: var(--md-sys-color-surface) !important;
+      box-shadow: none !important;
+
+      .render-preview-overlay {
+        display: none !important;
+      }
+
+      .render-fullscreen-toolbar {
+        display: flex !important;
+      }
+
+      .render-fullscreen-title {
+        display: flex !important;
+      }
+    }
+  }
+
+  .render-preview-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 1001;
+    cursor: pointer;
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-end;
+    padding: 16px;
+    background: transparent;
+    border-radius: inherit;
+    transition: background var(--dur-short4) var(--motion-standard);
+
+    &:hover {
+      background: rgba(0, 0, 0, 0.12);
+
+      .render-overlay-badge {
+        transform: scale(1.05);
+        box-shadow: var(--elev-3);
+        background: color-mix(in srgb, var(--md-sys-color-surface-container-high) 95%, transparent);
+      }
+    }
+  }
+
+  [data-theme="dark"] .render-preview-overlay:hover {
+    background: rgba(255, 255, 255, 0.08);
+  }
+
+  .render-overlay-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    border-radius: var(--shape-full);
+    background: color-mix(in srgb, var(--md-sys-color-surface-container-highest) 85%, transparent);
+    backdrop-filter: blur(16px) saturate(160%);
+    -webkit-backdrop-filter: blur(16px) saturate(160%);
+    color: var(--md-sys-color-on-surface);
+    font-size: 0.85rem;
+    font-weight: 500;
+    border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 50%, transparent);
+    box-shadow: var(--elev-2);
+    pointer-events: none;
+    transition: transform var(--dur-short3) var(--motion-standard),
+                background var(--dur-short3) var(--motion-standard),
+                box-shadow var(--dur-short3) var(--motion-standard),
+                opacity var(--dur-short3) var(--motion-standard);
+
+    .material-symbols-outlined {
+      font-size: 20px;
+      color: var(--md-sys-color-primary);
+    }
+  }
+
+  .render-fullscreen-toolbar {
+    display: none;
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    gap: 8px;
+    z-index: 5005;
+
+    .icon-btn {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: rgba(0, 0, 0, 0.45);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: white;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.2s ease, background 0.2s ease;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+
+      &:hover {
+        background: rgba(0, 0, 0, 0.75);
+        transform: scale(1.08);
+      }
+
+      &:active {
+        transform: scale(0.92);
+      }
+
+      .material-symbols-outlined {
+        font-size: 22px;
+      }
+    }
+  }
+
+  .render-fullscreen-title {
+    display: none;
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    align-items: center;
+    gap: 8px;
+    z-index: 5005;
+    padding: 8px 18px;
+    border-radius: var(--shape-full);
+    background: rgba(0, 0, 0, 0.45);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    font-size: 0.875rem;
+    font-weight: 500;
+    pointer-events: none;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+
+    .material-symbols-outlined {
+      font-size: 20px;
+      color: var(--md-sys-color-primary, #a8c7fa);
+    }
+  }
+
+  .render-placeholder {
+    width: 100%;
+    margin: 1.5em 0;
+    visibility: hidden;
+    pointer-events: none;
   }
 
   // File Download Card
@@ -4410,14 +4596,27 @@ md-navigation-drawer {
     align-items: center;
     justify-content: center;
 
-    img, video {
+    img, video, svg {
       max-width: 90vw;
       max-height: 90vh;
       object-fit: contain;
-      border-radius: 0;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.5);
       user-select: none;
       -webkit-user-drag: none;
+    }
+
+    img, video {
+      border-radius: 0;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+    }
+
+    svg {
+      background: var(--md-sys-color-surface);
+      padding: 24px;
+      border-radius: var(--shape-large, 16px);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+      box-sizing: border-box;
+      width: auto;
+      height: auto;
     }
   }
 }
