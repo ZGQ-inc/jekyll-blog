@@ -192,7 +192,7 @@ ul, ol { list-style: none; }
   to {
     opacity: 1;
     transform: none;
-    filter: blur(0);
+    filter: none;
   }
 }
 
@@ -4596,6 +4596,10 @@ md-navigation-drawer {
     align-items: center;
     justify-content: center;
 
+    &.is-dragging {
+      transition: none !important;
+    }
+
     img, video, svg {
       max-width: 90vw;
       max-height: 90vh;
@@ -4617,6 +4621,125 @@ md-navigation-drawer {
       box-sizing: border-box;
       width: auto;
       height: auto;
+    }
+  }
+}
+
+// Fullscreen styles for portalled 3D STL & GeoJSON Map renderers
+.stl-viewer.is-fullscreen-lightbox,
+.geojson-map.is-fullscreen-lightbox {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  margin: 0 !important;
+  border-radius: 0 !important;
+  border: none !important;
+  z-index: 5000 !important;
+  background-color: var(--md-sys-color-surface) !important;
+  box-shadow: none !important;
+  overflow: hidden !important;
+
+  .render-preview-overlay {
+    display: none !important;
+  }
+
+  .render-fullscreen-toolbar {
+    display: flex !important;
+  }
+
+  .render-fullscreen-title {
+    display: flex !important;
+  }
+}
+
+.render-fullscreen-toolbar {
+  display: none;
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  gap: 8px;
+  z-index: 5005;
+
+  .icon-btn {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.45);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s ease, background 0.2s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+
+    &:hover {
+      background: rgba(0, 0, 0, 0.75);
+      transform: scale(1.08);
+    }
+
+    &:active {
+      transform: scale(0.92);
+    }
+
+    .material-symbols-outlined {
+      font-size: 22px;
+    }
+  }
+}
+
+.render-fullscreen-title {
+  display: none;
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  align-items: center;
+  gap: 8px;
+  z-index: 5005;
+  padding: 8px 18px;
+  border-radius: var(--shape-full);
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  font-size: 0.875rem;
+  font-weight: 500;
+  pointer-events: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+
+  .material-symbols-outlined {
+    font-size: 20px;
+    color: var(--md-sys-color-primary, #a8c7fa);
+  }
+}
+
+@media (max-width: 600px) {
+  .stl-viewer.is-fullscreen-lightbox .render-fullscreen-title,
+  .geojson-map.is-fullscreen-lightbox .render-fullscreen-title,
+  .render-fullscreen-title {
+    display: none !important;
+  }
+  .render-fullscreen-toolbar,
+  .is-fullscreen-lightbox .render-fullscreen-toolbar {
+    top: 12px;
+    right: 12px;
+    gap: 6px;
+
+    .icon-btn {
+      width: 40px;
+      height: 40px;
+
+      .material-symbols-outlined {
+        font-size: 20px;
+      }
     }
   }
 }

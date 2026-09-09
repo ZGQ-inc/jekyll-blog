@@ -251,6 +251,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function closeLightbox() {
     lightbox.classList.remove('open');
     document.body.style.overflow = '';
+    contentWrapper.classList.remove('is-dragging');
     contentWrapper.innerHTML = '';
   }
 
@@ -290,6 +291,7 @@ document.addEventListener('DOMContentLoaded', () => {
     startX = e.clientX - translateX;
     startY = e.clientY - translateY;
     container.style.cursor = 'grabbing';
+    contentWrapper.classList.add('is-dragging');
   });
 
   window.addEventListener('mousemove', (e) => {
@@ -307,6 +309,7 @@ document.addEventListener('DOMContentLoaded', () => {
   window.addEventListener('mouseup', () => {
     isDragging = false;
     container.style.cursor = 'default';
+    contentWrapper.classList.remove('is-dragging');
     setTimeout(() => { isPanDragging = false; }, 0);
   });
 
@@ -314,6 +317,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let initialScale = 1;
 
   container.addEventListener('touchstart', (e) => {
+    contentWrapper.classList.add('is-dragging');
     if (e.touches.length === 1) {
       isDragging = true;
       isPanDragging = false;
@@ -352,13 +356,16 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }, { passive: false });
 
-  window.addEventListener('touchend', (e) => {
+  const onTouchEnd = (e) => {
     if (e.touches.length === 0) {
       isDragging = false;
       initialPinchDistance = null;
+      contentWrapper.classList.remove('is-dragging');
       setTimeout(() => { isPanDragging = false; }, 0);
     }
-  });
+  };
+  window.addEventListener('touchend', onTouchEnd);
+  window.addEventListener('touchcancel', onTouchEnd);
 
   document.addEventListener('keydown', (e) => {
     if (!lightbox.classList.contains('open')) return;

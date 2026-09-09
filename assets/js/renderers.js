@@ -28,7 +28,8 @@ function getCodeBlocks(language) {
 
 async function initMermaid() {
   const blocks = getCodeBlocks('mermaid');
-  if (blocks.length === 0) return;
+  const existingMermaids = document.querySelectorAll('.mermaid');
+  if (blocks.length === 0 && existingMermaids.length === 0) return;
 
   blocks.forEach(({ wrapper, codeText }) => {
     const newContainer = document.createElement('div');
@@ -40,45 +41,101 @@ async function initMermaid() {
     wrapper.parentNode.replaceChild(newContainer, wrapper);
   });
 
+  existingMermaids.forEach(div => {
+    if (!div.getAttribute('data-mermaid-src') && !div.querySelector('svg')) {
+      div.setAttribute('data-mermaid-src', div.textContent);
+    }
+  });
+
+  const bindMermaidInteraction = () => {
+    document.querySelectorAll('.mermaid').forEach(container => {
+      if (!container.querySelector('.mermaid-badge')) {
+        const badge = document.createElement('div');
+        badge.className = 'render-overlay-badge mermaid-badge';
+        badge.innerHTML = '<span class="material-symbols-outlined">zoom_in</span><span>点击查看大图 (支持缩放拖动)</span>';
+        container.appendChild(badge);
+      }
+      container.onclick = (e) => {
+        e.stopPropagation();
+        const currentSvg = container.querySelector('svg');
+        if (!currentSvg) return;
+        if (typeof window.openLightboxWithElement === 'function') {
+          window.openLightboxWithElement(currentSvg);
+        }
+      };
+    });
+  };
+
+  bindMermaidInteraction();
+
   try {
     const module = await import('https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs');
     const mermaid = module.default;
     
+    let isRendering = false;
+    let pendingRender = false;
+
     const renderMermaid = async () => {
-      const computedStyles = getComputedStyle(document.documentElement);
-      const primary = computedStyles.getPropertyValue('--md-sys-color-primary').trim() || '#6750A4';
-      const primaryContainer = computedStyles.getPropertyValue('--md-sys-color-primary-container').trim() || '#EADDFF';
-      const onPrimaryContainer = computedStyles.getPropertyValue('--md-sys-color-on-primary-container').trim() || '#21005D';
-      const surface = computedStyles.getPropertyValue('--md-sys-color-surface').trim() || '#FEF7FF';
-      const surfaceContainer = computedStyles.getPropertyValue('--md-sys-color-surface-container').trim() || '#F3EDF7';
-      const onSurface = computedStyles.getPropertyValue('--md-sys-color-on-surface').trim() || '#1D1B20';
-      const outline = computedStyles.getPropertyValue('--md-sys-color-outline-variant').trim() || '#CAC4D0';
+      if (isRendering) {
+        pendingRender = true;
+        return;
+      }
+      isRendering = true;
 
-      mermaid.initialize({
-        startOnLoad: false,
-        theme: 'base',
-        themeVariables: {
-          fontFamily: '"Inter", "Noto Sans SC", sans-serif',
-          primaryColor: primaryContainer,
-          primaryTextColor: onPrimaryContainer,
-          primaryBorderColor: outline,
-          lineColor: primary,
-          textColor: onSurface,
-          mainBkg: surfaceContainer,
-          nodeBorder: outline,
-          clusterBkg: surface,
-          clusterBorder: outline,
-          titleColor: onSurface,
-          edgeLabelBackground: surface
+      try {
+        const computedStyles = getComputedStyle(document.documentElement);
+        const primary = computedStyles.getPropertyValue('--md-sys-color-primary').trim() || '#6750A4';
+        const primaryContainer = computedStyles.getPropertyValue('--md-sys-color-primary-container').trim() || '#EADDFF';
+        const onPrimaryContainer = computedStyles.getPropertyValue('--md-sys-color-on-primary-container').trim() || '#21005D';
+        const surface = computedStyles.getPropertyValue('--md-sys-color-surface').trim() || '#FEF7FF';
+        const surfaceContainer = computedStyles.getPropertyValue('--md-sys-color-surface-container').trim() || '#F3EDF7';
+        const onSurface = computedStyles.getPropertyValue('--md-sys-color-on-surface').trim() || '#1D1B20';
+        const outline = computedStyles.getPropertyValue('--md-sys-color-outline-variant').trim() || '#CAC4D0';
+
+        mermaid.initialize({
+          startOnLoad: false,
+          theme: 'base',
+          themeVariables: {
+            fontFamily: '"Inter", "Noto Sans SC", sans-serif',
+            primaryColor: primaryContainer,
+            primaryTextColor: onPrimaryContainer,
+            primaryBorderColor: outline,
+            lineColor: primary,
+            textColor: onSurface,
+            mainBkg: surfaceContainer,
+            nodeBorder: outline,
+            clusterBkg: surface,
+            clusterBorder: outline,
+            titleColor: onSurface,
+            edgeLabelBackground: surface
+          }
+        });
+
+        const mermaidDivs = document.querySelectorAll('.mermaid');
+        mermaidDivs.forEach(div => {
+          const src = div.getAttribute('data-mermaid-src');
+          if (src) {
+            div.removeAttribute('data-processed');
+            div.innerHTML = src;
+          }
+        });
+
+        try {
+          await mermaid.run({ querySelector: '.mermaid', suppressErrors: true });
+        } catch (err) {
+          console.warn('mermaid.run warning:', err);
         }
-      });
 
-      const mermaidDivs = document.querySelectorAll('.mermaid');
-      mermaidDivs.forEach(div => {
-        div.removeAttribute('data-processed');
-        div.innerHTML = div.getAttribute('data-mermaid-src');
-      });
-      await mermaid.run({ querySelector: '.mermaid' });
+        bindMermaidInteraction();
+      } catch (err) {
+        console.error('Mermaid rendering failed:', err);
+      } finally {
+        isRendering = false;
+        if (pendingRender) {
+          pendingRender = false;
+          renderMermaid();
+        }
+      }
     };
 
     await renderMermaid();
@@ -87,33 +144,15 @@ async function initMermaid() {
       setTimeout(renderMermaid, 50);
     });
 
-    const bindMermaidLightbox = () => {
-      document.querySelectorAll('.mermaid').forEach(container => {
-        const svg = container.querySelector('svg');
-        if (!svg) return;
-
-        if (!container.querySelector('.mermaid-badge')) {
-          const badge = document.createElement('div');
-          badge.className = 'render-overlay-badge mermaid-badge';
-          badge.innerHTML = '<span class="material-symbols-outlined">zoom_in</span><span>点击查看大图 (支持缩放拖动)</span>';
-          container.appendChild(badge);
-        }
-
-        container.onclick = (e) => {
-          e.stopPropagation();
-          const currentSvg = container.querySelector('svg');
-          if (!currentSvg) return;
-          if (typeof window.openLightboxWithElement === 'function') {
-            window.openLightboxWithElement(currentSvg);
-          }
-        };
-      });
-    };
-
-    bindMermaidLightbox();
-    // Also bind after theme changes
-    document.addEventListener('themechange', () => {
-      setTimeout(bindMermaidLightbox, 100);
+    document.addEventListener('click', (e) => {
+      const container = e.target.closest('.mermaid');
+      if (!container) return;
+      const currentSvg = container.querySelector('svg');
+      if (!currentSvg) return;
+      if (typeof window.openLightboxWithElement === 'function') {
+        e.stopPropagation();
+        window.openLightboxWithElement(currentSvg);
+      }
     });
 
   } catch (err) {
@@ -127,9 +166,21 @@ async function initSTL() {
   if (blocks.length === 0) return;
 
   try {
-    const THREE = await import('https://esm.sh/three@0.158.0');
-    const { STLLoader } = await import('https://esm.sh/three@0.158.0/examples/jsm/loaders/STLLoader.js');
-    const { OrbitControls } = await import('https://esm.sh/three@0.158.0/examples/jsm/controls/OrbitControls.js');
+    let THREE, STLLoader, OrbitControls;
+    try {
+      THREE = await import('three');
+      const loaderMod = await import('three/addons/loaders/STLLoader.js');
+      STLLoader = loaderMod.STLLoader;
+      const controlsMod = await import('three/addons/controls/OrbitControls.js');
+      OrbitControls = controlsMod.OrbitControls;
+    } catch (e) {
+      console.warn('Bare import failed, falling back to full jsdelivr URL:', e);
+      THREE = await import('https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.module.js');
+      const loaderMod = await import('https://cdn.jsdelivr.net/npm/three@0.158.0/examples/jsm/loaders/STLLoader.js');
+      STLLoader = loaderMod.STLLoader;
+      const controlsMod = await import('https://cdn.jsdelivr.net/npm/three@0.158.0/examples/jsm/controls/OrbitControls.js');
+      OrbitControls = controlsMod.OrbitControls;
+    }
 
     const loader = new STLLoader();
 
@@ -238,11 +289,16 @@ async function initSTL() {
       container.appendChild(titleBadge);
 
       const enterFullscreen = () => {
+        if (container.classList.contains('is-fullscreen-lightbox')) return;
+
         const placeholder = document.createElement('div');
         placeholder.className = 'render-placeholder';
         placeholder.style.height = `${container.offsetHeight}px`;
         container.parentNode.insertBefore(placeholder, container);
         container._placeholder = placeholder;
+
+        // Portal to body to escape any ancestor containing blocks
+        document.body.appendChild(container);
 
         container.classList.add('is-fullscreen-lightbox');
         document.body.style.overflow = 'hidden';
@@ -258,7 +314,8 @@ async function initSTL() {
         container.classList.remove('is-fullscreen-lightbox');
         document.body.style.overflow = '';
 
-        if (container._placeholder) {
+        if (container._placeholder && container._placeholder.parentNode) {
+          container._placeholder.parentNode.insertBefore(container, container._placeholder);
           container._placeholder.remove();
           delete container._placeholder;
         }
@@ -268,12 +325,14 @@ async function initSTL() {
         const syncIcon = toolbar.querySelector('.rotate-toggle-btn .material-symbols-outlined');
         if (syncIcon) syncIcon.textContent = 'sync';
 
-        const w = container.clientWidth || 800;
-        const h = container.clientHeight || 400;
-        camera.aspect = w / h;
-        camera.updateProjectionMatrix();
-        renderer.setSize(w, h);
-        resetCameraView();
+        requestAnimationFrame(() => {
+          const w = container.clientWidth || 800;
+          const h = container.clientHeight || 400;
+          camera.aspect = w / h;
+          camera.updateProjectionMatrix();
+          renderer.setSize(w, h);
+          resetCameraView();
+        });
       };
 
       container._exitFullscreen = exitFullscreen;
@@ -506,11 +565,16 @@ async function initGeoJSON() {
         map.fitBounds(geojsonLayer.getBounds(), { padding: [20, 20], maxZoom: 14 });
 
         const enterFullscreen = () => {
+          if (container.classList.contains('is-fullscreen-lightbox')) return;
+
           const placeholder = document.createElement('div');
           placeholder.className = 'render-placeholder';
           placeholder.style.height = `${container.offsetHeight}px`;
           container.parentNode.insertBefore(placeholder, container);
           container._placeholder = placeholder;
+
+          // Portal to body to escape any ancestor containing blocks
+          document.body.appendChild(container);
 
           container.classList.add('is-fullscreen-lightbox');
           document.body.style.overflow = 'hidden';
@@ -522,7 +586,9 @@ async function initGeoJSON() {
           map.boxZoom.enable();
           map.keyboard.enable();
 
-          map.invalidateSize();
+          requestAnimationFrame(() => {
+            map.invalidateSize();
+          });
         };
 
         const exitFullscreen = () => {
@@ -530,7 +596,8 @@ async function initGeoJSON() {
           container.classList.remove('is-fullscreen-lightbox');
           document.body.style.overflow = '';
 
-          if (container._placeholder) {
+          if (container._placeholder && container._placeholder.parentNode) {
+            container._placeholder.parentNode.insertBefore(container, container._placeholder);
             container._placeholder.remove();
             delete container._placeholder;
           }
@@ -542,8 +609,10 @@ async function initGeoJSON() {
           map.boxZoom.disable();
           map.keyboard.disable();
 
-          map.invalidateSize();
-          map.fitBounds(geojsonLayer.getBounds(), { padding: [20, 20], maxZoom: 14 });
+          requestAnimationFrame(() => {
+            map.invalidateSize();
+            map.fitBounds(geojsonLayer.getBounds(), { padding: [20, 20], maxZoom: 14 });
+          });
         };
 
         container._exitFullscreen = exitFullscreen;
