@@ -208,16 +208,45 @@ document.addEventListener('DOMContentLoaded', () => {
     updateTransform();
   }
 
+  function prepareLightboxClone(mediaEl) {
+    const clone = mediaEl.cloneNode(true);
+    clone.draggable = false;
+
+    if (clone.tagName && clone.tagName.toLowerCase() === 'svg') {
+      const viewBox = clone.getAttribute('viewBox');
+      let vbWidth = 0, vbHeight = 0;
+      if (viewBox) {
+        const parts = viewBox.trim().split(/[\s,]+/).map(Number);
+        if (parts.length === 4 && parts[2] > 0 && parts[3] > 0) {
+          vbWidth = parts[2];
+          vbHeight = parts[3];
+        }
+      }
+      if (!vbWidth) {
+        const rect = mediaEl.getBoundingClientRect();
+        vbWidth = rect.width || 600;
+        vbHeight = rect.height || 400;
+      }
+      const targetWidth = Math.max(vbWidth * 1.5, 480);
+      clone.style.width = `min(90vw, ${targetWidth}px)`;
+      clone.style.maxWidth = '90vw';
+      clone.style.maxHeight = '85vh';
+      clone.style.height = 'auto';
+      clone.style.display = 'block';
+    } else {
+      clone.removeAttribute('width');
+      clone.removeAttribute('height');
+    }
+    return clone;
+  }
+
   function openLightbox(index) {
     if (index < 0 || index >= allMediaArray.length) return;
     currentLightboxIndex = index;
     const media = allMediaArray[index];
     
     contentWrapper.innerHTML = '';
-    const clone = media.cloneNode(true);
-    clone.removeAttribute('width');
-    clone.removeAttribute('height');
-    clone.draggable = false;
+    const clone = prepareLightboxClone(media);
     contentWrapper.appendChild(clone);
     
     lightbox.classList.add('open');
@@ -233,10 +262,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!mediaEl) return;
     currentLightboxIndex = -1;
     contentWrapper.innerHTML = '';
-    const clone = mediaEl.cloneNode(true);
-    clone.removeAttribute('width');
-    clone.removeAttribute('height');
-    clone.draggable = false;
+    const clone = prepareLightboxClone(mediaEl);
     contentWrapper.appendChild(clone);
 
     lightbox.classList.add('open');
@@ -252,7 +278,11 @@ document.addEventListener('DOMContentLoaded', () => {
     lightbox.classList.remove('open');
     document.body.style.overflow = '';
     contentWrapper.classList.remove('is-dragging');
-    contentWrapper.innerHTML = '';
+    setTimeout(() => {
+      if (!lightbox.classList.contains('open')) {
+        contentWrapper.innerHTML = '';
+      }
+    }, 350);
   }
 
   lightbox.querySelector('.close-btn').addEventListener('click', closeLightbox);

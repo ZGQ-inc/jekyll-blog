@@ -4483,33 +4483,50 @@ md-navigation-drawer {
 
 .md3-lightbox {
   position: fixed;
-  top: 0;
-  left: 0;
+  inset: 0;
   width: 100%;
   height: 100%;
   z-index: 4000;
   display: flex;
   align-items: center;
   justify-content: center;
-  opacity: 0;
+  pointer-events: none;
   visibility: hidden;
-  transition: opacity 0.3s ease, visibility 0.3s ease;
+  transition: visibility 0s linear var(--dur-medium3, 350ms);
   touch-action: none;
 
   &.open {
-    opacity: 1;
+    pointer-events: all;
     visibility: visible;
+    transition: visibility 0s linear;
+
+    .lightbox-backdrop {
+      opacity: 1;
+    }
+
+    .lightbox-content-container {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .lightbox-toolbar {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .nav-btn {
+      opacity: 1;
+    }
   }
 
   .lightbox-backdrop {
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.8);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+    inset: 0;
+    background: color-mix(in srgb, var(--md-sys-color-scrim, #000) 65%, transparent);
+    backdrop-filter: blur(var(--glass-blur, 24px)) saturate(var(--glass-saturate, 150%));
+    -webkit-backdrop-filter: blur(var(--glass-blur, 24px)) saturate(var(--glass-saturate, 150%));
+    opacity: 0;
+    transition: opacity var(--dur-medium3, 350ms) var(--motion-standard);
   }
 
   .lightbox-toolbar {
@@ -4519,14 +4536,17 @@ md-navigation-drawer {
     display: flex;
     gap: 8px;
     z-index: 4002;
+    opacity: 0;
+    transform: translateY(-8px);
+    transition: opacity var(--dur-medium3, 350ms) var(--motion-standard), transform var(--dur-medium3, 350ms) var(--motion-emphasized-decel);
 
     .icon-btn {
       width: 48px;
       height: 48px;
       border-radius: 50%;
       background: rgba(0, 0, 0, 0.4);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
+      backdrop-filter: blur(var(--glass-blur, 16px)) saturate(var(--glass-saturate, 150%));
+      -webkit-backdrop-filter: blur(var(--glass-blur, 16px)) saturate(var(--glass-saturate, 150%));
       border: 1px solid rgba(255, 255, 255, 0.15);
       color: white;
       cursor: pointer;
@@ -4556,17 +4576,18 @@ md-navigation-drawer {
     height: 56px;
     border-radius: 50%;
     background: rgba(0, 0, 0, 0.4);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(var(--glass-blur, 16px)) saturate(var(--glass-saturate, 150%));
+    -webkit-backdrop-filter: blur(var(--glass-blur, 16px)) saturate(var(--glass-saturate, 150%));
     border: 1px solid rgba(255, 255, 255, 0.15);
     color: white;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.2s ease;
     z-index: 4002;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    opacity: 0;
+    transition: opacity var(--dur-medium3, 350ms) var(--motion-standard), transform 0.2s ease, background 0.2s ease;
 
     &:hover {
       background: rgba(0, 0, 0, 0.6);
@@ -4587,6 +4608,9 @@ md-navigation-drawer {
     align-items: center;
     justify-content: center;
     overflow: hidden;
+    opacity: 0;
+    transform: scale(0.94);
+    transition: transform var(--dur-medium4, 400ms) var(--motion-emphasized-decel), opacity var(--dur-medium3, 350ms) var(--motion-standard);
   }
 
   .lightbox-content-wrapper {
@@ -4621,6 +4645,9 @@ md-navigation-drawer {
       box-sizing: border-box;
       width: auto;
       height: auto;
+      max-width: 90vw;
+      max-height: 85vh;
+      display: block;
     }
   }
 }
@@ -4642,6 +4669,11 @@ md-navigation-drawer {
   background-color: var(--md-sys-color-surface) !important;
   box-shadow: none !important;
   overflow: hidden !important;
+  animation: renderFullscreenFadeIn var(--dur-medium3, 350ms) var(--motion-emphasized-decel) both;
+
+  &.is-closing {
+    animation: renderFullscreenFadeOut var(--dur-short4, 200ms) var(--motion-emphasized-accel) forwards !important;
+  }
 
   .render-preview-overlay {
     display: none !important;
@@ -4649,10 +4681,52 @@ md-navigation-drawer {
 
   .render-fullscreen-toolbar {
     display: flex !important;
+    animation: renderToolbarSlideIn var(--dur-medium4, 400ms) var(--motion-emphasized-decel) both;
   }
 
   .render-fullscreen-title {
     display: flex !important;
+    animation: renderTitleSlideIn var(--dur-medium4, 400ms) var(--motion-emphasized-decel) both;
+  }
+}
+
+@keyframes renderFullscreenFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes renderFullscreenFadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes renderToolbarSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes renderTitleSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
@@ -4669,8 +4743,8 @@ md-navigation-drawer {
     height: 48px;
     border-radius: 50%;
     background: rgba(0, 0, 0, 0.45);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(var(--glass-blur, 16px)) saturate(var(--glass-saturate, 150%));
+    -webkit-backdrop-filter: blur(var(--glass-blur, 16px)) saturate(var(--glass-saturate, 150%));
     border: 1px solid rgba(255, 255, 255, 0.2);
     color: white;
     cursor: pointer;
@@ -4706,8 +4780,8 @@ md-navigation-drawer {
   padding: 8px 18px;
   border-radius: var(--shape-full);
   background: rgba(0, 0, 0, 0.45);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(var(--glass-blur, 16px)) saturate(var(--glass-saturate, 150%));
+  -webkit-backdrop-filter: blur(var(--glass-blur, 16px)) saturate(var(--glass-saturate, 150%));
   border: 1px solid rgba(255, 255, 255, 0.2);
   color: white;
   font-size: 0.875rem;

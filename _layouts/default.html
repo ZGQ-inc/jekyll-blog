@@ -109,8 +109,8 @@
   <span class="material-symbols-outlined">arrow_upward</span>
 </button>
 
-<!-- Markdown Lazy Renderers -->
-<script type="module" src="{{ '/assets/js/renderers.js' | relative_url }}"></script>
+<!-- Markdown Lazy Renderers (Mermaid, STL, GeoJSON) -->
+<script src="{{ '/assets/js/renderers.js' | relative_url }}?v={{ site.time | date: '%s' }}"></script>
 
 <!-- Color Swatches for Inline Code -->
 <script>

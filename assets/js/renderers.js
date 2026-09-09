@@ -52,7 +52,7 @@ async function initMermaid() {
       if (!container.querySelector('.mermaid-badge')) {
         const badge = document.createElement('div');
         badge.className = 'render-overlay-badge mermaid-badge';
-        badge.innerHTML = '<span class="material-symbols-outlined">zoom_in</span><span>点击查看大图 (支持缩放拖动)</span>';
+        badge.innerHTML = '<span class="material-symbols-outlined">zoom_in</span><span>点击查看大图</span>';
         container.appendChild(badge);
       }
       container.onclick = (e) => {
@@ -263,7 +263,7 @@ async function initSTL() {
       previewOverlay.innerHTML = `
         <div class="render-overlay-badge">
           <span class="material-symbols-outlined">view_in_ar</span>
-          <span>点击全屏交互 (360° 旋转 · 滚轮缩放)</span>
+          <span>点击全屏交互</span>
         </div>
       `;
       container.appendChild(previewOverlay);
@@ -284,7 +284,7 @@ async function initSTL() {
       titleBadge.className = 'render-fullscreen-title';
       titleBadge.innerHTML = `
         <span class="material-symbols-outlined">view_in_ar</span>
-        <span>3D 模型预览 (拖拽旋转 · 滚轮缩放)</span>
+        <span>3D 模型预览</span>
       `;
       container.appendChild(titleBadge);
 
@@ -311,28 +311,32 @@ async function initSTL() {
 
       const exitFullscreen = () => {
         if (!container.classList.contains('is-fullscreen-lightbox')) return;
-        container.classList.remove('is-fullscreen-lightbox');
-        document.body.style.overflow = '';
+        container.classList.add('is-closing');
 
-        if (container._placeholder && container._placeholder.parentNode) {
-          container._placeholder.parentNode.insertBefore(container, container._placeholder);
-          container._placeholder.remove();
-          delete container._placeholder;
-        }
+        setTimeout(() => {
+          container.classList.remove('is-fullscreen-lightbox', 'is-closing');
+          document.body.style.overflow = '';
 
-        controls.enabled = false;
-        controls.autoRotate = true;
-        const syncIcon = toolbar.querySelector('.rotate-toggle-btn .material-symbols-outlined');
-        if (syncIcon) syncIcon.textContent = 'sync';
+          if (container._placeholder && container._placeholder.parentNode) {
+            container._placeholder.parentNode.insertBefore(container, container._placeholder);
+            container._placeholder.remove();
+            delete container._placeholder;
+          }
 
-        requestAnimationFrame(() => {
-          const w = container.clientWidth || 800;
-          const h = container.clientHeight || 400;
-          camera.aspect = w / h;
-          camera.updateProjectionMatrix();
-          renderer.setSize(w, h);
-          resetCameraView();
-        });
+          controls.enabled = false;
+          controls.autoRotate = true;
+          const syncIcon = toolbar.querySelector('.rotate-toggle-btn .material-symbols-outlined');
+          if (syncIcon) syncIcon.textContent = 'sync';
+
+          requestAnimationFrame(() => {
+            const w = container.clientWidth || 800;
+            const h = container.clientHeight || 400;
+            camera.aspect = w / h;
+            camera.updateProjectionMatrix();
+            renderer.setSize(w, h);
+            resetCameraView();
+          });
+        }, 220);
       };
 
       container._exitFullscreen = exitFullscreen;
@@ -504,7 +508,7 @@ async function initGeoJSON() {
         previewOverlay.innerHTML = `
           <div class="render-overlay-badge">
             <span class="material-symbols-outlined">fullscreen</span>
-            <span>点击全屏浏览地图 (支持拖拽与缩放)</span>
+            <span>点击全屏浏览地图</span>
           </div>
         `;
         container.appendChild(previewOverlay);
@@ -524,7 +528,7 @@ async function initGeoJSON() {
         titleBadge.className = 'render-fullscreen-title';
         titleBadge.innerHTML = `
           <span class="material-symbols-outlined">map</span>
-          <span>交互式地图 (已启用拖拽与缩放)</span>
+          <span>交互式地图</span>
         `;
         container.appendChild(titleBadge);
 
@@ -593,26 +597,30 @@ async function initGeoJSON() {
 
         const exitFullscreen = () => {
           if (!container.classList.contains('is-fullscreen-lightbox')) return;
-          container.classList.remove('is-fullscreen-lightbox');
-          document.body.style.overflow = '';
+          container.classList.add('is-closing');
 
-          if (container._placeholder && container._placeholder.parentNode) {
-            container._placeholder.parentNode.insertBefore(container, container._placeholder);
-            container._placeholder.remove();
-            delete container._placeholder;
-          }
+          setTimeout(() => {
+            container.classList.remove('is-fullscreen-lightbox', 'is-closing');
+            document.body.style.overflow = '';
 
-          map.dragging.disable();
-          map.touchZoom.disable();
-          map.doubleClickZoom.disable();
-          map.scrollWheelZoom.disable();
-          map.boxZoom.disable();
-          map.keyboard.disable();
+            if (container._placeholder && container._placeholder.parentNode) {
+              container._placeholder.parentNode.insertBefore(container, container._placeholder);
+              container._placeholder.remove();
+              delete container._placeholder;
+            }
 
-          requestAnimationFrame(() => {
-            map.invalidateSize();
-            map.fitBounds(geojsonLayer.getBounds(), { padding: [20, 20], maxZoom: 14 });
-          });
+            map.dragging.disable();
+            map.touchZoom.disable();
+            map.doubleClickZoom.disable();
+            map.scrollWheelZoom.disable();
+            map.boxZoom.disable();
+            map.keyboard.disable();
+
+            requestAnimationFrame(() => {
+              map.invalidateSize();
+              map.fitBounds(geojsonLayer.getBounds(), { padding: [20, 20], maxZoom: 14 });
+            });
+          }, 220);
         };
 
         container._exitFullscreen = exitFullscreen;
