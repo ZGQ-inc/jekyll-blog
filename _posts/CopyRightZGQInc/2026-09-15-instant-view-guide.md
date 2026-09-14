@@ -7,12 +7,12 @@ date: 2026-09-15 03:30:00
 summary: "全面展示 Telegram Instant View 2.0 在本博客支持的全部排版语法规范，深入剖析 XPath 转换规则、DOM 扁平化重构与自动化频道推送的底层实现原理。"
 categories: [教程, Telegram]
 tags: [telegram, instant-view, jekyll, markdown, tutorial, 开源]
-image: /assets/images/2026-09/e621_6357346.webp
+image: /assets/images/2026-09/e621_6672234.webp
 comments: true
 toc: true
 ---
 
-> **画作来源**：[e621 #6357346](https://e621.net/posts/6357346){: .preview }  
+> **画作来源**：[e621 #6672234](https://e621.net/posts/6672234){: .preview }  
 > **核心规范**：Telegram Instant View 2.0 DSL (`~version: "2.0"`)  
 > **专属凭证**：`rhash = aefab8c132338b`  
 > **适用范围**：Jekyll + Kramdown + Rouge 博客全站文章  
@@ -304,8 +304,8 @@ Telegram IV 原生支持标准 Markdown 表格，并自动在小屏幕移动设�
 
 在 IV 中，所有正文插图均自动提升为独立的 `<figure>` 容器，用户点击后可直接唤起原生的全屏大图预览与无级手势放大：
 
-![e621_6357346 封面展示](/assets/images/2026-09/e621_6357346.webp)
-*图 1：文章封面画作展示（素材来源于 e621 #6357346，用于即时预览插图规范测试）*
+![e621_6672234 封面展示](/assets/images/2026-09/e621_6672234.webp)
+*图 1：文章封面画作展示（素材来源于 e621 #6672234，用于即时预览插图规范测试）*
 
 ---
 
