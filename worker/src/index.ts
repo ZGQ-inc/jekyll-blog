@@ -25,6 +25,8 @@ interface Env {
   GITHUB_BRANCH: string;
   GITHUB_POSTS_PATH: string;
   CHANNELS_CONFIG?: string;
+  ADMIN_USERS?: string;
+  ADMIN_USER?: string;
   // Secrets
   TELEGRAM_BOT_TOKEN: string;
   TELEGRAM_CHANNEL_ID: string;
@@ -186,6 +188,26 @@ function getBeijingTime(): { today: string; dateStr: string; yearMonth: string }
 }
 
 // ================================================================
+// Authorization Helper
+// ================================================================
+
+function isAuthorizedAdmin(user: TgUser | undefined, env: Env): boolean {
+  if (!user) return false;
+
+  // Read admin list from env (ADMIN_USERS or ADMIN_USER), fallback to 'ZGQinc' for backward compatibility
+  const rawAdmins = env.ADMIN_USERS || env.ADMIN_USER || 'ZGQinc';
+  const adminList = rawAdmins
+    .split(',')
+    .map(s => s.trim().toLowerCase().replace(/^@/, ''))
+    .filter(Boolean);
+
+  const username = (user.username || '').toLowerCase().replace(/^@/, '');
+  const userId = String(user.id || '');
+
+  return adminList.some(admin => admin === username || admin === userId);
+}
+
+// ================================================================
 // ZGQ Blog Cloudflare Worker - Telegram Webhook
 // Trigger CF Worker CI Test
 // ================================================================
@@ -200,6 +222,17 @@ async function handleTelegramWebhook(request: Request, env: Env): Promise<Respon
   const update: TgUpdate = await request.json();
   
   if (update.callback_query) {
+    if (!isAuthorizedAdmin(update.callback_query.from, env)) {
+      console.warn(`Unauthorized callback_query from @${update.callback_query.from?.username} (ID: ${update.callback_query.from?.id})`);
+      try {
+        await callTelegramApi(env.TELEGRAM_BOT_TOKEN, 'answerCallbackQuery', {
+          callback_query_id: update.callback_query.id,
+          text: '⛔ 权限不足：您不是博客管理员，无权操作此按钮。',
+          show_alert: true
+        });
+      } catch (e) {}
+      return jsonResponse({ ok: true });
+    }
     await handleCallbackQuery(update.callback_query, env);
     return jsonResponse({ ok: true });
   }
@@ -211,8 +244,27 @@ async function handleTelegramWebhook(request: Request, env: Env): Promise<Respon
   }
 
   // Authentication check
-  if (message.from?.username !== 'ZGQinc') {
-    console.warn(`Unauthorized access attempt from @${message.from?.username} (ID: ${message.from?.id})`);
+  if (!isAuthorizedAdmin(message.from, env)) {
+    const fromDesc = message.from
+      ? `${message.from.first_name || ''} (@${message.from.username || '无用户名'}, ID: ${message.from.id})`
+      : '未知用户';
+    console.warn(`Unauthorized access attempt from ${fromDesc}`);
+
+    if (message.chat?.id) {
+      await sendTelegramMessage(env.TELEGRAM_BOT_TOKEN, {
+        chat_id: message.chat.id,
+        text: [
+          '⛔ <b>访问被拒绝 / Access Denied</b>',
+          '',
+          '抱歉，您不是此博客的管理员，无权使用此 Bot 执行发布与管理操作。',
+          '',
+          `🆔 您的 Telegram ID: <code>${message.from?.id || '未知'}</code>`,
+          message.from?.username ? `👤 您的用户名: <code>@${escapeHtml(message.from.username)}</code>\n` : '',
+          '💡 <i>若您是博主本人，请在 Cloudflare Worker 的 <code>ADMIN_USERS</code> 环境变量中添加您的 Telegram ID 或用户名。</i>'
+        ].filter(Boolean).join('\n'),
+        parse_mode: 'HTML'
+      });
+    }
     return jsonResponse({ ok: true });
   }
 
