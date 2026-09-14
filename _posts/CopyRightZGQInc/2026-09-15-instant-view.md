@@ -112,7 +112,7 @@ Telegram IV 的 `Preformatted` 类型严禁在 `<pre><code>` 内嵌套 `<table>`
 Kramdown 默认将独立一行的 Markdown 图片渲染在 `<p>` 标签中。在 Telegram IV 中，图片必须是独立的 `<figure>` 块，若留在 `<p>` 内会导致解析崩溃。  
 **解决方案**：
 ```xpath
-<figure>: $body//img
+@wrap(<figure>): $body//img
 @split_parent: //figure
 ```
 利用 `@split_parent` 将 `<figure>` 从父级段落中无缝切开，成为正文同级块。
@@ -308,8 +308,8 @@ Telegram IV 原生支持标准 Markdown 表格，并自动在小屏幕移动设�
 
 在 IV 中，所有正文插图均自动提升为独立的 `<figure>` 容器，用户点击后可直接唤起原生的全屏大图预览与无级手势放大：
 
-![e621_6672234 封面展示](/assets/images/2026-09/e621_6672234.webp)
-*图 1：文章封面画作展示（素材来源于 e621 #6672234，用于即时预览插图规范测试）*
+![e621_6672234 插图展示](/assets/images/2026-09/e621_6672234.jpg)
+*图 1：文章插图画作展示（素材来源于 e621 #6672234，用于即时预览插图规范测试）*
 
 ---
 

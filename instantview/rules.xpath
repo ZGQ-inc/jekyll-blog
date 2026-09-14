@@ -5,8 +5,9 @@ body:           //div[has-class("article-content")]
 title:          //h1[has-class("hero-title")]
 subtitle:       //meta[@name="description"]/@content
 author:         //meta[@name="author"]/@content
-published_date: //meta[@property="article:published_time"]/@content
-cover:          //div[has-class("post-hero")]//img[has-class("hero-image")]
+# 封面图转换为 figure 并赋予 cover 属性
+@wrap(<figure>): //div[has-class("post-hero")]//img[has-class("hero-image")]
+cover:           $@
 
 # 1. 清理非文章本体的交互组件与不受支持的标签
 @remove: //script
@@ -52,7 +53,7 @@ cover:          //div[has-class("post-hero")]//img[has-class("hero-image")]
 @replace_tag(<li>): //dd
 
 # 9. 文章插图转换为原生 figure 并从段落中切分提取
-<figure>: $body//img
+@wrap(<figure>): $body//img
 @split_parent: //figure
 
 # 10. 深度扁平化 Rouge 语法高亮代码块（剥离行号 table，提取纯净 pre 代码）
