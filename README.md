@@ -17,6 +17,7 @@
   - **D1 数据库**：持久化存储文章数据、评论与动态。
   - **R2 对象存储**：分布式存储媒体资源（图片、附件等）。
 - **Telegram 深度集成**：通过 Bot Webhook，支持从 Telegram 快捷管理博客，支持 Markdown 图文推送、实时接收评论通知等。
+- **Telegram Instant View (即时预览)**：内置专属定制的 Instant View 2.0 模板（`instantview/rules.xpath`），支持在 Telegram 内毫秒级秒开原生排版文章，并在频道推送与文章分享时自动挂载即时预览。
 - **自动化 CI/CD**：依托 GitHub Actions 实现自动化部署，代码 Push 即可触发全站自动生成和更新。
 
 ## 🚀 部署指南
@@ -128,6 +129,14 @@ git push origin main
    bind - 手动绑定
    help - 显示使用说明帮助
    ```
+4. **Telegram Instant View (即时预览) 部署**：
+   - 仓库内置了博客专属的 Instant View 2.0 规则：`instantview/rules.xpath`。
+   - 登录 [instantview.telegram.org/my/](https://instantview.telegram.org/my/)，输入你的博客域名或文章链接进入编辑器。
+   - 粘贴 `instantview/rules.xpath` 并保存（点击 Track Changes）。
+   - 获取你的专属 `rhash`，并将其配置到：
+     - `_config.yml`：`telegram_iv_rhash: "你的rhash"`
+     - `worker/wrangler.toml`：`TELEGRAM_IV_RHASH = "你的rhash"`
+   - 之后博客推送到频道的消息将全自动挂载「⚡️ 即时预览」大按钮，文章底部的“分享到 Telegram”也会自动生成即时预览分享链接。
 
 ## ✍️ 写作发布
 

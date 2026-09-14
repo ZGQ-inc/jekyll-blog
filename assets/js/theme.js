@@ -1219,7 +1219,7 @@ function initGlobalAnchorHeadings() {
 
       let cleanId = id;
       try { cleanId = decodeURIComponent(id); } catch (e) {}
-      let baseUrl = window.location.href.split('#')[0];
+      let baseUrl = window.location.origin + window.location.pathname;
       try { baseUrl = decodeURI(baseUrl); } catch (e) {}
       const fullUrl = baseUrl + '#' + cleanId;
       

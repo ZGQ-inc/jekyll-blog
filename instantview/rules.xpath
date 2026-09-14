@@ -1,0 +1,71 @@
+~version: "2.0"
+?path: /posts/.+
+
+body:           //div[has-class("article-content")]
+title:          //h1[has-class("hero-title")]
+subtitle:       //meta[@name="description"]/@content
+author:         //meta[@name="author"]/@content
+published_date: //meta[@property="article:published_time"]/@content
+cover:          //div[has-class("post-hero")]//img[has-class("hero-image")]
+
+# 1. 清理非文章本体的交互组件与不受支持的标签
+@remove: //script
+@remove: //style
+@remove: //button
+@remove: //input
+@remove: //div[has-class("post-actions")]
+@remove: //div[has-class("card-tags")]
+@remove: //div[has-class("tg-discuss-card")]
+@remove: //div[has-class("render-preview-overlay")]
+@remove: //a[has-class("reversefootnote")]
+
+# 2. 转换 Kramdown figure.highlight（语法高亮外层包裹）为标准 div
+@replace_tag(<div>): //figure[has-class("highlight")]
+
+# 3. 简化 Telegram IV 不原生支持的行内排版标签
+@simplify: //abbr
+
+# 4. 优化 MD3 链接卡片（剔除卡片内缩略图与嵌套多层 span，保留纯净超链接）
+@remove: //a[has-class("md3-link-card")]//span[has-class("card-image-wrapper")]
+@remove: //a[has-class("md3-link-card")]//span[has-class("card-meta")]
+@remove: //a[has-class("md3-link-card")]//span[has-class("card-desc")]
+@simplify: //a[has-class("md3-link-card")]//span
+
+# 5. 优化文件下载卡片
+@remove: //div[has-class("file-download-wrapper")]//div[has-class("file-icon")]
+@remove: //div[has-class("file-download-wrapper")]//div[has-class("file-action")]
+@remove: //div[has-class("file-download-wrapper")]//div[has-class("file-meta")]
+@simplify: //div[has-class("file-download-wrapper")]//div
+@simplify: //div[has-class("file-download-wrapper")]//span
+
+# 6. 将 GitHub 风格警告卡片（Alerts）转换为原生引用块
+@replace_tag(<blockquote>): //div[has-class("github-alert")]
+@replace_tag(<p>): //div[has-class("github-alert-title")]
+
+# 7. 拆分嵌套 blockquote（IV 规范禁止 blockquote 内再包含 blockquote）
+@split_parent: //blockquote//blockquote
+@split_parent: //blockquote//blockquote
+
+# 8. 将自定义定义列表 (dl/dt/dd) 转换为原生无序列表
+@replace_tag(<ul>): //dl
+@replace_tag(<li>): //dt
+@replace_tag(<li>): //dd
+
+# 9. 文章插图转换为原生 figure 并从段落中切分提取
+<figure>: $body//img
+@split_parent: //figure
+
+# 10. 深度扁平化 Rouge 语法高亮代码块（剥离行号 table，提取纯净 pre 代码）
+@remove: //td[has-class("rouge-gutter")]
+@replace_tag(<div>): //pre[.//table]
+@replace_tag(<div>): //code[.//table]
+@replace_tag(<div>): //table[has-class("rouge-table")]
+@replace_tag(<div>): //tbody[.//td[has-class("rouge-code")]]
+@replace_tag(<div>): //tr[.//td[has-class("rouge-code")]]
+@replace_tag(<div>): //td[has-class("rouge-code")]
+
+# 11. 简化列表项内多余的段落嵌套
+@simplify: //li//p
+
+# 12. 简化 body 内所有剩余的辅助容器 div
+@simplify: $body//div

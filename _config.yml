@@ -55,6 +55,9 @@ comments:
 # Worker API
 worker_api_url: "https://api.zgqinc.gq"
 
+# Telegram Instant View (即时预览专属 Rules Hash)
+telegram_iv_rhash: "aefab8c132338b"
+
 # Build & Markdown
 markdown: kramdown
 highlighter: rouge
@@ -89,3 +92,4 @@ exclude:
   - README.md
   - .github/
   - node_modules/
+  - instantview/

@@ -99,13 +99,23 @@ layout: default
 
   <!-- Post Actions -->
   <div class="post-actions">
+    {% if site.telegram_iv_rhash %}
+    {% capture iv_share_url %}https://t.me/iv?url={{ post.url | absolute_url | url_encode }}&rhash={{ site.telegram_iv_rhash }}{% endcapture %}
+    <a class="action-btn btn-outlined"
+       href="https://t.me/share/url?url={{ iv_share_url | url_encode }}&text={{ post.title | url_encode }}"
+       target="_blank" rel="noopener" title="分享即时预览到 Telegram">
+      <span class="material-symbols-outlined">bolt</span>
+      分享到 Telegram
+    </a>
+    {% else %}
     <a class="action-btn btn-outlined"
        href="https://t.me/share/url?url={{ post.url | absolute_url | url_encode }}&text={{ post.title | url_encode }}"
        target="_blank" rel="noopener">
       <span class="material-symbols-outlined">share</span>
       分享到 Telegram
     </a>
-    <button class="action-btn btn-outlined" onclick="navigator.clipboard.writeText(decodeURI(window.location.href)).then(()=>window.showToast('链接已复制！'))">
+    {% endif %}
+    <button class="action-btn btn-outlined" onclick="navigator.clipboard.writeText(decodeURI(window.location.origin + window.location.pathname)).then(()=>window.showToast('链接已复制！'))">
       <span class="material-symbols-outlined">link</span>
       复制链接
     </button>

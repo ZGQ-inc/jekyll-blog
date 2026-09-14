@@ -27,6 +27,7 @@ interface Env {
   CHANNELS_CONFIG?: string;
   ADMIN_USERS?: string;
   ADMIN_USER?: string;
+  TELEGRAM_IV_RHASH?: string;
   // Secrets
   TELEGRAM_BOT_TOKEN: string;
   TELEGRAM_CHANNEL_ID: string;
@@ -740,20 +741,8 @@ async function handleSyncCommand(message: TgMessage, id: string, providedSummary
 
     const postUrl = `${env.BLOG_URL}/posts/${id}/`;
     
-    // Formatting text (keep exactly same as publishToChannel)
-    const idTag = `#ID_${id.replace(/-/g, '_')}`;
-    const otherTags = tags.map(t => `#${t.replace(/[^a-zA-Z0-9_\u4e00-\u9fa5]/g, '_')}`).join(' ');
-    const tagsLine = [idTag, otherTags].filter(Boolean).join(' ');
-
-    const text = [
-      `<b>${escapeHtml(title)}</b>`,
-      '',
-      escapeHtml(summary),
-      '',
-      `📖 <a href="${postUrl}">阅读完整文章</a>`,
-      '',
-      tagsLine
-    ].join('\n');
+    // Formatting text (using shared helper)
+    const { text, ivUrl } = buildPostMessageText(env, { id, title, summary, tags, postUrl });
 
     let chatId = (row.tg_channel_id as string) || env.TELEGRAM_CHANNEL_ID;
     if (!chatId.startsWith('@') && !chatId.startsWith('-')) {
@@ -766,7 +755,7 @@ async function handleSyncCommand(message: TgMessage, id: string, providedSummary
       message_id: tgMessageId,
       text,
       parse_mode: 'HTML',
-      link_preview_options: { is_disabled: false, url: postUrl, prefer_large_media: !!postInfo.image }
+      link_preview_options: { is_disabled: false, url: ivUrl || postUrl, prefer_large_media: true }
     });
 
     // If it fails because the original message is a Media message (like sent with sendPhoto previously)
@@ -1368,6 +1357,36 @@ function parseTelegramDiscussionHtml(html: string, channelName: string): {
 // Telegram API Helpers
 // ================================================================
 
+function buildPostMessageText(
+  env: Env,
+  opts: { id: string; title: string; summary: string; tags: string[]; postUrl: string }
+): { text: string; ivUrl: string | null } {
+  const { id, title, summary, tags, postUrl } = opts;
+  const idTag = `#ID_${id.replace(/-/g, '_')}`;
+  const otherTags = tags.map(t => `#${t.replace(/[^a-zA-Z0-9_\u4e00-\u9fa5]/g, '_')}`).join(' ');
+  const tagsLine = [idTag, otherTags].filter(Boolean).join(' ');
+
+  const ivUrl = env.TELEGRAM_IV_RHASH
+    ? `https://t.me/iv?url=${encodeURIComponent(postUrl)}&rhash=${env.TELEGRAM_IV_RHASH}`
+    : null;
+
+  // Prepend zero-width space link (Ghost Link) so Telegram auto-attaches Instant View preview
+  const ghostLink = ivUrl ? `<a href="${ivUrl}">&#8203;</a>` : '';
+
+  // "查看全文" directly points to the blog's own domain, while Telegram natively attaches the ⚡️ Instant View button
+  const text = [
+    `${ghostLink}<b>${escapeHtml(title)}</b>`,
+    '',
+    escapeHtml(summary),
+    '',
+    `📖 <a href="${postUrl}">查看全文</a>`,
+    '',
+    tagsLine
+  ].join('\n');
+
+  return { text, ivUrl };
+}
+
 async function publishToChannel(
   env: Env,
   opts: { id: string; title: string; summary: string; tags: string[]; postUrl: string; image?: string; targetChannel?: string }
@@ -1379,23 +1398,10 @@ async function publishToChannel(
     chatId = '@' + chatId;
   }
 
-  // Build MarkdownV2 text
-  // Format tag ID: 2026-001 → #ID_2026_001
-  const idTag = `#ID_${id.replace(/-/g, '_')}`;
-  const otherTags = tags.map(t => `#${t.replace(/[^a-zA-Z0-9_\u4e00-\u9fa5]/g, '_')}`).join(' ');
-  const tagsLine = [idTag, otherTags].filter(Boolean).join(' ');
+  const { text, ivUrl } = buildPostMessageText(env, { id, title, summary, tags, postUrl });
 
-  const text = [
-    `<b>${title.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</b>`,
-    '',
-    summary.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'),
-    '',
-    `📖 <a href="${postUrl}">阅读完整文章</a>`,
-    '',
-    tagsLine
-  ].join('\n');
-
-  if (image) {
+  // If Instant View is NOT enabled but an image is provided, fallback to legacy sendPhoto
+  if (image && !ivUrl) {
     const res = await callTelegramApi(env.TELEGRAM_BOT_TOKEN, 'sendPhoto', {
       chat_id: chatId,
       photo: image,
@@ -1406,13 +1412,18 @@ async function publishToChannel(
     console.error('Failed to send photo:', res);
   }
 
-  // Send text message with link preview options
-  // With prefer_large_media: true, the OpenGraph image (og:image) of the post will be rendered at the bottom!
+  // Send text message with link preview options:
+  // With prefer_large_media: true, Telegram renders the article cover image full-width
+  // AND displays the native ⚡️ Instant View button!
   const result = await callTelegramApi(env.TELEGRAM_BOT_TOKEN, 'sendMessage', {
     chat_id: chatId,
     text,
     parse_mode: 'HTML',
-    link_preview_options: { is_disabled: false, url: postUrl, prefer_large_media: !!image }
+    link_preview_options: {
+      is_disabled: false,
+      url: ivUrl || postUrl,
+      prefer_large_media: true
+    }
   });
 
   if (!result.ok) {

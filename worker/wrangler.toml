@@ -40,6 +40,8 @@ GITHUB_POSTS_PATH = "_posts"
 CHANNELS_CONFIG = '[{"id": "@ZGQincLiqun", "name": "主频道", "folder": "ZGQincLiqun"}, {"id": "@CopyRightZGQInc", "name": "个人频道", "folder": "CopyRightZGQInc"}]'
 # 管理员白名单（支持用户名如 ZGQinc 或数字用户ID 如 123456789，多个用英文逗号分隔）
 ADMIN_USERS    = "ZGQinc"
+# Telegram Instant View (即时预览专属 Rules Hash)
+TELEGRAM_IV_RHASH = "aefab8c132338b"
 
 # ================================================================
 # Secrets (通过 `wrangler secret put <NAME>` 注入，不在此文件中明文)
