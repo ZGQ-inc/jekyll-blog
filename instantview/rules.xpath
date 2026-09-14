@@ -67,5 +67,5 @@ cover:          //div[has-class("post-hero")]//img[has-class("hero-image")]
 # 11. 简化列表项内多余的段落嵌套
 @simplify: //li//p
 
-# 12. 简化 body 内所有剩余的辅助容器 div
-@simplify: $body//div
+# 12. 简化 body 内所有剩余的辅助容器 div（排除包裹代码块的 div，保护 pre 等宽格式与换行）
+@simplify: $body//div[not(.//pre)]

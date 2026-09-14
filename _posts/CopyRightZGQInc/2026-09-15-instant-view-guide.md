@@ -39,24 +39,28 @@ toc: true
 Telegram 的即时预览生成并非在手机端完成，而是由 Telegram 服务端的 **IV Generator Bot** 负责解析与转换。
 
 ```text
-  ┌──────────────────────┐
-  │  源网页原始 HTML      │  (含 Rouge 高亮表、MD3 容器、嵌入式媒体)
-  └──────────┬───────────┘
-             │  Telegram IV Bot 抓取
-             ▼
-  ┌──────────────────────┐
-  │  XPath 1.0 DSL 引擎  │  (执行 blog.zgqinc.gq 专属 rules.xpath 规则)
-  └──────────┬───────────┘
-             │  DOM 节点剪枝、拍平、标签替换
-             ▼
-  ┌──────────────────────┐
-  │  Instant View AST    │  (Article, Paragraph, Header, Figure, Code)
-  └──────────┬───────────┘
-             │  分发至 Telegram 客户端
-             ▼
-  ┌──────────────────────┐
-  │  原生轻量排版渲染器   │  (秒开阅读，支持离线与深色模式)
-  └──────────────────────┘
+┌──────────────────────┐
+│   源网页原始 HTML    │
+│ (含 Rouge 高亮/媒体) │
+└──────────┬───────────┘
+           │ Telegram IV 抓取
+           ▼
+┌──────────────────────┐
+│  XPath 1.0 DSL 引擎  │
+│ (执行 rules.xpath)   │
+└──────────┬───────────┘
+           │ DOM 剪枝与拍平
+           ▼
+┌──────────────────────┐
+│   Instant View AST   │
+│ (Article/Pre/Figure) │
+└──────────┬───────────┘
+           │ 分发至客户端
+           ▼
+┌──────────────────────┐
+│  原生轻量排版渲染器  │
+│ (秒开阅读/离线缓存)  │
+└──────────────────────┘
 ```
 
 ### 1. 声明式 XPath 1.0 DSL 与 AST 重塑
@@ -92,7 +96,7 @@ Jekyll 的 Rouge 高亮插件默认会输出带行号的结构：
 </div>
 ```
 Telegram IV 的 `Preformatted` 类型严禁在 `<pre><code>` 内嵌套 `<table>`，直接触发 `NESTED_ELEMENT_NOT_SUPPORTED`。  
-**解决方案**：通过规则切除 `rouge-gutter` 行号列，将包裹层批量置换为 `<div>`，最后使用 `@simplify` 拍平，无损提取核心 `<pre>` 代码块：
+**解决方案**：通过规则切除 `rouge-gutter` 行号列，将包裹层批量置换为 `<div>`，最后使用 `@simplify` 拍平（特别排除包含 `pre` 的容器以完整保留等宽代码排版与换行），无损提取核心 `<pre>` 代码块：
 ```xpath
 @remove: //td[has-class("rouge-gutter")]
 @replace_tag(<div>): //pre[.//table]
@@ -101,7 +105,7 @@ Telegram IV 的 `Preformatted` 类型严禁在 `<pre><code>` 内嵌套 `<table>`
 @replace_tag(<div>): //tbody[.//td[has-class("rouge-code")]]
 @replace_tag(<div>): //tr[.//td[has-class("rouge-code")]]
 @replace_tag(<div>): //td[has-class("rouge-code")]
-@simplify: $body//div
+@simplify: $body//div[not(.//pre)]
 ```
 
 #### 痛点 2：段落内嵌套插图 (`img` inside `p`)
