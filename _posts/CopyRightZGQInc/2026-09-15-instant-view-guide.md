@@ -7,7 +7,7 @@ date: 2026-09-15 03:30:00
 summary: "全面展示 Telegram Instant View 2.0 在本博客支持的全部排版语法规范，深入剖析 XPath 转换规则、DOM 扁平化重构与自动化频道推送的底层实现原理。"
 categories: [教程, Telegram]
 tags: [telegram, instant-view, jekyll, markdown, tutorial, 开源]
-image: /assets/images/2026-09/e621_6672234.webp
+image: /assets/images/2026-09/709f815bf5f24bff9c.jpeg
 comments: true
 toc: true
 ---
