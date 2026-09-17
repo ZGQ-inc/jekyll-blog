@@ -3,7 +3,7 @@ require 'date'
 module Jekyll
   module Tags
     # Dedicated tag for linking posts directly by ID:
-    # Syntax: {% post_id npg6ht %} or {% post_id "433824" %} or {% post_id m3c7r2#heading %}
+    # Syntax: {% post_id demo %} or {% post_id "433824" %} or {% post_id m3c7r2#heading %}
     class PostId < Liquid::Tag
       def initialize(tag_name, markup, tokens)
         super

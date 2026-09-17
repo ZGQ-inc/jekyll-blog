@@ -345,8 +345,11 @@ Jekyll::Hooks.register [:pages, :documents], :post_convert do |doc|
 
       desc_trunc = desc_safe.length > 180 ? desc_safe[0...177] + '...' : desc_safe
 
+      card_classes = ["md3-link-card"]
+      card_classes << "card-artwork" if is_artwork
+
       card_html = %Q{
-        <a href="#{url}" class="md3-link-card" target="#{is_internal ? '_self' : '_blank'}" rel="noopener">
+        <a href="#{url}" class="#{card_classes.join(' ')}" target="#{is_internal ? '_self' : '_blank'}" rel="noopener">
           <span class="card-content">
             #{image_html}
             <span class="card-text">

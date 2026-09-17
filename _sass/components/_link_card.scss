@@ -4,16 +4,36 @@
 .md3-link-card {
   display: block;
   width: 100%;
-  max-width: 680px; /* Expanded width for comfortable readability & media layout */
+  max-width: 480px; /* Original standard compact width for general web & internal links */
   text-decoration: none !important;
   color: inherit !important;
   background-color: var(--md-sys-color-surface-container);
   border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 50%, transparent);
   border-radius: var(--shape-large, 16px);
   overflow: hidden;
-  margin: 1.5rem auto;
+  margin: 1.5rem 0;
   transition: all var(--dur-short4) var(--motion-standard) !important;
   box-shadow: var(--elev-1);
+
+  /* Expanded large width specifically for Pixiv and e621 artwork cards */
+  &.card-artwork {
+    max-width: 680px;
+    margin: 1.5rem auto;
+
+    .card-text {
+      padding: 14px 18px 18px 18px;
+    }
+
+    .card-title {
+      font-size: 1.05rem;
+    }
+
+    .card-desc {
+      font-size: 0.85rem;
+      line-height: 1.55;
+      -webkit-line-clamp: 3;
+    }
+  }
 }
 
 .md3-link-card:hover {
@@ -150,14 +170,14 @@
 
 /* Card Text & Metadata */
 .md3-link-card .card-text {
-  padding: 14px 18px 18px 18px;
+  padding: 12px 16px 16px 16px;
   display: flex;
   flex-direction: column;
 }
 
 .md3-link-card .card-title {
   font-family: var(--font-family-title);
-  font-size: 1.05rem;
+  font-size: 1rem;
   font-weight: 600;
   line-height: 1.4;
   color: var(--md-sys-color-on-surface);
@@ -169,12 +189,12 @@
 }
 
 .md3-link-card .card-desc {
-  font-size: 0.85rem;
-  line-height: 1.55;
+  font-size: 0.8125rem;
+  line-height: 1.5;
   color: var(--md-sys-color-on-surface-variant);
   margin-bottom: 12px;
   display: -webkit-box;
-  -webkit-line-clamp: 3;
+  -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
