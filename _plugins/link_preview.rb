@@ -56,9 +56,8 @@ module LinkPreview
 
       tag_str = tags.reject { |t| t.start_with?('R-18') }.first(5).join(' · ')
 
-      # Pixiv's official embed.pixiv.net strictly returns 404 for R-18 artwork.
-      # For R-18, directly use pixiv.cat proxy which serves the full illustration.
-      img_url = is_r18 ? "https://pixiv.cat/#{illust_id}.jpg" : "https://embed.pixiv.net/artwork.php?illust_id=#{illust_id}"
+      # Use pixiv.cat proxy for all Pixiv illustrations to avoid cropped thumbnails and preserve full uncropped compositions
+      img_url = "https://pixiv.cat/#{illust_id}.jpg"
 
       return {
         'title' => "#{title} - #{author}",
@@ -86,7 +85,7 @@ module LinkPreview
       badges << { 'type' => 'r18', 'label' => 'R-18', 'icon' => '18_up_rating' } if is_r18
       badges << { 'type' => 'pixiv', 'label' => "ID: #{illust_id}", 'icon' => 'image' }
 
-      img_url = is_r18 ? "https://pixiv.cat/#{illust_id}.jpg" : "https://embed.pixiv.net/artwork.php?illust_id=#{illust_id}"
+      img_url = "https://pixiv.cat/#{illust_id}.jpg"
 
       return {
         'title' => title.strip,
@@ -340,8 +339,7 @@ Jekyll::Hooks.register [:pages, :documents], :post_convert do |doc|
 
       # Pixiv & e621 use expanded artwork card mode
       is_artwork = (data['domain'] == 'pixiv.net' || data['domain'] == 'e621.net')
-      illust_id = data['illust_id'] || url[/\d+/]
-      fallback_attr = (data['domain'] == 'pixiv.net' && illust_id) ? %Q{onerror="if(!this.dataset.fallback){this.dataset.fallback='1';this.src='https://pixiv.cat/#{illust_id}.jpg';}else{this.parentElement.style.display='none';}"} : %Q{onerror="this.parentElement.style.display='none'"}
+      fallback_attr = (data['domain'] == 'pixiv.net' && illust_id) ? %Q{onerror="if(!this.dataset.fallback && !#{data['is_r18'] ? 'true' : 'false'}){this.dataset.fallback='1';this.src='https://embed.pixiv.net/artwork.php?illust_id=#{illust_id}';}else{this.parentElement.style.display='none';}"} : %Q{onerror="this.parentElement.style.display='none'"}
 
       image_html = ""
       if !image_safe.empty?
