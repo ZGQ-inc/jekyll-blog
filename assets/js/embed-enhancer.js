@@ -146,16 +146,49 @@
     });
   }
 
+  // 5. Enhance Social Embeds (Twitter & Reddit) with MD3 Rounded Corners
+  function enhanceSocialEmbeds() {
+    var targets = document.querySelectorAll(
+      '.twitter-embed iframe, .twitter-embed .twitter-tweet, .twitter-embed .twitter-tweet-rendered, ' +
+      '.reddit-embed iframe, .reddit-embed-bq, iframe[id^="twitter-widget-"], iframe[src*="reddit.com"]'
+    );
+    targets.forEach(function(el) {
+      el.style.setProperty('border-radius', '16px', 'important');
+      el.style.setProperty('overflow', 'hidden', 'important');
+      el.style.setProperty('transform', 'translateZ(0)', 'important');
+      if (el.tagName === 'IFRAME' && el.closest('.reddit-embed')) {
+        el.style.setProperty('border', '1px solid var(--md-sys-color-outline-variant, rgba(120, 120, 120, 0.25))', 'important');
+      }
+    });
+  }
+
+  // Observe dynamically inserted iframes (Twitter & Reddit widgets.js inject asynchronously)
+  if (typeof MutationObserver !== 'undefined') {
+    var observer = new MutationObserver(function() {
+      enhanceSocialEmbeds();
+    });
+    // Wait until document.body is available
+    if (document.body) {
+      observer.observe(document.body, { childList: true, subtree: true });
+    } else {
+      document.addEventListener('DOMContentLoaded', function() {
+        observer.observe(document.body, { childList: true, subtree: true });
+      });
+    }
+  }
+
   // Initialize on DOM ready
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', function() {
       initImageMasks();
       initCardMasks();
       initEmbeds();
+      enhanceSocialEmbeds();
     });
   } else {
     initImageMasks();
     initCardMasks();
     initEmbeds();
+    enhanceSocialEmbeds();
   }
 })();

@@ -73,9 +73,15 @@
   margin: 1.5rem auto;
   width: 100%;
 
-  .twitter-tweet {
+  .twitter-tweet,
+  .twitter-tweet-rendered,
+  iframe {
     margin: 0 auto !important;
     border-radius: var(--shape-large, 16px) !important;
+    overflow: hidden !important;
+    border: none !important;
+    box-shadow: var(--elev-1);
+    transform: translateZ(0) !important;
   }
 }
 
@@ -85,13 +91,18 @@
   justify-content: center;
   margin: 1.5rem auto;
   width: 100%;
+  max-width: 640px;
 
-  .reddit-embed-bq {
+  .reddit-embed-bq,
+  iframe {
     margin: 0 auto !important;
     max-width: 600px;
-    width: 100%;
+    width: 100% !important;
     border-radius: var(--shape-large, 16px) !important;
+    overflow: hidden !important;
     border: 1px solid var(--md-sys-color-outline-variant) !important;
+    box-shadow: var(--elev-1);
+    transform: translateZ(0) !important;
   }
 }
 

@@ -56,12 +56,17 @@ module LinkPreview
 
       tag_str = tags.reject { |t| t.start_with?('R-18') }.first(5).join(' · ')
 
+      # Pixiv's official embed.pixiv.net strictly returns 404 for R-18 artwork.
+      # For R-18, directly use pixiv.cat proxy which serves the full illustration.
+      img_url = is_r18 ? "https://pixiv.cat/#{illust_id}.jpg" : "https://embed.pixiv.net/artwork.php?illust_id=#{illust_id}"
+
       return {
         'title' => "#{title} - #{author}",
         'description' => tag_str.empty? ? "Pixiv ID: #{illust_id}" : "标签: #{tag_str}",
-        'image' => "https://embed.pixiv.net/artwork.php?illust_id=#{illust_id}",
+        'image' => img_url,
         'domain' => 'pixiv.net',
         'is_r18' => is_r18,
+        'illust_id' => illust_id,
         'badges' => badges
       }
     rescue => e
@@ -81,12 +86,15 @@ module LinkPreview
       badges << { 'type' => 'r18', 'label' => 'R-18', 'icon' => '18_up_rating' } if is_r18
       badges << { 'type' => 'pixiv', 'label' => "ID: #{illust_id}", 'icon' => 'image' }
 
+      img_url = is_r18 ? "https://pixiv.cat/#{illust_id}.jpg" : "https://embed.pixiv.net/artwork.php?illust_id=#{illust_id}"
+
       return {
         'title' => title.strip,
         'description' => desc.strip,
-        'image' => "https://embed.pixiv.net/artwork.php?illust_id=#{illust_id}",
+        'image' => img_url,
         'domain' => 'pixiv.net',
         'is_r18' => is_r18,
+        'illust_id' => illust_id,
         'badges' => badges
       }
     rescue => e2
@@ -97,9 +105,10 @@ module LinkPreview
     {
       'title' => "Pixiv Artwork ##{illust_id}",
       'description' => "View illustration #{illust_id} on Pixiv",
-      'image' => "https://embed.pixiv.net/artwork.php?illust_id=#{illust_id}",
+      'image' => "https://pixiv.cat/#{illust_id}.jpg",
       'domain' => 'pixiv.net',
       'is_r18' => false,
+      'illust_id' => illust_id,
       'badges' => [
         { 'type' => 'pixiv', 'label' => "ID: #{illust_id}", 'icon' => 'image' }
       ]
@@ -107,15 +116,38 @@ module LinkPreview
   end
 
   def self.fetch_e621(url, post_id)
+    post = nil
     begin
       api_url = "https://e621.net/posts/#{post_id}.json"
       req_data = URI.open(api_url,
-        'User-Agent' => 'ZGQBlog/1.0 (by ZGQ on e621)',
+        'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36 ZGQBlog/1.0 (by zgq on e621)',
+        'Accept' => 'application/json, text/plain, */*',
+        'Accept-Language' => 'en-US,en;q=0.9',
+        'Referer' => "https://e621.net/posts/#{post_id}",
         :read_timeout => 8,
         :open_timeout => 5
       ).read
       json = JSON.parse(req_data)
       post = json['post']
+    rescue => e
+      Jekyll.logger.warn "LinkPreview (e621):", "e621 API direct failed for #{post_id} (#{e.message}), trying e926 fallback..."
+      begin
+        fallback_api_url = "https://e926.net/posts/#{post_id}.json"
+        req_data = URI.open(fallback_api_url,
+          'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36 ZGQBlog/1.0 (by zgq on e621)',
+          'Accept' => 'application/json, text/plain, */*',
+          :read_timeout => 8,
+          :open_timeout => 5
+        ).read
+        json = JSON.parse(req_data)
+        post = json['post']
+      rescue => e2
+        Jekyll.logger.warn "LinkPreview (e621):", "e926 fallback failed for #{post_id}: #{e2.message}"
+        post = nil
+      end
+    end
+
+    if post
       rating = post['rating'] || 'q'
       is_r18 = (rating == 'e')
       score = post['score'] ? post['score']['total'] : 0
@@ -139,6 +171,13 @@ module LinkPreview
       description = desc_items.empty? ? "e621 Post ##{post_id}" : desc_items.join(' | ')
 
       img = (post['sample'] && post['sample']['url']) ? post['sample']['url'] : (post['preview'] && post['preview']['url'] ? post['preview']['url'] : (post['file'] && post['file']['url'] ? post['file']['url'] : ''))
+
+      # Critical: For R-18 posts, e621 hides sample/preview/file URLs from guest requests.
+      # Construct high quality sample URL directly from file.md5!
+      md5 = post['file'] && post['file']['md5']
+      if (img.nil? || img.empty?) && md5
+        img = "https://static1.e621.net/data/sample/#{md5[0..1]}/#{md5[2..3]}/#{md5}.jpg"
+      end
 
       rating_map = {
         's' => { 'label' => 'Safe', 'class' => 'rating-s', 'icon' => 'verified_user' },
@@ -168,13 +207,13 @@ module LinkPreview
       return {
         'title' => "e621 ##{post_id} by #{artist_display}",
         'description' => description,
-        'image' => img,
+        'image' => img || '',
         'domain' => 'e621.net',
         'is_r18' => is_r18,
         'badges' => badges
       }
-    rescue => e
-      Jekyll.logger.warn "LinkPreview (e621):", "e621 API failed for #{post_id}: #{e.message}"
+    else
+      Jekyll.logger.warn "LinkPreview (e621):", "All API attempts failed for #{post_id}"
       return {
         'title' => "e621 Post ##{post_id}",
         'description' => "View post #{post_id} on e621",
@@ -299,13 +338,16 @@ Jekyll::Hooks.register [:pages, :documents], :post_convert do |doc|
         favicon_html = %Q{<img src="#{favicon_url}" class="card-favicon" loading="lazy" onerror="this.style.display='none'">}
       end
 
+      # Pixiv & e621 use expanded artwork card mode
+      is_artwork = (data['domain'] == 'pixiv.net' || data['domain'] == 'e621.net')
+      illust_id = data['illust_id'] || url[/\d+/]
+      fallback_attr = (data['domain'] == 'pixiv.net' && illust_id) ? %Q{onerror="if(!this.dataset.fallback){this.dataset.fallback='1';this.src='https://pixiv.cat/#{illust_id}.jpg';}else{this.parentElement.style.display='none';}"} : %Q{onerror="this.parentElement.style.display='none'"}
+
       image_html = ""
       if !image_safe.empty?
         img_src = image_safe
         img_src = (site.config['url'] || '') + img_src if img_src.start_with?('/')
         
-        # Pixiv & e621 use adaptive contain-fit without cropping
-        is_artwork = (data['domain'] == 'pixiv.net' || data['domain'] == 'e621.net')
         wrapper_classes = ["card-image-wrapper"]
         wrapper_classes << "is-adaptive" if is_artwork
         
@@ -313,7 +355,7 @@ Jekyll::Hooks.register [:pages, :documents], :post_convert do |doc|
           wrapper_classes << "is-r18-masked"
           image_html = %Q{
             <span class="#{wrapper_classes.join(' ')}" data-r18="true">
-              <img src="#{img_src}" class="card-image blur-r18" loading="lazy" onerror="this.parentElement.style.display='none'">
+              <img src="#{img_src}" class="card-image blur-r18" loading="lazy" #{fallback_attr}>
               <span class="card-mask-overlay" role="button" tabindex="0" title="点击显示 R-18 敏感内容">
                 <span class="card-mask-chip">
                   <span class="material-symbols-outlined">visibility_off</span>
@@ -325,7 +367,7 @@ Jekyll::Hooks.register [:pages, :documents], :post_convert do |doc|
         else
           image_html = %Q{
             <span class="#{wrapper_classes.join(' ')}">
-              <img src="#{img_src}" class="card-image" loading="lazy" onerror="this.parentElement.style.display='none'">
+              <img src="#{img_src}" class="card-image" loading="lazy" #{fallback_attr}>
             </span>
           }
         end

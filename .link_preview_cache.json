@@ -1,36 +1,31 @@
 {
-  "https://github.com/": {
-    "title": "GitHub: Let’s build from here",
-    "description": "GitHub is where over 100 million developers shape the future of software, together.",
-    "image": "https://github.githubassets.com/images/modules/site/social-cards/campaign-social.png",
-    "domain": "github.com",
-    "is_r18": false
-  },
-  "https://www.pixiv.net/artworks/112217641": {
-    "title": "rangiku matsumoto - williamk22",
-    "description": "Pixiv ID: 112217641 | 标签: 乱菊 · 死神 · 松本乱菊 · BLEACH · ブリーチ",
-    "image": "https://embed.pixiv.net/artwork.php?illust_id=112217641",
+  "https://www.pixiv.net/artworks/149691446": {
+    "title": "アイスを食べているだけ！ - かてら",
+    "description": "标签: ケモノ · furry · ケモショタ · 獣人 · うちの子",
+    "image": "https://embed.pixiv.net/artwork.php?illust_id=149691446",
     "domain": "pixiv.net",
     "is_r18": false,
+    "illust_id": "149691446",
     "badges": [
       {
         "type": "artist",
-        "label": "williamk22",
+        "label": "かてら",
         "icon": "palette"
       },
       {
         "type": "pixiv",
-        "label": "ID: 112217641",
+        "label": "ID: 149691446",
         "icon": "image"
       }
     ]
   },
-  "https://www.pixiv.net/artworks/95543160": {
-    "title": "デカ乳ギンガ団したっぱちゃん♥ - くろたま@吟醸マゴッツ",
-    "description": "Pixiv ID: 95543160 | 标签: ポケモン · ギンガ団 · したっぱ",
-    "image": "https://embed.pixiv.net/artwork.php?illust_id=95543160",
+  "https://www.pixiv.net/artworks/149736454": {
+    "title": "無題 - ねむい",
+    "description": "标签: ケモノ · ケモショタ",
+    "image": "https://pixiv.cat/149736454.jpg",
     "domain": "pixiv.net",
     "is_r18": true,
+    "illust_id": "149736454",
     "badges": [
       {
         "type": "r18",
@@ -39,44 +34,44 @@
       },
       {
         "type": "artist",
-        "label": "くろたま@吟醸マゴッツ",
+        "label": "ねむい",
         "icon": "palette"
       },
       {
         "type": "pixiv",
-        "label": "ID: 95543160",
+        "label": "ID: 149736454",
         "icon": "image"
       }
     ]
   },
-  "https://e621.net/posts/3720760": {
-    "title": "e621 #3720760 by hoc2pus",
-    "description": "原作: bethesda game studios, microsoft, skyrim | 角色: deeja | 物种: argonian, reptile, scalie",
-    "image": "https://static1.e621.net/data/06/c8/06c8834b50f67ebecb85ef7003571ae4.jpg",
+  "https://e621.net/posts/6234366": {
+    "title": "e621 #6234366 by kitune1tu",
+    "description": "物种: canid, canine, fox",
+    "image": "https://static1.e621.net/data/sample/65/cf/65cfdfff57129cbedf675dde52b33b2e.jpg",
     "domain": "e621.net",
     "is_r18": false,
     "badges": [
       {
-        "type": "rating-q",
-        "label": "Questionable",
-        "icon": "warning"
+        "type": "rating-s",
+        "label": "Safe",
+        "icon": "verified_user"
       },
       {
         "type": "artist",
-        "label": "hoc2pus",
+        "label": "kitune1tu",
         "icon": "palette"
       },
       {
         "type": "score",
-        "label": "+334",
+        "label": "+26",
         "icon": "thumb_up"
       }
     ]
   },
-  "https://e621.net/posts/6714373": {
-    "title": "e621 #6714373 by sachasketchy",
-    "description": "原作: mario bros, nintendo | 角色: reina (sachasketchy) | 物种: avian, bird, koopa",
-    "image": "https://static1.e621.net/data/sample/21/98/21985f917832204cbf3688c2b9f19cf3.jpg",
+  "https://e621.net/posts/3605521": {
+    "title": "e621 #3605521 by kuromu",
+    "description": "物种: ambiguous species, domestic cat, felid",
+    "image": "https://static1.e621.net/data/sample/ff/3f/ff3feb45db09d2151d942f83f53aebad.jpg",
     "domain": "e621.net",
     "is_r18": true,
     "badges": [
@@ -87,14 +82,45 @@
       },
       {
         "type": "artist",
-        "label": "sachasketchy",
+        "label": "kuromu",
         "icon": "palette"
       },
       {
         "type": "score",
-        "label": "+45",
+        "label": "+1074",
         "icon": "thumb_up"
       }
     ]
+  },
+  "https://e621.net/posts/6672234": {
+    "title": "e621 #6672234 by aellaellae",
+    "description": "物种: canid, canine, canis",
+    "image": "https://static1.e621.net/data/sample/7b/33/7b3387fd2a00e0838aa18fbebc3f007d.jpg",
+    "domain": "e621.net",
+    "is_r18": false,
+    "badges": [
+      {
+        "type": "rating-s",
+        "label": "Safe",
+        "icon": "verified_user"
+      },
+      {
+        "type": "artist",
+        "label": "aellaellae",
+        "icon": "palette"
+      },
+      {
+        "type": "score",
+        "label": "+28",
+        "icon": "thumb_up"
+      }
+    ]
+  },
+  "https://github.com/": {
+    "title": "GitHub: Let's build from here",
+    "description": "GitHub is where over 100 million developers shape the future of software, together. Contribute to the open source community, manage your Git repositories, review code like a pro, track bugs and feat...",
+    "image": "https://github.githubassets.com/assets/campaign-social-031d61680d67.png",
+    "domain": "github.com",
+    "is_r18": false
   }
 }
