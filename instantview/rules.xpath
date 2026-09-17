@@ -52,9 +52,9 @@ cover:           $@
 @replace_tag(<li>): //dt
 @replace_tag(<li>): //dd
 
-# 9. 外部嵌入媒体适配 (YouTube / Vimeo / Twitter / Telegram 等原生流媒体与外部组件)
+# 9. 外部嵌入媒体适配 (YouTube / Vimeo / Twitter 等原生流媒体与外部组件)
 # 9.1 针对不受支持的第三方 iframe 进行优雅降级，转为普通超链接以防 IV 崩溃
-$unsupported_iframe: $body//iframe[not(contains(@src, "youtube") or contains(@src, "youtu.be") or contains(@src, "vimeo") or contains(@src, "twitter") or contains(@src, "x.com") or contains(@src, "t.me") or contains(@src, "instagram") or contains(@src, "soundcloud") or contains(@src, "github") or contains(@src, "gist"))]
+$unsupported_iframe: $body//iframe[not(contains(@src, "youtube") or contains(@src, "youtu.be") or contains(@src, "vimeo") or contains(@src, "twitter") or contains(@src, "x.com") or contains(@src, "instagram") or contains(@src, "soundcloud") or contains(@src, "github") or contains(@src, "gist"))]
 @replace_tag(<a>): $unsupported_iframe
 @set_attr(href, @src): $body//a[not(@href) and @src]
 
