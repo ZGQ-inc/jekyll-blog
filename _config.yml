@@ -1,6 +1,6 @@
 # Site Settings
 title: "ZGQ Inc.'s Blog"
-description: "博客原型。"
+description: "个人博客。"
 url: "https://blog.zgqinc.gq"
 baseurl: ""
 lang: "zh-CN"
@@ -9,7 +9,7 @@ timezone: Asia/Shanghai
 # Author
 author:
   name: "ZGQ Inc."
-  bio: "博客原型。"
+  bio: "个人博客。"
   avatar: "/assets/images/avatar.png"
 
 # Navigation
