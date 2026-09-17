@@ -30,6 +30,7 @@ cover:           $@
 @remove: //a[has-class("md3-link-card")]//span[has-class("card-image-wrapper")]
 @remove: //a[has-class("md3-link-card")]//span[has-class("card-meta")]
 @remove: //a[has-class("md3-link-card")]//span[has-class("card-desc")]
+@remove: //a[has-class("md3-link-card")]//span[has-class("card-badges")]
 @simplify: //a[has-class("md3-link-card")]//span
 
 # 5. 优化文件下载卡片

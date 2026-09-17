@@ -1,3 +1,13 @@
-<div class="md3-video-embed">
-  <iframe src="https://www.youtube.com/embed/{{ include.id }}" title="{{ include.title | default: 'YouTube video player' }}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+{% assign video_id = include.id %}
+{% if include.url %}
+  {% if include.url contains "v=" %}
+    {% assign video_id = include.url | split: "v=" | last | split: "&" | first %}
+  {% elsif include.url contains "youtu.be/" %}
+    {% assign video_id = include.url | split: "youtu.be/" | last | split: "?" | first %}
+  {% elsif include.url contains "embed/" %}
+    {% assign video_id = include.url | split: "embed/" | last | split: "?" | first %}
+  {% endif %}
+{% endif %}
+<div class="md3-video-embed" data-embed-platform="youtube">
+  <iframe src="https://www.youtube-nocookie.com/embed/{{ video_id }}?enablejsapi=1&origin={{ site.url }}" title="{{ include.title | default: 'YouTube video player' }}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen loading="lazy"></iframe>
 </div>

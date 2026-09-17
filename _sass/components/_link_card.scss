@@ -113,3 +113,65 @@
   text-transform: uppercase;
 }
 
+/* Badges for Link Preview Cards (e.g. Pixiv, e621, GitHub) */
+.md3-link-card .card-badges {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.md3-link-card .preview-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  border-radius: 8px;
+  line-height: 1.4;
+  letter-spacing: 0.01em;
+
+  .material-symbols-outlined {
+    font-size: 13px !important;
+    line-height: 1;
+  }
+
+  &.preview-badge-artist {
+    background: color-mix(in srgb, var(--md-sys-color-primary-container) 70%, transparent);
+    color: var(--md-sys-color-on-primary-container);
+    border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 45%, transparent);
+  }
+
+  &.preview-badge-score {
+    background: color-mix(in srgb, var(--md-sys-color-tertiary-container) 70%, transparent);
+    color: var(--md-sys-color-on-tertiary-container);
+    border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 45%, transparent);
+  }
+
+  &.preview-badge-pixiv {
+    background: color-mix(in srgb, #0096fa 18%, transparent);
+    color: #0096fa;
+    border: 1px solid color-mix(in srgb, #0096fa 35%, transparent);
+  }
+
+  &.preview-badge-rating-s {
+    background: color-mix(in srgb, #2e7d32 18%, transparent);
+    color: #2e7d32;
+    border: 1px solid color-mix(in srgb, #2e7d32 35%, transparent);
+  }
+
+  &.preview-badge-rating-q {
+    background: color-mix(in srgb, #ed6c02 18%, transparent);
+    color: #ed6c02;
+    border: 1px solid color-mix(in srgb, #ed6c02 35%, transparent);
+  }
+
+  &.preview-badge-rating-e {
+    background: color-mix(in srgb, #d32f2f 18%, transparent);
+    color: #d32f2f;
+    border: 1px solid color-mix(in srgb, #d32f2f 35%, transparent);
+  }
+}
+

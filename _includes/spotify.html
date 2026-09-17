@@ -1,0 +1,17 @@
+{% assign sp_type = include.type | default: "track" %}
+{% assign sp_id = include.id %}
+{% if include.url %}
+  {% assign url_clean = include.url | split: "?" | first %}
+  {% if url_clean contains "spotify.com/" %}
+    {% assign parts = url_clean | split: "spotify.com/" | last | split: "/" %}
+    {% assign sp_type = parts[0] %}
+    {% assign sp_id = parts[1] %}
+  {% endif %}
+{% endif %}
+{% assign is_compact = include.compact %}
+{% if sp_type == "track" and include.compact == nil %}
+  {% assign is_compact = false %}
+{% endif %}
+<div class="spotify-embed{% if is_compact %} is-compact{% endif %}" data-embed-platform="spotify">
+  <iframe style="border-radius:12px" src="https://open.spotify.com/embed/{{ sp_type }}/{{ sp_id }}?utm_source=generator" width="100%" height="{% if is_compact %}152{% else %}352{% endif %}" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy" title="Spotify {{ sp_type | capitalize }}: {{ sp_id }}"></iframe>
+</div>

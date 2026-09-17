@@ -340,7 +340,7 @@ Telegram 即时预览官方原生支持解析主流流行平台的内容嵌入�
 通过标准的 16:9 MD3 响应式嵌入容器（或 `{% raw %}{% include youtube.html id="dQw4w9WgXcQ" %}{% endraw %}`）：
 
 <div class="md3-video-embed">
-  <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" title="Rick Astley - Never Gonna Give You Up" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+  <iframe src="https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ?enablejsapi=1" title="Rick Astley - Never Gonna Give You Up" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen loading="lazy"></iframe>
 </div>
 
 *注：在 Telegram 即时预览中，该嵌入会被自动识别为原生 YouTube Widget，点击直接在 Telegram 浮层全屏播放。*

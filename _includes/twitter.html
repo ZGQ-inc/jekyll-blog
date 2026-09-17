@@ -1,0 +1,10 @@
+{% assign tweet_url = include.url %}
+{% if include.id %}
+  {% assign tweet_url = "https://twitter.com/x/status/" | append: include.id %}
+{% endif %}
+<div class="twitter-embed md3-embed-container" data-embed-platform="twitter">
+  <blockquote class="twitter-tweet" data-dnt="true" data-theme="auto">
+    <a href="{{ tweet_url }}">{{ tweet_url }}</a>
+  </blockquote>
+  <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+</div>

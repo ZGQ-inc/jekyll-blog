@@ -191,6 +191,21 @@ git push origin main
 | **[Inter](https://rsms.me/inter/)** | [OFL-1.1 (SIL Open Font License)](https://openfontlicense.org/) | 现代化 UI 英文无衬线字体 |
 | **[JetBrains Mono](https://www.jetbrains.com/lp/mono/)** | [OFL-1.1 (SIL Open Font License)](https://openfontlicense.org/) | 等宽代码字体 |
 
+### 5. 多媒体嵌入、oEmbed 协议与开放平台集成 (Embeds & Open Platforms)
+| 平台 / 技术 | 集成方式 / 规范 | 说明与核心优势 |
+| :--- | :--- | :--- |
+| **[oEmbed 智能调度器](https://oembed.com/)** | Liquid 组件 (`embed.html`) | 自动识别 URL 格式并智能路由至最佳展示容器 |
+| **[YouTube IFrame Player](https://developers.google.com/youtube/iframe_api_reference)** | `youtube-nocookie.com` | 16:9 响应式画幅、严格防追踪，配合 Origin 解决 Error 153，Telegram IV 原生秒播 |
+| **[Spotify IFrame API](https://developer.spotify.com/documentation/embeds/tutorials/using-the-iframe-api)** | 官方 Embed API | 支持单曲/专辑/歌单/播客，提供 Compact (152px) 与 Normal (352px) 预设 |
+| **[Telegram Post Widget](https://core.telegram.org/widgets/post)** | `t.me` 原生 Widget + `postMessage` | 具备实时高度自适应双向通信机制，彻底消除内嵌滚动条与内容截断 |
+| **[Twitter / X Publish](https://publish.x.com/)** | `widgets.js` | 官方动态推文嵌入，自动跟随站点明暗主题 |
+| **[Reddit Embeds](https://developers.reddit.com/docs/api/public-api/type-aliases/Oembed)** | `widgets.js` | 官方社区帖子响应式嵌入组件 |
+| **[GitHub Gist & Repos](https://docs.github.com/en/rest)** | Gist JS & MD3 Card | 支持 Gist 代码高亮以及 GitHub 仓库 MD3 质感卡片 |
+| **[Pixiv Embed Proxy](https://embed.pixiv.net/)** | `embed.pixiv.net` / `phixiv` | 突破 Pixiv 403 跨域防盗链，提取画作元数据并展示 MD3 画师徽标 |
+| **[e621 JSON API](https://e621.net/help/api)** | 官方 REST API | 抓取艺术插画元数据，生成 Safe / Questionable / Explicit 分级徽标与评分 |
+| **MD3 毛玻璃媒体遮罩** | CSS `backdrop-filter` + JS 交互 | 为剧透与敏感图片提供深度景深高斯模糊、安全提示及「点击确认显示」交互 |
+
+
 ---
 
 ## 📄 许可证与开源协议合规 (License & Compliance)

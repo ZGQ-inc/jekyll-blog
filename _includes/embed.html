@@ -1,0 +1,21 @@
+{% assign embed_url = include.url %}
+{% if embed_url contains "youtube.com" or embed_url contains "youtu.be" %}
+  {% include youtube.html url=embed_url title=include.title %}
+{% elsif embed_url contains "spotify.com" %}
+  {% include spotify.html url=embed_url compact=include.compact %}
+{% elsif embed_url contains "t.me/" %}
+  {% include telegram.html url=embed_url %}
+{% elsif embed_url contains "twitter.com" or embed_url contains "x.com" %}
+  {% include twitter.html url=embed_url %}
+{% elsif embed_url contains "reddit.com" %}
+  {% include reddit.html url=embed_url %}
+{% elsif embed_url contains "github.com" %}
+  {% include github.html url=embed_url description=include.description %}
+{% elsif embed_url contains "vimeo.com" %}
+  {% assign vimeo_id = embed_url | split: "vimeo.com/" | last | split: "?" | first %}
+  {% include vimeo.html id=vimeo_id %}
+{% else %}
+  <div class="md3-generic-embed md3-embed-container" data-embed-platform="generic">
+    <iframe src="{{ embed_url }}" frameborder="0" loading="lazy" allowfullscreen title="{{ include.title | default: 'Embedded Content' }}"></iframe>
+  </div>
+{% endif %}

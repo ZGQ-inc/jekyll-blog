@@ -1,0 +1,270 @@
+/* ==========================================================================
+   MD3 Media Embeds & Frosted Glass Media Mask
+   ========================================================================== */
+
+/* Universal Embed Container */
+.md3-embed-container {
+  margin: 1.5rem auto;
+  width: 100%;
+  max-width: 680px;
+  border-radius: var(--shape-large, 16px);
+  overflow: hidden;
+  transition: all var(--dur-short4) var(--motion-standard);
+}
+
+/* 1. Spotify Embed */
+.spotify-embed {
+  margin: 1.5rem auto;
+  width: 100%;
+  max-width: 680px;
+  border-radius: var(--shape-large, 16px);
+  overflow: hidden;
+  box-shadow: var(--elev-1);
+  background-color: var(--md-sys-color-surface-container);
+  border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 50%, transparent);
+  transition: box-shadow var(--dur-short4) var(--motion-standard), transform var(--dur-short4) var(--motion-standard);
+
+  &:hover {
+    box-shadow: var(--elev-2);
+  }
+
+  iframe {
+    display: block;
+    width: 100%;
+    border: none;
+    border-radius: 12px;
+  }
+
+  &.is-compact iframe {
+    height: 152px !important;
+  }
+}
+
+/* 2. Telegram Post Embed (with Dynamic PostMessage Height) */
+.tg-post-embed {
+  margin: 1.5rem auto;
+  width: 100%;
+  max-width: 550px;
+  border-radius: var(--shape-large, 16px);
+  overflow: hidden;
+  background-color: var(--md-sys-color-surface-container);
+  border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 50%, transparent);
+  box-shadow: var(--elev-1);
+  transition: box-shadow var(--dur-short4) var(--motion-standard);
+
+  &:hover {
+    box-shadow: var(--elev-2);
+  }
+
+  iframe {
+    display: block;
+    width: 100%;
+    min-height: 200px;
+    height: 380px; /* Sensible default until postMessage resize arrives */
+    border: none;
+    transition: height 0.25s cubic-bezier(0.2, 0, 0, 1);
+  }
+}
+
+/* 3. Twitter / X Embed */
+.twitter-embed {
+  display: flex;
+  justify-content: center;
+  margin: 1.5rem auto;
+  width: 100%;
+
+  .twitter-tweet {
+    margin: 0 auto !important;
+    border-radius: var(--shape-large, 16px) !important;
+  }
+}
+
+/* 4. Reddit Embed */
+.reddit-embed {
+  display: flex;
+  justify-content: center;
+  margin: 1.5rem auto;
+  width: 100%;
+
+  .reddit-embed-bq {
+    margin: 0 auto !important;
+    max-width: 600px;
+    width: 100%;
+    border-radius: var(--shape-large, 16px) !important;
+    border: 1px solid var(--md-sys-color-outline-variant) !important;
+  }
+}
+
+/* 5. GitHub Embeds (Repo Cards & Gists) */
+.github-repo-card {
+  max-width: 580px;
+
+  .card-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    .gh-icon {
+      flex-shrink: 0;
+      color: var(--md-sys-color-primary);
+    }
+  }
+}
+
+.github-gist-embed {
+  margin: 1.5rem auto;
+  width: 100%;
+  max-width: 720px;
+
+  .gist {
+    .gist-file {
+      border-radius: var(--shape-large, 16px) !important;
+      border: 1px solid var(--md-sys-color-outline-variant) !important;
+      overflow: hidden;
+      box-shadow: var(--elev-1);
+    }
+    .gist-data {
+      border-radius: var(--shape-large, 16px) var(--shape-large, 16px) 0 0 !important;
+    }
+  }
+}
+
+/* 6. Generic Embed & Video Embed */
+.md3-generic-embed {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  width: 100%;
+  max-width: 720px;
+  background-color: var(--md-sys-color-surface-container);
+  border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 50%, transparent);
+  box-shadow: var(--elev-1);
+
+  iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+  }
+}
+
+/* ==========================================================================
+   MD3 Frosted Glass Media Mask (毛玻璃遮罩保护)
+   ========================================================================== */
+.md3-image-mask-wrapper {
+  position: relative;
+  display: inline-block;
+  max-width: 100%;
+  margin: 1.5rem auto;
+  border-radius: var(--shape-large, 16px);
+  overflow: hidden;
+  box-shadow: var(--elev-1);
+  user-select: none;
+
+  img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    border-radius: var(--shape-large, 16px);
+    filter: blur(28px) brightness(0.8);
+    transform: scale(1.05);
+    transition: filter 0.45s cubic-bezier(0.2, 0, 0, 1), transform 0.45s cubic-bezier(0.2, 0, 0, 1);
+    will-change: filter, transform;
+  }
+
+  .md3-image-mask-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    background: color-mix(in srgb, var(--md-sys-color-surface-container) 65%, transparent);
+    cursor: pointer;
+    transition: opacity 0.4s cubic-bezier(0.2, 0, 0, 1), visibility 0.4s cubic-bezier(0.2, 0, 0, 1);
+    z-index: 2;
+    border-radius: var(--shape-large, 16px);
+  }
+
+  .md3-mask-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 16px 22px;
+    background: color-mix(in srgb, var(--md-sys-color-surface-container-high) 85%, transparent);
+    border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 60%, transparent);
+    border-radius: 20px;
+    box-shadow: var(--elev-2);
+    text-align: center;
+    max-width: 88%;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    pointer-events: none;
+    transition: transform var(--dur-short4) var(--motion-standard);
+  }
+
+  &:hover .md3-mask-card {
+    transform: scale(1.02);
+  }
+
+  .md3-mask-icon {
+    font-size: 32px !important;
+    color: var(--md-sys-color-primary);
+  }
+
+  .md3-mask-text {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--md-sys-color-on-surface);
+  }
+
+  .md3-mask-reveal-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 18px;
+    margin-top: 4px;
+    background: var(--md-sys-color-primary);
+    color: var(--md-sys-color-on-primary);
+    border: none;
+    border-radius: 20px;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    cursor: pointer;
+    pointer-events: auto;
+    box-shadow: var(--elev-1);
+    transition: all var(--dur-short4) var(--motion-standard);
+
+    .material-symbols-outlined {
+      font-size: 16px !important;
+    }
+
+    &:hover {
+      background: color-mix(in srgb, var(--md-sys-color-primary) 85%, black);
+      box-shadow: var(--elev-2);
+      transform: translateY(-1px);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+  }
+
+  /* Revealed state */
+  &.is-revealed {
+    img {
+      filter: none !important;
+      transform: scale(1) !important;
+    }
+
+    .md3-image-mask-overlay {
+      opacity: 0 !important;
+      visibility: hidden !important;
+      pointer-events: none !important;
+    }
+  }
+}

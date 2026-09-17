@@ -1,0 +1,49 @@
+{
+  "https://github.com/": {
+    "title": "GitHub: Let’s build from here",
+    "description": "GitHub is where over 100 million developers shape the future of software, together.",
+    "image": "https://github.githubassets.com/images/modules/site/social-cards/campaign-social.png",
+    "domain": "github.com"
+  },
+  "https://www.pixiv.net/artworks/112217641": {
+    "title": "rangiku matsumoto - williamk22",
+    "description": "Pixiv ID: 112217641 | 标签: 乱菊 · 死神 · 松本乱菊 · BLEACH · ブリーチ",
+    "image": "https://embed.pixiv.net/artwork.php?illust_id=112217641",
+    "domain": "pixiv.net",
+    "badges": [
+      {
+        "type": "artist",
+        "label": "williamk22",
+        "icon": "palette"
+      },
+      {
+        "type": "pixiv",
+        "label": "ID: 112217641",
+        "icon": "image"
+      }
+    ]
+  },
+  "https://e621.net/posts/3720760": {
+    "title": "e621 #3720760 by hoc2pus",
+    "description": "角色: deeja | 标签: anthro · female · canine · mammal",
+    "image": "https://static1.e621.net/data/06/c8/06c8834b50f67ebecb85ef7003571ae4.jpg",
+    "domain": "e621.net",
+    "badges": [
+      {
+        "type": "rating-q",
+        "label": "Questionable",
+        "icon": "warning"
+      },
+      {
+        "type": "artist",
+        "label": "hoc2pus",
+        "icon": "palette"
+      },
+      {
+        "type": "score",
+        "label": "+334",
+        "icon": "thumb_up"
+      }
+    ]
+  }
+}

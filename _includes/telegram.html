@@ -1,0 +1,9 @@
+{% assign tg_post = include.post %}
+{% if include.url %}
+  {% if include.url contains "t.me/" %}
+    {% assign tg_post = include.url | split: "t.me/" | last | split: "?" | first %}
+  {% endif %}
+{% endif %}
+<div class="tg-post-embed" data-telegram-post="{{ tg_post }}">
+  <iframe src="https://t.me/{{ tg_post }}?embed=1" frameborder="0" scrolling="no" loading="lazy" title="Telegram Post: {{ tg_post }}"></iframe>
+</div>
