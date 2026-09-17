@@ -144,7 +144,7 @@ git push origin main
 
 1. **创建草稿**：在你的 Telegram 机器人中输入 `/new [文章标题]`，系统会自动在 GitHub 仓库生成一篇 Markdown 格式的草稿（含标准头部 Front Matter），并触发网站构建。
 2. **编辑文章**：使用你最喜欢的支持 Git 的编辑器（如 VS Code、Obsidian 等）拉取最新代码，编辑刚刚生成的 Markdown 文章。
-   - 各种文字排版、多媒体格式的 Markdown 语法规范，请严格参考此示例文章：[Jekyll 完整 Markup 语法展示](https://blog.zgqinc.gq/posts/npg6ht/)。
+   - 各种文字排版、多媒体格式的 Markdown 语法规范，请严格参考此示例文章：[Jekyll 完整 Markup 语法展示](https://blog.zgqinc.gq/posts/demo/)。
 3. **上传图床文件**：在写作过程中如果需要插图、上传附件、放置音视频等，无需寻找第三方图床，**直接将文件或图片发送给你的 Telegram Bot**！Bot 会自动将其存入 R2 存储并返回可以直接复制使用的 Markdown 代码或下载卡片代码。
 4. **推送更新**：在本地完成文章编写后，使用 `git commit` 与 `git push` 推送到 GitHub，博客网站将自动更新。
 5. **发布到频道**：网站更新完成后，在 Telegram 机器人中输入 `/link <文章ID> [摘要内容]`。Bot 会自动提取头图，并将这篇文章排版成精美的卡片推送至你的公开频道（图片在下、文字在上、自带链接预览），同时触发自动关联频道评论区！
