@@ -314,10 +314,10 @@ Jekyll::Hooks.register [:pages, :documents], :post_convert do |doc|
           image_html = %Q{
             <span class="#{wrapper_classes.join(' ')}" data-r18="true">
               <img src="#{img_src}" class="card-image blur-r18" loading="lazy" onerror="this.parentElement.style.display='none'">
-              <span class="card-mask-overlay" role="button" tabindex="0" title="点击解锁 R-18 敏感内容">
+              <span class="card-mask-overlay" role="button" tabindex="0" title="点击显示 R-18 敏感内容">
                 <span class="card-mask-chip">
                   <span class="material-symbols-outlined">visibility_off</span>
-                  <span>R-18 敏感内容 · 点击解锁</span>
+                  <span>R-18 敏感内容 · 点击显示</span>
                 </span>
               </span>
             </span>

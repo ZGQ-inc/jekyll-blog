@@ -66,7 +66,7 @@
       overlay.className = 'md3-image-mask-overlay';
       overlay.setAttribute('role', 'button');
       overlay.setAttribute('tabindex', '0');
-      overlay.setAttribute('aria-label', '点击确认查看图片');
+      overlay.setAttribute('aria-label', '点击查看图片');
 
       overlay.innerHTML = 
         '<div class="md3-mask-card">' +
@@ -74,7 +74,7 @@
           '<span class="md3-mask-text">' + reason + '</span>' +
           '<button type="button" class="md3-mask-reveal-btn">' +
             '<span class="material-symbols-outlined">visibility</span>' +
-            '<span>点击确认显示</span>' +
+            '<span>点击显示</span>' +
           '</button>' +
         '</div>';
 
