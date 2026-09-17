@@ -320,19 +320,48 @@ Telegram IV 2.0 原生支持 `<audio>` 与 `<video>` 媒体标签。当用户在
 #### 原生视频演示 (Video)
 带有自适应比例的全屏视频播放器：
 
-<video src="/assets/videos/rickroll.mp4" controls></video>
+<video src="https://blog.zgqinc.gq/assets/videos/rickroll.mp4" controls></video>
 
 #### 原生音频演示 (Audio)
 简洁美观的内嵌式音频播放栏，支持丝滑进度拖拽：
 
-<audio src="/assets/audios/Record_Makers_Kavinsky_Nightcall_Drive_Original_Movie_Soundtrack.mp3" controls
+<audio src="https://blog.zgqinc.gq/assets/audios/Record_Makers_Kavinsky_Nightcall_Drive_Original_Movie_Soundtrack.mp3" controls
        data-title="Nightcall"
        data-artist="Kavinsky">
 </audio>
 
 ---
 
-### 11. 可折叠详情组件 (Details & Summary)
+### 11. 外部流媒体与跨平台原生嵌入 (Native Embeds: YouTube / Vimeo / Telegram)
+
+Telegram 即时预览官方原生支持解析主流流行平台的内容嵌入（Embeds）。通过模板规则对 `<iframe>` 自动执行 `<figure>` 语义封装与父级段落安全解构，Telegram 客户端将直接调用**内置专属原生播放器**与**交互卡片**，让读者在即时预览中直接畅快播放 YouTube 视频，无需跳转外部浏览器：
+
+#### YouTube 视频原生嵌入 (Embedded YouTube Player)
+通过标准的 16:9 MD3 响应式嵌入容器（或 `{% raw %}{% include youtube.html id="dQw4w9WgXcQ" %}{% endraw %}`）：
+
+<div class="md3-video-embed">
+  <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" title="Rick Astley - Never Gonna Give You Up" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+</div>
+
+*注：在 Telegram 即时预览中，该嵌入会被自动识别为原生 YouTube Widget，点击直接在 Telegram 浮层全屏播放。*
+
+#### Vimeo 视频原生嵌入 (Embedded Vimeo Player)
+原生支持 Vimeo 高清视频播放：
+
+<div class="md3-video-embed">
+  <iframe src="https://player.vimeo.com/video/76979871" title="Vimeo video player" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
+</div>
+
+#### Telegram 官方频道消息内嵌 (Embedded Telegram Post)
+支持原生嵌入展示 Telegram 公开频道或群组的历史发言与动态：
+
+<div class="tg-post-embed">
+  <iframe src="https://t.me/ZGQincLiqun/3395?embed=1" frameborder="0"></iframe>
+</div>
+
+---
+
+### 12. 可折叠详情组件 (Details & Summary)
 
 无需任何额外 JS 依赖，Telegram IV 2.0 原生支持 `<details>` 和 `<summary>`：
 
@@ -340,14 +369,15 @@ Telegram IV 2.0 原生支持 `<audio>` 与 `<video>` 媒体标签。当用户在
 <summary><b>点击展开查看即时预览调试技巧</b></summary>
 
 1. **优先检查容器嵌套**：遇到 `NESTED_ELEMENT_NOT_SUPPORTED` 时，首先排查是否有 `div` 残留在 `body` 内部。
-2. **图片拆分检查**：确保没有 `img` 被裹在 `<p>` 或 `<a>` 中无法逃逸。
+2. **图片与媒体拆分检查**：确保所有 `img` 与 `iframe` 已封装为 `<figure>` 并执行 `@split_parent` 拆离。
 3. **行号表格剥离**：确保高亮引擎没有将 `table` 塞入 `pre` 中。
+4. **不受支持 iframe 保护机制**：对非官方支持列表的 iframe 执行优雅降级转普通超链接，避免整个页面崩溃。
 
 </details>
 
 ---
 
-### 12. 脚注与参考标记 (Footnotes)
+### 13. 脚注与参考标记 (Footnotes)
 
 在长篇学术或技术文章中，脚注是极佳的补充手段[^1]。
 
@@ -355,7 +385,7 @@ Kramdown 会自动在文章尾部生成规范的尾注列表，而我们的规�
 
 ---
 
-### 13. 极简超链接卡片 (Clean Link Previews)
+### 14. 极简超链接卡片 (Clean Link Previews)
 
 为了避免传统嵌入式卡片在 IV 中因多层嵌套 `<span>` 与微图标导致渲染崩溃，规则集已将其清洗为高对比度超链接：
 
