@@ -320,12 +320,12 @@ Telegram IV 2.0 原生支持 `<audio>` 与 `<video>` 媒体标签。当用户在
 #### 原生视频演示 (Video)
 带有自适应比例的全屏视频播放器：
 
-<video src="https://blog.zgqinc.gq/assets/videos/rickroll.mp4" controls></video>
+<video src="/assets/videos/rickroll.mp4" controls></video>
 
 #### 原生音频演示 (Audio)
 简洁美观的内嵌式音频播放栏，支持丝滑进度拖拽：
 
-<audio src="https://blog.zgqinc.gq/assets/audios/Record_Makers_Kavinsky_Nightcall_Drive_Original_Movie_Soundtrack.mp3" controls
+<audio src="/assets/audios/Record_Makers_Kavinsky_Nightcall_Drive_Original_Movie_Soundtrack.mp3" controls
        data-title="Nightcall"
        data-artist="Kavinsky">
 </audio>
