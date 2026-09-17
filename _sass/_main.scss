@@ -1394,18 +1394,51 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
   padding: 0 16px;
   gap: 12px;
   box-shadow: var(--md-sys-elevation-1);
-  transition: box-shadow 200ms ease, background-color 200ms ease;
+  transition: box-shadow 200ms ease, background-color 200ms ease, color 200ms ease;
   flex: 1;
   min-width: 0;
+  cursor: text;
+  position: relative;
 
   &:focus-within {
     box-shadow: var(--md-sys-elevation-3);
     background-color: var(--md-sys-color-surface-container-highest);
   }
 
+  // MD3 Error State when regex syntax is invalid
+  &.is-error {
+    background-color: var(--md-sys-color-error-container) !important;
+    box-shadow: 0 0 0 2px var(--md-sys-color-error), var(--md-sys-elevation-2) !important;
+
+    .search-icon {
+      color: var(--md-sys-color-error) !important;
+    }
+
+    input {
+      color: var(--md-sys-color-on-error-container) !important;
+
+      &::placeholder {
+        color: var(--md-sys-color-error) !important;
+        opacity: 0.7;
+      }
+    }
+
+    .search-regex-btn {
+      color: var(--md-sys-color-error) !important;
+
+      &.active {
+        background-color: var(--md-sys-color-error) !important;
+        color: var(--md-sys-color-on-error) !important;
+      }
+    }
+  }
+
   .search-icon {
     color: var(--md-sys-color-on-surface-variant);
     font-size: 24px;
+    flex-shrink: 0;
+    user-select: none;
+    pointer-events: none;
   }
 
   input {
@@ -1421,6 +1454,53 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
     &::placeholder {
       color: var(--md-sys-color-on-surface-variant);
       opacity: 0.8;
+    }
+  }
+
+  // MD3 Regex Toggle Button
+  .search-regex-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: var(--shape-full, 50%);
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--md-sys-color-on-surface-variant);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    flex-shrink: 0;
+    padding: 0;
+    margin: 0;
+    outline: none;
+    transition: background-color 200ms ease, color 200ms ease, border-color 200ms ease, transform 150ms ease;
+    user-select: none;
+
+    &:hover {
+      background-color: var(--md-sys-color-surface-container-highest);
+      color: var(--md-sys-color-on-surface);
+    }
+
+    &:active {
+      transform: scale(0.92);
+    }
+
+    &.active {
+      background-color: var(--md-sys-color-primary-container);
+      color: var(--md-sys-color-on-primary-container);
+      border-color: color-mix(in srgb, var(--md-sys-color-primary) 30%, transparent);
+
+      &:hover {
+        background-color: color-mix(in srgb, var(--md-sys-color-primary-container) 85%, var(--md-sys-color-primary));
+      }
+    }
+
+    .regex-icon {
+      font-family: 'Roboto Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      line-height: 1;
     }
   }
 }

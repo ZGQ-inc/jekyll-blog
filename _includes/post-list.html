@@ -1,8 +1,11 @@
 <!-- Filter Bar -->
 <div class="filter-bar">
-  <div class="android-search-bar">
+  <div class="android-search-bar" id="androidSearchBar">
     <span class="material-symbols-outlined search-icon">search</span>
-    <input type="text" id="searchInput" placeholder="搜索文章、标签、正文…" aria-label="搜索文章">
+    <input type="text" id="searchInput" placeholder="搜索文章、标签、正文…" aria-label="搜索文章" autocomplete="off" spellcheck="false">
+    <button type="button" id="regexToggleBtn" class="search-regex-btn action-btn" aria-label="正则表达式模式" title="正则表达式模式" aria-pressed="false">
+      <span class="regex-icon">.*</span>
+    </button>
   </div>
   <div class="view-toggle" role="group" aria-label="切换视图">
     <button data-view="grid" class="active" aria-label="网格视图" title="网格">

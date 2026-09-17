@@ -17,6 +17,7 @@ class BlogPaginationManager {
     this.btnNext = null;
     this.btnTop = null;
     this.isInitialized = false;
+    this.isSearching = false;
   }
 
   init() {
@@ -98,55 +99,79 @@ class BlogPaginationManager {
     const startIndex = (this.currentPage - 1) * this.itemsPerPage;
     const endIndex = startIndex + this.itemsPerPage;
 
-    const visibleSet = new Set(this.filteredCards.slice(startIndex, endIndex));
+    const visibleCards = this.filteredCards.slice(startIndex, endIndex);
+    const visibleSet = new Set(visibleCards);
 
-    // Update post card display
-    this.allCards.forEach(card => {
-      if (visibleSet.has(card)) {
+    // Update post card display & visual order
+    if (this.isSearching) {
+      // Set visual order for visible cards strictly by relevance ranking
+      visibleCards.forEach((card, idx) => {
+        card.style.order = idx;
         card.style.display = '';
         card.classList.add('animate-fade-in-up');
-      } else {
-        card.style.display = 'none';
-      }
-    });
+      });
+      // Hide all non-matching or off-page cards and reset their order
+      this.allCards.forEach(card => {
+        if (!visibleSet.has(card)) {
+          card.style.display = 'none';
+          card.style.order = '';
+        }
+      });
+      // Hide timeline headers during search as relevance sorting mixes chronological dates
+      const headers = this.galleryContainer.querySelectorAll('.timeline-header');
+      headers.forEach(header => {
+        header.style.display = 'none';
+      });
+    } else {
+      // Non-search mode: reset CSS order and render in native DOM chronological sequence
+      this.allCards.forEach(card => {
+        card.style.order = '';
+        if (visibleSet.has(card)) {
+          card.style.display = '';
+          card.classList.add('animate-fade-in-up');
+        } else {
+          card.style.display = 'none';
+        }
+      });
 
-    // Update timeline headers visibility
-    const headers = this.galleryContainer.querySelectorAll('.timeline-header');
-    headers.forEach(header => {
-      const dateStr = header.dataset.date;
-      const tagStr = header.dataset.tag;
-      const catStr = header.dataset.cat;
-      const headerId = header.id;
+      // Update timeline headers visibility
+      const headers = this.galleryContainer.querySelectorAll('.timeline-header');
+      headers.forEach(header => {
+        const dateStr = header.dataset.date;
+        const tagStr = header.dataset.tag;
+        const catStr = header.dataset.cat;
+        const headerId = header.id;
 
-      // Check if any visible post belongs to this header
-      let hasVisiblePost = false;
-      for (const card of visibleSet) {
-        if (dateStr && card.querySelector(`.calendar-jump-trigger[data-date="${dateStr}"]`)) {
-          hasVisiblePost = true;
-          break;
-        }
-        if (tagStr && card.dataset.tag === tagStr) {
-          hasVisiblePost = true;
-          break;
-        }
-        if (catStr && card.dataset.cat === catStr) {
-          hasVisiblePost = true;
-          break;
-        }
-        // General check: if card is next sibling under this header
-        if (!dateStr && !tagStr && !catStr) {
-          let prev = card.previousElementSibling;
-          while (prev) {
-            if (prev === header) { hasVisiblePost = true; break; }
-            if (prev.classList.contains('timeline-header')) break;
-            prev = prev.previousElementSibling;
+        // Check if any visible post belongs to this header
+        let hasVisiblePost = false;
+        for (const card of visibleSet) {
+          if (dateStr && card.querySelector(`.calendar-jump-trigger[data-date="${dateStr}"]`)) {
+            hasVisiblePost = true;
+            break;
           }
-          if (hasVisiblePost) break;
+          if (tagStr && card.dataset.tag === tagStr) {
+            hasVisiblePost = true;
+            break;
+          }
+          if (catStr && card.dataset.cat === catStr) {
+            hasVisiblePost = true;
+            break;
+          }
+          // General check: if card is next sibling under this header
+          if (!dateStr && !tagStr && !catStr) {
+            let prev = card.previousElementSibling;
+            while (prev) {
+              if (prev === header) { hasVisiblePost = true; break; }
+              if (prev.classList.contains('timeline-header')) break;
+              prev = prev.previousElementSibling;
+            }
+            if (hasVisiblePost) break;
+          }
         }
-      }
 
-      header.style.display = hasVisiblePost ? '' : 'none';
-    });
+        header.style.display = hasVisiblePost ? '' : 'none';
+      });
+    }
 
     // Update Bottom Island
     if (this.bottomIsland) {
@@ -194,8 +219,9 @@ class BlogPaginationManager {
     this.render(options);
   }
 
-  setFilteredCards(cards) {
+  setFilteredCards(cards, isSearching = false) {
     this.filteredCards = cards;
+    this.isSearching = !!isSearching;
     this.currentPage = 1;
     this.render({ scroll: false });
   }
