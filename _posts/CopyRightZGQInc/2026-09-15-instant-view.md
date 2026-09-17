@@ -356,7 +356,7 @@ Telegram 即时预览官方原生支持解析主流流行平台的内容嵌入�
 支持原生嵌入展示 Telegram 公开频道或群组的历史发言与动态：
 
 <div class="tg-post-embed">
-  <iframe src="https://t.me/ZGQincLiqun/3395?embed=1" frameborder="0"></iframe>
+  <iframe src="https://t.me/CopyRightZGQInc/1?embed=1" frameborder="0"></iframe>
 </div>
 
 ---

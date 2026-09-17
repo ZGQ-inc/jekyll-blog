@@ -52,24 +52,22 @@ cover:           $@
 @replace_tag(<li>): //dt
 @replace_tag(<li>): //dd
 
-# 9. 文章插图转换为原生 figure 并从段落中切分提取
-@wrap(<figure>): $body//img
-@split_parent: //figure
-
-# 10. 外部嵌入媒体适配 (YouTube / Vimeo / Twitter / Telegram 等原生流媒体与外部组件)
-# 10.1 针对不受支持的第三方 iframe 进行优雅降级，转为普通超链接以防 IV 崩溃
+# 9. 外部嵌入媒体适配 (YouTube / Vimeo / Twitter / Telegram 等原生流媒体与外部组件)
+# 9.1 针对不受支持的第三方 iframe 进行优雅降级，转为普通超链接以防 IV 崩溃
 $unsupported_iframe: $body//iframe[not(contains(@src, "youtube") or contains(@src, "youtu.be") or contains(@src, "vimeo") or contains(@src, "twitter") or contains(@src, "x.com") or contains(@src, "t.me") or contains(@src, "instagram") or contains(@src, "soundcloud") or contains(@src, "github") or contains(@src, "gist"))]
 @replace_tag(<a>): $unsupported_iframe
 @set_attr(href, @src): $body//a[not(@href) and @src]
 
-# 10.2 将受支持的原生流媒体 iframe 封装为 figure 并与父级容器安全拆分
-@wrap(<figure>): $body//iframe[not(parent::figure)]
-@split_parent: //figure
+# 9.2 将响应式视频与消息卡片外层容器直接转换为原生 figure
+@replace_tag(<figure>): //div[has-class("md3-video-embed") or has-class("tg-post-embed")]
 
-# 10.3 原生音频与视频标签 (audio / video) 增强与规范化封装
+# 10. 正文插图、独立媒体与外部嵌入封装为 figure，并从父级段落中安全切分（保护正文主体容器不被截断）
+@wrap(<figure>): $body//img[not(parent::figure)]
+@wrap(<figure>): $body//iframe[not(parent::figure)]
 @wrap(<figure>): $body//video[not(parent::figure)]
 @wrap(<figure>): $body//audio[not(parent::figure)]
-@split_parent: //figure
+@split_parent: //figure[parent::p]
+@split_parent: //figure[not(parent::div[has-class("article-content")]) and not(parent::details)]
 
 # 11. 深度扁平化 Rouge 语法高亮代码块（剥离行号 table，提取纯净 pre 代码）
 @remove: //td[has-class("rouge-gutter")]
@@ -83,5 +81,5 @@ $unsupported_iframe: $body//iframe[not(contains(@src, "youtube") or contains(@sr
 # 12. 简化列表项内多余的段落嵌套
 @simplify: //li//p
 
-# 13. 简化 body 内所有剩余的辅助容器 div（排除包裹代码块的 div，保护 pre 等宽格式与换行）
-@simplify: $body//div[not(.//pre)]
+# 13. 简化 body 内所有剩余的辅助容器 div（排除包裹代码块与媒体的 div）
+@simplify: $body//div[not(.//pre) and not(.//figure) and not(.//iframe) and not(.//video) and not(.//audio)]
