@@ -41,17 +41,28 @@ module LinkPreview
       title = body['illustTitle'] || "Pixiv ##{illust_id}"
       author = body['userName'] || "Pixiv Artist"
       tags = (body['tags'] && body['tags']['tags']) ? body['tags']['tags'].map { |t| t['tag'] } : []
-      tag_str = tags.first(5).join(' · ')
+      x_restrict = body['xRestrict'].to_i
+      is_r18 = (x_restrict >= 1) || tags.include?('R-18') || tags.include?('R-18G')
+      is_r18g = (x_restrict >= 2) || tags.include?('R-18G')
+
+      badges = []
+      if is_r18g
+        badges << { 'type' => 'r18', 'label' => 'R-18G (NSFW)', 'icon' => '18_up_rating' }
+      elsif is_r18
+        badges << { 'type' => 'r18', 'label' => 'R-18 (NSFW)', 'icon' => '18_up_rating' }
+      end
+      badges << { 'type' => 'artist', 'label' => author, 'icon' => 'palette' }
+      badges << { 'type' => 'pixiv', 'label' => "ID: #{illust_id}", 'icon' => 'image' }
+
+      tag_str = tags.reject { |t| t.start_with?('R-18') }.first(5).join(' · ')
 
       return {
         'title' => "#{title} - #{author}",
         'description' => tag_str.empty? ? "Pixiv ID: #{illust_id}" : "标签: #{tag_str}",
         'image' => "https://embed.pixiv.net/artwork.php?illust_id=#{illust_id}",
         'domain' => 'pixiv.net',
-        'badges' => [
-          { 'type' => 'artist', 'label' => author, 'icon' => 'palette' },
-          { 'type' => 'pixiv', 'label' => "ID: #{illust_id}", 'icon' => 'image' }
-        ]
+        'is_r18' => is_r18,
+        'badges' => badges
       }
     rescue => e
       Jekyll.logger.warn "LinkPreview (Pixiv):", "Direct AJAX failed for #{illust_id} (#{e.message}), trying Phixiv..."
@@ -64,14 +75,19 @@ module LinkPreview
       parsed = Nokogiri::HTML(html)
       title = parsed.at_css('meta[property="og:title"]')&.[]('content') || "Pixiv ##{illust_id}"
       desc = parsed.at_css('meta[property="og:description"]')&.[]('content') || ""
+      is_r18 = desc.include?('R-18') || title.include?('R-18')
+
+      badges = []
+      badges << { 'type' => 'r18', 'label' => 'R-18', 'icon' => '18_up_rating' } if is_r18
+      badges << { 'type' => 'pixiv', 'label' => "ID: #{illust_id}", 'icon' => 'image' }
+
       return {
         'title' => title.strip,
         'description' => desc.strip,
         'image' => "https://embed.pixiv.net/artwork.php?illust_id=#{illust_id}",
         'domain' => 'pixiv.net',
-        'badges' => [
-          { 'type' => 'pixiv', 'label' => "ID: #{illust_id}", 'icon' => 'image' }
-        ]
+        'is_r18' => is_r18,
+        'badges' => badges
       }
     rescue => e2
       Jekyll.logger.warn "LinkPreview (Pixiv):", "Phixiv failed for #{illust_id}: #{e2.message}"
@@ -83,6 +99,7 @@ module LinkPreview
       'description' => "View illustration #{illust_id} on Pixiv",
       'image' => "https://embed.pixiv.net/artwork.php?illust_id=#{illust_id}",
       'domain' => 'pixiv.net',
+      'is_r18' => false,
       'badges' => [
         { 'type' => 'pixiv', 'label' => "ID: #{illust_id}", 'icon' => 'image' }
       ]
@@ -100,36 +117,60 @@ module LinkPreview
       json = JSON.parse(req_data)
       post = json['post']
       rating = post['rating'] || 'q'
+      is_r18 = (rating == 'e')
       score = post['score'] ? post['score']['total'] : 0
+
+      # Multiple artists support
       artists = (post['tags'] && post['tags']['artist']) ? post['tags']['artist'] : []
-      artist_name = artists.reject { |a| a == 'conditional_dnp' }.first || 'Unknown Artist'
-      characters = (post['tags'] && post['tags']['character']) ? post['tags']['character'].first(3).join(' · ') : ''
-      tags = (post['tags'] && post['tags']['general']) ? post['tags']['general'].first(4).join(' · ') : ''
+      artists = artists.reject { |a| a == 'conditional_dnp' || a == 'third-party_edit' }
+      artists = ['Unknown Artist'] if artists.empty?
+      artist_display = artists.map { |a| a.tr('_', ' ') }.join(', ')
+
+      # Tags: Copyright, Character, Species (NO General tags)
+      copyright_tags = (post['tags'] && post['tags']['copyright']) ? post['tags']['copyright'].map { |t| t.tr('_', ' ') } : []
+      character_tags = (post['tags'] && post['tags']['character']) ? post['tags']['character'].map { |t| t.tr('_', ' ') } : []
+      species_tags = (post['tags'] && post['tags']['species']) ? post['tags']['species'].map { |t| t.tr('_', ' ') } : []
+
+      desc_items = []
+      desc_items << "原作: #{copyright_tags.first(3).join(', ')}" unless copyright_tags.empty?
+      desc_items << "角色: #{character_tags.first(3).join(', ')}" unless character_tags.empty?
+      desc_items << "物种: #{species_tags.first(3).join(', ')}" unless species_tags.empty?
+
+      description = desc_items.empty? ? "e621 Post ##{post_id}" : desc_items.join(' | ')
 
       img = (post['sample'] && post['sample']['url']) ? post['sample']['url'] : (post['preview'] && post['preview']['url'] ? post['preview']['url'] : (post['file'] && post['file']['url'] ? post['file']['url'] : ''))
 
       rating_map = {
         's' => { 'label' => 'Safe', 'class' => 'rating-s', 'icon' => 'verified_user' },
         'q' => { 'label' => 'Questionable', 'class' => 'rating-q', 'icon' => 'warning' },
-        'e' => { 'label' => 'Explicit', 'class' => 'rating-e', 'icon' => 'error' }
+        'e' => { 'label' => 'Explicit (R-18)', 'class' => 'rating-e', 'icon' => 'error' }
       }
       r_info = rating_map[rating] || { 'label' => rating.to_s.upcase, 'class' => 'rating-q', 'icon' => 'help' }
 
-      badges = [
-        { 'type' => r_info['class'], 'label' => r_info['label'], 'icon' => r_info['icon'] },
-        { 'type' => 'artist', 'label' => artist_name, 'icon' => 'palette' },
-        { 'type' => 'score', 'label' => "#{score.to_i > 0 ? '+' : ''}#{score}", 'icon' => 'thumb_up' }
-      ]
+      badges = []
+      if is_r18
+        badges << { 'type' => 'r18', 'label' => 'R-18 (Explicit)', 'icon' => '18_up_rating' }
+      else
+        badges << { 'type' => r_info['class'], 'label' => r_info['label'], 'icon' => r_info['icon'] }
+      end
 
-      desc_items = []
-      desc_items << "角色: #{characters}" unless characters.empty?
-      desc_items << "标签: #{tags}" unless tags.empty?
+      # Output artist badge(s)
+      if artists.length <= 2
+        artists.each do |a|
+          badges << { 'type' => 'artist', 'label' => a.tr('_', ' '), 'icon' => 'palette' }
+        end
+      else
+        badges << { 'type' => 'artist', 'label' => artist_display, 'icon' => 'palette' }
+      end
+
+      badges << { 'type' => 'score', 'label' => "#{score.to_i > 0 ? '+' : ''}#{score}", 'icon' => 'thumb_up' }
 
       return {
-        'title' => "e621 ##{post_id} by #{artist_name}",
-        'description' => desc_items.empty? ? "e621 Post ##{post_id}" : desc_items.join(' | '),
+        'title' => "e621 ##{post_id} by #{artist_display}",
+        'description' => description,
         'image' => img,
         'domain' => 'e621.net',
+        'is_r18' => is_r18,
         'badges' => badges
       }
     rescue => e
@@ -139,6 +180,7 @@ module LinkPreview
         'description' => "View post #{post_id} on e621",
         'image' => '',
         'domain' => 'e621.net',
+        'is_r18' => false,
         'badges' => [
           { 'type' => 'rating-q', 'label' => 'e621', 'icon' => 'image' }
         ]
@@ -176,12 +218,13 @@ module LinkPreview
           'title' => title.strip,
           'description' => desc.strip,
           'image' => image.strip,
-          'domain' => domain
+          'domain' => domain,
+          'is_r18' => false
         }
       rescue => e
         Jekyll.logger.warn "LinkPreview:", "Failed to fetch #{url}: #{e.message}"
         domain = URI.parse(url).host rescue url
-        data = { 'title' => url, 'description' => '', 'image' => '', 'domain' => domain }
+        data = { 'title' => url, 'description' => '', 'image' => '', 'domain' => domain, 'is_r18' => false }
       end
     end
 
@@ -232,7 +275,8 @@ Jekyll::Hooks.register [:pages, :documents], :post_convert do |doc|
           'title' => title,
           'description' => desc,
           'image' => image,
-          'domain' => domain
+          'domain' => domain,
+          'is_r18' => false
         }
       end
     end
@@ -259,11 +303,32 @@ Jekyll::Hooks.register [:pages, :documents], :post_convert do |doc|
       if !image_safe.empty?
         img_src = image_safe
         img_src = (site.config['url'] || '') + img_src if img_src.start_with?('/')
-        image_html = %Q{
-          <span class="card-image-wrapper">
-            <img src="#{img_src}" class="card-image" loading="lazy" onerror="this.parentElement.style.display='none'">
-          </span>
-        }
+        
+        # Pixiv & e621 use adaptive contain-fit without cropping
+        is_artwork = (data['domain'] == 'pixiv.net' || data['domain'] == 'e621.net')
+        wrapper_classes = ["card-image-wrapper"]
+        wrapper_classes << "is-adaptive" if is_artwork
+        
+        if data['is_r18']
+          wrapper_classes << "is-r18-masked"
+          image_html = %Q{
+            <span class="#{wrapper_classes.join(' ')}" data-r18="true">
+              <img src="#{img_src}" class="card-image blur-r18" loading="lazy" onerror="this.parentElement.style.display='none'">
+              <span class="card-mask-overlay" role="button" tabindex="0" title="点击解锁 R-18 敏感内容">
+                <span class="card-mask-chip">
+                  <span class="material-symbols-outlined">visibility_off</span>
+                  <span>R-18 敏感内容 · 点击解锁</span>
+                </span>
+              </span>
+            </span>
+          }
+        else
+          image_html = %Q{
+            <span class="#{wrapper_classes.join(' ')}">
+              <img src="#{img_src}" class="card-image" loading="lazy" onerror="this.parentElement.style.display='none'">
+            </span>
+          }
+        end
       end
 
       badges_html = ""
@@ -278,7 +343,7 @@ Jekyll::Hooks.register [:pages, :documents], :post_convert do |doc|
         badges_html = %Q{<span class="card-badges">#{badges_items}</span>}
       end
 
-      desc_trunc = desc_safe.length > 120 ? desc_safe[0...117] + '...' : desc_safe
+      desc_trunc = desc_safe.length > 180 ? desc_safe[0...177] + '...' : desc_safe
 
       card_html = %Q{
         <a href="#{url}" class="md3-link-card" target="#{is_internal ? '_self' : '_blank'}" rel="noopener">

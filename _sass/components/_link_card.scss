@@ -3,14 +3,15 @@
    ========================================================================== */
 .md3-link-card {
   display: block;
-  max-width: 480px; /* Limit width so it doesn't have too much whitespace */
+  width: 100%;
+  max-width: 680px; /* Expanded width for comfortable readability & media layout */
   text-decoration: none !important;
   color: inherit !important;
   background-color: var(--md-sys-color-surface-container);
   border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 50%, transparent);
-  border-radius: var(--shape-large);
+  border-radius: var(--shape-large, 16px);
   overflow: hidden;
-  margin: 1.5rem 0;
+  margin: 1.5rem auto;
   transition: all var(--dur-short4) var(--motion-standard) !important;
   box-shadow: var(--elev-1);
 }
@@ -33,11 +34,34 @@
 }
 
 .md3-link-card .card-image-wrapper {
+  position: relative;
   width: 100%;
-  aspect-ratio: 1.91 / 1; /* Standard Open Graph / Twitter Card ratio */
-  background-color: var(--md-sys-color-surface-variant);
-  border-bottom: 1px solid var(--md-sys-color-outline-variant);
+  aspect-ratio: 1.91 / 1; /* Standard Open Graph / Twitter Card ratio for normal web links */
+  background-color: color-mix(in srgb, var(--md-sys-color-surface-variant) 40%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 50%, transparent);
   overflow: hidden;
+
+  /* Adaptive image mode for Pixiv, e621, and artwork previews (NO CROPPING!) */
+  &.is-adaptive {
+    aspect-ratio: unset !important;
+    min-height: 220px;
+    max-height: 540px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(circle at center, color-mix(in srgb, var(--md-sys-color-surface-container-highest) 75%, transparent), color-mix(in srgb, var(--md-sys-color-surface-container-high) 90%, transparent));
+
+    .card-image {
+      width: auto !important;
+      max-width: 100% !important;
+      max-height: 540px !important;
+      height: auto !important;
+      object-fit: contain !important; /* Zero crop! Entire illustration visible */
+      display: block;
+      margin: 0 auto !important;
+      border-radius: 0 !important;
+    }
+  }
 }
 
 .md3-link-card img {
@@ -53,19 +77,87 @@
   transition: transform 0.4s cubic-bezier(0.2, 0, 0, 1);
 }
 
-.md3-link-card:hover .card-image {
-  transform: scale(1.05);
+.md3-link-card:hover .card-image:not(.blur-r18) {
+  transform: scale(1.02);
 }
 
+/* ==========================================================================
+   R-18 / NSFW Automatic Media Masking for Link Cards
+   ========================================================================== */
+.md3-link-card .card-image-wrapper.is-r18-masked {
+  position: relative;
+
+  .card-image.blur-r18 {
+    filter: blur(36px) brightness(0.65) !important;
+    transform: scale(1.08) !important;
+    transition: filter 0.45s cubic-bezier(0.2, 0, 0, 1), transform 0.45s cubic-bezier(0.2, 0, 0, 1) !important;
+    will-change: filter, transform;
+  }
+
+  .card-mask-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    background: color-mix(in srgb, var(--md-sys-color-surface-container) 60%, transparent);
+    z-index: 3;
+    transition: opacity 0.35s ease, visibility 0.35s ease;
+    cursor: pointer;
+  }
+
+  .card-mask-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 9px 20px;
+    background: color-mix(in srgb, var(--md-sys-color-error-container) 95%, transparent);
+    color: var(--md-sys-color-on-error-container);
+    border: 1px solid color-mix(in srgb, var(--md-sys-color-error) 45%, transparent);
+    border-radius: 20px;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    box-shadow: var(--elev-2);
+    transition: transform 0.2s ease, background 0.2s ease;
+
+    .material-symbols-outlined {
+      font-size: 18px !important;
+      color: var(--md-sys-color-error);
+    }
+
+    &:hover {
+      transform: scale(1.05);
+      background: var(--md-sys-color-error-container);
+    }
+  }
+
+  /* Unlocked state */
+  &.is-revealed {
+    .card-image.blur-r18 {
+      filter: none !important;
+      transform: scale(1) !important;
+    }
+
+    .card-mask-overlay {
+      opacity: 0 !important;
+      visibility: hidden !important;
+      pointer-events: none !important;
+    }
+  }
+}
+
+/* Card Text & Metadata */
 .md3-link-card .card-text {
-  padding: 12px 16px 16px 16px;
+  padding: 14px 18px 18px 18px;
   display: flex;
   flex-direction: column;
 }
 
 .md3-link-card .card-title {
   font-family: var(--font-family-title);
-  font-size: 1rem;
+  font-size: 1.05rem;
   font-weight: 600;
   line-height: 1.4;
   color: var(--md-sys-color-on-surface);
@@ -77,12 +169,12 @@
 }
 
 .md3-link-card .card-desc {
-  font-size: 0.8125rem;
-  line-height: 1.5;
+  font-size: 0.85rem;
+  line-height: 1.55;
   color: var(--md-sys-color-on-surface-variant);
   margin-bottom: 12px;
   display: -webkit-box;
-  -webkit-line-clamp: 2;
+  -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
@@ -113,7 +205,7 @@
   text-transform: uppercase;
 }
 
-/* Badges for Link Preview Cards (e.g. Pixiv, e621, GitHub) */
+/* Badges for Link Preview Cards (Pixiv, e621, GitHub) */
 .md3-link-card .card-badges {
   display: flex;
   flex-wrap: wrap;
@@ -126,7 +218,7 @@
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  padding: 2px 8px;
+  padding: 3px 9px;
   font-size: 0.72rem;
   font-weight: 600;
   border-radius: 8px;
@@ -173,5 +265,11 @@
     color: #d32f2f;
     border: 1px solid color-mix(in srgb, #d32f2f 35%, transparent);
   }
-}
 
+  &.preview-badge-r18 {
+    background: color-mix(in srgb, #d32f2f 22%, transparent) !important;
+    color: #d32f2f !important;
+    border: 1px solid color-mix(in srgb, #d32f2f 45%, transparent) !important;
+    font-weight: 700 !important;
+  }
+}

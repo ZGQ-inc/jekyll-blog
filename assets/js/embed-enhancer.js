@@ -122,14 +122,40 @@
     });
   }
 
+  // 4. R-18 / NSFW Card Image Mask Handler
+  function initCardMasks() {
+    var cardMasks = document.querySelectorAll('.card-image-wrapper.is-r18-masked');
+    cardMasks.forEach(function(wrapper) {
+      var overlay = wrapper.querySelector('.card-mask-overlay');
+      if (!overlay) return;
+
+      function unlock(e) {
+        if (e) {
+          e.preventDefault();
+          e.stopPropagation();
+        }
+        wrapper.classList.add('is-revealed');
+      }
+
+      overlay.addEventListener('click', unlock);
+      overlay.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+          unlock(e);
+        }
+      });
+    });
+  }
+
   // Initialize on DOM ready
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', function() {
       initImageMasks();
+      initCardMasks();
       initEmbeds();
     });
   } else {
     initImageMasks();
+    initCardMasks();
     initEmbeds();
   }
 })();

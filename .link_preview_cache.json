@@ -3,13 +3,15 @@
     "title": "GitHub: Let’s build from here",
     "description": "GitHub is where over 100 million developers shape the future of software, together.",
     "image": "https://github.githubassets.com/images/modules/site/social-cards/campaign-social.png",
-    "domain": "github.com"
+    "domain": "github.com",
+    "is_r18": false
   },
   "https://www.pixiv.net/artworks/112217641": {
     "title": "rangiku matsumoto - williamk22",
     "description": "Pixiv ID: 112217641 | 标签: 乱菊 · 死神 · 松本乱菊 · BLEACH · ブリーチ",
     "image": "https://embed.pixiv.net/artwork.php?illust_id=112217641",
     "domain": "pixiv.net",
+    "is_r18": false,
     "badges": [
       {
         "type": "artist",
@@ -23,11 +25,36 @@
       }
     ]
   },
+  "https://www.pixiv.net/artworks/95543160": {
+    "title": "デカ乳ギンガ団したっぱちゃん♥ - くろたま@吟醸マゴッツ",
+    "description": "Pixiv ID: 95543160 | 标签: ポケモン · ギンガ団 · したっぱ",
+    "image": "https://embed.pixiv.net/artwork.php?illust_id=95543160",
+    "domain": "pixiv.net",
+    "is_r18": true,
+    "badges": [
+      {
+        "type": "r18",
+        "label": "R-18 (NSFW)",
+        "icon": "18_up_rating"
+      },
+      {
+        "type": "artist",
+        "label": "くろたま@吟醸マゴッツ",
+        "icon": "palette"
+      },
+      {
+        "type": "pixiv",
+        "label": "ID: 95543160",
+        "icon": "image"
+      }
+    ]
+  },
   "https://e621.net/posts/3720760": {
     "title": "e621 #3720760 by hoc2pus",
-    "description": "角色: deeja | 标签: anthro · female · canine · mammal",
+    "description": "原作: bethesda game studios, microsoft, skyrim | 角色: deeja | 物种: argonian, reptile, scalie",
     "image": "https://static1.e621.net/data/06/c8/06c8834b50f67ebecb85ef7003571ae4.jpg",
     "domain": "e621.net",
+    "is_r18": false,
     "badges": [
       {
         "type": "rating-q",
@@ -42,6 +69,30 @@
       {
         "type": "score",
         "label": "+334",
+        "icon": "thumb_up"
+      }
+    ]
+  },
+  "https://e621.net/posts/6714373": {
+    "title": "e621 #6714373 by sachasketchy",
+    "description": "原作: mario bros, nintendo | 角色: reina (sachasketchy) | 物种: avian, bird, koopa",
+    "image": "https://static1.e621.net/data/sample/21/98/21985f917832204cbf3688c2b9f19cf3.jpg",
+    "domain": "e621.net",
+    "is_r18": true,
+    "badges": [
+      {
+        "type": "r18",
+        "label": "R-18 (Explicit)",
+        "icon": "18_up_rating"
+      },
+      {
+        "type": "artist",
+        "label": "sachasketchy",
+        "icon": "palette"
+      },
+      {
+        "type": "score",
+        "label": "+45",
         "icon": "thumb_up"
       }
     ]
