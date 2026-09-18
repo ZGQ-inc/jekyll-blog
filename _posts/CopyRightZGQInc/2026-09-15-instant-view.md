@@ -332,7 +332,7 @@ Telegram IV 2.0 原生支持 `<audio>` 与 `<video>` 媒体标签。当用户在
 
 ---
 
-### 11. 外部流媒体与跨平台原生嵌入 (Native Embeds: YouTube / Vimeo / Telegram)
+### 11. 外部流媒体与跨平台原生嵌入 (Native Embeds: YouTube / Telegram / Twitter)
 
 Telegram 即时预览官方原生支持解析主流流行平台的内容嵌入（Embeds）。通过模板规则对 `<iframe>` 自动执行 `<figure>` 语义封装与父级段落安全解构，Telegram 客户端将直接调用**内置专属原生播放器**与**交互卡片**，让读者在即时预览中直接畅快播放 YouTube 视频，无需跳转外部浏览器：
 
@@ -340,23 +340,16 @@ Telegram 即时预览官方原生支持解析主流流行平台的内容嵌入�
 通过标准的 16:9 MD3 响应式嵌入容器（或 `{% raw %}{% include youtube.html id="dQw4w9WgXcQ" %}{% endraw %}`）：
 
 <div class="md3-video-embed">
-  <iframe src="https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ?enablejsapi=1" title="Rick Astley - Never Gonna Give You Up" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen loading="lazy"></iframe>
+  <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" title="Rick Astley - Never Gonna Give You Up" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen loading="lazy"></iframe>
 </div>
 
 *注：在 Telegram 即时预览中，该嵌入会被自动识别为原生 YouTube Widget，点击直接在 Telegram 浮层全屏播放。*
-
-#### Vimeo 视频原生嵌入 (Embedded Vimeo Player)
-原生支持 Vimeo 高清视频播放：
-
-<div class="md3-video-embed">
-  <iframe src="https://player.vimeo.com/video/76979871" title="Vimeo video player" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
-</div>
 
 #### Telegram 官方频道消息内嵌 (Embedded Telegram Post)
 支持原生嵌入展示 Telegram 公开频道或群组的历史发言与动态：
 
 <div class="tg-post-embed">
-  <iframe src="https://t.me/CopyRightZGQInc/1?embed=1" frameborder="0"></iframe>
+  <iframe src="https://t.me/CopyRightZGQInc/2061?embed=1" frameborder="0"></iframe>
 </div>
 
 ---

@@ -11,9 +11,6 @@
   {% include reddit.html url=embed_url %}
 {% elsif embed_url contains "github.com" %}
   {% include github.html url=embed_url description=include.description %}
-{% elsif embed_url contains "vimeo.com" %}
-  {% assign vimeo_id = embed_url | split: "vimeo.com/" | last | split: "?" | first %}
-  {% include vimeo.html id=vimeo_id %}
 {% else %}
   <div class="md3-generic-embed md3-embed-container" data-embed-platform="generic">
     <iframe src="{{ embed_url }}" frameborder="0" loading="lazy" allowfullscreen title="{{ include.title | default: 'Embedded Content' }}"></iframe>

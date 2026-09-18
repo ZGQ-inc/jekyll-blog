@@ -106,7 +106,6 @@
       var src = iframe.getAttribute('src') || '';
       var isVideo = src.indexOf('youtube') !== -1 || 
                     src.indexOf('youtu.be') !== -1 || 
-                    src.indexOf('vimeo') !== -1 || 
                     src.indexOf('bilibili.com') !== -1;
 
       if (isVideo && !iframe.closest('.md3-video-embed')) {
