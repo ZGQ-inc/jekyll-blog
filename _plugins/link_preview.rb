@@ -339,6 +339,7 @@ Jekyll::Hooks.register [:pages, :documents], :post_convert do |doc|
 
       # Pixiv & e621 use expanded artwork card mode
       is_artwork = (data['domain'] == 'pixiv.net' || data['domain'] == 'e621.net')
+      illust_id = data['illust_id'] || url[/\d+/]
       fallback_attr = (data['domain'] == 'pixiv.net' && illust_id) ? %Q{onerror="if(!this.dataset.fallback && !#{data['is_r18'] ? 'true' : 'false'}){this.dataset.fallback='1';this.src='https://embed.pixiv.net/artwork.php?illust_id=#{illust_id}';}else{this.parentElement.style.display='none';}"} : %Q{onerror="this.parentElement.style.display='none'"}
 
       image_html = ""
