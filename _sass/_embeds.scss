@@ -66,6 +66,52 @@
   }
 }
 
+/* Telegram Private Message Card Fallback */
+.tg-private-post-card {
+  margin: 1.5rem auto;
+  width: 100%;
+  max-width: 550px;
+  padding: 1.25rem 1.5rem;
+  border-radius: var(--shape-large, 16px);
+  background-color: var(--md-sys-color-surface-container);
+  border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 50%, transparent);
+  box-shadow: var(--elev-1);
+  box-sizing: border-box;
+
+  .tg-private-post-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+    color: var(--md-sys-color-on-surface);
+    margin-bottom: 0.5rem;
+
+    .tg-private-icon {
+      color: var(--md-sys-color-primary);
+      font-size: 1.25rem;
+    }
+
+    .tg-private-title {
+      font-size: 1rem;
+    }
+  }
+
+  .tg-private-desc {
+    margin: 0 0 1rem 0;
+    font-size: 0.875rem;
+    color: var(--md-sys-color-on-surface-variant);
+    line-height: 1.5;
+  }
+
+  .tg-private-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    text-decoration: none;
+    font-size: 0.875rem;
+  }
+}
+
 /* 3. Twitter / X Embed */
 .twitter-embed {
   display: flex;

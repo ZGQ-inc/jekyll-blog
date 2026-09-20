@@ -56,6 +56,8 @@ interface TgMessage {
   message_id: number;
   chat: TgChat;
   from?: TgUser;
+  sender_chat?: TgChat;
+  is_automatic_forward?: boolean;
   reply_to_message?: TgMessage;
   text?: string;
   caption?: string;
@@ -64,6 +66,25 @@ interface TgMessage {
   video?: TgVideo;
   audio?: TgAudio;
   date: number;
+  // Service / System message fields
+  pinned_message?: any;
+  new_chat_members?: any[];
+  left_chat_member?: any;
+  new_chat_title?: string;
+  new_chat_photo?: any[];
+  delete_chat_photo?: boolean;
+  group_chat_created?: boolean;
+  supergroup_chat_created?: boolean;
+  channel_chat_created?: boolean;
+  message_auto_delete_timer_changed?: any;
+  migrate_to_chat_id?: number;
+  migrate_from_chat_id?: number;
+  forum_topic_created?: any;
+  forum_topic_edited?: any;
+  forum_topic_closed?: any;
+  forum_topic_reopened?: any;
+  video_chat_started?: any;
+  video_chat_ended?: any;
 }
 
 interface TgAudio {
@@ -87,6 +108,7 @@ interface TgUser {
   id: number;
   username?: string;
   first_name: string;
+  is_bot?: boolean;
 }
 
 interface TgPhotoSize {
@@ -244,14 +266,77 @@ async function handleTelegramWebhook(request: Request, env: Env): Promise<Respon
     return jsonResponse({ ok: true });
   }
 
-  // Authentication check
+  // 1. 过滤特殊消息与系统服务消息，防止误触发或向群组/频道刷屏
+  // 1.1 自动转发消息 (如频道发布后自动转发到关联讨论组的消息)
+  if (message.is_automatic_forward) {
+    return jsonResponse({ ok: true });
+  }
+
+  // 1.2 Telegram 官方系统账号 (777000) 消息
+  if (message.from?.id === 777000) {
+    return jsonResponse({ ok: true });
+  }
+
+  // 1.3 来自其他 Bot 的消息，防止 Bot 间相互唤醒或循环触发
+  if (message.from?.is_bot) {
+    return jsonResponse({ ok: true });
+  }
+
+  // 1.4 系统服务事件消息 (置顶、加群、退群、修改群名、群创建等无内容消息)
+  const isServiceMessage = !!(
+    message.pinned_message ||
+    message.new_chat_members ||
+    message.left_chat_member ||
+    message.new_chat_title ||
+    message.new_chat_photo ||
+    message.delete_chat_photo ||
+    message.group_chat_created ||
+    message.supergroup_chat_created ||
+    message.channel_chat_created ||
+    message.message_auto_delete_timer_changed ||
+    message.migrate_to_chat_id ||
+    message.migrate_from_chat_id ||
+    message.forum_topic_created ||
+    message.forum_topic_edited ||
+    message.forum_topic_closed ||
+    message.forum_topic_reopened ||
+    message.video_chat_started ||
+    message.video_chat_ended
+  );
+  if (isServiceMessage) {
+    return jsonResponse({ ok: true });
+  }
+
+  // 1.5 空内容消息 (既无文本、图文说明，也无任何媒体附件)
+  const hasContent = !!(
+    message.text ||
+    message.caption ||
+    message.photo ||
+    message.video ||
+    message.audio ||
+    message.document
+  );
+  if (!hasContent) {
+    return jsonResponse({ ok: true });
+  }
+
+  const isPrivateChat = message.chat?.type === 'private';
+  const text = message.text || message.caption || '';
+  const isCommandOrBotAction = text.startsWith('/') || 
+    text.startsWith('📁') || 
+    text === '❌ 取消创建' || 
+    !!(message.reply_to_message?.from?.is_bot);
+
+  // 2. 权限校验
   if (!isAuthorizedAdmin(message.from, env)) {
     const fromDesc = message.from
       ? `${message.from.first_name || ''} (@${message.from.username || '无用户名'}, ID: ${message.from.id})`
       : '未知用户';
-    console.warn(`Unauthorized access attempt from ${fromDesc}`);
+    console.warn(`Unauthorized access attempt from ${fromDesc} in chat ${message.chat?.id} (${message.chat?.type})`);
 
-    if (message.chat?.id) {
+    // 重点：只有在私聊 (Private Chat) 场景下，才向用户返回「访问被拒绝」提示卡片。
+    // 在群组、超级群或频道等公开讨论场景中，普通用户的非授权发言/特殊消息一律静默忽略，绝不触发「访问被拒绝」刷屏。
+    if (isPrivateChat && message.chat?.id) {
       await sendTelegramMessage(env.TELEGRAM_BOT_TOKEN, {
         chat_id: message.chat.id,
         text: [
@@ -269,7 +354,10 @@ async function handleTelegramWebhook(request: Request, env: Env): Promise<Respon
     return jsonResponse({ ok: true });
   }
 
-  const text = message.text || message.caption || '';
+  // 3. 在非私聊群组中，如果不是针对 Bot 的指令或操作，也予以静默忽略，不干扰正常群聊
+  if (!isPrivateChat && !isCommandOrBotAction) {
+    return jsonResponse({ ok: true });
+  }
 
   // Handle Cancel from Reply Keyboard Menu
   if (text === '❌ 取消创建') {
@@ -1082,7 +1170,32 @@ async function handleGetPostComments(postId: string, request: Request, env: Env)
   }
 
   const cleanChannel = tgChannelId.replace('@', '');
-  const tgPostUrl = `https://t.me/${cleanChannel}/${tgMessageId}`;
+  const isPrivateChannel = cleanChannel.startsWith('-100') || cleanChannel.startsWith('c/');
+  const privateChatId = cleanChannel.replace(/^(-100|c\/)/, '');
+  const tgPostUrl = isPrivateChannel 
+    ? `https://t.me/c/${privateChatId}/${tgMessageId}`
+    : `https://t.me/${cleanChannel}/${tgMessageId}`;
+
+  if (isPrivateChannel) {
+    // Private channels/groups do not support public web comments embedding via widget
+    try {
+      const archived = await env.DB.prepare(
+        `SELECT comments_json FROM post_comments_archive WHERE post_id = ?`
+      ).bind(postId).first();
+      if (archived && archived.comments_json) {
+        const parsedArchive = JSON.parse(String(archived.comments_json));
+        return jsonResponse({ ok: true, post_id: postId, tg_post_url: tgPostUrl, ...parsedArchive, archived: true }, 200);
+      }
+    } catch (e) {}
+    return jsonResponse({
+      ok: false,
+      error: 'Private channel does not support public web discussion embedding',
+      post_id: postId,
+      tg_post_url: tgPostUrl,
+      count: 0,
+      comments: []
+    }, 200);
+  }
 
   // Fetch Telegram embed discussion page with comments_limit=100
   let tmeUrl = `https://t.me/${cleanChannel}/${tgMessageId}?embed=1&discussion=1&comments_limit=100`;

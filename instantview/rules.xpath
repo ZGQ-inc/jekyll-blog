@@ -59,7 +59,8 @@ cover:           $@
 @replace("\\?.*$", ""): $body//iframe[contains(@src, "youtube.com/embed")]/@src
 
 # 9.1 针对不受支持的第三方 iframe 进行优雅降级，转为普通超链接以防 IV 崩溃
-$unsupported_iframe: $body//iframe[not(contains(@src, "youtube") or contains(@src, "youtu.be") or contains(@src, "t.me") or contains(@src, "telegram.me") or contains(@src, "telegram.org") or contains(@src, "twitter") or contains(@src, "x.com") or contains(@src, "instagram") or contains(@src, "soundcloud") or contains(@src, "github") or contains(@src, "gist"))]
+# 注意：明确排除 Telegram 私密频道/群组消息 (t.me/c/...)，此类消息不支持 Widget 嵌入，会触发 IV Bot 报 "Embed not supported yet" 并拒绝生成
+$unsupported_iframe: $body//iframe[contains(@src, "t.me/c/") or contains(@src, "telegram.me/c/") or not(contains(@src, "youtube") or contains(@src, "youtu.be") or contains(@src, "t.me") or contains(@src, "telegram.me") or contains(@src, "telegram.org") or contains(@src, "twitter") or contains(@src, "x.com") or contains(@src, "instagram") or contains(@src, "soundcloud") or contains(@src, "github") or contains(@src, "gist"))]
 @replace_tag(<a>): $unsupported_iframe
 @set_attr(href, @src): $body//a[not(@href) and @src]
 

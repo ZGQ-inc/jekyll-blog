@@ -4,6 +4,20 @@
     {% assign tg_post = include.url | split: "t.me/" | last | split: "?" | first %}
   {% endif %}
 {% endif %}
-<div class="tg-post-embed" data-telegram-post="{{ tg_post }}">
-  <iframe src="https://t.me/{{ tg_post }}?embed=1" frameborder="0" scrolling="no" loading="lazy" title="Telegram Post: {{ tg_post }}"></iframe>
-</div>
+{% if tg_post contains "c/" or tg_post contains "+" or tg_post contains "joinchat" %}
+  <div class="tg-private-post-card md3-card" data-telegram-post="{{ tg_post }}">
+    <div class="tg-private-post-header">
+      <span class="material-symbols-outlined tg-private-icon">lock</span>
+      <span class="tg-private-title">Telegram 私密群组 / 频道消息</span>
+    </div>
+    <p class="tg-private-desc">此消息位于 Telegram 私密群组或频道，无法作为公开网页组件内嵌。请在 Telegram 客户端中打开：</p>
+    <a href="https://t.me/{{ tg_post }}" class="action-btn btn-filled tg-private-link" target="_blank" rel="noopener">
+      <span class="material-symbols-outlined">open_in_new</span>
+      <span>前往 Telegram 打开消息</span>
+    </a>
+  </div>
+{% else %}
+  <div class="tg-post-embed" data-telegram-post="{{ tg_post }}">
+    <iframe src="https://t.me/{{ tg_post }}?embed=1" frameborder="0" scrolling="no" loading="lazy" title="Telegram Post: {{ tg_post }}"></iframe>
+  </div>
+{% endif %}
