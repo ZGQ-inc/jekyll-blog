@@ -394,8 +394,8 @@ async function handleTelegramWebhook(request: Request, env: Env): Promise<Respon
     return jsonResponse({ ok: true });
   }
 
-  // Parse /new command
-  const newMatch = text.match(/^\/new\s+(.+)/s) || text.match(/^\/new$/);
+  // Parse /new command (支持 /new 或群聊中的 /new@BotName)
+  const newMatch = text.match(/^\/new(?:@\w+)?(?:\s+(.+)|$)/s);
   if (newMatch) {
     const title = newMatch[1] ? newMatch[1].trim() : '未命名文章';
     await handleNewCommand(message, title, env);
@@ -403,28 +403,28 @@ async function handleTelegramWebhook(request: Request, env: Env): Promise<Respon
   }
 
   // Parse /link command
-  const linkMatch = text.match(/^\/link\s+([a-zA-Z0-9_-]+)(?:\s+(.+))?$/s);
+  const linkMatch = text.match(/^\/link(?:@\w+)?\s+([a-zA-Z0-9_-]+)(?:\s+(.+))?$/s);
   if (linkMatch) {
     await handleLinkCommand(message, linkMatch[1], linkMatch[2] || '', env);
     return jsonResponse({ ok: true });
   }
 
   // Parse /sync command
-  const syncMatch = text.match(/^\/sync\s+([a-zA-Z0-9_-]+)(?:\s+(.+))?$/s);
+  const syncMatch = text.match(/^\/sync(?:@\w+)?\s+([a-zA-Z0-9_-]+)(?:\s+(.+))?$/s);
   if (syncMatch) {
     await handleSyncCommand(message, syncMatch[1], syncMatch[2] || '', env);
     return jsonResponse({ ok: true });
   }
 
   // Parse /cancel command
-  const cancelMatch = text.match(/^\/cancel\s+([a-zA-Z0-9_-]+)$/s);
+  const cancelMatch = text.match(/^\/cancel(?:@\w+)?\s+([a-zA-Z0-9_-]+)$/s);
   if (cancelMatch) {
     await handleCancelCommand(message, cancelMatch[1], env);
     return jsonResponse({ ok: true });
   }
 
   // Parse /bind command
-  const bindMatch = text.match(/^\/bind\s+([a-zA-Z0-9_-]+)\s+(https?:\/\/t\.me\/(?:c\/)?([a-zA-Z0-9_]+)\/(\d+))/s);
+  const bindMatch = text.match(/^\/bind(?:@\w+)?\s+([a-zA-Z0-9_-]+)\s+(https?:\/\/t\.me\/(?:c\/)?([a-zA-Z0-9_]+)\/(\d+))/s);
   if (bindMatch) {
     await handleBindCommand(message, bindMatch[1], bindMatch[2], bindMatch[3], bindMatch[4], env);
     return jsonResponse({ ok: true });
@@ -437,7 +437,7 @@ async function handleTelegramWebhook(request: Request, env: Env): Promise<Respon
   }
 
   // Help / Start command
-  if (text.startsWith('/start') || text.startsWith('/help')) {
+  if (text.match(/^\/(?:start|help)(?:@\w+)?(?:\s|$)/s)) {
     // Register official Telegram Bot Command Menu
     await setupBotCommands(env.TELEGRAM_BOT_TOKEN);
 
@@ -492,7 +492,33 @@ async function handleNewCommand(message: TgMessage, title: string, env: Env): Pr
     return;
   }
 
-  // Reply Keyboard Menu (底部菜单列表)
+  const isPrivateChat = message.chat?.type === 'private';
+  if (!isPrivateChat) {
+    // 群组模式：使用 Inline Keyboard (消息内嵌按钮)，避免 Reply Keyboard 污染整个群的输入栏
+    const inlineKeyboard = {
+      inline_keyboard: [
+        ...channels.map((c: any) => ([{
+          text: `📁 ${c.name} (${c.folder})`,
+          callback_data: `new_draft:${c.folder}`
+        }])),
+        [{ text: '❌ 取消创建', callback_data: 'new_draft:cancel' }]
+      ]
+    };
+
+    await sendTelegramMessage(env.TELEGRAM_BOT_TOKEN, {
+      chat_id: message.chat.id,
+      text: [
+        `请点击下方按钮选择目标发布频道：\n`,
+        `📌 <b>文章标题</b>: <code>${escapeHtml(title)}</code>`
+      ].join('\n'),
+      parse_mode: 'HTML',
+      reply_to_message_id: message.message_id,
+      reply_markup: inlineKeyboard
+    });
+    return;
+  }
+
+  // 私聊模式：使用 Reply Keyboard (底部快捷菜单)
   const keyboard = channels.map((c: any) => ([{
     text: `📁 ${c.name} (${c.folder})`
   }]));
@@ -519,14 +545,26 @@ async function handleCallbackQuery(callbackQuery: TgCallbackQuery, env: Env): Pr
   const data = callbackQuery.data;
   if (!data || !data.startsWith('new_draft:')) return;
 
-  const folder = data.replace('new_draft:', '').trim();
-
   // Answer callback query immediately to dismiss client loading spinner
   try {
     await callTelegramApi(env.TELEGRAM_BOT_TOKEN, 'answerCallbackQuery', {
       callback_query_id: callbackQuery.id
     });
   } catch (e) {}
+
+  if (data === 'new_draft:cancel') {
+    if (callbackQuery.message) {
+      await callTelegramApi(env.TELEGRAM_BOT_TOKEN, 'editMessageText', {
+        chat_id: callbackQuery.message.chat.id,
+        message_id: callbackQuery.message.message_id,
+        text: '已取消创建草稿。',
+        parse_mode: 'HTML'
+      });
+    }
+    return;
+  }
+
+  const folder = data.replace('new_draft:', '').trim();
 
   // Extract title from bot message text
   let title = '未命名文章';
