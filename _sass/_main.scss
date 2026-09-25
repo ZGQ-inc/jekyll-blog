@@ -3350,7 +3350,7 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
       width: 100% !important;
       border: none;
       display: block;
-      color-scheme: light dark;
+      color-scheme: light;
       opacity: 0;
       transform: translateY(10px);
       transition: opacity 0.45s cubic-bezier(0.2, 0, 0, 1), transform 0.45s cubic-bezier(0.2, 0, 0, 1);
@@ -3360,6 +3360,11 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
         transform: translateY(0);
       }
     }
+  }
+
+  [data-theme="dark"] & #tg-comments-container iframe,
+  html[data-theme="dark"] #tg-comments-container iframe {
+    color-scheme: dark;
   }
 
   .comments-loading-placeholder {

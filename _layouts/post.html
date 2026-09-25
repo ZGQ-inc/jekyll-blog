@@ -217,11 +217,24 @@ layout: default
       script.setAttribute('data-telegram-discussion', cleanChannel + '/' + data.tg_message_id);
       script.setAttribute('data-comments-limit', '20');
       script.setAttribute('data-colorful', '1');
+      var isDark = false;
+      if (window.themeManager && typeof window.themeManager.getEffectiveDark === 'function') {
+        isDark = window.themeManager.getEffectiveDark();
+      } else {
+        var themeAttr = document.documentElement.getAttribute('data-theme');
+        if (themeAttr === 'dark') {
+          isDark = true;
+        } else if (themeAttr === 'light') {
+          isDark = false;
+        } else {
+          isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        }
+      }
 
-      var isDark = document.documentElement.classList.contains('dark') ||
-                   (!document.documentElement.classList.contains('light') && window.matchMedia('(prefers-color-scheme: dark)').matches);
       if (isDark) {
         script.setAttribute('data-dark', '1');
+      } else {
+        script.setAttribute('data-dark', '0');
       }
 
       commentsContainer.appendChild(script);
@@ -316,8 +329,20 @@ layout: default
     loadComments(false);
 
     document.addEventListener('themechange', function(e) {
-      if (window.Telegram && window.Telegram.setWidgetOptions) {
-        window.Telegram.setWidgetOptions({ dark: e.detail && e.detail.isDark ? 1 : 0 });
+      var isDarkNow = (e.detail && typeof e.detail.isDark === 'boolean')
+        ? e.detail.isDark
+        : (document.documentElement.getAttribute('data-theme') === 'dark');
+      if (window.Telegram && typeof window.Telegram.setWidgetOptions === 'function') {
+        window.Telegram.setWidgetOptions({ dark: isDarkNow ? 1 : 0 });
+      }
+      var iframe = commentsContainer ? commentsContainer.querySelector('iframe') : null;
+      if (iframe && iframe.contentWindow) {
+        try {
+          iframe.contentWindow.postMessage(JSON.stringify({
+            event: 'set_options',
+            options: { dark: isDarkNow ? 1 : 0 }
+          }), '*');
+        } catch(err) {}
       }
     });
   });
