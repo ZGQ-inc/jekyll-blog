@@ -89,3 +89,8 @@ $unsupported_iframe: $body//iframe[contains(@src, "t.me/c/") or contains(@src, "
 
 # 13. 简化 body 内所有剩余的辅助容器 div（排除包裹代码块与媒体的 div）
 @simplify: $body//div[not(.//pre) and not(.//figure) and not(.//iframe) and not(.//video) and not(.//audio)]
+
+# 14. 转换网页端遮罩为 Telegram Instant View 原生 <tg-spoiler> 交互标签
+@replace_tag(<tg-spoiler>): $body//span[has-class("tg-spoiler")]
+@simplify: $body//tg-spoiler//span
+

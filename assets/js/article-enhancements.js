@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', () => {
+function initArticleEnhancements() {
   const kbdElements = document.querySelectorAll('kbd');
   kbdElements.forEach(kbd => {
     if (kbd.querySelector('.material-symbols-outlined')) return;
@@ -109,5 +109,169 @@ document.addEventListener('DOMContentLoaded', () => {
       dateItems.forEach(d => d.classList.remove('active'));
     }
   });
-});
+
+  // Telegram Spoiler with Cyber Glitch & Data Restoration Decryption
+  initTelegramSpoilers();
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initArticleEnhancements);
+} else {
+  initArticleEnhancements();
+}
+
+// ==============================================================================
+// Telegram Spoiler with Cyber Glitch & Data Restoration Decryption Engine
+// ==============================================================================
+function initTelegramSpoilers() {
+  const GLITCH_CHARS = '█▓▒░01X#$%/\\<>!?*+=~_';
+
+  // 1. Client-side progressive enhancement: scan text nodes for any unparsed ||spoiler|| syntax
+  const articleContent = document.querySelector('.article-content');
+  if (articleContent) {
+    const walker = document.createTreeWalker(
+      articleContent,
+      NodeFilter.SHOW_TEXT,
+      null,
+      false
+    );
+
+    const nodesToReplace = [];
+    let textNode;
+    while ((textNode = walker.nextNode())) {
+      const parent = textNode.parentElement;
+      if (!parent) continue;
+      if (parent.closest('pre, code, script, style, kbd, textarea, .tg-spoiler')) continue;
+      if (textNode.nodeValue && textNode.nodeValue.includes('||')) {
+        nodesToReplace.push(textNode);
+      }
+    }
+
+    nodesToReplace.forEach(node => {
+      const val = node.nodeValue;
+      if (!/(?<!\|)\|\|(?!\|)(.+?)(?<!\|)\|\|(?!\|)/s.test(val)) return;
+
+      const fragment = document.createDocumentFragment();
+      let lastIndex = 0;
+      const regex = /(?<!\|)\|\|(?!\|)(.+?)(?<!\|)\|\|(?!\|)/gs;
+      let match;
+
+      while ((match = regex.exec(val)) !== null) {
+        if (match.index > lastIndex) {
+          fragment.appendChild(document.createTextNode(val.substring(lastIndex, match.index)));
+        }
+        const span = document.createElement('span');
+        span.className = 'tg-spoiler';
+        span.setAttribute('data-spoiler', 'true');
+        span.setAttribute('tabindex', '0');
+        span.setAttribute('role', 'button');
+        span.setAttribute('aria-expanded', 'false');
+        span.setAttribute('title', '点击解密恢复数据');
+
+        const inner = document.createElement('span');
+        inner.className = 'tg-spoiler-inner';
+        inner.textContent = match[1];
+
+        span.appendChild(inner);
+        fragment.appendChild(span);
+        lastIndex = regex.lastIndex;
+      }
+
+      if (lastIndex < val.length) {
+        fragment.appendChild(document.createTextNode(val.substring(lastIndex)));
+      }
+
+      node.parentNode.replaceChild(fragment, node);
+    });
+  }
+
+  // 2. Bind cyber decryption restoration animations to all .tg-spoiler elements
+  const spoilers = document.querySelectorAll('.tg-spoiler');
+  spoilers.forEach(spoiler => {
+    const inner = spoiler.querySelector('.tg-spoiler-inner') || spoiler;
+    if (!inner) return;
+
+    // Cache original HTML
+    const originalHtml = inner.innerHTML;
+    const originalText = inner.textContent;
+
+    let isAnimating = false;
+
+    function triggerRestoration() {
+      if (isAnimating) return;
+
+      // If already revealed, toggle back to corrupted state
+      if (spoiler.classList.contains('is-revealed')) {
+        spoiler.classList.remove('is-revealed');
+        spoiler.setAttribute('aria-expanded', 'false');
+        spoiler.setAttribute('title', '点击解密恢复数据');
+        inner.innerHTML = originalHtml;
+        return;
+      }
+
+      // Start Data Restoration Animation
+      isAnimating = true;
+      spoiler.classList.add('is-restoring');
+      spoiler.setAttribute('aria-expanded', 'true');
+
+      const duration = 480; // ms
+      const startTime = performance.now();
+      const chars = Array.from(originalText);
+      const len = chars.length;
+
+      function step(now) {
+        const elapsed = now - startTime;
+        const progress = Math.min(1, elapsed / duration);
+
+        // Easing: easeOutQuad for snappy tech feel
+        const eased = 1 - (1 - progress) * (1 - progress);
+        const lockCount = Math.floor(eased * len);
+
+        // Construct scrambled display text
+        let scrambled = '';
+        for (let i = 0; i < len; i++) {
+          if (chars[i] === ' ' || chars[i] === '\n' || chars[i] === '\t') {
+            scrambled += chars[i];
+          } else if (i < lockCount) {
+            scrambled += chars[i];
+          } else {
+            const randChar = GLITCH_CHARS[Math.floor(Math.random() * GLITCH_CHARS.length)];
+            scrambled += randChar;
+          }
+        }
+
+        inner.textContent = scrambled;
+
+        if (progress < 1) {
+          requestAnimationFrame(step);
+        } else {
+          // Decryption finished! Restore full original HTML (including bold, links, etc.)
+          inner.innerHTML = originalHtml;
+          spoiler.classList.remove('is-restoring');
+          spoiler.classList.add('is-revealed');
+          spoiler.setAttribute('title', '点击重新遮罩数据');
+          isAnimating = false;
+        }
+      }
+
+      requestAnimationFrame(step);
+    }
+
+    spoiler.addEventListener('click', (e) => {
+      // Prevent clicking links inside unrevealed spoiler
+      if (!spoiler.classList.contains('is-revealed')) {
+        e.preventDefault();
+      }
+      triggerRestoration();
+    });
+
+    spoiler.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        triggerRestoration();
+      }
+    });
+  });
+}
+
 

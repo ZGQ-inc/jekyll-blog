@@ -1,0 +1,247 @@
+/* ==============================================================================
+   Telegram Spoiler with Cyber Data Corruption & Restoration Glitch
+   ============================================================================== */
+
+.tg-spoiler {
+  position: relative;
+  display: inline-flex;
+  align-items: baseline;
+  vertical-align: baseline;
+  box-sizing: border-box;
+  margin: 0 2px;
+  padding: 1px 7px;
+  border-radius: 6px;
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  font-family: inherit;
+  line-height: inherit;
+  overflow: hidden;
+  transition: all 0.28s cubic-bezier(0.2, 0, 0, 1);
+  outline: none;
+
+  /* 基础动态配色绑定 */
+  --spoiler-bg: color-mix(in srgb, var(--md-sys-color-primary) 16%, var(--md-sys-color-surface-container-high));
+  --spoiler-border: color-mix(in srgb, var(--md-sys-color-primary) 32%, transparent);
+  --spoiler-accent: var(--md-sys-color-primary);
+  --spoiler-glow: color-mix(in srgb, var(--md-sys-color-primary) 45%, transparent);
+  --spoiler-scan: color-mix(in srgb, var(--md-sys-color-tertiary, var(--md-sys-color-primary)) 50%, #ffffff);
+
+  background-color: var(--spoiler-bg);
+  border: 1px solid var(--spoiler-border);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+
+  &:focus-visible {
+    border-color: var(--spoiler-accent);
+    box-shadow: 0 0 0 2px var(--spoiler-glow);
+  }
+
+  /* ----------------------------------------------------------------------------
+     1. 未解密状态 (Corrupted / Masked)
+     ---------------------------------------------------------------------------- */
+  &:not(.is-revealed) {
+    .tg-spoiler-inner {
+      opacity: 0;
+      filter: blur(6px);
+      user-select: none;
+      -webkit-user-select: none;
+      pointer-events: none;
+      transition: filter 0.35s cubic-bezier(0.2, 0, 0, 1), opacity 0.35s cubic-bezier(0.2, 0, 0, 1);
+    }
+
+    /* 数据损坏故障扫描线与矩阵网格 */
+    &::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      pointer-events: none;
+      background:
+        repeating-linear-gradient(
+          0deg,
+          rgba(0, 0, 0, 0.12) 0px,
+          rgba(0, 0, 0, 0.12) 1.5px,
+          transparent 1.5px,
+          transparent 3px
+        ),
+        radial-gradient(
+          circle at 50% 50%,
+          color-mix(in srgb, var(--spoiler-accent) 26%, transparent),
+          transparent 90%
+        );
+      opacity: 0.9;
+      animation: tgSpoilerScanlines 3.5s linear infinite;
+    }
+
+    /* 赛博数据坏块与微噪点颗粒微颤层 */
+    &::after {
+      content: "";
+      position: absolute;
+      inset: -2px;
+      z-index: 3;
+      pointer-events: none;
+      background-image: 
+        radial-gradient(1px 1px at 20% 30%, var(--spoiler-accent) 50%, transparent 100%),
+        radial-gradient(1.5px 1.5px at 60% 70%, var(--spoiler-scan) 50%, transparent 100%),
+        radial-gradient(1px 1px at 85% 20%, var(--spoiler-accent) 50%, transparent 100%),
+        radial-gradient(1.5px 1.5px at 40% 80%, var(--spoiler-accent) 50%, transparent 100%);
+      background-size: 32px 32px;
+      opacity: 0.75;
+      mix-blend-mode: overlay;
+      animation: tgSpoilerGlitchJitter 0.45s steps(2) infinite alternate;
+    }
+
+    /* 悬停状态：活跃度增强，数据波动激化 */
+    &:hover {
+      border-color: var(--spoiler-accent);
+      box-shadow: 0 0 10px var(--spoiler-glow);
+      transform: translateY(-0.5px);
+
+      &::after {
+        opacity: 0.95;
+        animation-duration: 0.25s;
+      }
+    }
+  }
+
+  /* ----------------------------------------------------------------------------
+     2. 数据恢复解码中状态 (Restoring / Decrypting)
+     ---------------------------------------------------------------------------- */
+  &.is-restoring {
+    pointer-events: none;
+    border-color: var(--spoiler-accent);
+    box-shadow: 0 0 14px var(--spoiler-glow);
+
+    .tg-spoiler-inner {
+      opacity: 1;
+      filter: none;
+      color: var(--spoiler-accent);
+      font-family: ui-monospace, "SF Mono", "JetBrains Mono", Consolas, monospace;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-shadow: 0 0 8px var(--spoiler-glow);
+      transition: none;
+    }
+
+    /* 自左向右的高能数据重组扫描光束 */
+    &::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 4;
+      pointer-events: none;
+      background: linear-gradient(
+        90deg,
+        transparent 0%,
+        color-mix(in srgb, var(--spoiler-accent) 40%, transparent) 45%,
+        #ffffff 50%,
+        color-mix(in srgb, var(--spoiler-accent) 70%, transparent) 55%,
+        transparent 100%
+      );
+      background-size: 200% 100%;
+      animation: tgDataRestoreBeam 0.5s ease-out forwards;
+    }
+
+    &::after {
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+  }
+
+  /* ----------------------------------------------------------------------------
+     3. 已完全恢复数据状态 (Revealed)
+     ---------------------------------------------------------------------------- */
+  &.is-revealed {
+    background-color: color-mix(in srgb, var(--md-sys-color-primary) 7%, transparent);
+    border-color: color-mix(in srgb, var(--md-sys-color-outline-variant) 40%, transparent);
+    box-shadow: none;
+    user-select: text;
+    -webkit-user-select: text;
+
+    .tg-spoiler-inner {
+      opacity: 1;
+      filter: none;
+      color: inherit;
+      user-select: text;
+      -webkit-user-select: text;
+      pointer-events: auto;
+      transition: color 0.3s ease, filter 0.3s ease;
+    }
+
+    &::before,
+    &::after {
+      display: none;
+    }
+
+    &:hover {
+      border-color: var(--spoiler-border);
+      background-color: color-mix(in srgb, var(--md-sys-color-primary) 12%, transparent);
+    }
+  }
+}
+
+/* ------------------------------------------------------------------------------
+   动画关键帧定义 (Keyframes)
+   ------------------------------------------------------------------------------ */
+
+/* 1. 扫描线流动 */
+@keyframes tgSpoilerScanlines {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 0 36px;
+  }
+}
+
+/* 2. 赛博噪点与故障坏块微颤动效 */
+@keyframes tgSpoilerGlitchJitter {
+  0% {
+    transform: translate(0, 0) scale(1);
+    filter: hue-rotate(0deg);
+  }
+  25% {
+    transform: translate(-1.5px, 1px) scale(1.01);
+    filter: hue-rotate(25deg);
+  }
+  50% {
+    transform: translate(1px, -1px) scale(0.99);
+    filter: hue-rotate(-20deg);
+  }
+  75% {
+    transform: translate(-1px, -0.5px) scale(1.005);
+    filter: hue-rotate(15deg);
+  }
+  100% {
+    transform: translate(1.5px, 0.5px) scale(1);
+    filter: hue-rotate(0deg);
+  }
+}
+
+/* 3. 数据重组恢复扫描光束 */
+@keyframes tgDataRestoreBeam {
+  0% {
+    transform: translateX(-100%);
+    opacity: 0.2;
+  }
+  40% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+/* ------------------------------------------------------------------------------
+   无障碍：对偏好减弱动画的用户禁用高频抖动，保留精致静态毛玻璃遮罩
+   ------------------------------------------------------------------------------ */
+@media (prefers-reduced-motion: reduce) {
+  .tg-spoiler:not(.is-revealed)::before,
+  .tg-spoiler:not(.is-revealed)::after {
+    animation: none !important;
+  }
+  .tg-spoiler.is-restoring::before {
+    animation-duration: 0.01ms !important;
+  }
+}
