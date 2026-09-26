@@ -124,7 +124,19 @@ if (document.readyState === 'loading') {
 // Telegram Spoiler with Cyber Glitch & Data Restoration Decryption Engine
 // ==============================================================================
 function initTelegramSpoilers() {
-  const GLITCH_CHARS = '█▓▒░01X#$%/\\<>!?*+=~_';
+  const CJK_GLITCH_CHARS = ['█', '▓', '▒', '░', '■', '◆', '▲', '▼', '★', '※', '§', '¶', 'Ξ', 'Ψ', 'Ω'];
+  const ASCII_GLITCH_CHARS = ['0', '1', 'X', '#', '$', '%', '&', '<', '>', '/', '\\', '*', '+', '=', '!', '?'];
+
+  function getRandomGlitchChar(origChar) {
+    if (origChar === ' ' || origChar === '\t' || origChar === '\n' || origChar === '\r') {
+      return origChar;
+    }
+    // Match full-width CJK vs half-width ASCII so visual width remains identical
+    if (origChar.charCodeAt(0) > 255) {
+      return CJK_GLITCH_CHARS[Math.floor(Math.random() * CJK_GLITCH_CHARS.length)];
+    }
+    return ASCII_GLITCH_CHARS[Math.floor(Math.random() * ASCII_GLITCH_CHARS.length)];
+  }
 
   // 1. Client-side progressive enhancement: scan text nodes for any unparsed ||spoiler|| syntax
   const articleContent = document.querySelector('.article-content');
@@ -206,47 +218,60 @@ function initTelegramSpoilers() {
         spoiler.setAttribute('aria-expanded', 'false');
         spoiler.setAttribute('title', '点击解密恢复数据');
         inner.innerHTML = originalHtml;
+        spoiler.style.width = '';
+        spoiler.style.height = '';
         return;
       }
+
+      // 1. Measure and lock exact dimensions to eliminate ANY subpixel layout / line-height shift
+      const rect = spoiler.getBoundingClientRect();
+      spoiler.style.width = `${rect.width}px`;
+      spoiler.style.height = `${rect.height}px`;
 
       // Start Data Restoration Animation
       isAnimating = true;
       spoiler.classList.add('is-restoring');
       spoiler.setAttribute('aria-expanded', 'true');
 
-      const duration = 480; // ms
+      const totalDuration = 560; // ms
+      const fullGlitchDuration = 140; // ms - initial stage: 100% glitch, 0% plaintext
       const startTime = performance.now();
       const chars = Array.from(originalText);
       const len = chars.length;
 
       function step(now) {
         const elapsed = now - startTime;
-        const progress = Math.min(1, elapsed / duration);
 
-        // Easing: easeOutQuad for snappy tech feel
-        const eased = 1 - (1 - progress) * (1 - progress);
-        const lockCount = Math.floor(eased * len);
-
-        // Construct scrambled display text
-        let scrambled = '';
-        for (let i = 0; i < len; i++) {
-          if (chars[i] === ' ' || chars[i] === '\n' || chars[i] === '\t') {
-            scrambled += chars[i];
-          } else if (i < lockCount) {
-            scrambled += chars[i];
-          } else {
-            const randChar = GLITCH_CHARS[Math.floor(Math.random() * GLITCH_CHARS.length)];
-            scrambled += randChar;
+        if (elapsed < fullGlitchDuration) {
+          // Stage 1: 全量乱码阶段 (All characters are random glitch, length strictly invariant, 0 revealed)
+          let scrambled = '';
+          for (let i = 0; i < len; i++) {
+            scrambled += getRandomGlitchChar(chars[i]);
           }
-        }
+          inner.textContent = scrambled;
+          requestAnimationFrame(step);
+        } else if (elapsed < totalDuration) {
+          // Stage 2: 逐一解析阶段 (Sequential left-to-right decoding)
+          const decodeElapsed = elapsed - fullGlitchDuration;
+          const decodeDuration = totalDuration - fullGlitchDuration;
+          const progress = Math.min(1, decodeElapsed / decodeDuration);
+          const resolvedCount = Math.floor(progress * len);
 
-        inner.textContent = scrambled;
-
-        if (progress < 1) {
+          let scrambled = '';
+          for (let i = 0; i < len; i++) {
+            if (i < resolvedCount) {
+              scrambled += chars[i];
+            } else {
+              scrambled += getRandomGlitchChar(chars[i]);
+            }
+          }
+          inner.textContent = scrambled;
           requestAnimationFrame(step);
         } else {
-          // Decryption finished! Restore full original HTML (including bold, links, etc.)
+          // Stage 3: Decryption finished! Restore full original HTML (including bold, links, etc.)
           inner.innerHTML = originalHtml;
+          spoiler.style.width = '';
+          spoiler.style.height = '';
           spoiler.classList.remove('is-restoring');
           spoiler.classList.add('is-revealed');
           spoiler.setAttribute('title', '点击重新遮罩数据');
