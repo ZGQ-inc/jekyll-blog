@@ -9,87 +9,108 @@ module LinkPreview
   @cache = {}
   @cache_modified = false
 
-  def self.load_cache
-    if File.exist?(CACHE_FILE)
+  def self.load_cache(site = nil)
+    cache_path = site ? File.join(site.source, CACHE_FILE) : CACHE_FILE
+    if File.exist?(cache_path)
       begin
-        @cache = JSON.parse(File.read(CACHE_FILE))
+        @cache = JSON.parse(File.read(cache_path))
       rescue
         @cache = {}
       end
     end
   end
 
-  def self.save_cache
+  def self.save_cache(site = nil)
     if @cache_modified
-      File.write(CACHE_FILE, JSON.pretty_generate(@cache))
+      cache_path = site ? File.join(site.source, CACHE_FILE) : CACHE_FILE
+      File.write(cache_path, JSON.pretty_generate(@cache))
       @cache_modified = false
     end
   end
 
   def self.fetch_pixiv(url, illust_id)
-    # 1. Try Pixiv AJAX
+    # 1. Try Pixiv Direct AJAX
     begin
       ajax_url = "https://www.pixiv.net/ajax/illust/#{illust_id}"
       req_data = URI.open(ajax_url,
-        'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36',
+        'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
         'Referer' => "https://www.pixiv.net/artworks/#{illust_id}",
+        'Accept-Language' => 'ja,en-US;q=0.9,en;q=0.8,zh-CN;q=0.7',
+        'Accept' => 'application/json',
         :read_timeout => 8,
         :open_timeout => 5
       ).read
       json = JSON.parse(req_data)
-      body = json['body']
-      title = body['illustTitle'] || "Pixiv ##{illust_id}"
-      author = body['userName'] || "Pixiv Artist"
-      tags = (body['tags'] && body['tags']['tags']) ? body['tags']['tags'].map { |t| t['tag'] } : []
-      x_restrict = body['xRestrict'].to_i
-      is_r18 = (x_restrict >= 1) || tags.include?('R-18') || tags.include?('R-18G')
-      is_r18g = (x_restrict >= 2) || tags.include?('R-18G')
+      if json && !json['error'] && json['body'] && json['body'].is_a?(Hash)
+        body = json['body']
+        title = body['illustTitle'] || "Pixiv ##{illust_id}"
+        author = body['userName'] || "Pixiv Artist"
+        tags = (body['tags'] && body['tags']['tags']) ? body['tags']['tags'].map { |t| t['tag'] } : []
+        x_restrict = body['xRestrict'].to_i
+        is_r18 = (x_restrict >= 1) || tags.include?('R-18') || tags.include?('R-18G')
+        is_r18g = (x_restrict >= 2) || tags.include?('R-18G')
 
-      badges = []
-      if is_r18g
-        badges << { 'type' => 'r18', 'label' => 'R-18G (NSFW)', 'icon' => '18_up_rating' }
-      elsif is_r18
-        badges << { 'type' => 'r18', 'label' => 'R-18 (NSFW)', 'icon' => '18_up_rating' }
+        badges = []
+        if is_r18g
+          badges << { 'type' => 'r18', 'label' => 'R-18G (NSFW)', 'icon' => '18_up_rating' }
+        elsif is_r18
+          badges << { 'type' => 'r18', 'label' => 'R-18 (NSFW)', 'icon' => '18_up_rating' }
+        end
+        badges << { 'type' => 'artist', 'label' => author, 'icon' => 'palette' }
+        badges << { 'type' => 'pixiv', 'label' => "ID: #{illust_id}", 'icon' => 'image' }
+
+        tag_str = tags.reject { |t| t.start_with?('R-18') }.first(5).join(' · ')
+        img_url = "https://pixiv.cat/#{illust_id}.jpg"
+
+        return {
+          'title' => "#{title} - #{author}",
+          'description' => tag_str.empty? ? "Pixiv ID: #{illust_id}" : "标签: #{tag_str}",
+          'image' => img_url,
+          'domain' => 'pixiv.net',
+          'is_r18' => is_r18,
+          'illust_id' => illust_id,
+          'badges' => badges
+        }
       end
-      badges << { 'type' => 'artist', 'label' => author, 'icon' => 'palette' }
-      badges << { 'type' => 'pixiv', 'label' => "ID: #{illust_id}", 'icon' => 'image' }
-
-      tag_str = tags.reject { |t| t.start_with?('R-18') }.first(5).join(' · ')
-
-      # Use pixiv.cat proxy for all Pixiv illustrations to avoid cropped thumbnails and preserve full uncropped compositions
-      img_url = "https://pixiv.cat/#{illust_id}.jpg"
-
-      return {
-        'title' => "#{title} - #{author}",
-        'description' => tag_str.empty? ? "Pixiv ID: #{illust_id}" : "标签: #{tag_str}",
-        'image' => img_url,
-        'domain' => 'pixiv.net',
-        'is_r18' => is_r18,
-        'illust_id' => illust_id,
-        'badges' => badges
-      }
     rescue => e
-      Jekyll.logger.warn "LinkPreview (Pixiv):", "Direct AJAX failed for #{illust_id} (#{e.message}), trying Phixiv..."
+      Jekyll.logger.warn "LinkPreview (Pixiv):", "Direct AJAX failed for #{illust_id} (#{e.message}), trying fallbacks..."
     end
 
-    # 2. Try Phixiv fallback
+    # 2. Try Phixiv fallback with intelligent R-18 login-wall detection
     begin
       phixiv_url = "https://www.phixiv.net/artworks/#{illust_id}"
       html = URI.open(phixiv_url, 'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)', :read_timeout => 8, :open_timeout => 5).read
       parsed = Nokogiri::HTML(html)
       title = parsed.at_css('meta[property="og:title"]')&.[]('content') || "Pixiv ##{illust_id}"
       desc = parsed.at_css('meta[property="og:description"]')&.[]('content') || ""
-      is_r18 = desc.include?('R-18') || title.include?('R-18')
+
+      # If Phixiv redirected to Pixiv's generic landing page, it means Pixiv blocked unauthenticated guest access because it's R-18!
+      is_login_wall = title.include?('イラストコミュニケーションサービス') || desc.include?('イラストコミュニケーションサービス')
+      is_r18 = is_login_wall || desc.include?('R-18') || title.include?('R-18')
+
+      # Check embed.pixiv.net probe if still uncertain: embed.pixiv.net returns 404 for R-18
+      if !is_r18
+        begin
+          probe_url = "https://embed.pixiv.net/artwork.php?illust_id=#{illust_id}"
+          URI.open(probe_url, 'User-Agent' => 'Mozilla/5.0', :read_timeout => 4, :open_timeout => 3)
+        rescue OpenURI::HTTPError => err
+          is_r18 = true if err.message.include?('404')
+        rescue => _
+        end
+      end
+
+      display_title = is_login_wall ? "Pixiv Artwork ##{illust_id}" : title.strip
+      display_desc = is_login_wall ? "Pixiv ID: #{illust_id} (R-18 敏感内容)" : desc.strip
 
       badges = []
-      badges << { 'type' => 'r18', 'label' => 'R-18', 'icon' => '18_up_rating' } if is_r18
+      badges << { 'type' => 'r18', 'label' => 'R-18 (NSFW)', 'icon' => '18_up_rating' } if is_r18
       badges << { 'type' => 'pixiv', 'label' => "ID: #{illust_id}", 'icon' => 'image' }
 
       img_url = "https://pixiv.cat/#{illust_id}.jpg"
 
       return {
-        'title' => title.strip,
-        'description' => desc.strip,
+        'title' => display_title,
+        'description' => display_desc,
         'image' => img_url,
         'domain' => 'pixiv.net',
         'is_r18' => is_r18,
@@ -100,17 +121,28 @@ module LinkPreview
       Jekyll.logger.warn "LinkPreview (Pixiv):", "Phixiv failed for #{illust_id}: #{e2.message}"
     end
 
-    # 3. Static fallback
+    # 3. Third-level fallback: probe embed.pixiv.net (404 = R-18, 200 = Safe)
+    is_r18_probe = false
+    begin
+      probe_url = "https://embed.pixiv.net/artwork.php?illust_id=#{illust_id}"
+      URI.open(probe_url, 'User-Agent' => 'Mozilla/5.0', :read_timeout => 4, :open_timeout => 3)
+    rescue OpenURI::HTTPError => err
+      is_r18_probe = true if err.message.include?('404')
+    rescue => _
+    end
+
+    badges = []
+    badges << { 'type' => 'r18', 'label' => 'R-18 (NSFW)', 'icon' => '18_up_rating' } if is_r18_probe
+    badges << { 'type' => 'pixiv', 'label' => "ID: #{illust_id}", 'icon' => 'image' }
+
     {
       'title' => "Pixiv Artwork ##{illust_id}",
-      'description' => "View illustration #{illust_id} on Pixiv",
+      'description' => is_r18_probe ? "Pixiv ID: #{illust_id} (R-18 敏感内容)" : "View illustration #{illust_id} on Pixiv",
       'image' => "https://pixiv.cat/#{illust_id}.jpg",
       'domain' => 'pixiv.net',
-      'is_r18' => false,
+      'is_r18' => is_r18_probe,
       'illust_id' => illust_id,
-      'badges' => [
-        { 'type' => 'pixiv', 'label' => "ID: #{illust_id}", 'icon' => 'image' }
-      ]
+      'badges' => badges
     }
   end
 
@@ -273,11 +305,11 @@ module LinkPreview
 end
 
 Jekyll::Hooks.register :site, :after_init do |site|
-  LinkPreview.load_cache
+  LinkPreview.load_cache(site)
 end
 
 Jekyll::Hooks.register :site, :post_write do |site|
-  LinkPreview.save_cache
+  LinkPreview.save_cache(site)
 end
 
 Jekyll::Hooks.register [:pages, :documents], :post_convert do |doc|
@@ -290,6 +322,13 @@ Jekyll::Hooks.register [:pages, :documents], :post_convert do |doc|
   html.css('a.preview').each do |a|
     url = a['href']
     next if url.nil? || url.empty?
+
+    # Check if author explicitly labeled this link as R-18 / NSFW via link text, class, or attribute
+    link_text = a.text.to_s
+    link_classes = (a['class'] || '').split(/\s+/)
+    explicit_r18 = (link_text =~ /\b(r-?18|r-?18g|nsfw|18\+)\b/i || link_text.include?('R-18') || link_text.include?('R18') || link_text.include?('NSFW')) ||
+                   link_classes.any? { |c| %w[r18 r-18 nsfw blur spoiler].include?(c.downcase) } ||
+                   a['data-r18'] == 'true' || a['data-nsfw'] == 'true'
 
     data = nil
     is_internal = false
@@ -325,6 +364,16 @@ Jekyll::Hooks.register [:pages, :documents], :post_convert do |doc|
     end
 
     if data
+      # If author explicitly marked it as R-18, or backend queried it as R-18
+      is_r18 = data['is_r18'] || explicit_r18
+      if explicit_r18
+        data['is_r18'] = true
+        data['badges'] ||= []
+        unless data['badges'].any? { |b| b['type'] == 'r18' }
+          data['badges'].unshift({ 'type' => 'r18', 'label' => 'R-18 (NSFW)', 'icon' => '18_up_rating' })
+        end
+      end
+
       title_safe = CGI.escapeHTML(data['title'] || '')
       desc_safe = CGI.escapeHTML(data['description'] || '')
       image_safe = CGI.escapeHTML(data['image'] || '')
@@ -340,7 +389,18 @@ Jekyll::Hooks.register [:pages, :documents], :post_convert do |doc|
       # Pixiv & e621 use expanded artwork card mode
       is_artwork = (data['domain'] == 'pixiv.net' || data['domain'] == 'e621.net')
       illust_id = data['illust_id'] || url[/\d+/]
-      fallback_attr = (data['domain'] == 'pixiv.net' && illust_id) ? %Q{onerror="if(!this.dataset.fallback && !#{data['is_r18'] ? 'true' : 'false'}){this.dataset.fallback='1';this.src='https://embed.pixiv.net/artwork.php?illust_id=#{illust_id}';}else{this.parentElement.style.display='none';}"} : %Q{onerror="this.parentElement.style.display='none'"}
+      
+      fallback_attr = if data['domain'] == 'pixiv.net' && illust_id
+        if data['is_r18']
+          # For R-18 artworks: primary pixiv.cat -> fallback pixiv.re (never hide parent overlay, keeping blur and mask intact)
+          %Q{onerror="if(!this.dataset.fallback){this.dataset.fallback='1';this.src='https://pixiv.re/#{illust_id}.jpg';}else{this.style.opacity='0.1';}"}
+        else
+          # For safe artworks: primary pixiv.cat -> fallback pixiv.re -> official embed.pixiv.net -> hide parent if all fail
+          %Q{onerror="if(!this.dataset.fallback){this.dataset.fallback='1';this.src='https://pixiv.re/#{illust_id}.jpg';}else if(this.dataset.fallback==='1'){this.dataset.fallback='2';this.src='https://embed.pixiv.net/artwork.php?illust_id=#{illust_id}';}else{this.parentElement.style.display='none';}"}
+        end
+      else
+        %Q{onerror="this.parentElement.style.display='none'"}
+      end
 
       image_html = ""
       if !image_safe.empty?
