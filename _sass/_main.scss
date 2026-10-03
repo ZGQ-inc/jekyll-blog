@@ -91,6 +91,16 @@
   --glass-opacity-light: 0.65;
   --glass-opacity-dark:  0.55;
 
+  // LQIP Slanted Sweep & Harmonic Darken Settings (Calibrated)
+  --lqip-sweep-speed: 2.8s;
+  --lqip-beam-angle: 118deg;
+  --lqip-darken-peak: 0.65;
+  --lqip-beam-core: rgba(255, 255, 255, 0.55);
+  --lqip-beam-halo: rgba(2, 132, 199, 0.15);
+  --lqip-blur: 24px;
+  --sk-base-dim: #e2e8f0;
+  --sk-base-normal: #f1f5f9;
+
   // Typography
   font-family: 'Noto Sans SC', 'Inter', 'Roboto', system-ui, sans-serif;
   font-size: 16px;
@@ -107,6 +117,13 @@
   --elev-2: 0 1px 2px rgba(0,0,0,.24), 0 2px 6px 2px rgba(0,0,0,.22);
   --elev-3: 0 4px 8px 3px rgba(0,0,0,.20), 0 1px 3px rgba(0,0,0,.28);
   --elev-4: 0 6px 10px 4px rgba(0,0,0,.22), 0 2px 3px rgba(0,0,0,.28);
+
+  // Dark mode LQIP settings (exact specs: 45% depth, 30% clarity, 24px blur, 2.8s speed)
+  --lqip-darken-peak: 0.45;
+  --lqip-beam-core: rgba(255, 255, 255, 0.30);
+  --lqip-beam-halo: rgba(56, 189, 248, 0.15);
+  --sk-base-dim: #0c1219;
+  --sk-base-normal: #192433;
 }
 
 
@@ -1725,20 +1742,88 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
   position: relative;
   overflow: hidden;
   aspect-ratio: 16/9;
-  background: linear-gradient(
+  background-color: var(--sk-base-normal);
+  background-image: linear-gradient(
     135deg,
     color-mix(in srgb, var(--md-sys-color-primary-container) 60%, transparent),
     color-mix(in srgb, var(--md-sys-color-tertiary-container) 60%, transparent)
   );
-}
 
-.card-thumb {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform var(--dur-long1) var(--motion-emphasized-decel);
+  .card-thumb-lqip {
+    position: absolute;
+    inset: -15px;
+    width: calc(100% + 30px);
+    height: calc(100% + 30px);
+    object-fit: cover;
+    transform: scale(1.08);
+    z-index: 1;
+    pointer-events: none;
+    filter: blur(var(--lqip-blur, 24px)) brightness(1.0);
+    animation: lqip-bg-harmonic var(--lqip-sweep-speed, 2.8s) ease-in-out infinite;
+    transition: opacity 0.8s ease;
+    will-change: filter;
+  }
 
-  .post-card:hover & { transform: scale(1.06); }
+  .card-thumb-beam {
+    position: absolute;
+    top: -50%;
+    bottom: -50%;
+    left: -60%;
+    width: 220%;
+    height: 200%;
+    z-index: 2;
+    pointer-events: none;
+    background: linear-gradient(
+      var(--lqip-beam-angle, 118deg),
+      transparent 0%,
+      transparent 32%,
+      var(--lqip-beam-halo, rgba(56, 189, 248, 0.15)) 42%,
+      var(--lqip-beam-core, rgba(255, 255, 255, 0.30)) 50%,
+      var(--lqip-beam-halo, rgba(56, 189, 248, 0.15)) 58%,
+      transparent 68%,
+      transparent 100%
+    );
+    mix-blend-mode: screen;
+    animation: lqip-beam-sweep var(--lqip-sweep-speed, 2.8s) ease-in-out infinite;
+    opacity: 1;
+    transition: opacity 0.6s ease;
+    will-change: transform;
+  }
+
+  .card-thumb {
+    position: relative;
+    z-index: 3;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    filter: blur(var(--lqip-blur, 24px)) brightness(0.85);
+    transform: scale(1.04);
+    transition: 
+      opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+      filter 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+      transform var(--dur-long1) var(--motion-emphasized-decel);
+
+    .post-card:hover & { transform: scale(1.06); }
+  }
+
+  &.thumb-loaded {
+    .card-thumb-lqip {
+      opacity: 0 !important;
+      animation-play-state: paused !important;
+    }
+    .card-thumb-beam {
+      opacity: 0 !important;
+      animation-play-state: paused !important;
+    }
+    .card-thumb {
+      opacity: 1 !important;
+      filter: blur(0px) brightness(1.0) !important;
+      transform: scale(1);
+
+      .post-card:hover & { transform: scale(1.06); }
+    }
+  }
 }
 
 .card-no-image {
@@ -1851,6 +1936,48 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
+  background-color: var(--sk-base-normal);
+
+  .hero-lqip {
+    position: absolute;
+    inset: -20px;
+    width: calc(100% + 40px);
+    height: calc(100% + 40px);
+    object-fit: cover;
+    transform: scale(1.08);
+    z-index: 1;
+    pointer-events: none;
+    filter: blur(var(--lqip-blur, 24px)) brightness(1.0);
+    animation: lqip-bg-harmonic var(--lqip-sweep-speed, 2.8s) ease-in-out infinite;
+    transition: opacity 0.8s ease;
+    will-change: filter;
+  }
+
+  .hero-sweep-beam {
+    position: absolute;
+    top: -50%;
+    bottom: -50%;
+    left: -60%;
+    width: 220%;
+    height: 200%;
+    z-index: 2;
+    pointer-events: none;
+    background: linear-gradient(
+      var(--lqip-beam-angle, 118deg),
+      transparent 0%,
+      transparent 32%,
+      var(--lqip-beam-halo, rgba(56, 189, 248, 0.15)) 42%,
+      var(--lqip-beam-core, rgba(255, 255, 255, 0.30)) 50%,
+      var(--lqip-beam-halo, rgba(56, 189, 248, 0.15)) 58%,
+      transparent 68%,
+      transparent 100%
+    );
+    mix-blend-mode: screen;
+    animation: lqip-beam-sweep var(--lqip-sweep-speed, 2.8s) ease-in-out infinite;
+    opacity: 1;
+    transition: opacity 0.7s ease;
+    will-change: transform;
+  }
 
   .hero-image {
     position: absolute;
@@ -1859,12 +1986,36 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
     height: 100%;
     object-fit: cover;
     transform-origin: center;
-    animation: page-enter var(--dur-long2) var(--motion-emphasized-decel) both;
+    z-index: 3;
+    opacity: 0;
+    filter: blur(var(--lqip-blur, 24px)) brightness(0.85);
+    transform: scale(1.04);
+    transition: 
+      opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1),
+      filter 0.9s cubic-bezier(0.16, 1, 0.3, 1),
+      transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  &.hero-loaded {
+    .hero-lqip {
+      opacity: 0 !important;
+      animation-play-state: paused !important;
+    }
+    .hero-sweep-beam {
+      opacity: 0 !important;
+      animation-play-state: paused !important;
+    }
+    .hero-image {
+      opacity: 1 !important;
+      filter: blur(0px) brightness(1.0) !important;
+      transform: scale(1) !important;
+    }
   }
 
   .hero-overlay {
     position: absolute;
     inset: 0;
+    z-index: 4;
     background: linear-gradient(
       to bottom,
       rgba(0,0,0,.15) 0%,
@@ -1875,7 +2026,7 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
 
   .hero-content {
     position: relative;
-    z-index: 2;
+    z-index: 5;
     padding: 36px 32px 28px;
     animation: card-enter var(--dur-long1) var(--motion-emphasized-decel) both;
     animation-delay: var(--dur-short4);
@@ -2575,6 +2726,80 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
       box-shadow: none !important;
       max-height: 22px !important;
       width: auto !important;
+    }
+  }
+
+  .post-img-container {
+    position: relative;
+    display: block;
+    overflow: hidden;
+    margin: 1.5em auto;
+    border-radius: var(--shape-large);
+    box-shadow: var(--elev-2);
+    min-height: 120px;
+    background-color: var(--sk-base-normal);
+    animation: lqip-sk-harmonic var(--lqip-sweep-speed, 2.8s) ease-in-out infinite;
+    transition: background-color 0.6s ease;
+
+    img {
+      display: block;
+      width: 100%;
+      height: auto;
+      margin: 0 !important;
+      border-radius: 0 !important;
+      box-shadow: none !important;
+      position: relative;
+      z-index: 1;
+      opacity: 0;
+      filter: blur(16px) brightness(0.85);
+      transform: scale(1.03);
+      transition: 
+        opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+        filter 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+        transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .slanted-beam-runner {
+      position: absolute;
+      top: -50%;
+      bottom: -50%;
+      left: -60%;
+      width: 220%;
+      height: 200%;
+      pointer-events: none;
+      z-index: 2;
+      background: linear-gradient(
+        var(--lqip-beam-angle, 118deg),
+        transparent 0%,
+        transparent 32%,
+        var(--lqip-beam-halo, rgba(56, 189, 248, 0.15)) 42%,
+        var(--lqip-beam-core, rgba(255, 255, 255, 0.30)) 50%,
+        var(--lqip-beam-halo, rgba(56, 189, 248, 0.15)) 58%,
+        transparent 68%,
+        transparent 100%
+      );
+      mix-blend-mode: screen;
+      animation: lqip-beam-sweep var(--lqip-sweep-speed, 2.8s) ease-in-out infinite;
+      opacity: 1;
+      transition: opacity 0.6s ease;
+      will-change: transform;
+    }
+
+    &.is-loaded {
+      min-height: auto;
+      animation: none !important;
+      background-color: transparent !important;
+
+      .slanted-beam-runner {
+        opacity: 0 !important;
+        animation-play-state: paused !important;
+      }
+
+      img {
+        opacity: 1 !important;
+        filter: blur(0px) brightness(1.0) !important;
+        transform: scale(1) !important;
+      }
     }
   }
 
@@ -5447,4 +5672,64 @@ md-navigation-drawer {
   animation: anchorHighlightGlow 2.5s cubic-bezier(0.2, 0, 0, 1) forwards !important;
   transition: border-radius var(--dur-medium2) var(--motion-standard);
 }
+
+// ================================================================
+// LQIP Sweep Beam & Harmonic Background Animations
+// ================================================================
+@keyframes lqip-bg-harmonic {
+  0% {
+    filter: blur(var(--lqip-blur, 24px)) brightness(1.0);
+  }
+  50% {
+    filter: blur(var(--lqip-blur, 24px)) brightness(var(--lqip-darken-peak, 0.45)) contrast(1.1);
+  }
+  100% {
+    filter: blur(var(--lqip-blur, 24px)) brightness(1.0);
+  }
+}
+
+@keyframes lqip-beam-sweep {
+  0% {
+    transform: translate3d(-65%, 0, 0);
+  }
+  100% {
+    transform: translate3d(65%, 0, 0);
+  }
+}
+
+@keyframes lqip-sk-harmonic {
+  0% {
+    background-color: var(--sk-base-normal, #192433);
+  }
+  50% {
+    background-color: var(--sk-base-dim, #0c1219);
+  }
+  100% {
+    background-color: var(--sk-base-normal, #192433);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-lqip,
+  .card-thumb-lqip,
+  .post-img-container,
+  .hero-sweep-beam,
+  .card-thumb-beam,
+  .slanted-beam-runner {
+    animation: none !important;
+  }
+  .hero-sweep-beam,
+  .card-thumb-beam,
+  .slanted-beam-runner {
+    display: none !important;
+  }
+  .hero-image,
+  .card-thumb,
+  .post-img-container img {
+    opacity: 1 !important;
+    filter: none !important;
+    transform: none !important;
+  }
+}
+
 

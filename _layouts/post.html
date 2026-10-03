@@ -6,8 +6,13 @@ layout: default
 
 <!-- Post Hero Image or Gradient Header -->
 {% if post.image %}
-<div class="post-hero">
-  <img class="hero-image" src="{{ post.image }}" alt="{{ post.title }}" loading="eager">
+{% assign hero_lqip = post.image_lqip | default: site.data.lqip[post.image] %}
+<div class="post-hero {% if hero_lqip %}has-lqip{% endif %}" id="postHero">
+  {% if hero_lqip %}
+  <img class="hero-lqip" src="{{ hero_lqip }}" alt="" aria-hidden="true">
+  {% endif %}
+  <div class="hero-sweep-beam"></div>
+  <img class="hero-image" src="{{ post.image }}" alt="{{ post.title }}" loading="eager" onload="this.parentElement.classList.add('hero-loaded')">
   <div class="hero-overlay"></div>
   <div class="hero-content">
     {% if post.tags.size > 0 %}
@@ -39,6 +44,17 @@ layout: default
     </div>
   </div>
 </div>
+<script>
+  (function(){
+    var h = document.getElementById('postHero');
+    if (h) {
+      var img = h.querySelector('.hero-image');
+      if (img && img.complete && img.naturalWidth > 0) {
+        h.classList.add('hero-loaded');
+      }
+    }
+  })();
+</script>
 {% else %}
 <div class="post-hero-no-image">
   <div style="width: 100%;">

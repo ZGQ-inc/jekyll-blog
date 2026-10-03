@@ -47,7 +47,12 @@
       <!-- Thumbnail -->
       <div class="card-thumb-wrapper">
         {% if post.image %}
-        <img class="card-thumb" src="{{ post.image }}" alt="{{ post.title }}" loading="lazy">
+        {% assign thumb_lqip = post.image_lqip | default: site.data.lqip[post.image] %}
+        {% if thumb_lqip %}
+        <img class="card-thumb-lqip" src="{{ thumb_lqip }}" alt="" aria-hidden="true">
+        {% endif %}
+        <div class="card-thumb-beam"></div>
+        <img class="card-thumb" src="{{ post.image }}" alt="{{ post.title }}" loading="lazy" onload="this.parentElement.classList.add('thumb-loaded')">
         {% else %}
         <div class="card-no-image">
           <span class="material-symbols-outlined">article</span>

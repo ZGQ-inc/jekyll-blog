@@ -112,6 +112,12 @@ function initArticleEnhancements() {
 
   // Telegram Spoiler with Cyber Glitch & Data Restoration Decryption
   initTelegramSpoilers();
+
+  // In-article images loading animation & thumbnail cache check (deferred to let gallery setup run first)
+  setTimeout(() => {
+    initArticleImages();
+    initThumbnailCacheCheck();
+  }, 30);
 }
 
 if (document.readyState === 'loading') {
@@ -299,4 +305,53 @@ function initTelegramSpoilers() {
   });
 }
 
+// ==============================================================================
+// In-Article Images Loading Animation (Skeleton background + Slanted beam sweep)
+// ==============================================================================
+function initArticleImages() {
+  const articleImgs = document.querySelectorAll(
+    '.article-content img:not([src*=".svg"]):not([src*="badge"]):not([src*="shields.io"]):not([src*="min-tuijian"]):not([src*="min-oss"])'
+  );
+
+  articleImgs.forEach(img => {
+    // Skip if already wrapped
+    if (img.parentElement && img.parentElement.classList.contains('post-img-container')) {
+      return;
+    }
+
+    // Skip if inside heading, code, link cards, gallery carousels or lightboxes
+    if (img.closest('h1, h2, h3, h4, h5, h6, pre, code, .md3-link-card, .md3-gallery, .gallery-thumbnails, .gallery-thumbnail-item, .lightbox-overlay, .lightbox-content-wrapper')) {
+      return;
+    }
+
+    const wrapper = document.createElement('div');
+    wrapper.className = 'post-img-container';
+
+    const beam = document.createElement('div');
+    beam.className = 'slanted-beam-runner';
+
+    img.parentNode.insertBefore(wrapper, img);
+    wrapper.appendChild(img);
+    wrapper.appendChild(beam);
+
+    const onComplete = () => {
+      wrapper.classList.add('is-loaded');
+    };
+
+    if (img.complete && img.naturalWidth > 0) {
+      onComplete();
+    } else {
+      img.addEventListener('load', onComplete, { once: true });
+      img.addEventListener('error', onComplete, { once: true });
+    }
+  });
+}
+
+function initThumbnailCacheCheck() {
+  document.querySelectorAll('.card-thumb').forEach(img => {
+    if (img.complete && img.naturalWidth > 0 && img.parentElement) {
+      img.parentElement.classList.add('thumb-loaded');
+    }
+  });
+}
 
