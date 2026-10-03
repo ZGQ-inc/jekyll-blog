@@ -46,9 +46,10 @@
         var dismissed = false;
         function dismiss() {
           if (dismissed) return;
+          dismissed = true;
+          document.body.classList.remove('preload');
           var el = document.getElementById('pageLoader');
           if (!el) return;
-          dismissed = true;
           el.classList.add('is-loaded');
           setTimeout(function() {
             if (el && el.parentNode) el.style.display = 'none';

@@ -10,9 +10,15 @@ layout: default
 <div class="post-hero {% if hero_lqip %}has-lqip{% endif %}" id="postHero">
   {% if hero_lqip %}
   <img class="hero-lqip" src="{{ hero_lqip }}" alt="" aria-hidden="true">
-  {% endif %}
+  <div class="hero-sweep-beam"></div>
+  <img class="hero-image" data-src="{{ post.image }}" alt="{{ post.title }}" decoding="async">
+  <noscript>
+    <img class="hero-image" src="{{ post.image }}" alt="{{ post.title }}" style="opacity: 1; filter: none;">
+  </noscript>
+  {% else %}
   <div class="hero-sweep-beam"></div>
   <img class="hero-image" src="{{ post.image }}" alt="{{ post.title }}" loading="eager" onload="this.parentElement.classList.add('hero-loaded')">
+  {% endif %}
   <div class="hero-overlay"></div>
   <div class="hero-content">
     {% if post.tags.size > 0 %}
@@ -46,12 +52,50 @@ layout: default
 </div>
 <script>
   (function(){
-    var h = document.getElementById('postHero');
-    if (h) {
-      var img = h.querySelector('.hero-image');
-      if (img && img.complete && img.naturalWidth > 0) {
-        h.classList.add('hero-loaded');
+    var hero = document.getElementById('postHero');
+    if (!hero) return;
+
+    // Base64 略缩图直接在 HTML 中解码就绪，第一时间解除页面遮挡，确保文章入场动画正常执行
+    if (typeof window.dismissPageLoader === 'function') {
+      window.dismissPageLoader();
+    }
+    document.body.classList.remove('preload');
+
+    var heroImg = hero.querySelector('.hero-image[data-src]');
+    if (!heroImg) {
+      var plainImg = hero.querySelector('.hero-image');
+      if (plainImg && plainImg.complete && plainImg.naturalWidth > 0) {
+        hero.classList.add('hero-loaded');
       }
+      return;
+    }
+
+    var realSrc = heroImg.getAttribute('data-src');
+    if (!realSrc) return;
+
+    // 现场动态加载原图机制：
+    // 文章带着 Base64 略缩图和微光横扫出现，随后在现场后台异步请求原图；
+    // 原图加载完成后平滑褪去横扫并展开高清图，不阻塞首屏与文章入场动画
+    function startDynamicLoad() {
+      var loader = new Image();
+      loader.onload = function() {
+        heroImg.src = realSrc;
+        heroImg.removeAttribute('data-src');
+        hero.classList.add('hero-loaded');
+      };
+      loader.onerror = function() {
+        heroImg.src = realSrc;
+        hero.classList.add('hero-loaded');
+      };
+      loader.src = realSrc;
+    }
+
+    if (window.requestAnimationFrame) {
+      requestAnimationFrame(function() {
+        startDynamicLoad();
+      });
+    } else {
+      startDynamicLoad();
     }
   })();
 </script>

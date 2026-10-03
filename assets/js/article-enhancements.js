@@ -324,6 +324,13 @@ function initArticleImages() {
       return;
     }
 
+    if (!img.hasAttribute('loading')) {
+      img.setAttribute('loading', 'lazy');
+    }
+    if (!img.hasAttribute('decoding')) {
+      img.setAttribute('decoding', 'async');
+    }
+
     const wrapper = document.createElement('div');
     wrapper.className = 'post-img-container';
 

@@ -949,6 +949,7 @@ function initBackToTop() {
 // Global Page Loader (MD3 Circular Progress)
 function initPageLoader() {
   const dismissLoader = () => {
+    document.body.classList.remove('preload');
     const loader = document.getElementById('pageLoader');
     if (!loader || loader.classList.contains('is-loaded')) return;
     
