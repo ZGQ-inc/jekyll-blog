@@ -111,7 +111,7 @@ jobs:
           )
 
           try:
-              with urllib.request.urlopen(req, timeout=30) as res:
+              with urllib.request.urlopen(req, timeout=300) as res:
                   body = json.loads(res.read())
                   print(f"✅ Notified Worker: {body}")
           except urllib.error.HTTPError as e:

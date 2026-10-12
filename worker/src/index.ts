@@ -734,6 +734,75 @@ async function fetchPostInfoFromGitHub(id: string, env: Env): Promise<{ title: s
   }
 }
 
+// ================================================================
+// Readiness Poller: 确保文章在 Cloudflare Pages 部署就绪 (HTTP 200)
+// ================================================================
+
+interface WaitForPostResult {
+  ready: boolean;
+  attempts: number;
+  elapsedMs: number;
+  finalStatus?: number;
+}
+
+/**
+ * 轮询检查文章 URL 是否已在 Cloudflare Pages 上成功部署并返回 HTTP 200
+ * @param url 文章的目标 URL (例如 https://blog.zgqinc.gq/posts/b4c50y/)
+ * @param maxWaitMs 最大等待时间（毫秒），默认 180,000ms (3分钟)
+ * @param intervalMs 轮询间隔（毫秒），默认 5,000ms (5秒)
+ * @param onProgress 进度回调函数，用于实时向 Telegram 用户更新状态
+ */
+async function waitForPostReady(
+  url: string,
+  maxWaitMs = 180000,
+  intervalMs = 5000,
+  onProgress?: (attempts: number, elapsedSec: number, status?: number) => Promise<void>
+): Promise<WaitForPostResult> {
+  const startTime = Date.now();
+  let attempts = 0;
+  let finalStatus: number | undefined;
+
+  console.log(`[waitForPostReady] 开始轮询检查文章上线状态: ${url}`);
+
+  while (Date.now() - startTime < maxWaitMs) {
+    attempts++;
+    try {
+      // 附加随机防缓存参数并设置 Cache-Control，杜绝边缘节点缓存旧的 404
+      const cacheBustUrl = url.includes('?') ? `${url}&_check_t=${Date.now()}` : `${url}?_check_t=${Date.now()}`;
+      const res = await fetch(cacheBustUrl, {
+        method: 'GET',
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (compatible; ZGQBlogBot/1.0; +https://blog.zgqinc.gq)',
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          'Pragma': 'no-cache'
+        }
+      });
+      finalStatus = res.status;
+      if (res.status === 200) {
+        const elapsedMs = Date.now() - startTime;
+        console.log(`[waitForPostReady] 文章已成功上线 (HTTP 200)！耗时 ${elapsedMs}ms (${attempts} 次重试)`);
+        return { ready: true, attempts, elapsedMs, finalStatus: 200 };
+      }
+      console.log(`[waitForPostReady] 第 ${attempts} 次检查: HTTP ${res.status}，等待 ${intervalMs}ms 重试...`);
+    } catch (err) {
+      console.warn(`[waitForPostReady] 第 ${attempts} 次检查网络异常:`, err);
+    }
+
+    const elapsedSec = Math.round((Date.now() - startTime) / 1000);
+    if (onProgress && attempts % 3 === 0) {
+      try {
+        await onProgress(attempts, elapsedSec, finalStatus);
+      } catch (e) {}
+    }
+
+    await new Promise(resolve => setTimeout(resolve, intervalMs));
+  }
+
+  const elapsedMs = Date.now() - startTime;
+  console.warn(`[waitForPostReady] 轮询超时！文章未能就绪: ${url} (耗时 ${elapsedMs}ms, 最终状态: ${finalStatus})`);
+  return { ready: false, attempts, elapsedMs, finalStatus };
+}
+
 async function handleLinkCommand(message: TgMessage, id: string, providedSummary: string, env: Env): Promise<void> {
   await sendTelegramMessage(env.TELEGRAM_BOT_TOKEN, {
     chat_id: message.chat.id,
@@ -773,6 +842,29 @@ async function handleLinkCommand(message: TgMessage, id: string, providedSummary
     }
 
     const postUrl = `${env.BLOG_URL}/posts/${id}/`;
+
+    // 预检文章是否已在 Cloudflare Pages 上部署就绪 (HTTP 200)
+    let checkResult = await waitForPostReady(postUrl, 6000, 3000);
+    if (!checkResult.ready) {
+      // 提示管理员正在等待构建
+      await sendTelegramMessage(env.TELEGRAM_BOT_TOKEN, {
+        chat_id: message.chat.id,
+        text: `⏳ 检测到文章尚未在博客上线（HTTP ${checkResult.finalStatus || 404}），正在等待 Cloudflare Pages 构建部署就绪（最长等待 3 分钟）...`,
+        parse_mode: 'HTML'
+      });
+      // 轮询等待就绪
+      checkResult = await waitForPostReady(postUrl, 180000, 5000);
+    }
+
+    if (!checkResult.ready) {
+      await sendTelegramMessage(env.TELEGRAM_BOT_TOKEN, {
+        chat_id: message.chat.id,
+        text: `❌ <b>关联中断</b>：文章在 3 分钟内仍未返回 HTTP 200 (当前状态: ${checkResult.finalStatus || '未知'})。\n为避免 Telegram 抓取 404 并缓存错误预览，本次未向频道推送。\n请确认 Cloudflare Pages 构建成功后重新发送：\n<code>/link ${escapeHtml(id)}</code>`,
+        parse_mode: 'HTML'
+      });
+      return;
+    }
+
     const tgResult = await publishToChannel(env, {
       id,
       title,
@@ -867,6 +959,16 @@ async function handleSyncCommand(message: TgMessage, id: string, providedSummary
 
     const postUrl = `${env.BLOG_URL}/posts/${id}/`;
     
+    // 检查文章是否在线 (HTTP 200)
+    const checkResult = await waitForPostReady(postUrl, 6000, 3000);
+    if (!checkResult.ready) {
+      await sendTelegramMessage(env.TELEGRAM_BOT_TOKEN, {
+        chat_id: message.chat.id,
+        text: `⚠️ <b>提示</b>：文章链接 <code>${postUrl}</code> 目前返回 HTTP ${checkResult.finalStatus || 404}。\n若刚发布，建议等待 Cloudflare Pages 构建完毕后再同步，以防 Telegram 抓取失败。正在继续尝试更新消息...`,
+        parse_mode: 'HTML'
+      });
+    }
+
     // Formatting text (using shared helper)
     const { text, ivUrl } = buildPostMessageText(env, { id, title, summary, tags, postUrl });
 
@@ -1107,7 +1209,18 @@ async function handleNotify(request: Request, env: Env): Promise<Response> {
     return jsonResponse({ error: 'Missing required fields: post_id, title, summary' }, 400);
   }
 
-  const postUrl = `${env.BLOG_URL}/posts/${slug}/`;
+  // 规范化文章 slug：Jekyll permalink 规则为 /posts/:slug/
+  // 若传入带有日期前缀的 slug（如 2026-10-13-b4c50y），需去除日期前缀；若有 post_id 则优先使用 post_id
+  const cleanSlug = post_id || (slug ? slug.replace(/^\d{4}-\d{2}-\d{2}-/, '') : '');
+  const postUrl = `${env.BLOG_URL}/posts/${cleanSlug}/`;
+
+  // 轮询检查文章是否已在 Cloudflare Pages 上成功部署并返回 HTTP 200（最多等待 3 分钟）
+  console.log(`[handleNotify] 正在等待文章在 Cloudflare Pages 部署就绪: ${postUrl}`);
+  const checkResult = await waitForPostReady(postUrl, 180000, 5000);
+
+  if (!checkResult.ready) {
+    console.warn(`[handleNotify] 警告: 文章在 ${checkResult.elapsedMs}ms 内未返回 HTTP 200 (最终状态: ${checkResult.finalStatus})，仍将尝试发布`);
+  }
 
   // Publish to Telegram channel
   const tgResult = await publishToChannel(env, {
@@ -1134,14 +1247,16 @@ async function handleNotify(request: Request, env: Env): Promise<Response> {
     env.TELEGRAM_CHANNEL_ID,
     title,
     postUrl,
-    slug,
+    cleanSlug,
     'git'
   ).run();
 
   return jsonResponse({
     ok: true,
     message_id: tgResult.message_id,
-    post_url: postUrl
+    post_url: postUrl,
+    wait_time_ms: checkResult.elapsedMs,
+    ready: checkResult.ready
   });
 }
 

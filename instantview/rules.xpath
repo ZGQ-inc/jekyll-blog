@@ -6,6 +6,8 @@ title:          //h1[has-class("hero-title")]
 subtitle:       //meta[@name="description"]/@content
 author:         //meta[@name="author"]/@content
 # 封面图转换为 figure 并赋予 cover 属性
+@set_attr(src, @data-src): //img[@data-src and not(@src)]
+@remove: //img[has-class("hero-lqip")]
 @wrap(<figure>): //div[has-class("post-hero")]//img[has-class("hero-image")]
 cover:           $@
 
