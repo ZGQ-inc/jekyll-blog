@@ -3258,18 +3258,9 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
   .file-download-wrapper {
     margin: 1.5em 0;
 
-    .file-download-item,
-    blockquote.file-download-item {
+    .file-download-item {
       margin: 0;
       padding: 0;
-      border: none;
-      background: transparent;
-      quotes: none;
-      font-style: normal;
-      color: inherit;
-      &::before, &::after {
-        content: none;
-      }
     }
   }
   
