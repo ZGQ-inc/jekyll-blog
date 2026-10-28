@@ -35,12 +35,17 @@ cover:           $@
 @remove: //a[has-class("md3-link-card")]//span[has-class("card-badges")]
 @simplify: //a[has-class("md3-link-card")]//span
 
-# 5. 优化文件下载卡片
+# 5. 优化文件下载卡片（转换为原生超链接段落）
+@before("📥 "): //div[has-class("file-download-wrapper")]//div[has-class("file-name")]
 @remove: //div[has-class("file-download-wrapper")]//div[has-class("file-icon")]
 @remove: //div[has-class("file-download-wrapper")]//div[has-class("file-action")]
-@remove: //div[has-class("file-download-wrapper")]//div[has-class("file-meta")]
+@remove: //div[has-class("file-download-wrapper")]//span[has-class("file-date")]
+@remove: //div[has-class("file-download-wrapper")]//span[has-class("separator")]
+@before(" ("): //div[has-class("file-download-wrapper")]//span[has-class("file-size")]
+@after(")"): //div[has-class("file-download-wrapper")]//span[has-class("file-size")]
 @simplify: //div[has-class("file-download-wrapper")]//div
 @simplify: //div[has-class("file-download-wrapper")]//span
+@replace_tag(<p>): //div[has-class("file-download-wrapper")]
 
 # 6. 将 GitHub 风格警告卡片（Alerts）转换为原生引用块
 @replace_tag(<blockquote>): //div[has-class("github-alert")]
