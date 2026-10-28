@@ -3257,6 +3257,11 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
   // File Download Card
   .file-download-wrapper {
     margin: 1.5em 0;
+
+    .file-download-item {
+      margin: 0;
+      padding: 0;
+    }
   }
   
   .file-download-card {
