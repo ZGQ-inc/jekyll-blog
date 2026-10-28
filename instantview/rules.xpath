@@ -45,7 +45,7 @@ cover:           $@
 @after(")"): //div[has-class("file-download-wrapper")]//span[has-class("file-size")]
 @simplify: //div[has-class("file-download-wrapper")]//div
 @simplify: //div[has-class("file-download-wrapper")]//span
-@replace_tag(<p>): //div[has-class("file-download-wrapper")]
+@simplify: //div[has-class("file-download-wrapper")]
 
 # 6. 将 GitHub 风格警告卡片（Alerts）转换为原生引用块
 @replace_tag(<blockquote>): //div[has-class("github-alert")]

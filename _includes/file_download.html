@@ -194,7 +194,7 @@
 {% endif %}
 
 <div class="file-download-wrapper" markdown="0">
-  <p class="file-download-item">
+  <blockquote class="file-download-item">
   <a href="{{ include.url }}" class="file-download-card color-{{ file_color }}" {% if include.download != false %}download{% endif %} target="_blank" rel="noopener">
     <div class="file-icon">
       <span class="material-symbols-outlined">{{ file_icon }}</span>
@@ -213,5 +213,5 @@
       </div>
     </div>
   </a>
-  </p>
+  </blockquote>
 </div>
