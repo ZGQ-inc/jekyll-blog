@@ -50,6 +50,9 @@
 <link rel="manifest" href="{{ '/manifest.json' | relative_url }}">
 
 <!-- SEO -->
+{% if page.summary %}
+<meta name="summary" content="{{ page.summary | strip_html | strip_newlines | escape }}">
+{% endif %}
 {% seo %}
 
 <!-- Canonical -->
