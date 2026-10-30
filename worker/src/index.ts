@@ -615,7 +615,71 @@ async function handleTelegramWebhook(request: Request, env: Env): Promise<Respon
     return jsonResponse({ ok: true });
   }
 
-  // 1.7 处理 /start 与 /help 指令（区分管理员与普通读者）
+  // 1.7 处理 /privacy 指令
+  const isPrivacy = /^\/privacy(?:@\w+)?(?:\s|$)/i.test(trimmedText);
+  if (isPrivacy && message.chat) {
+    const blogUrl = env.BLOG_URL || 'https://blog.zgqinc.gq';
+    await sendTelegramMessage(env.TELEGRAM_BOT_TOKEN, {
+      chat_id: message.chat.id,
+      text: [
+        '🔒 <b>隐私保护政策 / Privacy Policy</b>',
+        '',
+        '<b>1. 信息收集与使用</b>',
+        '本助手（@zgqinc_blog_bot）仅收集您的 Telegram User ID、用户名及昵称，用于：',
+        '• 接收博客最新文章私信通知（<code>/subscribe</code>）',
+        '• 生成 30 天加密文章临时访问凭据（<code>/unlock</code>）',
+        '',
+        '<b>2. 绝不获取个人敏感隐私</b>',
+        '我们<b>绝不</b>获取或存储您的手机号、真实姓名、个人通讯录、私人聊天记录或地理位置。',
+        '',
+        '<b>3. 自由退订与数据删除</b>',
+        '您可以随时发送 <code>/unsubscribe</code> 立即停止一切私信推送，并不再接收任何广播。',
+        '',
+        '<b>4. 安全保障</b>',
+        '所有数据与服务由 Cloudflare 边缘计算与加密传输保障，零第三方商业数据出售。'
+      ].join('\n'),
+      parse_mode: 'HTML',
+      reply_markup: {
+        inline_keyboard: [
+          [
+            { text: '📖 在博客查阅完整隐私政策', url: `${blogUrl}/privacy/` }
+          ]
+        ]
+      }
+    });
+    return jsonResponse({ ok: true });
+  }
+
+  // 1.8 处理 /setupbot 指令（管理员专用：立即向 Telegram 同步注册官方资料与菜单）
+  const isSetupBot = /^\/(setupbot|initbot)(?:@\w+)?(?:\s|$)/i.test(trimmedText);
+  if (isSetupBot && message.chat) {
+    if (!isAuthorizedAdmin(message.from, env)) {
+      await sendTelegramMessage(env.TELEGRAM_BOT_TOKEN, {
+        chat_id: message.chat.id,
+        text: '🔒 抱歉，只有博主/管理员可以执行此指令。'
+      });
+      return jsonResponse({ ok: true });
+    }
+
+    await setupBotCommands(env.TELEGRAM_BOT_TOKEN);
+    await sendTelegramMessage(env.TELEGRAM_BOT_TOKEN, {
+      chat_id: message.chat.id,
+      text: [
+        '✅ <b>机器人官方资料与指令菜单已同步更新到 Telegram！</b>',
+        '',
+        '• <b>名称 (Name)</b>: ZGQ Inc.\'s Blog 博客助手',
+        '• <b>关于 (About)</b>: ZGQ Inc. 个人博客官方助手。博客地址： blog.zgqinc.gq',
+        '• <b>主描述 (Description)</b>: 已设置欢迎卡片与功能说明',
+        '• <b>官方指令</b>: unlock, subscribe, unsubscribe, new, link, sync, cancel, bind, help',
+        '',
+        '<i>注：Telegram 客户端通常会在数分钟内刷新显示。</i>'
+      ].join('\n'),
+      parse_mode: 'HTML'
+    });
+    return jsonResponse({ ok: true });
+  }
+
+  // 1.9 处理 /start 与 /help 指令（区分管理员与普通读者）
   const isStartOrHelp = /^\/(start|help)(?:@\w+)?(?:\s|$)/i.test(trimmedText);
   if (isStartOrHelp && message.chat) {
     await ensureBotCommands(env.TELEGRAM_BOT_TOKEN);
@@ -688,6 +752,7 @@ async function handleTelegramWebhook(request: Request, env: Env): Promise<Respon
               { text: '🔕 退订新文章推送', callback_data: 'user_unsubscribe' }
             ],
             [
+              { text: '🔒 隐私政策', url: `${blogUrl}/privacy/` },
               { text: '👤 关于本站 / 凭证状态', url: `${blogUrl}/about/` }
             ]
           ]
@@ -821,23 +886,39 @@ async function handleTelegramWebhook(request: Request, env: Env): Promise<Respon
  */
 async function setupBotCommands(token: string): Promise<void> {
   try {
+    // 1. 设置机器人显示名称 (Name)
+    await callTelegramApi(token, 'setMyName', {
+      name: "ZGQ Inc.'s Blog 博客助手"
+    });
+
+    // 2. 设置官方 9 个指令列表 (Commands)
     await callTelegramApi(token, 'setMyCommands', {
       commands: [
-        { command: 'unlock', description: '🔐 获取受限机密文章 30 天解锁凭证' },
-        { command: 'subscribe', description: '🔔 订阅博客新文章私信推送' },
-        { command: 'unsubscribe', description: '🔕 退订新文章私信推送' },
-        { command: 'start', description: '🚀 启动助手与功能主菜单' },
-        { command: 'help', description: '📖 查看使用指南与博客信息' }
+        { command: 'unlock', description: '获取解锁凭证' },
+        { command: 'subscribe', description: '订阅新文章推送' },
+        { command: 'unsubscribe', description: '退订新文章推送' },
+        { command: 'new', description: '创建新文章草稿(仅限管理员)' },
+        { command: 'link', description: '推送文章到频道(仅限管理员)' },
+        { command: 'sync', description: '同步更新频道信息(仅限管理员)' },
+        { command: 'cancel', description: '取消频道关联(仅限管理员)' },
+        { command: 'bind', description: '手动绑定(仅限管理员)' },
+        { command: 'help', description: '显示使用帮助' }
       ]
     });
+
+    // 3. 启用左下角官方快捷指令菜单按钮
     await callTelegramApi(token, 'setChatMenuButton', {
       menu_button: { type: 'commands' }
     });
-    await callTelegramApi(token, 'setMyDescription', {
-      description: '欢迎使用 ZGQ Inc. 个人博客官方助手！\n\n✨ 核心功能：\n• 🔐 获取受限底层逆向/机密文章 30 天专属解密凭证\n• 🔔 实时私信接收最新博客文章摘要与直达推送\n• 📢 直达官方 Telegram 讨论频道与博客主页\n\n点击下方「开始」或发送 /start 即可立即使用。'
-    });
+
+    // 4. 设置关于文本 (About / Short Description)
     await callTelegramApi(token, 'setMyShortDescription', {
-      short_description: 'ZGQ Inc. 个人博客助手：受限技术文章 30 天解密凭证获取 & 新文章实时私信推送。'
+      short_description: 'ZGQ Inc. 个人博客官方助手。\n博客地址： blog.zgqinc.gq'
+    });
+
+    // 5. 设置机器人欢迎主说明 (Description)
+    await callTelegramApi(token, 'setMyDescription', {
+      description: '👋 欢迎使用 ZGQ Blog 官方助手！\n\n本机器人是 ZGQ Inc. 个人博客 blog.zgqinc.gq 的配套服务 Bot。\n\n🔐 获取机密技术文章阅读凭证：\n针对博客中的敏感文章，点击下方 Start 并发送 /unlock，即可一键获取 30 天端到端解密授权。\n📢 频道订阅与动态讨论：\n文章发布即时推送，支持一键前往关联讨论组交流。'
     });
   } catch (e) {
     console.warn('Failed to setup bot commands menu:', e);
