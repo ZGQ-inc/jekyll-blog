@@ -405,7 +405,7 @@
       }
 
       submitBtn.disabled = true;
-      var originalText = submitBtn.textContent;
+      var originalHtml = submitBtn.innerHTML;
       submitBtn.innerHTML = '<span class="md3-circular-progress" style="width:18px;height:18px;margin-right:8px;vertical-align:middle;display:inline-block;"></span> 零知识计算中...';
 
       try {
@@ -441,7 +441,7 @@
         }
       } finally {
         submitBtn.disabled = false;
-        submitBtn.textContent = originalText;
+        submitBtn.innerHTML = originalHtml;
       }
     });
   }

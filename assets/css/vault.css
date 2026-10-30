@@ -2,41 +2,50 @@
    ZGQ Blog Vault & Access Control Styles (Material Design 3 Theme Integrated)
    ========================================================================== */
 
-/* Vault Lock Screen Container - Blends seamlessly into article flow */
+/* Vault Lock Screen Container - Spans full width of article, no outer black void */
 .vault-lock-screen {
   position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  display: block;
   width: 100%;
-  padding: 16px 0 32px 0;
+  margin: 0;
+  padding: 0;
   box-sizing: border-box;
 }
 
-/* MD3 Elevated Vault Challenge Card */
+/* MD3 Elevated Vault Challenge Card - Fills content width seamlessly */
 .vault-card {
   position: relative;
   width: 100%;
-  max-width: 820px;
-  background: var(--md-sys-color-surface-container-low, #f3f3f7);
+  max-width: 100%;
+  margin: 8px 0 32px 0;
+  background: color-mix(in srgb, var(--md-sys-color-surface-container) 85%, var(--md-sys-color-surface-container-low));
   border-radius: var(--shape-xl, 28px);
-  padding: 36px 32px;
+  padding: 32px 28px;
   box-shadow: var(--elev-1);
-  border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 35%, transparent);
+  border: 1px solid color-mix(in srgb, var(--md-sys-color-primary) 24%, var(--md-sys-color-outline-variant));
   box-sizing: border-box;
   animation: vaultFadeUp 0.4s cubic-bezier(0.1, 0.9, 0.2, 1) both;
   transition: background var(--dur-short4, 200ms),
               border-color var(--dur-short4, 200ms),
               box-shadow var(--dur-short4, 200ms);
+  overflow: hidden;
 }
 
-html[data-theme="dark"] .vault-card {
-  background: var(--md-sys-color-surface-container-low, #1c1e20);
+/* Elegant theme accent line on card top */
+.vault-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, var(--md-sys-color-primary), transparent);
+  pointer-events: none;
 }
 
 .vault-card:hover {
-  box-shadow: var(--elev-2);
+  border-color: color-mix(in srgb, var(--md-sys-color-primary) 45%, var(--md-sys-color-outline-variant));
+  box-shadow: 0 4px 20px color-mix(in srgb, var(--md-sys-color-primary) 12%, transparent), var(--elev-2);
 }
 
 @keyframes vaultFadeUp {
@@ -70,11 +79,12 @@ html[data-theme="dark"] .vault-card {
 
 .vault-lock-icon {
   font-size: 36px !important;
-  color: var(--md-sys-color-primary);
+  color: var(--md-sys-color-on-primary-container);
   background: var(--md-sys-color-primary-container);
   padding: 14px;
   border-radius: var(--shape-large, 16px);
-  border: 1px solid color-mix(in srgb, var(--md-sys-color-primary) 20%, transparent);
+  border: 1.5px solid color-mix(in srgb, var(--md-sys-color-primary) 35%, transparent);
+  box-shadow: 0 4px 14px color-mix(in srgb, var(--md-sys-color-primary) 22%, transparent);
   flex-shrink: 0;
   display: flex;
   align-items: center;
@@ -92,14 +102,22 @@ html[data-theme="dark"] .vault-card {
   gap: 6px;
   font-family: inherit;
   font-size: 0.75rem;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.05em;
   font-weight: 700;
   padding: 4px 12px;
   border-radius: var(--shape-full, 9999px);
-  background: var(--md-sys-color-error-container);
-  color: var(--md-sys-color-on-error-container);
-  border: 1px solid color-mix(in srgb, var(--md-sys-color-error) 25%, transparent);
+  background: color-mix(in srgb, var(--md-sys-color-primary) 14%, transparent);
+  color: var(--md-sys-color-primary);
+  border: 1px solid color-mix(in srgb, var(--md-sys-color-primary) 30%, transparent);
   margin-bottom: 8px;
+}
+
+.vault-badge-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: var(--md-sys-color-primary);
+  box-shadow: 0 0 6px var(--md-sys-color-primary);
 }
 
 .vault-title {
@@ -117,19 +135,19 @@ html[data-theme="dark"] .vault-card {
   line-height: 1.55;
 }
 
-/* Notice Box */
+/* Notice Box with Theme Accent */
 .vault-notice-box {
   display: flex;
   align-items: flex-start;
   gap: 12px;
-  background: color-mix(in srgb, var(--md-sys-color-primary-container) 25%, transparent);
+  background: color-mix(in srgb, var(--md-sys-color-primary-container) 30%, var(--md-sys-color-surface-container-low));
   border-left: 4px solid var(--md-sys-color-primary);
-  border-top: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 30%, transparent);
-  border-right: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 30%, transparent);
-  border-bottom: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 30%, transparent);
+  border-top: 1px solid color-mix(in srgb, var(--md-sys-color-primary) 22%, transparent);
+  border-right: 1px solid color-mix(in srgb, var(--md-sys-color-primary) 22%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--md-sys-color-primary) 22%, transparent);
   padding: 14px 18px;
   border-radius: var(--shape-medium, 12px);
-  margin-bottom: 26px;
+  margin-bottom: 24px;
   font-size: 0.9rem;
   color: var(--md-sys-color-on-surface);
   line-height: 1.6;
@@ -163,17 +181,17 @@ html[data-theme="dark"] .vault-card {
 }
 
 .vault-question-list::-webkit-scrollbar-thumb {
-  background: color-mix(in srgb, var(--md-sys-color-outline-variant) 60%, transparent);
+  background: color-mix(in srgb, var(--md-sys-color-primary) 30%, var(--md-sys-color-outline-variant));
   border-radius: 4px;
 }
 
 .vault-question-list::-webkit-scrollbar-thumb:hover {
-  background: var(--md-sys-color-outline);
+  background: var(--md-sys-color-primary);
 }
 
 .vault-q-item {
-  background: var(--md-sys-color-surface-container, #ededf1);
-  border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 40%, transparent);
+  background: var(--md-sys-color-surface-container);
+  border: 1px solid color-mix(in srgb, var(--md-sys-color-primary) 16%, var(--md-sys-color-outline-variant));
   border-radius: var(--shape-large, 16px);
   padding: 16px 20px;
   transition: border-color var(--dur-short4, 200ms),
@@ -181,13 +199,13 @@ html[data-theme="dark"] .vault-card {
               background var(--dur-short4, 200ms);
 }
 
-html[data-theme="dark"] .vault-q-item {
-  background: var(--md-sys-color-surface-container, #202224);
+.vault-q-item:hover {
+  border-color: color-mix(in srgb, var(--md-sys-color-primary) 45%, var(--md-sys-color-outline-variant));
 }
 
 .vault-q-item:focus-within {
   border-color: var(--md-sys-color-primary);
-  box-shadow: 0 0 0 1px var(--md-sys-color-primary);
+  box-shadow: 0 0 0 1px var(--md-sys-color-primary), 0 2px 10px color-mix(in srgb, var(--md-sys-color-primary) 18%, transparent);
 }
 
 .vault-q-meta {
@@ -202,7 +220,8 @@ html[data-theme="dark"] .vault-q-item {
   font-weight: 700;
   font-size: 0.8rem;
   color: var(--md-sys-color-primary);
-  background: color-mix(in srgb, var(--md-sys-color-primary) 12%, transparent);
+  background: color-mix(in srgb, var(--md-sys-color-primary) 14%, transparent);
+  border: 1px solid color-mix(in srgb, var(--md-sys-color-primary) 28%, transparent);
   padding: 2px 8px;
   border-radius: var(--shape-xs, 4px);
 }
@@ -210,7 +229,8 @@ html[data-theme="dark"] .vault-q-item {
 .vault-q-tag {
   font-size: 0.75rem;
   color: var(--md-sys-color-on-surface-variant);
-  background: var(--md-sys-color-surface-container-high);
+  background: color-mix(in srgb, var(--md-sys-color-primary) 6%, var(--md-sys-color-surface-container-high));
+  border: 1px solid color-mix(in srgb, var(--md-sys-color-primary) 14%, transparent);
   padding: 2px 8px;
   border-radius: var(--shape-xs, 4px);
 }
@@ -226,8 +246,9 @@ html[data-theme="dark"] .vault-q-item {
   font-family: 'JetBrains Mono', monospace;
   font-size: 0.85em;
   padding: 2px 6px;
-  background: var(--md-sys-color-surface-container-highest);
+  background: color-mix(in srgb, var(--md-sys-color-primary) 10%, var(--md-sys-color-surface-container-highest));
   color: var(--md-sys-color-primary);
+  border: 1px solid color-mix(in srgb, var(--md-sys-color-primary) 22%, transparent);
   border-radius: 4px;
 }
 
@@ -236,13 +257,14 @@ html[data-theme="dark"] .vault-q-item {
   width: 100%;
   box-sizing: border-box;
   --md-outlined-text-field-container-shape: 12px;
-  --md-outlined-text-field-outline-color: var(--md-sys-color-outline-variant);
-  --md-outlined-text-field-hover-outline-color: var(--md-sys-color-outline);
+  --md-outlined-text-field-outline-color: color-mix(in srgb, var(--md-sys-color-primary) 25%, var(--md-sys-color-outline-variant));
+  --md-outlined-text-field-hover-outline-color: var(--md-sys-color-primary);
   --md-outlined-text-field-focus-outline-color: var(--md-sys-color-primary);
   --md-outlined-text-field-label-text-color: var(--md-sys-color-on-surface-variant);
   --md-outlined-text-field-focus-label-text-color: var(--md-sys-color-primary);
   --md-outlined-text-field-input-text-color: var(--md-sys-color-on-surface);
-  --md-outlined-text-field-input-text-font: inherit;
+  --md-outlined-text-field-caret-color: var(--md-sys-color-primary);
+  --md-sys-color-primary: var(--md-sys-color-primary);
 }
 
 /* Cloudflare Turnstile Wrapper */
@@ -287,16 +309,38 @@ html[data-theme="dark"] .vault-q-item {
   padding-top: 20px;
 }
 
-.vault-bot-link {
+.vault-actions .action-btn.btn-tonal.vault-bot-link {
   text-decoration: none;
+  border: 1px solid color-mix(in srgb, var(--md-sys-color-primary) 20%, transparent);
+  transition: all var(--dur-short4, 200ms) var(--motion-standard);
 }
 
-.vault-submit-btn {
-  font-family: inherit;
+.vault-actions .action-btn.btn-tonal.vault-bot-link:hover {
+  border-color: var(--md-sys-color-primary);
+  background: color-mix(in srgb, var(--md-sys-color-primary) 15%, var(--md-sys-color-secondary-container));
+  box-shadow: var(--elev-1);
+}
+
+.vault-actions .action-btn.btn-filled.vault-submit-btn {
+  background: var(--md-sys-color-primary) !important;
+  color: var(--md-sys-color-on-primary) !important;
   font-weight: 700;
   letter-spacing: 0.02em;
-  padding: 0 24px;
-  height: 44px;
+  padding: 10px 24px;
+  border-radius: var(--shape-full, 9999px);
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--md-sys-color-primary) 30%, transparent);
+  transition: all var(--dur-short4, 200ms) var(--motion-standard);
+}
+
+.vault-actions .action-btn.btn-filled.vault-submit-btn:hover {
+  box-shadow: var(--elev-2), 0 4px 16px color-mix(in srgb, var(--md-sys-color-primary) 40%, transparent);
+  filter: brightness(1.05);
+}
+
+.vault-actions .action-btn.btn-filled.vault-submit-btn:active {
+  transform: scale(0.97);
 }
 
 /* Decrypted State Animations */
@@ -323,25 +367,22 @@ html[data-theme="dark"] .vault-q-item {
   padding: 16px 20px;
   border-radius: var(--shape-large, 20px);
   margin-bottom: 24px;
-  border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 40%, transparent);
-  background: var(--md-sys-color-surface-container, #ededf1);
+  border: 1px solid color-mix(in srgb, var(--md-sys-color-primary) 20%, var(--md-sys-color-outline-variant));
+  background: var(--md-sys-color-surface-container);
   transition: all 0.3s ease;
-}
-
-html[data-theme="dark"] .vault-status-card {
-  background: var(--md-sys-color-surface-container, #202224);
 }
 
 .vault-status-card.unlocked {
   background: color-mix(in srgb, var(--md-sys-color-primary-container) 35%, transparent);
-  border-color: color-mix(in srgb, var(--md-sys-color-primary) 40%, transparent);
+  border-color: color-mix(in srgb, var(--md-sys-color-primary) 45%, transparent);
   box-shadow: var(--elev-1);
 }
 
 .vault-status-card .status-icon {
   font-size: 26px;
-  color: var(--md-sys-color-primary);
+  color: var(--md-sys-color-on-primary-container);
   background: var(--md-sys-color-primary-container);
+  border: 1px solid color-mix(in srgb, var(--md-sys-color-primary) 30%, transparent);
   padding: 10px;
   border-radius: var(--shape-medium, 14px);
   display: flex;
@@ -382,7 +423,6 @@ html[data-theme="dark"] .vault-status-card {
     flex-direction: column-reverse;
     align-items: stretch;
   }
-  .vault-actions md-filled-button,
   .vault-actions .action-btn {
     width: 100%;
     justify-content: center;
