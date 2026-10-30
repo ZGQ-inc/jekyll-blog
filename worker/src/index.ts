@@ -364,11 +364,28 @@ async function sendUnlockCard(
 }
 
 /**
+ * 获取主频道 ID，自动过滤/纠正已废弃的历史旧频道（如 @ZGQinc_blog），统一归一化为 @CopyRightZGQInc
+ */
+function getPrimaryChannelId(env: Env): string {
+  let ch = (env.TELEGRAM_CHANNEL_ID || '').trim();
+  if (!ch || ch.toLowerCase().includes('zgqinc_blog')) {
+    ch = '@CopyRightZGQInc';
+  }
+  if (!ch.startsWith('@') && !ch.startsWith('-')) {
+    ch = '@' + ch;
+  }
+  return ch;
+}
+
+/**
  * Build standard Telegram message URL for a channel post
  */
 function buildTelegramMessageUrl(channel: string, messageId: number | string): string {
-  const clean = channel.replace('@', '');
+  let clean = channel.replace('@', '');
   if (!clean || !messageId) return '';
+  if (clean.toLowerCase().includes('zgqinc_blog')) {
+    clean = 'CopyRightZGQInc';
+  }
   if (clean.startsWith('-100')) {
     return `https://t.me/c/${clean.substring(4)}/${messageId}`;
   }
@@ -684,7 +701,7 @@ async function handleTelegramWebhook(request: Request, env: Env): Promise<Respon
   if (isStartOrHelp && message.chat) {
     await ensureBotCommands(env.TELEGRAM_BOT_TOKEN);
     const blogUrl = env.BLOG_URL || 'https://blog.zgqinc.gq';
-    const channelName = env.TELEGRAM_CHANNEL_ID ? env.TELEGRAM_CHANNEL_ID.replace('@', '') : 'CopyRightZGQInc';
+    const channelName = getPrimaryChannelId(env).replace('@', '');
     const channelUrl = `https://t.me/${channelName}`;
 
     if (isAuthorizedAdmin(message.from, env)) {
@@ -1285,7 +1302,7 @@ async function handleLinkCommand(message: TgMessage, id: string, providedSummary
       channels = JSON.parse(env.CHANNELS_CONFIG || '[]');
     } catch(e) {}
 
-    let targetChannel = env.TELEGRAM_CHANNEL_ID;
+    let targetChannel = getPrimaryChannelId(env);
     const matchedChannel = channels.find(c => c.folder === folder);
     if (matchedChannel) {
       targetChannel = matchedChannel.id;
@@ -1428,7 +1445,10 @@ async function handleSyncCommand(message: TgMessage, id: string, providedSummary
     // Formatting text (using shared helper)
     const { text, ivUrl } = buildPostMessageText(env, { id, title, summary, tags, postUrl });
 
-    let chatId = (row.tg_channel_id as string) || env.TELEGRAM_CHANNEL_ID;
+    let chatId = (row.tg_channel_id as string) || getPrimaryChannelId(env);
+    if (chatId.toLowerCase().includes('zgqinc_blog')) {
+      chatId = '@CopyRightZGQInc';
+    }
     if (!chatId.startsWith('@') && !chatId.startsWith('-')) {
       chatId = '@' + chatId;
     }
@@ -1492,8 +1512,9 @@ async function handleCancelCommand(message: TgMessage, id: string, env: Env): Pr
     }
 
     const tgMessageId = row.tg_message_id as number;
+    const channelId = (row.tg_channel_id as string) || getPrimaryChannelId(env);
     const delRes = await callTelegramApi(env.TELEGRAM_BOT_TOKEN, 'deleteMessage', {
-      chat_id: env.TELEGRAM_CHANNEL_ID,
+      chat_id: channelId.toLowerCase().includes('zgqinc_blog') ? '@CopyRightZGQInc' : channelId,
       message_id: tgMessageId
     });
 
@@ -1701,7 +1722,7 @@ async function handleNotify(request: Request, env: Env): Promise<Response> {
   ).run();
 
   // 构造频道消息链接
-  const tgPostUrl = buildTelegramMessageUrl(env.TELEGRAM_CHANNEL_ID || '', tgResult.message_id);
+  const tgPostUrl = buildTelegramMessageUrl(getPrimaryChannelId(env), tgResult.message_id);
 
   // 同步推送给除作者外的所有订阅者
   const broadcastResult = await broadcastNewPostToSubscribers(env, {
@@ -2114,7 +2135,10 @@ async function publishToChannel(
 ): Promise<{ message_id: number; error?: string } | null> {
   const { id, title, summary, tags, postUrl, image } = opts;
 
-  let chatId = opts.targetChannel || env.TELEGRAM_CHANNEL_ID;
+  let chatId = opts.targetChannel || getPrimaryChannelId(env);
+  if (chatId.toLowerCase().includes('zgqinc_blog')) {
+    chatId = '@CopyRightZGQInc';
+  }
   if (!chatId.startsWith('@') && !chatId.startsWith('-')) {
     chatId = '@' + chatId;
   }
