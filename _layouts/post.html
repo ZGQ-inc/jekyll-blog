@@ -109,17 +109,16 @@ layout: default
 
   <div id="vaultData" style="display:none;" data-iv="{{ post.vault_iv }}" data-cipher="{{ post.vault_cipher }}" data-salt="{{ site.vault_salt }}"></div>
 
-  <!-- Lock Screen with Matrix Digital Rain & 10 CTF Challenges -->
+  <!-- Lock Screen with MD3 CTF Challenges -->
   <div id="vaultLockScreen" class="vault-lock-screen" style="display:none;">
-    <div class="matrix-canvas-wrapper">
-      <canvas id="matrixCanvas" class="matrix-canvas"></canvas>
-    </div>
-
     <div class="vault-card">
       <div class="vault-card-header">
         <span class="material-symbols-outlined vault-lock-icon">encrypted</span>
         <div class="vault-title-group">
-          <div class="vault-badge">RESTRICTED // CLASSIFIED</div>
+          <div class="vault-badge">
+            <span class="material-symbols-outlined" style="font-size:14px">lock</span>
+            受限加密文章
+          </div>
           <h2 class="vault-title">受限文章</h2>
           <p class="vault-subtitle">本文已采用 AES-256-GCM 进行端到端构建期加密保护。</p>
         </div>
@@ -128,7 +127,7 @@ layout: default
       <div class="vault-notice-box">
         <span class="material-symbols-outlined">security</span>
         <div>
-          若要阅读本文，请解答以下 10 道题。答案完全正确即可在客户端通过零知识证明派生解密密钥并解除锁定。
+          本文内容已采用端到端加密保护。您可以通过解答以下 10 道技术验证题在本地派生解密密钥（解锁后长效保留 180 天）；亦可前往官方 Telegram 机器人获取 30 天临时访问凭证。
         </div>
       </div>
 
@@ -243,9 +242,13 @@ layout: default
         </div>
 
         <div class="vault-actions">
+          <a href="https://t.me/zgqinc_blog_bot?start=unlock" target="_blank" rel="noopener" class="vault-bot-link action-btn btn-tonal">
+            <span class="material-symbols-outlined">smart_toy</span>
+            前往 Bot 免答题获取凭证 (30天)
+          </a>
           <md-filled-button id="vaultSubmitBtn" class="vault-submit-btn">
             <span class="material-symbols-outlined" slot="icon">key</span>
-            验证并解密文章
+            验证并解密文章 (180天)
           </md-filled-button>
         </div>
       </form>

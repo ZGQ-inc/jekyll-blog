@@ -59,7 +59,9 @@ worker_api_url: "https://api.zgqinc.gq"
 telegram_iv_rhash: "aefab8c132338b"
 
 # Cloudflare Turnstile (人机安全验证，防止暴力碰撞)
-turnstile_site_key: "1x00000000000000000000AA"
+# 说明: "1x00000000000000000000AA" 为 Cloudflare 官方测试密钥（会显示“仅用于测试”）。
+# 正式上线请在 Cloudflare Dash -> Turnstile 添加站点 blog.zgqinc.gq，将获取到的 Site Key (形如 0x4AAAAAA...) 替换下方配置。
+turnstile_site_key: "0x4AAAAAAFs46xTj_x2e4dfU"
 
 # Build & Markdown
 markdown: kramdown

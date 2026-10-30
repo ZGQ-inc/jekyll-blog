@@ -1,7 +1,7 @@
 /**
  * ZGQ Blog Vault & Access Control Module
  * End-to-End Build-Time Encryption, Web Crypto AES-256-GCM, Zero-Knowledge PBKDF2 Challenge,
- * Matrix Digital Rain & 30-Day Cookie/Storage Session Management.
+ * Material Design 3 Integration, 180-Day Challenge Session & 30-Day Bot Token Management.
  */
 
 (function () {
@@ -15,6 +15,7 @@
   var STORAGE_KEY = 'zgq_vault_auth';
   var COOKIE_NAME = 'zgq_vault_auth';
   var THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000;
+  var ONE_HUNDRED_EIGHTY_DAYS_MS = 180 * 24 * 60 * 60 * 1000;
 
   /* ==========================================================================
      Cookie & LocalStorage Helpers
@@ -51,15 +52,17 @@
   }
 
   function saveAuthData(keyHex, expiresAt) {
+    var exp = expiresAt || (Date.now() + ONE_HUNDRED_EIGHTY_DAYS_MS);
     var data = {
       key: keyHex,
-      expires: expiresAt || (Date.now() + THIRTY_DAYS_MS)
+      expires: exp
     };
     var jsonStr = JSON.stringify(data);
     try {
       localStorage.setItem(STORAGE_KEY, jsonStr);
     } catch (e) {}
-    setCookie(COOKIE_NAME, jsonStr, 30);
+    var days = Math.max(1, Math.ceil((exp - Date.now()) / (24 * 60 * 60 * 1000)));
+    setCookie(COOKIE_NAME, jsonStr, days);
     triggerVaultUnlocked();
     return data;
   }
@@ -185,90 +188,6 @@
 
     var dec = new TextDecoder('utf-8');
     return dec.decode(decryptedBuffer);
-  }
-
-  /* ==========================================================================
-     Matrix Digital Rain Canvas Engine
-     ========================================================================== */
-
-  function initMatrixRain(canvasId) {
-    var canvas = document.getElementById(canvasId);
-    if (!canvas) return null;
-
-    var ctx = canvas.getContext('2d');
-    var characters = '0123456789ABCDEFﾊﾐﾋｰｳｼﾅﾓﾆｻﾜﾂｵﾘｱﾎﾃﾏｹﾒｴｶｷﾑﾕﾗｾﾈｽﾀﾇﾍ$#&%*+-=<>~';
-    var fontSize = 15;
-    var columns = 0;
-    var drops = [];
-    var animationFrameId = null;
-
-    function resize() {
-      var rect = canvas.getBoundingClientRect();
-      var width = rect.width || window.innerWidth;
-      var height = rect.height || window.innerHeight;
-      var dpr = window.devicePixelRatio || 1;
-
-      canvas.width = width * dpr;
-      canvas.height = height * dpr;
-      ctx.setTransform(1, 0, 0, 1, 0, 0);
-      ctx.scale(dpr, dpr);
-
-      columns = Math.floor(width / fontSize);
-      drops = [];
-      for (var i = 0; i < columns; i++) {
-        drops[i] = Math.floor(Math.random() * -50);
-      }
-    }
-
-    resize();
-    window.addEventListener('resize', resize);
-
-    var isDark = document.documentElement.getAttribute('data-theme') !== 'light';
-
-    function draw() {
-      var width = canvas.width / (window.devicePixelRatio || 1);
-      var height = canvas.height / (window.devicePixelRatio || 1);
-
-      isDark = document.documentElement.getAttribute('data-theme') !== 'light';
-
-      ctx.fillStyle = isDark ? 'rgba(8, 14, 11, 0.12)' : 'rgba(235, 245, 240, 0.18)';
-      ctx.fillRect(0, 0, width, height);
-
-      ctx.font = 'bold ' + fontSize + 'px "JetBrains Mono", monospace';
-
-      for (var i = 0; i < drops.length; i++) {
-        var text = characters.charAt(Math.floor(Math.random() * characters.length));
-        var x = i * fontSize;
-        var y = drops[i] * fontSize;
-
-        if (y > 0 && y < height) {
-          // Bright leading character
-          ctx.fillStyle = isDark ? '#E8FFF0' : '#00A854';
-          ctx.fillText(text, x, y);
-
-          // Glowing body character
-          ctx.fillStyle = isDark ? '#00FF80' : '#007A3D';
-          var prevChar = characters.charAt(Math.floor(Math.random() * characters.length));
-          ctx.fillText(prevChar, x, y - fontSize);
-        }
-
-        if (y > height && Math.random() > 0.975) {
-          drops[i] = 0;
-        }
-        drops[i]++;
-      }
-
-      animationFrameId = requestAnimationFrame(draw);
-    }
-
-    draw();
-
-    return {
-      destroy: function () {
-        if (animationFrameId) cancelAnimationFrame(animationFrameId);
-        window.removeEventListener('resize', resize);
-      }
-    };
   }
 
   /* ==========================================================================
@@ -495,9 +414,9 @@
 
         var success = await tryUnlockPage(derivedKeyHex);
         if (success) {
-          saveAuthData(derivedKeyHex, Date.now() + THIRTY_DAYS_MS);
+          saveAuthData(derivedKeyHex, Date.now() + ONE_HUNDRED_EIGHTY_DAYS_MS);
           if (window.showToast) {
-            window.showToast('挑战成功！解密密钥已派生，权限已生效（30天有效）');
+            window.showToast('挑战成功！解密密钥已派生，文章已解锁（180 天长效有效）');
           }
         } else {
           throw new Error('Verification failed');
@@ -547,7 +466,7 @@
           '<span class="material-symbols-outlined status-icon">lock_open</span>' +
           '<div class="status-info">' +
             '<div class="status-title">🛡️ 受限文章已解锁</div>' +
-            '<p class="status-desc">本地授权有效，剩余时间：<strong>' + days + ' 天 ' + hours + ' 小时</strong>（每次通过验证将自动刷新 30 天）</p>' +
+            '<p class="status-desc">本地授权有效，剩余时间：<strong>' + days + ' 天 ' + hours + ' 小时</strong>（网页答题解锁享 180 天长效访问，Bot 凭证享 30 天访问）</p>' +
           '</div>' +
           '<button class="action-btn btn-tonal" id="vaultRevokeBtn" style="flex-shrink:0;">' +
             '<span class="material-symbols-outlined" style="font-size:18px">lock</span>' +
@@ -580,13 +499,7 @@
      ========================================================================== */
 
   document.addEventListener('DOMContentLoaded', async function () {
-    // 1. Initialize Matrix Rain Canvas if present
-    var rainCanvas = document.getElementById('matrixCanvas');
-    if (rainCanvas) {
-      initMatrixRain('matrixCanvas');
-    }
-
-    // 2. Check for URL Hash Token (#access_token=...)
+    // 1. Check for URL Hash Token (#access_token=...)
     var tokenKeyHex = processUrlHashToken();
 
     // 3. Load stored authorization
