@@ -1,7 +1,7 @@
 require 'nokogiri'
 
 Jekyll::Hooks.register [:posts, :pages, :documents], :post_convert do |doc|
-  next unless doc.content.include?('blockquote')
+  next if doc.content.nil? || !doc.content.include?('blockquote')
 
   html = Nokogiri::HTML::DocumentFragment.parse(doc.content)
   modified = false

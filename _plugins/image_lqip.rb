@@ -4,11 +4,15 @@ require 'json'
 
 module ImageLqip
   def self.generate_if_needed(site)
-    script_path = File.join(site.source, 'scripts', 'generate_lqip.py')
+    script_path = [
+      File.join(site.source, 'scripts', 'generate_lqip.py'),
+      File.join(site.source, 'local', 'generate_lqip.py')
+    ].find { |p| File.exist?(p) }
+
     cache_file = File.join(site.source, '_data', 'lqip.json')
 
     # If cache file doesn't exist, try running python generator
-    if !File.exist?(cache_file) && File.exist?(script_path)
+    if !File.exist?(cache_file) && script_path && File.exist?(script_path)
       system("python3 \"#{script_path}\" 2>/dev/null || python \"#{script_path}\" 2>/dev/null")
     end
 
@@ -38,15 +42,16 @@ Jekyll::Hooks.register [:posts, :pages, :documents], :pre_render do |doc|
 end
 
 Jekyll::Hooks.register [:posts, :documents], :post_render do |doc|
-  if doc.output_ext == ".html" && doc.output
+  if doc.output_ext == ".html" && doc.output && !doc.output.empty?
+    output = doc.output.dup
     # Add loading="lazy" and decoding="async" to markdown images to prevent blocking page render
-    doc.output.gsub!(/<img\s+(?![^>]*\bloading=)([^>]+)>/i) do |match|
+    output = output.gsub(/<img\s+(?![^>]*\bloading=)([^>]+)>/i) do |match|
       if match.include?('hero-') || match.include?('card-thumb')
         match
       else
         match.sub('<img ', '<img loading="lazy" decoding="async" ')
       end
     end
+    doc.output = output
   end
 end
-

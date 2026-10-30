@@ -313,7 +313,7 @@ Jekyll::Hooks.register :site, :post_write do |site|
 end
 
 Jekyll::Hooks.register [:pages, :documents], :post_convert do |doc|
-  next unless doc.content.include?('class="preview"') || doc.content.include?("class='preview'")
+  next if doc.content.nil? || (!doc.content.include?('class="preview"') && !doc.content.include?("class='preview'"))
   
   html = Nokogiri::HTML::DocumentFragment.parse(doc.content)
   modified = false
