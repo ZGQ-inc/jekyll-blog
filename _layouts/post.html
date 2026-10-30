@@ -102,10 +102,164 @@ layout: default
   {% endif %}
 
   <!-- Post meta bar -->
+  {% if post.restricted and post.vault_dev_preview != true %}
+  <link rel="stylesheet" href="{{ '/assets/css/vault.css' | relative_url }}">
+  <script src="{{ '/assets/js/vault.js' | relative_url }}" defer></script>
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" async defer></script>
+
+  <div id="vaultData" style="display:none;" data-iv="{{ post.vault_iv }}" data-cipher="{{ post.vault_cipher }}" data-salt="{{ site.vault_salt }}"></div>
+
+  <!-- Lock Screen with Matrix Digital Rain & 10 CTF Challenges -->
+  <div id="vaultLockScreen" class="vault-lock-screen" style="display:none;">
+    <div class="matrix-canvas-wrapper">
+      <canvas id="matrixCanvas" class="matrix-canvas"></canvas>
+    </div>
+
+    <div class="vault-card">
+      <div class="vault-card-header">
+        <span class="material-symbols-outlined vault-lock-icon">encrypted</span>
+        <div class="vault-title-group">
+          <div class="vault-badge">RESTRICTED // CLASSIFIED</div>
+          <h2 class="vault-title">受限文章</h2>
+          <p class="vault-subtitle">本文已采用 AES-256-GCM 进行端到端构建期加密保护。</p>
+        </div>
+      </div>
+
+      <div class="vault-notice-box">
+        <span class="material-symbols-outlined">security</span>
+        <div>
+          若要阅读本文，请解答以下 10 道题。答案完全正确即可在客户端通过零知识证明派生解密密钥并解除锁定。
+        </div>
+      </div>
+
+      <form id="vaultChallengeForm" autocomplete="off" onsubmit="return false;">
+        <div class="vault-question-list">
+          <!-- Question 1 -->
+          <div class="vault-q-item">
+            <div class="vault-q-meta">
+              <span class="vault-q-num">CHALLENGE 01</span>
+              <span class="vault-q-tag">8051 / 硬件逆向</span>
+            </div>
+            <div class="vault-q-desc">在对 OneMix 1S+ (8051) 固件反编译分析中，USB 描述符重定向后端点 1 的 IN 传输缓冲区在 XDATA 中的物理基地址十六进制小写前缀（不带 0x）是？</div>
+            <md-outlined-text-field id="vault_q1" class="vault-q-input" label="回答 Challenge 01" placeholder="例如: abc123"></md-outlined-text-field>
+          </div>
+
+          <!-- Question 2 -->
+          <div class="vault-q-item">
+            <div class="vault-q-meta">
+              <span class="vault-q-num">CHALLENGE 02</span>
+              <span class="vault-q-tag">AST / JavaScript 逆向</span>
+            </div>
+            <div class="vault-q-desc">在针对 Spotify Windows 桌面端 Rspack 打包体系的逆向中，注入 AST 劫持脚本以拦截音视频流解密密钥的 Hook 函数虚拟地址在 Rspack chunk 中的偏移量哈希（加盐 <code>rspack_hook</code> 做 SHA256）前 6 位是？</div>
+            <md-outlined-text-field id="vault_q2" class="vault-q-input" label="回答 Challenge 02" placeholder="例如: abc123"></md-outlined-text-field>
+          </div>
+
+          <!-- Question 3 -->
+          <div class="vault-q-item">
+            <div class="vault-q-meta">
+              <span class="vault-q-num">CHALLENGE 03</span>
+              <span class="vault-q-tag">电子纸驱动 / 硬件波形</span>
+            </div>
+            <div class="vault-q-desc">在 3.98 英寸三色电子墨水屏 (EPD) 驱动波形逆向工程中，交错栅极扫描驱动 (Gate Interlacing) 第二阶段刷新时 LUT 寄存器 0x24 写入的特征控制字（SHA256 加盐 <code>epd_lut_phase2</code>）前 6 位是？</div>
+            <md-outlined-text-field id="vault_q3" class="vault-q-input" label="回答 Challenge 03" placeholder="例如: abc123"></md-outlined-text-field>
+          </div>
+
+          <!-- Question 4 -->
+          <div class="vault-q-item">
+            <div class="vault-q-meta">
+              <span class="vault-q-num">CHALLENGE 04</span>
+              <span class="vault-q-tag">Windows Core Audio / COM 虚表</span>
+            </div>
+            <div class="vault-q-desc">Windows Core Audio API 中，<code>IAudioEndpointVolume</code> 接口虚函数表中用于获取当前主音量绝对标量值的函数名称是？</div>
+            <md-outlined-text-field id="vault_q4" class="vault-q-input" label="回答 Challenge 04" placeholder="例如: FunctionName"></md-outlined-text-field>
+          </div>
+
+          <!-- Question 5 -->
+          <div class="vault-q-item">
+            <div class="vault-q-meta">
+              <span class="vault-q-num">CHALLENGE 05</span>
+              <span class="vault-q-tag">Windows 内核 RPC / 注册表</span>
+            </div>
+            <div class="vault-q-desc">在 Windows 内核与注册表通信中，向本地 RPC 命名管道 <code>\pipe\winreg</code> 发送打开注册表键请求时，若传入的子键路径以反斜杠 <code>\</code> 开头（例如 <code>\SOFTWARE\Microsoft\Windows\CurrentVersion\Run</code>），<code>RegOpenKey</code> API 底层返回的 Win32 错误代码是？</div>
+            <md-outlined-text-field id="vault_q5" class="vault-q-input" label="回答 Challenge 05" placeholder="例如: 2"></md-outlined-text-field>
+          </div>
+
+          <!-- Question 6 -->
+          <div class="vault-q-item">
+            <div class="vault-q-meta">
+              <span class="vault-q-num">CHALLENGE 06</span>
+              <span class="vault-q-tag">密码学 / ECC ECDH</span>
+            </div>
+            <div class="vault-q-desc">在 NIST P-256 椭圆曲线上，已知私钥 \(d_A = \text{0xdeadbeef114514}\)，公钥点 \(Q_B = (x_B, y_B)\)，经 ECDH 交换计算出的共享秘密点坐标 \(x\) 分量的前 3 个字节（十六进制小写，6 字符）是？</div>
+            <md-outlined-text-field id="vault_q6" class="vault-q-input" label="回答 Challenge 06" placeholder="例如: abc123"></md-outlined-text-field>
+          </div>
+
+          <!-- Question 7 -->
+          <div class="vault-q-item">
+            <div class="vault-q-meta">
+              <span class="vault-q-num">CHALLENGE 07</span>
+              <span class="vault-q-tag">BGP 路由 / 自治系统</span>
+            </div>
+            <div class="vault-q-desc">在针对 Cloudflare Anycast 路由与国内优化线路的 BGP 骨干网流量分析中，位于圣何塞节点直接对接到中国联通 AS4837 的上游 Tier 1 转接商对应的自治系统编号（ASN，格式形如 ASxxxxx）是？</div>
+            <md-outlined-text-field id="vault_q7" class="vault-q-input" label="回答 Challenge 07" placeholder="例如: AS12345"></md-outlined-text-field>
+          </div>
+
+          <!-- Question 8 -->
+          <div class="vault-q-item">
+            <div class="vault-q-meta">
+              <span class="vault-q-num">CHALLENGE 08</span>
+              <span class="vault-q-tag">Android 安全 / 签名方案</span>
+            </div>
+            <div class="vault-q-desc">在 Android APK Signature Scheme v2 的签名分块（APK Signing Block）规范中，用于存储 v2 签名方案数据的 ID-value 对的特征 Block ID（十六进制，带 0x 小写）是？</div>
+            <md-outlined-text-field id="vault_q8" class="vault-q-input" label="回答 Challenge 08" placeholder="例如: 0x12345678"></md-outlined-text-field>
+          </div>
+
+          <!-- Question 9 -->
+          <div class="vault-q-item">
+            <div class="vault-q-meta">
+              <span class="vault-q-num">CHALLENGE 09</span>
+              <span class="vault-q-tag">Chromium / 逆向爬虫对抗</span>
+            </div>
+            <div class="vault-q-desc">在 Chromium / Blink 渲染引擎源码中，完全禁用注入到 <code>window.navigator</code> 上的自动化标记以绕过高危 Web 爬虫检测的核心启动开关标志是 <code>--disable-blink-features=</code> 后面接的特性名称是什么？</div>
+            <md-outlined-text-field id="vault_q9" class="vault-q-input" label="回答 Challenge 09" placeholder="例如: FeatureName"></md-outlined-text-field>
+          </div>
+
+          <!-- Question 10 -->
+          <div class="vault-q-item">
+            <div class="vault-q-meta">
+              <span class="vault-q-num">CHALLENGE 10</span>
+              <span class="vault-q-tag">Go 架构 / 客户端补丁</span>
+            </div>
+            <div class="vault-q-desc">在开源项目 Spicetify-cli 的 Go 源码架构中，专门负责在写入修改前对 Spotify 客户端主 bundle 进行 AST 解析与代码预处理的源码文件名称是？</div>
+            <md-outlined-text-field id="vault_q10" class="vault-q-input" label="回答 Challenge 10" placeholder="例如: file.go"></md-outlined-text-field>
+          </div>
+        </div>
+
+        <div id="vaultErrorBanner" class="vault-error-banner" style="display: none;"></div>
+
+        <!-- Cloudflare Turnstile Verification -->
+        <div class="vault-turnstile-wrapper">
+          <div id="vaultTurnstile" data-sitekey="{{ site.turnstile_site_key | default: site.turnstile.site_key | default: '1x00000000000000000000AA' }}"></div>
+        </div>
+
+        <div class="vault-actions">
+          <md-filled-button id="vaultSubmitBtn" class="vault-submit-btn">
+            <span class="material-symbols-outlined" slot="icon">key</span>
+            验证并解密文章
+          </md-filled-button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Container for Decrypted Body -->
+  <div class="article-content" id="vaultDecryptedContent" itemprop="articleBody" style="display:none;"></div>
+  {% else %}
   <!-- Article body -->
   <div class="article-content" itemprop="articleBody">
     {{ content }}
   </div>
+  {% endif %}
 
   <!-- Tags row -->
   {% if post.tags.size > 0 %}
@@ -161,7 +315,7 @@ layout: default
 
   <!-- Telegram Channel Discussion Button -->
   {% if post.comments != false %}
-  <div class="tg-discuss-card" id="tgDiscussCard">
+  <div class="tg-discuss-card" id="tgDiscussCard" {% if post.restricted %}style="display:none;"{% endif %}>
     <div class="tg-icon">
       <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
         <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
@@ -180,6 +334,7 @@ layout: default
   </div>
 
   <!-- Fetch TG message ID, update discussion card and load official Telegram widget -->
+  {% unless post.restricted %}
   <script>
   document.addEventListener('DOMContentLoaded', function() {
     var postId = {{ post.slug | jsonify }};
@@ -369,10 +524,11 @@ layout: default
     });
   });
   </script>
+  {% endunless %}
   {% endif %}
 
   <!-- Telegram Official Comments Section -->
-  {% if post.comments != false %}
+  {% if post.comments != false and post.restricted != true %}
   <section class="comments-section" aria-label="评论区">
     <div class="comments-header">
       <h3 class="comments-title">

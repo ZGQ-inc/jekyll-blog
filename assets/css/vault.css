@@ -1,0 +1,321 @@
+/* ==========================================================================
+   ZGQ Blog Vault & Access Control Styles (Material Design 3 + Matrix Rain)
+   ========================================================================== */
+
+/* Matrix Canvas */
+.matrix-canvas-wrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.85;
+}
+
+.matrix-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* Vault Lock Screen Container */
+.vault-lock-screen {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 120px);
+  padding: 32px 16px;
+  box-sizing: border-box;
+  overflow: hidden;
+  border-radius: 28px;
+  background: radial-gradient(circle at center, rgba(16, 24, 20, 0.92) 0%, rgba(8, 12, 10, 0.98) 100%);
+}
+
+html[data-theme="light"] .vault-lock-screen {
+  background: radial-gradient(circle at center, rgba(235, 245, 240, 0.96) 0%, rgba(220, 235, 228, 0.98) 100%);
+}
+
+/* MD3 Elevated Vault Challenge Card */
+.vault-card {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  max-width: 780px;
+  background: var(--md-sys-color-surface-container-high, #252a27);
+  border-radius: 28px;
+  padding: 36px 32px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
+  border: 1px solid rgba(0, 255, 128, 0.18);
+  backdrop-filter: blur(16px);
+  box-sizing: border-box;
+  animation: vaultFadeUp 0.5s cubic-bezier(0.1, 0.9, 0.2, 1) both;
+}
+
+@keyframes vaultFadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.vault-card.shake {
+  animation: vaultShake 0.45s ease-in-out;
+}
+
+@keyframes vaultShake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-8px); }
+  40%, 80% { transform: translateX(8px); }
+}
+
+.vault-card-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 18px;
+  margin-bottom: 24px;
+}
+
+.vault-lock-icon {
+  font-size: 40px !important;
+  color: #00FF80;
+  background: rgba(0, 255, 128, 0.12);
+  padding: 14px;
+  border-radius: 20px;
+  border: 1px solid rgba(0, 255, 128, 0.25);
+  flex-shrink: 0;
+  box-shadow: 0 0 20px rgba(0, 255, 128, 0.2);
+}
+
+.vault-title-group {
+  flex: 1;
+}
+
+.vault-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 8px;
+  background: rgba(255, 60, 60, 0.15);
+  color: #FF6B6B;
+  border: 1px solid rgba(255, 60, 60, 0.3);
+  margin-bottom: 8px;
+}
+
+.vault-title {
+  margin: 0 0 6px 0;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--md-sys-color-on-surface, #ffffff);
+  letter-spacing: -0.02em;
+}
+
+.vault-subtitle {
+  margin: 0;
+  font-size: 0.95rem;
+  color: var(--md-sys-color-on-surface-variant, #a0aca4);
+  line-height: 1.5;
+}
+
+.vault-notice-box {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  background: rgba(0, 255, 128, 0.06);
+  border-left: 4px solid #00FF80;
+  padding: 14px 18px;
+  border-radius: 12px;
+  margin-bottom: 28px;
+  font-size: 0.9rem;
+  color: var(--md-sys-color-on-surface, #ffffff);
+  line-height: 1.6;
+}
+
+.vault-notice-box .material-symbols-outlined {
+  color: #00FF80;
+  font-size: 22px;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+/* Question List & Inputs */
+.vault-question-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-bottom: 32px;
+  max-height: 52vh;
+  overflow-y: auto;
+  padding-right: 8px;
+  scroll-behavior: smooth;
+}
+
+.vault-question-list::-webkit-scrollbar {
+  width: 6px;
+}
+.vault-question-list::-webkit-scrollbar-thumb {
+  background: rgba(0, 255, 128, 0.25);
+  border-radius: 4px;
+}
+
+.vault-q-item {
+  background: var(--md-sys-color-surface-container, rgba(0, 0, 0, 0.25));
+  border: 1px solid var(--md-sys-color-outline-variant, rgba(255, 255, 255, 0.08));
+  border-radius: 18px;
+  padding: 18px 20px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.vault-q-item:focus-within {
+  border-color: #00FF80;
+  box-shadow: 0 0 16px rgba(0, 255, 128, 0.12);
+}
+
+.vault-q-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.vault-q-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 800;
+  font-size: 0.85rem;
+  color: #00FF80;
+}
+
+.vault-q-tag {
+  font-size: 0.75rem;
+  color: var(--md-sys-color-on-surface-variant);
+  background: rgba(255, 255, 255, 0.06);
+  padding: 2px 8px;
+  border-radius: 6px;
+}
+
+.vault-q-desc {
+  font-size: 0.92rem;
+  line-height: 1.6;
+  color: var(--md-sys-color-on-surface);
+  margin-bottom: 14px;
+}
+
+.vault-q-input {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Action Area */
+.vault-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 16px;
+  border-top: 1px solid var(--md-sys-color-outline-variant, rgba(255, 255, 255, 0.08));
+  padding-top: 24px;
+}
+
+.vault-submit-btn {
+  font-family: 'Noto Sans SC', sans-serif;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  padding: 0 28px;
+  height: 48px;
+}
+
+.vault-error-banner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(255, 60, 60, 0.12);
+  border: 1px solid rgba(255, 60, 60, 0.35);
+  color: #FF8080;
+  border-radius: 12px;
+  padding: 12px 18px;
+  margin-top: 18px;
+  font-size: 0.9rem;
+  animation: fadeIn 0.3s ease;
+}
+
+/* Decrypted State Animations */
+.vault-unlocked-content {
+  animation: vaultReveal 0.6s cubic-bezier(0.1, 0.9, 0.2, 1) both;
+}
+
+@keyframes vaultReveal {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* About Page Badge */
+.vault-status-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 20px;
+  border-radius: 20px;
+  margin-bottom: 24px;
+  border: 1px solid var(--md-sys-color-outline-variant);
+  background: var(--md-sys-color-surface-container);
+  transition: all 0.3s ease;
+}
+
+.vault-status-card.unlocked {
+  background: rgba(0, 255, 128, 0.08);
+  border-color: rgba(0, 255, 128, 0.35);
+  box-shadow: 0 4px 20px rgba(0, 255, 128, 0.08);
+}
+
+.vault-status-card .status-icon {
+  font-size: 28px;
+  color: #00FF80;
+  background: rgba(0, 255, 128, 0.15);
+  padding: 10px;
+  border-radius: 14px;
+  display: flex;
+}
+
+.vault-status-card .status-info {
+  flex: 1;
+}
+
+.vault-status-card .status-title {
+  font-weight: 800;
+  font-size: 1rem;
+  color: var(--md-sys-color-on-surface);
+  margin-bottom: 2px;
+}
+
+.vault-status-card .status-desc {
+  font-size: 0.85rem;
+  color: var(--md-sys-color-on-surface-variant);
+  margin: 0;
+}
+
+/* Cloudflare Turnstile Wrapper */
+.vault-turnstile-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 20px 0 12px 0;
+  min-height: 65px;
+}

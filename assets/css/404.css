@@ -1,0 +1,203 @@
+/* ==========================================================================
+   404 Page Styles - Material Design 3 Specification
+   Dynamic Theme Color, Frosted Surface & Matrix Rain Canvas
+   ========================================================================== */
+
+.error-404-page {
+  position: relative;
+  width: 100%;
+  max-width: none !important;
+  margin: 0 !important;
+  min-height: calc(100dvh - 160px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 16px 48px;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+/* Background Canvas */
+.error-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 1.2s var(--motion-standard, ease);
+  background-color: transparent !important;
+  filter: none !important;
+}
+
+/* MD3 Surface Card */
+.error-card {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 440px;
+  padding: 40px 32px 32px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 12px;
+  border-radius: var(--shape-xl, 28px);
+  background: color-mix(in srgb, var(--md-sys-color-surface-container-low, #f3f3f7) 84%, transparent);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant, #c3c7cf) 55%, transparent);
+  box-shadow: var(--elev-2, 0 4px 8px 3px rgba(0, 0, 0, 0.15));
+  animation: errorCardEnter 0.6s var(--motion-emphasized-decel, cubic-bezier(0.05, 0.7, 0.1, 1)) both;
+  transition:
+    background-color var(--dur-medium2, 0.3s) var(--motion-standard, ease),
+    border-color var(--dur-medium2, 0.3s) var(--motion-standard, ease),
+    box-shadow var(--dur-medium2, 0.3s) var(--motion-standard, ease);
+}
+
+@keyframes errorCardEnter {
+  from {
+    opacity: 0;
+    transform: translateY(28px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Status Badge with Glowing Pulse */
+.error-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 14px;
+  border-radius: var(--shape-full, 9999px);
+  background: color-mix(in srgb, var(--md-sys-color-primary, #0061a4) 12%, transparent);
+  color: var(--md-sys-color-primary, #0061a4);
+  border: 1px solid color-mix(in srgb, var(--md-sys-color-primary, #0061a4) 25%, transparent);
+  font-family: 'Roboto Mono', 'JetBrains Mono', Consolas, monospace;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.matrix-status-pulse {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background-color: var(--md-sys-color-primary, #0061a4);
+  box-shadow: 0 0 6px var(--md-sys-color-primary, #0061a4);
+  animation: matrixPulse 2s infinite ease-in-out;
+}
+
+@keyframes matrixPulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.35;
+    transform: scale(0.8);
+  }
+}
+
+/* 404 Hero Number */
+.error-code-display {
+  font-size: clamp(4.5rem, 12vw, 6.2rem);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.04em;
+  color: var(--md-sys-color-primary, #0061a4);
+  text-shadow: 0 0 24px color-mix(in srgb, var(--md-sys-color-primary, #0061a4) 35%, transparent);
+  margin: 0;
+  user-select: none;
+}
+
+/* Title and Description */
+.error-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--md-sys-color-on-surface, #1a1c1e);
+  margin: 4px 0 0;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+}
+
+.error-desc {
+  font-size: 0.9375rem;
+  color: var(--md-sys-color-on-surface-variant, #43474e);
+  line-height: 1.6;
+  margin: 0 0 12px;
+  max-width: 360px;
+}
+
+/* Button Group */
+.error-btn-group {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 12px;
+}
+
+.error-action-btn {
+  justify-content: center;
+  width: 100%;
+  height: 48px;
+  border-radius: var(--shape-full, 9999px);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  box-sizing: border-box;
+}
+
+/* Quick Navigation Links */
+.error-quick-links {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  width: 100%;
+  margin-top: 4px;
+  padding-top: 18px;
+  border-top: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant, #c3c7cf) 40%, transparent);
+}
+
+.error-quick-btn {
+  padding: 6px 14px;
+  font-size: 0.8125rem;
+  height: 36px;
+  border-radius: var(--shape-full, 9999px);
+}
+
+/* Responsive Overrides */
+@media (max-width: 480px) {
+  .error-404-page {
+    padding: 20px 12px 36px;
+    min-height: calc(100dvh - 140px);
+  }
+
+  .error-card {
+    padding: 32px 20px 24px;
+    border-radius: var(--shape-large, 16px);
+    gap: 10px;
+  }
+
+  .error-code-display {
+    font-size: 4rem;
+  }
+
+  .error-title {
+    font-size: 1.35rem;
+  }
+
+  .error-desc {
+    font-size: 0.875rem;
+    margin-bottom: 8px;
+  }
+}

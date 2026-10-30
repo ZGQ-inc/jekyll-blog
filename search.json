@@ -1,8 +1,9 @@
 ---
 layout: none
 ---
+{% assign visible_posts = site.posts | where_exp: "item", "item.restricted != true" %}
 [
-  {% for post in site.posts %}
+  {% for post in visible_posts %}
   {
     "title"    : {{ post.title | jsonify }},
     "url"      : {{ post.url | relative_url | jsonify }},

@@ -1,27 +1,60 @@
 ---
 layout: default
-title: 页面不存在
+title: 页面未找到
 permalink: /404.html
 ---
 
-<main class="page-content" role="main" style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;text-align:center">
-  <div style="font-size:6rem;line-height:1;margin-bottom:16px;animation:fadeInUp 0.4s ease both">404</div>
+<link rel="stylesheet" href="{{ '/assets/css/404.css' | relative_url }}?v={{ site.time | date: '%s' }}">
+<script src="{{ '/assets/js/404.js' | relative_url }}?v={{ site.time | date: '%s' }}" defer></script>
 
-  <h1 style="font-size:1.5rem;font-weight:800;color:var(--md-sys-color-on-surface);margin-bottom:8px">
-    页面走丢了
-  </h1>
-  <p style="color:var(--md-sys-color-on-surface-variant);margin-bottom:28px;max-width:300px;font-size:0.9rem">
-    你访问的页面不存在，可能已被删除或链接有误。
-  </p>
+<main class="page-content error-404-page" role="main">
+  <!-- Dynamic Matrix Digital Rain Canvas -->
+  <canvas id="matrixCanvas" class="error-canvas" aria-hidden="true"></canvas>
 
-  <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center">
-    <a class="action-btn btn-filled" href="{{ '/' | relative_url }}">
-      <span class="material-symbols-outlined">home</span>
-      回到首页
-    </a>
-    <button class="action-btn btn-outlined" onclick="history.back()">
-      <span class="material-symbols-outlined">arrow_back</span>
-      返回上页
-    </button>
+  <!-- MD3 Elevated Surface Card -->
+  <div class="error-card">
+    <!-- Status Badge -->
+    <div class="error-badge">
+      <span class="matrix-status-pulse"></span>
+      <span>SYSTEM 404 // ROUTE NOT FOUND</span>
+    </div>
+
+    <!-- Error Code Display -->
+    <div class="error-code-display" aria-label="404">404</div>
+
+    <!-- Error Title & Description -->
+    <h1 class="error-title">页面未找到</h1>
+    <p class="error-desc">
+      抱歉，您访问的页面节点不存在，该资源可能已被迁移、重构或链接已失效。
+    </p>
+
+    <!-- Main Navigation Actions -->
+    <div class="error-btn-group">
+      <a href="{{ '/' | relative_url }}" class="action-btn btn-filled error-action-btn">
+        <span class="material-symbols-outlined">home</span>
+        <span>返回博客首页</span>
+      </a>
+
+      <button type="button" class="action-btn btn-tonal error-action-btn" onclick="if(window.history.length > 1){window.history.back();}else{window.location.href='{{ '/' | relative_url }}';}">
+        <span class="material-symbols-outlined">arrow_back</span>
+        <span>返回上一页</span>
+      </button>
+    </div>
+
+    <!-- Quick Navigation Links -->
+    <div class="error-quick-links">
+      <a href="{{ '/archives/' | relative_url }}" class="action-btn btn-outlined error-quick-btn" title="查看文章归档">
+        <span class="material-symbols-outlined">inventory_2</span>
+        <span>文章归档</span>
+      </a>
+      <a href="{{ '/tags/' | relative_url }}" class="action-btn btn-outlined error-quick-btn" title="浏览全部标签">
+        <span class="material-symbols-outlined">label</span>
+        <span>全站标签</span>
+      </a>
+      <a href="{{ '/links/' | relative_url }}" class="action-btn btn-outlined error-quick-btn" title="友情链接">
+        <span class="material-symbols-outlined">link</span>
+        <span>友情链接</span>
+      </a>
+    </div>
   </div>
 </main>

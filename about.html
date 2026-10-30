@@ -4,12 +4,17 @@ title: 关于
 permalink: /about/
 ---
 
+<link rel="stylesheet" href="{{ '/assets/css/vault.css' | relative_url }}">
+<script src="{{ '/assets/js/vault.js' | relative_url }}" defer></script>
 
 <main class="page-content" role="main">
   <div class="page-header">
     <h1 class="page-title">👤 关于我</h1>
     <p class="page-subtitle">Hello, World!</p>
   </div>
+
+  <!-- Vault Authorization Status Card -->
+  <div id="vaultAboutStatus"></div>
 
   <!-- Profile Card -->
   <div class="about-section">
@@ -95,7 +100,5 @@ permalink: /about/
       {% endif %}
     </div>
   </div>
-
-
 
 </main>

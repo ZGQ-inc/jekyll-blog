@@ -28,6 +28,17 @@ CREATE TABLE IF NOT EXISTS media_uploads (
   uploaded_at     DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Bot 订阅用户表（私聊开启 Bot 的读者，用于自动推送新文章广播）
+CREATE TABLE IF NOT EXISTS bot_subscribers (
+  user_id         INTEGER  PRIMARY KEY,          -- Telegram 用户 chat_id
+  username        TEXT,                          -- @username
+  first_name      TEXT,                          -- 用户昵称
+  is_active       INTEGER  DEFAULT 1,            -- 1: 启用推送, 0: 退订或屏蔽
+  created_at      DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updated_at      DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
 -- 索引优化
 CREATE INDEX IF NOT EXISTS idx_post_tg_map_tg_message ON post_tg_map(tg_message_id);
 CREATE INDEX IF NOT EXISTS idx_media_uploads_post_id  ON media_uploads(post_id);
+CREATE INDEX IF NOT EXISTS idx_bot_subscribers_active  ON bot_subscribers(is_active);

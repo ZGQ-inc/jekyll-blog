@@ -121,4 +121,4 @@ jobs:
         env:
           POST_FILE: ${{ steps.detect.outputs.post_file }}
           WORKER_API_URL: ${{ secrets.WORKER_API_URL }}
-          NOTIFY_SECRET: ${{ secrets.NOTIFY_S
+          NOTIFY_SECRET: ${{ secrets.NOTIFY_SECRET }}

@@ -34,6 +34,7 @@ interface Env {
   GITHUB_TOKEN: string;
   NOTIFY_SECRET: string;
   WEBHOOK_SECRET: string;
+  VAULT_KEY?: string;
 }
 
 interface TgUpdate {
@@ -146,6 +147,26 @@ interface NotifyPayload {
   image?: string;
   slug: string;
   date: string;
+  restricted?: boolean;
+}
+
+function generateVaultToken(userId: number, env?: Env): string {
+  const key = env?.VAULT_KEY;
+  if (!key) {
+    throw new Error('VAULT_KEY secret is not configured in Cloudflare Worker');
+  }
+  const expiresAt = Date.now() + 30 * 24 * 60 * 60 * 1000; // 30 days
+  const randomBytes = new Uint8Array(16);
+  crypto.getRandomValues(randomBytes);
+  const nonce = Array.from(randomBytes).map(b => b.toString(16).padStart(2, '0')).join('');
+  const payload = {
+    k: key,
+    exp: expiresAt,
+    uid: userId,
+    nonce: nonce
+  };
+  const jsonStr = JSON.stringify(payload);
+  return btoa(unescape(encodeURIComponent(jsonStr))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 }
 
 // ================================================================
@@ -214,7 +235,10 @@ function getBeijingTime(): { today: string; dateStr: string; yearMonth: string }
 // Authorization Helper
 // ================================================================
 
-function isAuthorizedAdmin(user: TgUser | undefined, env: Env): boolean {
+function isAuthorizedAdmin(
+  user: { id?: number | string; username?: string; first_name?: string } | undefined,
+  env: Env
+): boolean {
   if (!user) return false;
 
   // Read admin list from env (ADMIN_USERS or ADMIN_USER), fallback to 'ZGQinc' for backward compatibility
@@ -230,7 +254,154 @@ function isAuthorizedAdmin(user: TgUser | undefined, env: Env): boolean {
   return adminList.some(admin => admin === username || admin === userId);
 }
 
+/**
+ * Record or update subscriber interaction in D1.
+ * Admin users are recorded with is_active = 0 to guarantee they never receive broadcasts.
+ * Regular users are recorded with is_active = 1 by default, preserving preference on update.
+ */
+async function recordSubscriber(user: TgUser | undefined, env: Env): Promise<void> {
+  if (!user || user.is_bot) return;
+  const isAdmin = isAuthorizedAdmin(user, env);
+  try {
+    if (isAdmin) {
+      await env.DB.prepare(
+        `INSERT INTO bot_subscribers (user_id, username, first_name, is_active, updated_at)
+         VALUES (?, ?, ?, 0, CURRENT_TIMESTAMP)
+         ON CONFLICT(user_id) DO UPDATE SET
+           username = excluded.username,
+           first_name = excluded.first_name,
+           is_active = 0,
+           updated_at = CURRENT_TIMESTAMP`
+      ).bind(
+        user.id,
+        user.username || null,
+        user.first_name || null
+      ).run();
+    } else {
+      await env.DB.prepare(
+        `INSERT INTO bot_subscribers (user_id, username, first_name, is_active, updated_at)
+         VALUES (?, ?, ?, 1, CURRENT_TIMESTAMP)
+         ON CONFLICT(user_id) DO UPDATE SET
+           username = excluded.username,
+           first_name = excluded.first_name,
+           updated_at = CURRENT_TIMESTAMP`
+      ).bind(
+        user.id,
+        user.username || null,
+        user.first_name || null
+      ).run();
+    }
+  } catch (err) {
+    console.error('[recordSubscriber] Failed to record subscriber:', err);
+  }
+}
+
 // ================================================================
+
+/**
+ * Update subscriber active preference in D1.
+ */
+async function setSubscriberActive(
+  user: { id: number | string; username?: string | null; first_name?: string | null },
+  isActive: boolean,
+  env: Env
+): Promise<void> {
+  const numId = Number(user.id);
+  if (!numId) return;
+  try {
+    if (isActive) {
+      await env.DB.prepare(
+        `INSERT INTO bot_subscribers (user_id, username, first_name, is_active, updated_at)
+         VALUES (?, ?, ?, 1, CURRENT_TIMESTAMP)
+         ON CONFLICT(user_id) DO UPDATE SET
+           username = excluded.username,
+           first_name = excluded.first_name,
+           is_active = 1,
+           updated_at = CURRENT_TIMESTAMP`
+      ).bind(numId, user.username || null, user.first_name || null).run();
+    } else {
+      await env.DB.prepare(
+        `UPDATE bot_subscribers SET is_active = 0, updated_at = CURRENT_TIMESTAMP WHERE user_id = ?`
+      ).bind(numId).run();
+    }
+  } catch (err) {
+    console.error('[setSubscriberActive] Failed:', err);
+  }
+}
+
+/**
+ * Send vault access unlock token card to user.
+ */
+async function sendUnlockCard(
+  chatId: number,
+  user: { id: number; first_name?: string },
+  env: Env
+): Promise<void> {
+  const token = generateVaultToken(user.id, env);
+  const blogUrl = env.BLOG_URL || 'https://blog.zgqinc.gq';
+  const unlockUrl = `${blogUrl}/about/#access_token=${token}`;
+
+  await sendTelegramMessage(env.TELEGRAM_BOT_TOKEN, {
+    chat_id: chatId,
+    text: [
+      '🔐 <b>受限文章解密凭证已就绪</b>',
+      '',
+      `读者 <b>${escapeHtml(user.first_name || '读者')}</b>，您的专属访问令牌已生成（30 天有效）。`,
+      '',
+      '点击下方专属凭证链接即可自动解锁博客的所有机密与受限文章：',
+      '',
+      `🔗 <a href="${unlockUrl}">👉 点击立即前往博客自动解锁</a>`,
+      '',
+      '💡 <i>安全说明：本链接通过 URL Hash (#) 传递端到端 AES 解密参数，解密过程全部在您的浏览器本地 Web Crypto 中完成，服务器不记录明文密钥。到期后可随时再次点击按钮或发送 /unlock 自动刷新 30 天。</i>'
+    ].join('\n'),
+    parse_mode: 'HTML',
+    reply_markup: {
+      inline_keyboard: [
+        [{ text: '🚀 立即前往博客解锁 (30天有效)', url: unlockUrl }]
+      ]
+    }
+  });
+}
+
+/**
+ * Build standard Telegram message URL for a channel post
+ */
+function buildTelegramMessageUrl(channel: string, messageId: number | string): string {
+  const clean = channel.replace('@', '');
+  if (!clean || !messageId) return '';
+  if (clean.startsWith('-100')) {
+    return `https://t.me/c/${clean.substring(4)}/${messageId}`;
+  }
+  return `https://t.me/${clean}/${messageId}`;
+}
+
+/**
+ * Format post tags and Instant View zero-width ghost link
+ */
+function formatPostTagsAndIv(
+  env: Env,
+  opts: { id: string; postUrl: string; tags?: string[] }
+): { tagsLine: string; ivUrl: string | null; ghostLink: string } {
+  const { id, postUrl, tags } = opts;
+  const idTag = `#ID_${id.replace(/-/g, '_')}`;
+  const otherTags = (tags || []).map(t => `#${t.replace(/[^a-zA-Z0-9_\u4e00-\u9fa5]/g, '_')}`).join(' ');
+  const tagsLine = [idTag, otherTags].filter(Boolean).join(' ');
+
+  const ivUrl = env.TELEGRAM_IV_RHASH
+    ? `https://t.me/iv?url=${encodeURIComponent(postUrl)}&rhash=${env.TELEGRAM_IV_RHASH}`
+    : null;
+  const ghostLink = ivUrl ? `<a href="${ivUrl}">&#8203;</a>` : '';
+
+  return { tagsLine, ivUrl, ghostLink };
+}
+
+let botCommandsConfigured = false;
+async function ensureBotCommands(token: string): Promise<void> {
+  if (botCommandsConfigured) return;
+  await setupBotCommands(token);
+  botCommandsConfigured = true;
+}
+
 // ZGQ Blog Cloudflare Worker - Telegram Webhook
 // Trigger CF Worker CI Test
 // ================================================================
@@ -245,12 +416,78 @@ async function handleTelegramWebhook(request: Request, env: Env): Promise<Respon
   const update: TgUpdate = await request.json();
   
   if (update.callback_query) {
+    if (update.callback_query.from) {
+      await recordSubscriber(update.callback_query.from, env);
+    }
+
+    const cbData = update.callback_query.data || '';
+    if (cbData === 'user_unsubscribe') {
+      const user = update.callback_query.from;
+      await setSubscriberActive(user, false, env);
+
+      await callTelegramApi(env.TELEGRAM_BOT_TOKEN, 'answerCallbackQuery', {
+        callback_query_id: update.callback_query.id,
+        text: '🔕 已退订新文章私信推送'
+      });
+
+      if (update.callback_query.message?.chat?.id) {
+        await sendTelegramMessage(env.TELEGRAM_BOT_TOKEN, {
+          chat_id: update.callback_query.message.chat.id,
+          text: '🔕 <b>已退订新文章私信推送</b>\n\n您将不会再收到新文章私信推送。随时发送 <code>/subscribe</code> 或点击下方按钮即可重新订阅。',
+          parse_mode: 'HTML',
+          reply_markup: {
+            inline_keyboard: [
+              [{ text: '🔔 重新订阅推送', callback_data: 'user_subscribe' }]
+            ]
+          }
+        });
+      }
+      return jsonResponse({ ok: true });
+    }
+
+    if (cbData === 'user_subscribe') {
+      const user = update.callback_query.from;
+      await setSubscriberActive(user, true, env);
+
+      await callTelegramApi(env.TELEGRAM_BOT_TOKEN, 'answerCallbackQuery', {
+        callback_query_id: update.callback_query.id,
+        text: '🔔 已恢复订阅新文章推送！'
+      });
+
+      if (update.callback_query.message?.chat?.id) {
+        await sendTelegramMessage(env.TELEGRAM_BOT_TOKEN, {
+          chat_id: update.callback_query.message.chat.id,
+          text: '🔔 <b>已恢复订阅新文章私信推送！</b>\n\n新文章发布时将第一时间同步通知您。',
+          parse_mode: 'HTML',
+          reply_markup: {
+            inline_keyboard: [
+              [{ text: '🔕 退订推送', callback_data: 'user_unsubscribe' }]
+            ]
+          }
+        });
+      }
+      return jsonResponse({ ok: true });
+    }
+
+    if (cbData === 'user_unlock') {
+      const user = update.callback_query.from;
+      await callTelegramApi(env.TELEGRAM_BOT_TOKEN, 'answerCallbackQuery', {
+        callback_query_id: update.callback_query.id,
+        text: '✅ 凭证已生成，正在发送解锁链接...'
+      });
+
+      if (update.callback_query.message?.chat?.id) {
+        await sendUnlockCard(update.callback_query.message.chat.id, user, env);
+      }
+      return jsonResponse({ ok: true });
+    }
+
     if (!isAuthorizedAdmin(update.callback_query.from, env)) {
       console.warn(`Unauthorized callback_query from @${update.callback_query.from?.username} (ID: ${update.callback_query.from?.id})`);
       try {
         await callTelegramApi(env.TELEGRAM_BOT_TOKEN, 'answerCallbackQuery', {
           callback_query_id: update.callback_query.id,
-          text: '⛔ 权限不足：您不是博客管理员，无权操作此按钮。',
+          text: '⛔ 该操作仅限博客管理员。',
           show_alert: true
         });
       } catch (e) {}
@@ -327,28 +564,167 @@ async function handleTelegramWebhook(request: Request, env: Env): Promise<Respon
     text === '❌ 取消创建' || 
     !!(message.reply_to_message?.from?.is_bot);
 
-  // 2. 权限校验
+  // 记录订阅者（用户私聊或发送指令）
+  if (message.from && (isPrivateChat || message.text?.startsWith('/'))) {
+    await recordSubscriber(message.from, env);
+  }
+
+  // 1.6 允许任意 Telegram 用户通过 /unlock、/getkey、/vault 获取受限文章解锁凭证
+  const trimmedText = text.trim();
+  const isUnlockCmd = /^\/(unlock|getkey|access|vault)(\s+.*)?$/i.test(trimmedText) ||
+                      /^\/start\s+(unlock|vault|access)/i.test(trimmedText);
+
+  if (isUnlockCmd && message.from && message.chat) {
+    await sendUnlockCard(message.chat.id, message.from, env);
+    return jsonResponse({ ok: true });
+  }
+
+  // 1.6.1 处理 /subscribe 订阅指令
+  const isSubscribeCmd = /^\/subscribe(?:@\w+)?(?:\s|$)/i.test(trimmedText);
+  if (isSubscribeCmd && message.from && message.chat) {
+    await setSubscriberActive(message.from, true, env);
+    await sendTelegramMessage(env.TELEGRAM_BOT_TOKEN, {
+      chat_id: message.chat.id,
+      text: [
+        '🔔 <b>已成功订阅博客新文章推送！</b>',
+        '',
+        '每当博主发布新文章并推送到频道时，Bot 会第一时间私信向您推送精选摘要与阅读直达链接。',
+        '',
+        '💡 <i>如需退订，可随时发送 <code>/unsubscribe</code> 或点击推送底部的退订按钮。</i>'
+      ].join('\n'),
+      parse_mode: 'HTML'
+    });
+    return jsonResponse({ ok: true });
+  }
+
+  // 1.6.2 处理 /unsubscribe 退订指令
+  const isUnsubscribeCmd = /^\/unsubscribe(?:@\w+)?(?:\s|$)/i.test(trimmedText);
+  if (isUnsubscribeCmd && message.from && message.chat) {
+    await setSubscriberActive(message.from, false, env);
+    await sendTelegramMessage(env.TELEGRAM_BOT_TOKEN, {
+      chat_id: message.chat.id,
+      text: [
+        '🔕 <b>已退订新文章私信推送</b>',
+        '',
+        '您将不会再收到新文章私信通知。',
+        '',
+        '💡 <i>您可以继续使用 <code>/unlock</code> 获取受限文章解锁令牌，随时发送 <code>/subscribe</code> 即可重新订阅。</i>'
+      ].join('\n'),
+      parse_mode: 'HTML'
+    });
+    return jsonResponse({ ok: true });
+  }
+
+  // 1.7 处理 /start 与 /help 指令（区分管理员与普通读者）
+  const isStartOrHelp = /^\/(start|help)(?:@\w+)?(?:\s|$)/i.test(trimmedText);
+  if (isStartOrHelp && message.chat) {
+    await ensureBotCommands(env.TELEGRAM_BOT_TOKEN);
+    const blogUrl = env.BLOG_URL || 'https://blog.zgqinc.gq';
+    const channelName = env.TELEGRAM_CHANNEL_ID ? env.TELEGRAM_CHANNEL_ID.replace('@', '') : 'CopyRightZGQInc';
+    const channelUrl = `https://t.me/${channelName}`;
+
+    if (isAuthorizedAdmin(message.from, env)) {
+      // 管理员控制台视图
+      await sendTelegramMessage(env.TELEGRAM_BOT_TOKEN, {
+        chat_id: message.chat.id,
+        text: [
+          '👑 <b>博主控制中心 / Admin Dashboard</b>',
+          '',
+          `欢迎回来，<b>${escapeHtml(message.from?.first_name || '博主')}</b>！`,
+          '',
+          '📝 <b>快捷管理指令：</b>',
+          '• <code>/new [标题]</code> — 新建文章草稿并提交到 GitHub',
+          '• <code>/link &lt;id&gt; [摘要]</code> — 关联发布到 Telegram 频道',
+          '• <code>/sync &lt;id&gt;</code> — 重新同步文章内容与摘要',
+          '• <code>/bind &lt;id&gt; &lt;url&gt;</code> — 手动绑定已有频道消息',
+          '• <code>/cancel &lt;id&gt;</code> — 取消草稿并清理分支',
+          '• 直接发送媒体（图片/视频/文档）可直传 R2 图床',
+          '',
+          '🔑 <b>读者功能测试：</b>',
+          '• <code>/unlock</code> — 测试生成 30 天受限文章解密令牌'
+        ].join('\n'),
+        parse_mode: 'HTML',
+        reply_markup: {
+          inline_keyboard: [
+            [
+              { text: '🔑 测试生成解锁凭证', callback_data: 'user_unlock' }
+            ],
+            [
+              { text: '🌐 访问博客首页', url: blogUrl },
+              { text: '📢 前往博客频道', url: channelUrl }
+            ]
+          ]
+        }
+      });
+      return jsonResponse({ ok: true });
+    } else {
+      // 普通读者欢迎卡片
+      await sendTelegramMessage(env.TELEGRAM_BOT_TOKEN, {
+        chat_id: message.chat.id,
+        text: [
+          `👋 <b>您好，${escapeHtml(message.from?.first_name || '朋友')}！欢迎使用 Blog 助手</b>`,
+          '',
+          '本机器人是 <b>ZGQ Inc. 个人博客</b>的官方服务助手。',
+          '',
+          '✨ <b>核心服务功能：</b>',
+          '• 🔐 <b>受限文章访问凭证</b>：本站部分底层逆向与深度系统安全文章已启用端到端加密保护。点击下方按钮即可一键获取 <b>30 天有效</b>的专属解密链接。',
+          '• 📢 <b>频道订阅与讨论</b>：最新技术干货发布时将自动推送摘要至频道，支持一键前往讨论区。',
+          '• 🌐 <b>博客内容与导航</b>：随时直达博客主页、分类标签与归档。',
+          '',
+          '👇 <b>请点击下方按钮选择所需操作：</b>'
+        ].join('\n'),
+        parse_mode: 'HTML',
+        reply_markup: {
+          inline_keyboard: [
+            [
+              { text: '🔑 获取受限文章解锁凭证 (30天)', callback_data: 'user_unlock' }
+            ],
+            [
+              { text: '🌐 访问博客首页', url: blogUrl },
+              { text: '📢 前往 Telegram 频道', url: channelUrl }
+            ],
+            [
+              { text: '🔔 订阅新文章推送', callback_data: 'user_subscribe' },
+              { text: '🔕 退订新文章推送', callback_data: 'user_unsubscribe' }
+            ],
+            [
+              { text: '👤 关于本站 / 凭证状态', url: `${blogUrl}/about/` }
+            ]
+          ]
+        }
+      });
+      return jsonResponse({ ok: true });
+    }
+  }
+
+  // 2. 权限校验（非管理员尝试使用管理指令时的提示）
   if (!isAuthorizedAdmin(message.from, env)) {
     const fromDesc = message.from
       ? `${message.from.first_name || ''} (@${message.from.username || '无用户名'}, ID: ${message.from.id})`
       : '未知用户';
     console.warn(`Unauthorized access attempt from ${fromDesc} in chat ${message.chat?.id} (${message.chat?.type})`);
 
-    // 重点：只有在私聊 (Private Chat) 场景下，才向用户返回「访问被拒绝」提示卡片。
-    // 在群组、超级群或频道等公开讨论场景中，普通用户的非授权发言/特殊消息一律静默忽略，绝不触发「访问被拒绝」刷屏。
     if (isPrivateChat && message.chat?.id) {
       await sendTelegramMessage(env.TELEGRAM_BOT_TOKEN, {
         chat_id: message.chat.id,
         text: [
-          '⛔ <b>访问被拒绝 / Access Denied</b>',
+          '🔒 <b>权限受限 / Admin Only</b>',
           '',
-          '抱歉，您不是此博客的管理员，无权使用此 Bot 执行发布与管理操作。',
+          '抱歉，此功能为博客管理员专用操作命令。',
           '',
-          `🆔 您的 Telegram ID: <code>${message.from?.id || '未知'}</code>`,
-          message.from?.username ? `👤 您的用户名: <code>@${escapeHtml(message.from.username)}</code>\n` : '',
-          '💡 <i>若您是博主本人，请在 Cloudflare Worker 的 <code>ADMIN_USERS</code> 环境变量中添加您的 Telegram ID 或用户名。</i>'
-        ].filter(Boolean).join('\n'),
-        parse_mode: 'HTML'
+          '💡 如果您希望阅读博客的受限机密技术文章，请发送 <code>/unlock</code> 或点击下方按钮获取 30 天有效解密链接：'
+        ].join('\n'),
+        parse_mode: 'HTML',
+        reply_markup: {
+          inline_keyboard: [
+            [
+              { text: '🔑 获取受限文章解锁凭证', callback_data: 'user_unlock' }
+            ],
+            [
+              { text: '🌐 访问博客首页', url: env.BLOG_URL || 'https://blog.zgqinc.gq' }
+            ]
+          ]
+        }
       });
     }
     return jsonResponse({ ok: true });
@@ -436,18 +812,6 @@ async function handleTelegramWebhook(request: Request, env: Env): Promise<Respon
     return jsonResponse({ ok: true });
   }
 
-  // Help / Start command
-  if (text.match(/^\/(?:start|help)(?:@\w+)?(?:\s|$)/s)) {
-    // Register official Telegram Bot Command Menu
-    await setupBotCommands(env.TELEGRAM_BOT_TOKEN);
-
-    await sendTelegramMessage(env.TELEGRAM_BOT_TOKEN, {
-      chat_id: message.chat.id,
-      text: buildHelpHtml(),
-      parse_mode: 'HTML'
-    });
-    return jsonResponse({ ok: true });
-  }
 
   return jsonResponse({ ok: true });
 }
@@ -459,16 +823,21 @@ async function setupBotCommands(token: string): Promise<void> {
   try {
     await callTelegramApi(token, 'setMyCommands', {
       commands: [
-        { command: 'new', description: '📝 新建文章草稿' },
-        { command: 'link', description: '🔗 关联发布到频道' },
-        { command: 'sync', description: '🔄 重新同步文章内容' },
-        { command: 'bind', description: '📌 手动绑定已有频道消息' },
-        { command: 'cancel', description: '🗑️ 取消并删除草稿' },
-        { command: 'help', description: '❓ 查看使用指南与菜单' }
+        { command: 'unlock', description: '🔐 获取受限机密文章 30 天解锁凭证' },
+        { command: 'subscribe', description: '🔔 订阅博客新文章私信推送' },
+        { command: 'unsubscribe', description: '🔕 退订新文章私信推送' },
+        { command: 'start', description: '🚀 启动助手与功能主菜单' },
+        { command: 'help', description: '📖 查看使用指南与博客信息' }
       ]
     });
     await callTelegramApi(token, 'setChatMenuButton', {
       menu_button: { type: 'commands' }
+    });
+    await callTelegramApi(token, 'setMyDescription', {
+      description: '欢迎使用 ZGQ Inc. 个人博客官方助手！\n\n✨ 核心功能：\n• 🔐 获取受限底层逆向/机密文章 30 天专属解密凭证\n• 🔔 实时私信接收最新博客文章摘要与直达推送\n• 📢 直达官方 Telegram 讨论频道与博客主页\n\n点击下方「开始」或发送 /start 即可立即使用。'
+    });
+    await callTelegramApi(token, 'setMyShortDescription', {
+      short_description: 'ZGQ Inc. 个人博客助手：受限技术文章 30 天解密凭证获取 & 新文章实时私信推送。'
     });
   } catch (e) {
     console.warn('Failed to setup bot commands menu:', e);
@@ -889,16 +1258,22 @@ async function handleLinkCommand(message: TgMessage, id: string, providedSummary
         'telegram_manual'
       ).run();
 
-      let channelLink = '';
-      if (targetChannel.startsWith('@')) {
-        channelLink = `\n<b>频道</b>: https://t.me/${targetChannel.substring(1)}/${tgResult.message_id}`;
-      } else if (targetChannel.startsWith('-100')) {
-        channelLink = `\n<b>频道</b>: https://t.me/c/${targetChannel.substring(4)}/${tgResult.message_id}`;
-      }
+      const tgPostUrl = buildTelegramMessageUrl(targetChannel, tgResult.message_id);
+      const channelLink = tgPostUrl ? `\n<b>频道</b>: ${tgPostUrl}` : '';
+
+      // 同步推送给除作者外的所有订阅者
+      const broadcastResult = await broadcastNewPostToSubscribers(env, {
+        id,
+        title,
+        summary,
+        tags,
+        postUrl,
+        tgPostUrl
+      });
 
       await sendTelegramMessage(env.TELEGRAM_BOT_TOKEN, {
         chat_id: message.chat.id,
-        text: `✅ 关联成功！已推送到频道。\n\n<b>文章</b>: ${escapeHtml(title)}\n<b>博客</b>: ${postUrl}${channelLink}`,
+        text: `✅ 关联成功！已推送到频道。\n\n<b>文章</b>: ${escapeHtml(title)}\n<b>博客</b>: ${postUrl}${channelLink}\n\n📢 <b>订阅者同步推送</b>: 成功 ${broadcastResult.sent} 人，跳过管理员 ${broadcastResult.skippedAdmins} 人`,
         parse_mode: 'HTML'
       });
     } else {
@@ -1075,7 +1450,7 @@ function getFileIcon(ext: string): string {
     case 'pdf': return 'picture_as_pdf';
     case 'zip': case 'rar': case '7z': case 'tar': case 'gz': return 'folder_zip';
     case 'doc': case 'docx': return 'description';
-    case 'xls': case 'xlsx': case 'csv': return 'table_chart'; // 'table_chart' or 'table', 'table' might not exist in standard MD3, usually it's table_chart or table_view. The user said "table", let's use "table". Wait, they explicitly said "table". I will use "table" to exactly match their template.
+    case 'xls': case 'xlsx': case 'csv': return 'table';
     case 'ppt': case 'pptx': return 'co_present';
     case 'jpg': case 'jpeg': case 'png': case 'gif': case 'svg': case 'webp': case 'ico': return 'image';
     case 'mp3': case 'wav': case 'flac': case 'ogg': return 'audio_file';
@@ -1088,13 +1463,6 @@ function getFileIcon(ext: string): string {
     case 'js': case 'ts': case 'py': case 'rb': case 'go': case 'java': case 'c': case 'cpp': case 'rs': case 'php': case 'html': case 'css': case 'scss': case 'cs': case 'swift': case 'kt': case 'dart': case 'lua': case 'sql': return 'code';
     default: return 'description';
   }
-}
-
-// User specified 'table', I will override the case for xls above to ensure it uses exactly what they asked.
-function getExactFileIcon(ext: string): string {
-  const e = ext.toLowerCase();
-  if (['xls', 'xlsx', 'csv'].includes(e)) return 'table';
-  return getFileIcon(e);
 }
 
 async function handleMediaUpload(message: TgMessage, env: Env): Promise<void> {
@@ -1158,7 +1526,7 @@ async function handleMediaUpload(message: TgMessage, env: Env): Promise<void> {
 
     const formattedSize = formatBytes(fileSize);
     const ext = fileName.split('.').pop() || '';
-    const icon = getExactFileIcon(ext);
+    const icon = getFileIcon(ext);
     const safeName = fileName.replace(/"/g, '\\"');
     // Liquid file download card format
     const liquidSnippet = [
@@ -1232,7 +1600,7 @@ async function handleNotify(request: Request, env: Env): Promise<Response> {
     image
   });
 
-  if (!tgResult) {
+  if (!tgResult || !tgResult.message_id) {
     return jsonResponse({ error: 'Failed to send Telegram message' }, 500);
   }
 
@@ -1251,12 +1619,27 @@ async function handleNotify(request: Request, env: Env): Promise<Response> {
     'git'
   ).run();
 
+  // 构造频道消息链接
+  const tgPostUrl = buildTelegramMessageUrl(env.TELEGRAM_CHANNEL_ID || '', tgResult.message_id);
+
+  // 同步推送给除作者外的所有订阅者
+  const broadcastResult = await broadcastNewPostToSubscribers(env, {
+    id: post_id,
+    title,
+    summary,
+    tags: tags || [],
+    postUrl,
+    image,
+    tgPostUrl
+  });
+
   return jsonResponse({
     ok: true,
     message_id: tgResult.message_id,
     post_url: postUrl,
     wait_time_ms: checkResult.elapsedMs,
-    ready: checkResult.ready
+    ready: checkResult.ready,
+    broadcast: broadcastResult
   });
 }
 
@@ -1628,16 +2011,7 @@ function buildPostMessageText(
   opts: { id: string; title: string; summary: string; tags: string[]; postUrl: string }
 ): { text: string; ivUrl: string | null } {
   const { id, title, summary, tags, postUrl } = opts;
-  const idTag = `#ID_${id.replace(/-/g, '_')}`;
-  const otherTags = tags.map(t => `#${t.replace(/[^a-zA-Z0-9_\u4e00-\u9fa5]/g, '_')}`).join(' ');
-  const tagsLine = [idTag, otherTags].filter(Boolean).join(' ');
-
-  const ivUrl = env.TELEGRAM_IV_RHASH
-    ? `https://t.me/iv?url=${encodeURIComponent(postUrl)}&rhash=${env.TELEGRAM_IV_RHASH}`
-    : null;
-
-  // Prepend zero-width space link (Ghost Link) so Telegram auto-attaches Instant View preview
-  const ghostLink = ivUrl ? `<a href="${ivUrl}">&#8203;</a>` : '';
+  const { tagsLine, ivUrl, ghostLink } = formatPostTagsAndIv(env, { id, postUrl, tags });
 
   // "查看全文" directly points to the blog's own domain, while Telegram natively attaches the ⚡️ Instant View button
   const text = [
@@ -1698,6 +2072,148 @@ async function publishToChannel(
   }
 
   return { message_id: result.result.message_id as number };
+}
+
+interface BroadcastPostOpts {
+  id: string;
+  title: string;
+  summary: string;
+  tags?: string[];
+  postUrl: string;
+  image?: string;
+  tgPostUrl?: string;
+}
+
+interface BroadcastResult {
+  total: number;
+  sent: number;
+  failed: number;
+  skippedAdmins: number;
+}
+
+/**
+ * 广播新文章至所有活跃订阅者（严格排除博主/管理员本人）
+ */
+async function broadcastNewPostToSubscribers(
+  env: Env,
+  opts: BroadcastPostOpts
+): Promise<BroadcastResult> {
+  try {
+    const { results } = await env.DB.prepare(
+      `SELECT user_id, username, first_name FROM bot_subscribers WHERE is_active = 1`
+    ).all<{ user_id: number; username: string | null; first_name: string | null }>();
+
+    if (!results || results.length === 0) {
+      console.log('[broadcastNewPostToSubscribers] 无活跃订阅者，跳过广播。');
+      return { total: 0, sent: 0, failed: 0, skippedAdmins: 0 };
+    }
+
+    // 严格过滤博主/管理员账号，确保博主不会收到自己文章的推送
+    const targetSubscribers: Array<{ user_id: number; username: string | null; first_name: string | null }> = [];
+    let skippedAdmins = 0;
+
+    for (const sub of results) {
+      if (isAuthorizedAdmin({ id: sub.user_id, username: sub.username || undefined, first_name: sub.first_name || '' }, env)) {
+        skippedAdmins++;
+        continue;
+      }
+      targetSubscribers.push(sub);
+    }
+
+    console.log(`[broadcastNewPostToSubscribers] 数据库订阅者: ${results.length}，过滤管理员: ${skippedAdmins}，实际发送目标: ${targetSubscribers.length}`);
+
+    if (targetSubscribers.length === 0) {
+      return { total: results.length, sent: 0, failed: 0, skippedAdmins };
+    }
+
+    const { id, title, summary, tags, postUrl, tgPostUrl } = opts;
+    const { tagsLine, ivUrl, ghostLink } = formatPostTagsAndIv(env, { id, postUrl, tags });
+
+    const messageText = [
+      `${ghostLink}📢 <b>博主发布了新文章！</b>`,
+      '',
+      `📌 <b>${escapeHtml(title)}</b>`,
+      '',
+      escapeHtml(summary),
+      '',
+      tagsLine ? `${tagsLine}\n` : '',
+      `💡 <i>若该文章属于受限文章，可在本机器人直接发送 /unlock 获取 30 天解密凭证。</i>`
+    ].filter(line => line !== '').join('\n');
+
+    const inlineKeyboard: Array<Array<{ text: string; url?: string; callback_data?: string }>> = [
+      [
+        { text: '📖 在博客阅读全文', url: postUrl }
+      ]
+    ];
+
+    if (tgPostUrl) {
+      inlineKeyboard[0].push({ text: '💬 频道讨论区', url: tgPostUrl });
+    }
+
+    inlineKeyboard.push([
+      { text: '🔑 快速获取解锁凭证', callback_data: 'user_unlock' },
+      { text: '🔕 退订推送', callback_data: 'user_unsubscribe' }
+    ]);
+
+    let sent = 0;
+    let failed = 0;
+
+    // 分批并发发送（每批 10 个，批次间休眠 50ms 防止触发 Telegram API 429 速率限制）
+    const BATCH_SIZE = 10;
+    for (let i = 0; i < targetSubscribers.length; i += BATCH_SIZE) {
+      const batch = targetSubscribers.slice(i, i + BATCH_SIZE);
+      await Promise.all(
+        batch.map(async (sub) => {
+          try {
+            const res = await callTelegramApi(env.TELEGRAM_BOT_TOKEN, 'sendMessage', {
+              chat_id: sub.user_id,
+              text: messageText,
+              parse_mode: 'HTML',
+              link_preview_options: {
+                is_disabled: false,
+                url: ivUrl || postUrl,
+                prefer_large_media: true
+              },
+              reply_markup: {
+                inline_keyboard: inlineKeyboard
+              }
+            });
+
+            if (res.ok) {
+              sent++;
+            } else {
+              failed++;
+              const desc = (res.description || '').toLowerCase();
+              // 若用户已拉黑 Bot 或已注销账号，自动将其设为 is_active = 0
+              if (
+                desc.includes('bot was blocked by the user') ||
+                desc.includes('user is deactivated') ||
+                desc.includes('chat not found')
+              ) {
+                console.log(`[broadcast] 用户 ${sub.user_id} 已拉黑机器人或停用，标记 is_active = 0`);
+                await env.DB.prepare(
+                  `UPDATE bot_subscribers SET is_active = 0, updated_at = CURRENT_TIMESTAMP WHERE user_id = ?`
+                ).bind(sub.user_id).run();
+              }
+            }
+          } catch (e: any) {
+            failed++;
+            console.error(`[broadcast] 向用户 ${sub.user_id} 发送失败:`, e);
+          }
+        })
+      );
+
+      if (i + BATCH_SIZE < targetSubscribers.length) {
+        await new Promise(resolve => setTimeout(resolve, 50));
+      }
+    }
+
+    console.log(`[broadcastNewPostToSubscribers] 广播完成。总订阅者: ${results.length}，成功发送: ${sent}，失败: ${failed}，跳过管理员: ${skippedAdmins}`);
+    return { total: results.length, sent, failed, skippedAdmins };
+  } catch (err) {
+    console.error('[broadcastNewPostToSubscribers] 广播异常:', err);
+    return { total: 0, sent: 0, failed: 0, skippedAdmins: 0 };
+  }
 }
 
 async function sendTelegramMessage(
@@ -1864,19 +2380,6 @@ function escapeHtml(str: string): string {
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;');
-}
-
-function buildHelpHtml(): string {
-  return [
-    '📖 <b>博客管理机器人使用指南</b>\n',
-    '1️⃣ <b>新建草稿</b>: <code>/new [文章标题]</code>',
-    '2️⃣ <b>关联频道</b>: <code>/link &lt;id&gt; [摘要内容]</code>',
-    '3️⃣ <b>同步文章</b>: <code>/sync &lt;id&gt; [新摘要内容]</code>',
-    '4️⃣ <b>手动绑定</b>: <code>/bind &lt;id&gt; &lt;频道消息链接&gt;</code>',
-    '5️⃣ <b>取消草稿</b>: <code>/cancel &lt;id&gt;</code>',
-    '6️⃣ <b>媒体上传</b>: 直接向机器人发送图片/视频/音频/文件',
-    '\n💡 <i>点击聊天窗口左下角的 [Menu] 菜单即可快捷使用所有命令。</i>'
-  ].join('\n');
 }
 
 function jsonResponse(data: unknown, status = 200): Response {

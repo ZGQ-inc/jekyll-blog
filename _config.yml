@@ -58,6 +58,9 @@ worker_api_url: "https://api.zgqinc.gq"
 # Telegram Instant View (即时预览专属 Rules Hash)
 telegram_iv_rhash: "aefab8c132338b"
 
+# Cloudflare Turnstile (人机安全验证，防止暴力碰撞)
+turnstile_site_key: "1x00000000000000000000AA"
+
 # Build & Markdown
 markdown: kramdown
 highlighter: rouge

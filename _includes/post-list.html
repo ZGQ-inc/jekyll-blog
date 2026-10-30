@@ -29,8 +29,10 @@
 
 <!-- Post Gallery -->
 <div class="gallery-container grid-mode" id="postGallery">
-  {% assign postsByDay = include.posts | group_by_exp: "post", "post.date | date: '%Y-%m-%d'" %}
+  {% assign visible_posts = include.posts | where_exp: "item", "item.restricted != true" %}
+  {% assign postsByDay = visible_posts | group_by_exp: "post", "post.date | date: '%Y-%m-%d'" %}
   {% for day_group in postsByDay %}
+    {% if day_group.items.size == 0 %}{% continue %}{% endif %}
     <div class="timeline-header" data-date="{{ day_group.name }}">
       <span class="material-symbols-outlined header-icon">calendar_today</span>
       <span class="header-title">{{ day_group.name }}</span>
@@ -38,6 +40,7 @@
     </div>
 
     {% for post in day_group.items %}
+    {% if post.restricted %}{% continue %}{% endif %}
     <a class="post-card scroll-animate"
        href="{{ post.url | relative_url }}"
        data-title="{{ post.title | downcase }}"
@@ -101,7 +104,7 @@
     {% endfor %}
   {% endfor %}
 
-  {% if include.posts.size == 0 %}
+  {% if visible_posts.size == 0 %}
   <div class="empty-state" style="grid-column:1/-1">
     <span class="material-symbols-outlined empty-icon">{{ include.empty_icon | default: 'edit_note' }}</span>
     <p class="empty-title">{{ include.empty_title | default: '还没有文章' }}</p>
@@ -109,5 +112,3 @@
   </div>
   {% endif %}
 </div><!-- /gallery-container -->
-
-
