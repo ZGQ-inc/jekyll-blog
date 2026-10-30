@@ -45,6 +45,11 @@
     document.cookie = name + '=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT; SameSite=Lax';
   }
 
+  function triggerVaultUnlocked() {
+    document.documentElement.classList.add('vault-unlocked');
+    window.dispatchEvent(new CustomEvent('vaultUnlocked'));
+  }
+
   function saveAuthData(keyHex, expiresAt) {
     var data = {
       key: keyHex,
@@ -55,8 +60,14 @@
       localStorage.setItem(STORAGE_KEY, jsonStr);
     } catch (e) {}
     setCookie(COOKIE_NAME, jsonStr, 30);
+    triggerVaultUnlocked();
     return data;
   }
+
+  window.isVaultUnlocked = function() {
+    var data = loadAuthData();
+    return !!(data && data.key && (!data.expires || Date.now() < data.expires));
+  };
 
   function loadAuthData() {
     var data = null;
@@ -261,16 +272,16 @@
   }
 
   /* ==========================================================================
-     Hash Token Parser (Method 1: Telegram Bot Token)
+     Hash & Query Token Parser (Method 1: Telegram Bot Token)
      ========================================================================== */
 
   function processUrlHashToken() {
-    var rawHash = window.location.hash || window._initialHash || '';
-    if (!rawHash || rawHash.indexOf('access_token=') === -1) {
+    var rawParam = window.location.hash || window.location.search || window._initialHash || '';
+    if (!rawParam || rawParam.indexOf('access_token=') === -1) {
       return null;
     }
 
-    var match = rawHash.match(/access_token=([^&]+)/);
+    var match = rawParam.match(/access_token=([^&#]+)/);
     if (!match) return null;
 
     var tokenStr = match[1];
@@ -296,9 +307,11 @@
 
     if (keyHex) {
       saveAuthData(keyHex, expiresAt);
-      // Clean URL hash smoothly without reloading
+      // Clean URL search & hash smoothly without reloading
       if (history.replaceState) {
-        history.replaceState(null, null, window.location.pathname + window.location.search);
+        var cleanSearch = window.location.search.replace(/[?&]access_token=[^&#]+/, '').replace(/^&/, '?');
+        if (cleanSearch === '?') cleanSearch = '';
+        history.replaceState(null, null, window.location.pathname + cleanSearch);
       }
       return keyHex;
     }
@@ -339,6 +352,13 @@
       // Show comment card and discussions
       var discussCard = document.getElementById('tgDiscussCard');
       if (discussCard) discussCard.style.display = 'flex';
+
+      var commentsSection = document.getElementById('commentsSection');
+      if (commentsSection) commentsSection.style.display = 'block';
+
+      if (typeof window.loadTgComments === 'function') {
+        window.loadTgComments(false);
+      }
 
       return true;
     } catch (e) {
@@ -572,6 +592,9 @@
     // 3. Load stored authorization
     var auth = loadAuthData();
     var effectiveKeyHex = tokenKeyHex || (auth ? auth.key : null);
+    if (effectiveKeyHex) {
+      triggerVaultUnlocked();
+    }
 
     // 4. If on a restricted post page:
     var vaultDataEl = document.getElementById('vaultData');

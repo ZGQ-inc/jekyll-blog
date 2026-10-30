@@ -29,19 +29,32 @@
 
 <!-- Post Gallery -->
 <div class="gallery-container grid-mode" id="postGallery">
-  {% assign visible_posts = include.posts | where_exp: "item", "item.restricted != true" %}
-  {% assign postsByDay = visible_posts | group_by_exp: "post", "post.date | date: '%Y-%m-%d'" %}
+  {% assign postsByDay = include.posts | group_by_exp: "post", "post.date | date: '%Y-%m-%d'" %}
   {% for day_group in postsByDay %}
     {% if day_group.items.size == 0 %}{% continue %}{% endif %}
-    <div class="timeline-header" data-date="{{ day_group.name }}">
+    {% assign day_restricted_count = 0 %}
+    {% for item in day_group.items %}
+      {% if item.restricted %}{% assign day_restricted_count = day_restricted_count | plus: 1 %}{% endif %}
+    {% endfor %}
+    {% assign is_all_restricted = false %}
+    {% if day_restricted_count == day_group.items.size %}
+      {% assign is_all_restricted = true %}
+    {% endif %}
+    <div class="timeline-header{% if is_all_restricted %} vault-restricted{% endif %}"
+         data-date="{{ day_group.name }}"
+         data-public-count="{{ day_group.items.size | minus: day_restricted_count }}"
+         data-total-count="{{ day_group.items.size }}">
       <span class="material-symbols-outlined header-icon">calendar_today</span>
       <span class="header-title">{{ day_group.name }}</span>
-      <span class="header-count">{{ day_group.items.size }} 篇</span>
+      <span class="header-count">
+        <span class="count-public">{{ day_group.items.size | minus: day_restricted_count }}</span>
+        <span class="count-total" style="display:none;">{{ day_group.items.size }}</span> 篇
+      </span>
     </div>
 
     {% for post in day_group.items %}
-    {% if post.restricted %}{% continue %}{% endif %}
-    <a class="post-card scroll-animate"
+    <a class="post-card scroll-animate{% if post.restricted %} vault-restricted{% endif %}"
+       {% if post.restricted %}data-restricted="true"{% endif %}
        href="{{ post.url | relative_url }}"
        data-title="{{ post.title | downcase }}"
        data-tags="{{ post.tags | join: ',' | downcase }}"

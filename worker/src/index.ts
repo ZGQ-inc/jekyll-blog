@@ -166,7 +166,12 @@ function generateVaultToken(userId: number, env?: Env): string {
     nonce: nonce
   };
   const jsonStr = JSON.stringify(payload);
-  return btoa(unescape(encodeURIComponent(jsonStr))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+  const bytes = new TextEncoder().encode(jsonStr);
+  let binary = '';
+  for (let i = 0; i < bytes.byteLength; i++) {
+    binary += String.fromCharCode(bytes[i]);
+  }
+  return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 }
 
 // ================================================================
@@ -337,30 +342,50 @@ async function sendUnlockCard(
   user: { id: number; first_name?: string },
   env: Env
 ): Promise<void> {
-  const token = generateVaultToken(user.id, env);
-  const blogUrl = env.BLOG_URL || 'https://blog.zgqinc.gq';
-  const unlockUrl = `${blogUrl}/about/#access_token=${token}`;
+  try {
+    const token = generateVaultToken(user.id, env);
+    const blogUrl = env.BLOG_URL || 'https://blog.zgqinc.gq';
+    // Must use URL Hash fragment (#) to preserve client-side zero-knowledge secrecy (CDN does not log/cache hash)
+    const unlockUrl = `${blogUrl}/about/#access_token=${token}`;
 
-  await sendTelegramMessage(env.TELEGRAM_BOT_TOKEN, {
-    chat_id: chatId,
-    text: [
-      '🔐 <b>受限文章解密凭证已就绪</b>',
-      '',
-      `读者 <b>${escapeHtml(user.first_name || '读者')}</b>，您的专属访问令牌已生成（30 天有效）。`,
-      '',
-      '点击下方专属凭证链接即可自动解锁博客的所有机密与受限文章：',
-      '',
-      `🔗 <a href="${unlockUrl}">👉 点击立即前往博客自动解锁</a>`,
-      '',
-      '💡 <i>安全说明：本链接通过 URL Hash (#) 传递端到端 AES 解密参数，解密过程全部在您的浏览器本地 Web Crypto 中完成，服务器不记录明文密钥。到期后可随时再次点击按钮或发送 /unlock 自动刷新 30 天。</i>'
-    ].join('\n'),
-    parse_mode: 'HTML',
-    reply_markup: {
-      inline_keyboard: [
-        [{ text: '🚀 立即前往博客解锁 (30天有效)', url: unlockUrl }]
-      ]
+    const res = await callTelegramApi(env.TELEGRAM_BOT_TOKEN, 'sendMessage', {
+      chat_id: chatId,
+      text: [
+        '🔐 <b>受限文章解密凭证已就绪</b>',
+        '',
+        `读者 <b>${escapeHtml(user.first_name || '读者')}</b>，您的专属访问令牌已生成（30 天有效）。`,
+        '',
+        '点击下方专属凭证链接即可自动解锁博客的所有机密与受限文章：',
+        '',
+        `🔗 <a href="${unlockUrl}">👉 点击立即前往博客自动解锁</a>`,
+        '',
+        '💡 <i>安全说明：本链接通过 URL Hash (#) 传递端到端 AES 解密参数，Hash 锚点绝不发送至 CDN 或服务器，全部在您的浏览器本地 Web Crypto 中完成解密与安全存储，并在加载后自动从地址栏抹除。到期后可随时再次点击按钮或发送 /unlock 自动刷新 30 天。</i>'
+      ].join('\n'),
+      parse_mode: 'HTML',
+      reply_markup: {
+        inline_keyboard: [
+          [{ text: '🚀 立即前往博客解锁 (30天有效)', url: unlockUrl }]
+        ]
+      }
+    });
+
+    if (!res.ok) {
+      console.error('[sendUnlockCard] Telegram API error:', res.description);
+      // Fallback: send without inline keyboard if URL was somehow rejected
+      await callTelegramApi(env.TELEGRAM_BOT_TOKEN, 'sendMessage', {
+        chat_id: chatId,
+        text: `🔐 <b>受限文章解密凭证已就绪 (30天有效)</b>\n\n读者 <b>${escapeHtml(user.first_name || '读者')}</b>，请点击下方链接直接解锁：\n\n👉 <a href="${unlockUrl}">点击立即前往博客自动解锁</a>\n\n<code>${unlockUrl}</code>`,
+        parse_mode: 'HTML'
+      });
     }
-  });
+  } catch (err) {
+    console.error('[sendUnlockCard] Error generating or sending unlock card:', err);
+    await callTelegramApi(env.TELEGRAM_BOT_TOKEN, 'sendMessage', {
+      chat_id: chatId,
+      text: `❌ 生成受限文章解锁凭证时出现异常: ${escapeHtml(String(err))}`,
+      parse_mode: 'HTML'
+    });
+  }
 }
 
 /**
@@ -447,18 +472,17 @@ async function handleTelegramWebhook(request: Request, env: Env): Promise<Respon
         text: '🔕 已退订新文章私信推送'
       });
 
-      if (update.callback_query.message?.chat?.id) {
-        await sendTelegramMessage(env.TELEGRAM_BOT_TOKEN, {
-          chat_id: update.callback_query.message.chat.id,
-          text: '🔕 <b>已退订新文章私信推送</b>\n\n您将不会再收到新文章私信推送。随时发送 <code>/subscribe</code> 或点击下方按钮即可重新订阅。',
-          parse_mode: 'HTML',
-          reply_markup: {
-            inline_keyboard: [
-              [{ text: '🔔 重新订阅推送', callback_data: 'user_subscribe' }]
-            ]
-          }
-        });
-      }
+      const targetChatId = update.callback_query.message?.chat?.id || user.id;
+      await sendTelegramMessage(env.TELEGRAM_BOT_TOKEN, {
+        chat_id: targetChatId,
+        text: '🔕 <b>已退订新文章私信推送</b>\n\n您将不会再收到新文章私信推送。随时发送 /subscribe 或点击下方按钮即可重新订阅。',
+        parse_mode: 'HTML',
+        reply_markup: {
+          inline_keyboard: [
+            [{ text: '🔔 重新订阅推送', callback_data: 'user_subscribe' }]
+          ]
+        }
+      });
       return jsonResponse({ ok: true });
     }
 
@@ -471,31 +495,32 @@ async function handleTelegramWebhook(request: Request, env: Env): Promise<Respon
         text: '🔔 已恢复订阅新文章推送！'
       });
 
-      if (update.callback_query.message?.chat?.id) {
-        await sendTelegramMessage(env.TELEGRAM_BOT_TOKEN, {
-          chat_id: update.callback_query.message.chat.id,
-          text: '🔔 <b>已恢复订阅新文章私信推送！</b>\n\n新文章发布时将第一时间同步通知您。',
-          parse_mode: 'HTML',
-          reply_markup: {
-            inline_keyboard: [
-              [{ text: '🔕 退订推送', callback_data: 'user_unsubscribe' }]
-            ]
-          }
-        });
-      }
+      const targetChatId = update.callback_query.message?.chat?.id || user.id;
+      await sendTelegramMessage(env.TELEGRAM_BOT_TOKEN, {
+        chat_id: targetChatId,
+        text: '🔔 <b>已恢复订阅新文章私信推送！</b>\n\n新文章发布时将第一时间同步通知您。',
+        parse_mode: 'HTML',
+        reply_markup: {
+          inline_keyboard: [
+            [{ text: '🔕 退订推送', callback_data: 'user_unsubscribe' }]
+          ]
+        }
+      });
       return jsonResponse({ ok: true });
     }
 
     if (cbData === 'user_unlock') {
       const user = update.callback_query.from;
+      const isPrivate = !update.callback_query.message || update.callback_query.message.chat?.type === 'private';
+      const targetChatId = isPrivate ? (update.callback_query.message?.chat?.id || user.id) : user.id;
+
       await callTelegramApi(env.TELEGRAM_BOT_TOKEN, 'answerCallbackQuery', {
         callback_query_id: update.callback_query.id,
-        text: '✅ 凭证已生成，正在发送解锁链接...'
+        text: isPrivate ? '🔑 专属解密凭证已就绪，请查收下方消息！' : '🔑 专属解密凭证已发送至您的 Bot 私聊窗口！',
+        show_alert: !isPrivate
       });
 
-      if (update.callback_query.message?.chat?.id) {
-        await sendUnlockCard(update.callback_query.message.chat.id, user, env);
-      }
+      await sendUnlockCard(targetChatId, user, env);
       return jsonResponse({ ok: true });
     }
 
@@ -607,7 +632,7 @@ async function handleTelegramWebhook(request: Request, env: Env): Promise<Respon
         '',
         '每当博主发布新文章并推送到频道时，Bot 会第一时间私信向您推送精选摘要与阅读直达链接。',
         '',
-        '💡 <i>如需退订，可随时发送 <code>/unsubscribe</code> 或点击推送底部的退订按钮。</i>'
+        '💡 <i>如需退订，可随时发送 /unsubscribe 或点击推送底部的退订按钮。</i>'
       ].join('\n'),
       parse_mode: 'HTML'
     });
@@ -625,7 +650,7 @@ async function handleTelegramWebhook(request: Request, env: Env): Promise<Respon
         '',
         '您将不会再收到新文章私信通知。',
         '',
-        '💡 <i>您可以继续使用 <code>/unlock</code> 获取受限文章解锁令牌，随时发送 <code>/subscribe</code> 即可重新订阅。</i>'
+        '💡 <i>您可以继续使用 /unlock 获取受限文章解锁令牌，随时发送 /subscribe 即可重新订阅。</i>'
       ].join('\n'),
       parse_mode: 'HTML'
     });
@@ -643,14 +668,14 @@ async function handleTelegramWebhook(request: Request, env: Env): Promise<Respon
         '',
         '<b>1. 信息收集与使用</b>',
         '本助手（@zgqinc_blog_bot）仅收集您的 Telegram User ID、用户名及昵称，用于：',
-        '• 接收博客最新文章私信通知（<code>/subscribe</code>）',
-        '• 生成 30 天加密文章临时访问凭据（<code>/unlock</code>）',
+        '• 接收博客最新文章私信通知（/subscribe）',
+        '• 生成 30 天加密文章临时访问凭据（/unlock）',
         '',
         '<b>2. 绝不获取个人敏感隐私</b>',
         '我们<b>绝不</b>获取或存储您的手机号、真实姓名、个人通讯录、私人聊天记录或地理位置。',
         '',
         '<b>3. 自由退订与数据删除</b>',
-        '您可以随时发送 <code>/unsubscribe</code> 立即停止一切私信推送，并不再接收任何广播。',
+        '您可以随时发送 /unsubscribe 立即停止一切私信推送，并不再接收任何广播。',
         '',
         '<b>4. 安全保障</b>',
         '所有数据与服务由 Cloudflare 边缘计算与加密传输保障，零第三方商业数据出售。'
@@ -714,15 +739,18 @@ async function handleTelegramWebhook(request: Request, env: Env): Promise<Respon
           `欢迎回来，<b>${escapeHtml(message.from?.first_name || '博主')}</b>！`,
           '',
           '📝 <b>快捷管理指令：</b>',
-          '• <code>/new [标题]</code> — 新建文章草稿并提交到 GitHub',
-          '• <code>/link &lt;id&gt; [摘要]</code> — 关联发布到 Telegram 频道',
-          '• <code>/sync &lt;id&gt;</code> — 重新同步文章内容与摘要',
-          '• <code>/bind &lt;id&gt; &lt;url&gt;</code> — 手动绑定已有频道消息',
-          '• <code>/cancel &lt;id&gt;</code> — 取消草稿并清理分支',
+          '• /new [标题] — 新建文章草稿并提交到 GitHub',
+          '• /link &lt;id&gt; [摘要] — 关联发布到 Telegram 频道',
+          '• /sync &lt;id&gt; — 重新同步文章内容与摘要',
+          '• /bind &lt;id&gt; &lt;url&gt; — 手动绑定已有频道消息',
+          '• /cancel &lt;id&gt; — 取消草稿并清理分支',
           '• 直接发送媒体（图片/视频/文档）可直传 R2 图床',
           '',
           '🔑 <b>读者功能测试：</b>',
-          '• <code>/unlock</code> — 测试生成 30 天受限文章解密令牌'
+          '• /unlock — 测试生成 30 天受限文章解密令牌',
+          '• /subscribe — 订阅新文章私信推送',
+          '• /unsubscribe — 退订新文章私信推送',
+          '• /privacy — 查看隐私政策'
         ].join('\n'),
         parse_mode: 'HTML',
         reply_markup: {
@@ -748,9 +776,15 @@ async function handleTelegramWebhook(request: Request, env: Env): Promise<Respon
           '本机器人是 <b>ZGQ Inc. 个人博客</b>的官方服务助手。',
           '',
           '✨ <b>核心服务功能：</b>',
-          '• 🔐 <b>受限文章访问凭证</b>：本站部分底层逆向与深度系统安全文章已启用端到端加密保护。点击下方按钮即可一键获取 <b>30 天有效</b>的专属解密链接。',
+          '• 🔐 <b>受限文章访问凭证</b>：本站部分底层逆向与深度系统安全文章已启用端到端加密保护。发送 /unlock 或点击下方按钮即可一键获取 <b>30 天有效</b>专属解密链接。',
           '• 📢 <b>频道订阅与讨论</b>：最新技术干货发布时将自动推送摘要至频道，支持一键前往讨论区。',
           '• 🌐 <b>博客内容与导航</b>：随时直达博客主页、分类标签与归档。',
+          '',
+          '💡 <b>快捷指令：</b>',
+          '• /unlock — 获取 30 天受限文章解密令牌',
+          '• /subscribe — 开启新文章私信通知',
+          '• /unsubscribe — 关闭新文章私信通知',
+          '• /privacy — 查看个人隐私保护政策',
           '',
           '👇 <b>请点击下方按钮选择所需操作：</b>'
         ].join('\n'),
@@ -794,7 +828,7 @@ async function handleTelegramWebhook(request: Request, env: Env): Promise<Respon
           '',
           '抱歉，此功能为博客管理员专用操作命令。',
           '',
-          '💡 如果您希望阅读博客的受限机密技术文章，请发送 <code>/unlock</code> 或点击下方按钮获取 30 天有效解密链接：'
+          '💡 如果您希望阅读博客的受限机密技术文章，请发送 /unlock 或点击下方按钮获取 30 天有效解密链接：'
         ].join('\n'),
         parse_mode: 'HTML',
         reply_markup: {
@@ -1523,7 +1557,7 @@ async function handleCancelCommand(message: TgMessage, id: string, env: Env): Pr
 
       await sendTelegramMessage(env.TELEGRAM_BOT_TOKEN, {
         chat_id: message.chat.id,
-        text: `✅ 关联已成功取消！你现在可以重新使用 <code>/link</code> 命令关联新的频道消息了。`,
+        text: `✅ 关联已成功取消！你现在可以重新使用 /link 命令关联新的频道消息了。`,
         parse_mode: 'HTML'
       });
     } else {
@@ -2324,21 +2358,30 @@ async function broadcastNewPostToSubscribers(
 async function sendTelegramMessage(
   token: string,
   params: Record<string, unknown>
-): Promise<void> {
-  await callTelegramApi(token, 'sendMessage', params);
+): Promise<{ ok: boolean; result?: any; description?: string }> {
+  return await callTelegramApi(token, 'sendMessage', params);
 }
 
 async function callTelegramApi(
   token: string,
   method: string,
   params: Record<string, unknown>
-): Promise<{ ok: boolean; result: Record<string, unknown>; description?: string }> {
-  const res = await fetch(`https://api.telegram.org/bot${token}/${method}`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(params)
-  });
-  return res.json() as Promise<{ ok: boolean; result: Record<string, unknown>; description?: string }>;
+): Promise<{ ok: boolean; result?: any; description?: string; error_code?: number }> {
+  try {
+    const res = await fetch(`https://api.telegram.org/bot${token}/${method}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(params)
+    });
+    const data = await res.json() as { ok: boolean; result?: any; description?: string; error_code?: number };
+    if (!data.ok) {
+      console.error(`[Telegram API Error] ${method} failed:`, data.error_code, data.description, 'params:', JSON.stringify(params));
+    }
+    return data;
+  } catch (err) {
+    console.error(`[Telegram API Fetch Error] ${method}:`, err);
+    return { ok: false, description: String(err) };
+  }
 }
 
 // ================================================================

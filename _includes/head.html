@@ -27,6 +27,21 @@
     doc.style.colorScheme = isDark ? 'dark' : 'light';
     doc.style.backgroundColor = isDark ? '#1A1C1E' : '#FDFCFF';
 
+    // Instant Anti-FOUC Vault Unlock Verification
+    try {
+      var vaultAuth = localStorage.getItem('zgq_vault_auth');
+      if (!vaultAuth) {
+        var vMatch = document.cookie.match(/(?:^|;\s*)zgq_vault_auth=([^;]+)/);
+        if (vMatch) vaultAuth = decodeURIComponent(vMatch[1]);
+      }
+      if (vaultAuth) {
+        var vData = JSON.parse(vaultAuth);
+        if (vData && vData.expires && Date.now() < vData.expires && vData.key) {
+          doc.classList.add('vault-unlocked');
+        }
+      }
+    } catch(e) {}
+
     var themeColor = isDark ? '#1A1C1E' : '#FDFCFF';
     var metaTheme = document.querySelector('meta[name="theme-color"]');
     if (metaTheme) metaTheme.setAttribute('content', themeColor);
@@ -60,6 +75,18 @@
 
 <!-- Critical Page Loader & Canvas Styles -->
 <style>
+  /* Vault Restricted Content - Hidden completely unless unlocked */
+  html:not(.vault-unlocked) .vault-restricted,
+  html:not(.vault-unlocked) [data-restricted="true"],
+  html:not(.vault-unlocked) .vault-restricted-item {
+    display: none !important;
+  }
+  html.vault-unlocked .count-public {
+    display: none !important;
+  }
+  html.vault-unlocked .count-total {
+    display: inline !important;
+  }
   :root {
     color-scheme: light dark;
   }

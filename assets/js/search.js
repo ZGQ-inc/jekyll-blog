@@ -89,7 +89,14 @@ function initSearch() {
   setTimeout(loadSearchIndex, 800); // Proactive index preload
 
   window.filterPosts = function() {
+    var isUnlocked = document.documentElement.classList.contains('vault-unlocked') ||
+                     (typeof window.isVaultUnlocked === 'function' && window.isVaultUnlocked());
     var allCards = Array.from(document.querySelectorAll('.post-card'));
+    if (!isUnlocked) {
+      allCards = allCards.filter(function(card) {
+        return card.dataset.restricted !== 'true' && !card.classList.contains('vault-restricted');
+      });
+    }
     var raw = searchInput.value.trim();
     var scoredCandidates = [];
 

@@ -20,6 +20,16 @@ class BlogPaginationManager {
     this.isSearching = false;
   }
 
+  collectCards() {
+    if (!this.galleryContainer) return [];
+    const isUnlocked = document.documentElement.classList.contains('vault-unlocked') ||
+                       (typeof window.isVaultUnlocked === 'function' && window.isVaultUnlocked());
+    if (!isUnlocked) {
+      return Array.from(this.galleryContainer.querySelectorAll('.post-card:not([data-restricted="true"]):not(.vault-restricted)'));
+    }
+    return Array.from(this.galleryContainer.querySelectorAll('.post-card'));
+  }
+
   init() {
     // Find the main gallery container on the page
     this.galleryContainer = document.getElementById('postGallery') ||
@@ -28,7 +38,7 @@ class BlogPaginationManager {
                            document.querySelector('.gallery-container');
     if (!this.galleryContainer) return;
 
-    this.allCards = Array.from(this.galleryContainer.querySelectorAll('.post-card'));
+    this.allCards = this.collectCards();
     if (!this.allCards.length) return;
 
     this.filteredCards = [...this.allCards];
@@ -38,6 +48,13 @@ class BlogPaginationManager {
     this.btnPrev = document.getElementById('btnPrev');
     this.btnNext = document.getElementById('btnNext');
     this.btnTop = document.getElementById('btnIslandTop');
+
+    // Re-evaluate card collection on vault state change
+    window.addEventListener('vaultUnlocked', () => {
+      this.allCards = this.collectCards();
+      this.filteredCards = [...this.allCards];
+      this.render({ scroll: false });
+    });
 
     // Read ?page= from URL params
     const params = new URLSearchParams(window.location.search);
@@ -220,7 +237,7 @@ class BlogPaginationManager {
   }
 
   setFilteredCards(cards, isSearching = false) {
-    this.filteredCards = cards;
+    this.filteredCards = cards ? cards : [...this.allCards];
     this.isSearching = !!isSearching;
     this.currentPage = 1;
     this.render({ scroll: false });

@@ -6,13 +6,16 @@ permalink: /tags/
 
 <main class="page-content" role="main">
   <div class="page-header">
-    {% assign active_tag_count = 0 %}
+    {% assign public_tag_count = 0 %}
     {% for tag in site.tags %}
-      {% assign unarchived = tag[1] | where_exp: "item", "item.restricted != true" %}
-      {% if unarchived.size > 0 %}{% assign active_tag_count = active_tag_count | plus: 1 %}{% endif %}
+      {% assign p_count = 0 %}
+      {% for p in tag[1] %}
+        {% if p.restricted != true %}{% assign p_count = p_count | plus: 1 %}{% endif %}
+      {% endfor %}
+      {% if p_count > 0 %}{% assign public_tag_count = public_tag_count | plus: 1 %}{% endif %}
     {% endfor %}
     <h1 class="page-title">🏷️ 标签</h1>
-    <p class="page-subtitle">共 {{ active_tag_count }} 个标签</p>
+    <p class="page-subtitle">共 <span class="count-public">{{ public_tag_count }}</span><span class="count-total" style="display:none;">{{ site.tags.size }}</span> 个标签</p>
   </div>
 
   <!-- MD3 Collapsible Tag Cloud Card -->
@@ -21,7 +24,10 @@ permalink: /tags/
       <div class="tag-cloud-header-left">
         <span class="material-symbols-outlined tag-cloud-icon">sell</span>
         <span class="tag-cloud-heading">标签云</span>
-        <span class="tag-cloud-counter">{{ active_tag_count }}</span>
+        <span class="tag-cloud-counter">
+          <span class="count-public">{{ public_tag_count }}</span>
+          <span class="count-total" style="display:none;">{{ site.tags.size }}</span>
+        </span>
       </div>
       <button type="button" class="md3-tag-collapse-btn" id="tagCollapseToggleBtn" aria-expanded="false" aria-label="展开或折叠标签列表">
         <span class="toggle-text">展开全部</span>
@@ -33,13 +39,24 @@ permalink: /tags/
       <div class="tag-cloud" id="tagCloudList">
         {% assign sorted_tags = site.tags | sort %}
         {% for tag in sorted_tags %}
-        {% assign unarchived_tag_posts = tag[1] | where_exp: "item", "item.restricted != true" %}
-        {% if unarchived_tag_posts.size == 0 %}{% continue %}{% endif %}
+        {% if tag[1].size == 0 %}{% continue %}{% endif %}
+        {% assign tag_posts = tag[1] %}
+        {% assign tag_restricted_count = 0 %}
+        {% for p in tag_posts %}
+          {% if p.restricted %}{% assign tag_restricted_count = tag_restricted_count | plus: 1 %}{% endif %}
+        {% endfor %}
+        {% assign is_tag_all_restricted = false %}
+        {% if tag_restricted_count == tag_posts.size %}
+          {% assign is_tag_all_restricted = true %}
+        {% endif %}
         {% assign t = tag[0] %}
-        <a href="#{{ t }}" class="tag-item">
+        <a href="#{{ t }}" class="tag-item{% if is_tag_all_restricted %} vault-restricted{% endif %}" data-tag="{{ t }}">
           <span class="material-symbols-outlined tag-chip-icon">tag</span>
           <span class="tag-name">{{ t }}</span>
-          <span class="tag-count">{{ unarchived_tag_posts.size }}</span>
+          <span class="tag-count">
+            <span class="count-public">{{ tag_posts.size | minus: tag_restricted_count }}</span>
+            <span class="count-total" style="display:none;">{{ tag_posts.size }}</span>
+          </span>
         </a>
         {% endfor %}
       </div>
@@ -51,18 +68,31 @@ permalink: /tags/
   <div class="gallery-container timeline-mode" id="tagPostGallery" style="margin-bottom: 24px;">
     {% assign sorted_tags = site.tags | sort %}
     {% for tag in sorted_tags %}
-      {% assign unarchived_tag_posts = tag[1] | where_exp: "item", "item.restricted != true" %}
-      {% if unarchived_tag_posts.size == 0 %}{% continue %}{% endif %}
+      {% if tag[1].size == 0 %}{% continue %}{% endif %}
+      {% assign tag_posts = tag[1] %}
+      {% assign tag_restricted_count = 0 %}
+      {% for p in tag_posts %}
+        {% if p.restricted %}{% assign tag_restricted_count = tag_restricted_count | plus: 1 %}{% endif %}
+      {% endfor %}
+      {% assign is_tag_all_restricted = false %}
+      {% if tag_restricted_count == tag_posts.size %}
+        {% assign is_tag_all_restricted = true %}
+      {% endif %}
       {% assign t = tag[0] %}
       
-      <div class="timeline-header" id="{{ t }}" data-tag="{{ t }}">
+      <div class="timeline-header{% if is_tag_all_restricted %} vault-restricted{% endif %}" id="{{ t }}" data-tag="{{ t }}">
         <span class="material-symbols-outlined header-icon">tag</span>
         <span class="header-title">{{ t }}</span>
-        <span class="header-count">{{ unarchived_tag_posts.size }} 篇</span>
+        <span class="header-count">
+          <span class="count-public">{{ tag_posts.size | minus: tag_restricted_count }}</span>
+          <span class="count-total" style="display:none;">{{ tag_posts.size }}</span> 篇
+        </span>
       </div>
       
-      {% for post in unarchived_tag_posts %}
-      <a class="post-card scroll-animate" data-tag="{{ t }}" href="{{ post.url | relative_url }}">
+      {% for post in tag_posts %}
+      <a class="post-card scroll-animate{% if post.restricted %} vault-restricted{% endif %}"
+         {% if post.restricted %}data-restricted="true"{% endif %}
+         data-tag="{{ t }}" href="{{ post.url | relative_url }}">
         <div class="card-thumb-wrapper">
           {% if post.image %}
           <img class="card-thumb" src="{{ post.image }}" alt="{{ post.title }}" loading="lazy">
