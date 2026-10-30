@@ -756,9 +756,6 @@ async function handleTelegramWebhook(request: Request, env: Env): Promise<Respon
         reply_markup: {
           inline_keyboard: [
             [
-              { text: '🔑 测试生成解锁凭证', callback_data: 'user_unlock' }
-            ],
-            [
               { text: '🌐 访问博客首页', url: blogUrl },
               { text: '📢 前往博客频道', url: channelUrl }
             ]
@@ -776,7 +773,7 @@ async function handleTelegramWebhook(request: Request, env: Env): Promise<Respon
           '本机器人是 <b>ZGQ Inc. 个人博客</b>的官方服务助手。',
           '',
           '✨ <b>核心服务功能：</b>',
-          '• 🔐 <b>受限文章访问凭证</b>：本站部分底层逆向与深度系统安全文章已启用端到端加密保护。发送 /unlock 或点击下方按钮即可一键获取 <b>30 天有效</b>专属解密链接。',
+          '• 🔐 <b>受限文章访问凭证</b>：本站部分底层逆向与深度系统安全文章已启用端到端加密保护。发送 /unlock 即可一键获取 <b>30 天有效</b>专属解密链接。',
           '• 📢 <b>频道订阅与讨论</b>：最新技术干货发布时将自动推送摘要至频道，支持一键前往讨论区。',
           '• 🌐 <b>博客内容与导航</b>：随时直达博客主页、分类标签与归档。',
           '',
@@ -791,9 +788,6 @@ async function handleTelegramWebhook(request: Request, env: Env): Promise<Respon
         parse_mode: 'HTML',
         reply_markup: {
           inline_keyboard: [
-            [
-              { text: '🔑 获取受限文章解锁凭证 (30天)', callback_data: 'user_unlock' }
-            ],
             [
               { text: '🌐 访问博客首页', url: blogUrl },
               { text: '📢 前往 Telegram 频道', url: channelUrl }
@@ -828,14 +822,11 @@ async function handleTelegramWebhook(request: Request, env: Env): Promise<Respon
           '',
           '抱歉，此功能为博客管理员专用操作命令。',
           '',
-          '💡 如果您希望阅读博客的受限机密技术文章，请发送 /unlock 或点击下方按钮获取 30 天有效解密链接：'
+          '💡 如果您希望阅读博客的受限机密技术文章，请发送 /unlock 获取 30 天有效解密链接：'
         ].join('\n'),
         parse_mode: 'HTML',
         reply_markup: {
           inline_keyboard: [
-            [
-              { text: '🔑 获取受限文章解锁凭证', callback_data: 'user_unlock' }
-            ],
             [
               { text: '🌐 访问博客首页', url: env.BLOG_URL || 'https://blog.zgqinc.gq' }
             ]
@@ -2290,7 +2281,6 @@ async function broadcastNewPostToSubscribers(
     }
 
     inlineKeyboard.push([
-      { text: '🔑 快速获取解锁凭证', callback_data: 'user_unlock' },
       { text: '🔕 退订推送', callback_data: 'user_unsubscribe' }
     ]);
 
