@@ -3,24 +3,68 @@
 require 'json'
 
 module ImageLqip
+  def self.find_python_cmd
+    ['python3', 'python'].find do |cmd|
+      system("#{cmd} --version", out: File::NULL, err: File::NULL)
+    end
+  end
+
   def self.generate_if_needed(site)
     script_path = [
       File.join(site.source, 'scripts', 'generate_lqip.py'),
       File.join(site.source, 'local', 'generate_lqip.py')
     ].find { |p| File.exist?(p) }
 
+    return unless script_path
+
     cache_file = File.join(site.source, '_data', 'lqip.json')
 
-    # If cache file doesn't exist, try running python generator
-    if !File.exist?(cache_file) && script_path && File.exist?(script_path)
-      system("python3 \"#{script_path}\" 2>/dev/null || python \"#{script_path}\" 2>/dev/null")
-    end
-
-    if File.exist?(cache_file) && (!site.data['lqip'] || site.data['lqip'].empty?)
+    # Ensure site.data['lqip'] is populated from disk if it exists
+    if File.exist?(cache_file) && (!site.data['lqip'] || !site.data['lqip'].is_a?(Hash))
       begin
         site.data['lqip'] = JSON.parse(File.read(cache_file))
       rescue StandardError => e
         Jekyll.logger.warn "ImageLqip:", "Failed to parse #{cache_file}: #{e.message}"
+        site.data['lqip'] = {}
+      end
+    else
+      site.data['lqip'] ||= {}
+    end
+
+    lqip_cache = site.data['lqip']
+
+    # Check if cache file is missing entirely OR any document's front-matter image is missing from cache
+    missing_image = false
+    if !File.exist?(cache_file) || lqip_cache.empty?
+      missing_image = true
+    else
+      docs_to_check = (site.posts.docs || []) + (site.pages || [])
+      docs_to_check.each do |doc|
+        img = doc.data['image']
+        if img && !img.to_s.empty? && !img.start_with?('http://', 'https://')
+          unless lqip_cache.key?(img) && !lqip_cache[img].to_s.empty?
+            missing_image = true
+            break
+          end
+        end
+      end
+    end
+
+    if missing_image
+      py_cmd = find_python_cmd
+      if py_cmd
+        Jekyll.logger.info "ImageLqip:", "Missing thumbnails detected, running #{script_path}..."
+        success = system("#{py_cmd} \"#{script_path}\"")
+        if success && File.exist?(cache_file)
+          begin
+            site.data['lqip'] = JSON.parse(File.read(cache_file))
+            Jekyll.logger.info "ImageLqip:", "Successfully reloaded #{site.data['lqip'].size} thumbnails."
+          rescue StandardError => e
+            Jekyll.logger.warn "ImageLqip:", "Failed to reload #{cache_file}: #{e.message}"
+          end
+        end
+      else
+        Jekyll.logger.warn "ImageLqip:", "Python interpreter not found in PATH, skipping thumbnail generation."
       end
     end
   end

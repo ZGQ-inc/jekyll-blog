@@ -58,3 +58,6 @@ walkthrough.md
 
 # Nested wrangler caches
 **/.wrangler/
+ 
+__pycache__/
+*.pyc
