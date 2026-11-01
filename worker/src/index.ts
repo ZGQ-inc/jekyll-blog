@@ -2266,8 +2266,7 @@ async function broadcastNewPostToSubscribers(
       '',
       escapeHtml(summary),
       '',
-      tagsLine ? `${tagsLine}\n` : '',
-      `💡 <i>若该文章属于受限文章，可在本机器人直接发送 /unlock 获取 30 天解密凭证。</i>`
+      tagsLine
     ].filter(line => line !== '').join('\n');
 
     const inlineKeyboard: Array<Array<{ text: string; url?: string; callback_data?: string }>> = [
@@ -2279,10 +2278,6 @@ async function broadcastNewPostToSubscribers(
     if (tgPostUrl) {
       inlineKeyboard[0].push({ text: '💬 频道讨论区', url: tgPostUrl });
     }
-
-    inlineKeyboard.push([
-      { text: '🔕 退订推送', callback_data: 'user_unsubscribe' }
-    ]);
 
     let sent = 0;
     let failed = 0;
