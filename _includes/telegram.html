@@ -1,9 +1,10 @@
 {% assign tg_post = include.post %}
 {% if include.url %}
   {% if include.url contains "t.me/" %}
-    {% assign tg_post = include.url | split: "t.me/" | last | split: "?" | first %}
+    {% assign tg_post = include.url | split: "t.me/" | last | split: "?" | first | split: "#" | first %}
   {% endif %}
 {% endif %}
+
 {% if tg_post contains "c/" or tg_post contains "+" or tg_post contains "joinchat" %}
   <div class="tg-private-post-card md3-card" data-telegram-post="{{ tg_post }}">
     <div class="tg-private-post-header">
@@ -16,8 +17,42 @@
       <span>前往 Telegram 打开消息</span>
     </a>
   </div>
-{% else %}
+{% elsif tg_post contains "/" %}
   <div class="tg-post-embed" data-telegram-post="{{ tg_post }}">
     <iframe src="https://t.me/{{ tg_post }}?embed=1" frameborder="0" scrolling="no" loading="lazy" title="Telegram Post: {{ tg_post }}"></iframe>
+    <script>(function(ifr){if(ifr&&(document.documentElement.getAttribute('data-theme')==='dark'||(!document.documentElement.getAttribute('data-theme')&&window.matchMedia('(prefers-color-scheme: dark)').matches))){ifr.src+=(ifr.src.indexOf('?')===-1?'?':'&')+'dark=1';}})(document.currentScript.previousElementSibling);</script>
+  </div>
+{% else %}
+  {% assign entity_username = tg_post | remove: "@" %}
+  <div class="tg-entity-embed" data-telegram-entity="{{ entity_username }}">
+    <div class="tg-profile-card md3-card color-primary">
+      <div class="tg-profile-card-inner">
+        <div class="tg-avatar-col">
+          <div class="tg-avatar-wrapper">
+            <img class="tg-profile-avatar" src="{{ include.avatar | default: 'https://telegram.org/img/t_logo_2x.png' }}" alt="{{ entity_username }}" loading="lazy" onerror="this.src='https://telegram.org/img/t_logo_2x.png'">
+          </div>
+        </div>
+        <div class="tg-profile-main">
+          <div class="tg-profile-topline">
+            <span class="tg-profile-title">{{ include.title | default: include.name | default: entity_username }}</span>
+            {% if include.verified %}<span class="material-symbols-outlined verified-badge" title="官方认证">verified</span>{% endif %}
+            <span class="tg-profile-badge chip chip-tonal">{{ include.type | default: 'Telegram' }}</span>
+          </div>
+          <div class="tg-profile-meta">
+            <span class="tg-username">@{{ entity_username }}</span>
+            {% if include.extra %}<span class="tg-meta-sep">•</span><span class="tg-extra-info">{{ include.extra }}</span>{% endif %}
+          </div>
+          {% if include.desc %}
+          <div class="tg-profile-desc">{{ include.desc }}</div>
+          {% endif %}
+          <div class="tg-profile-action-row">
+            <a href="https://t.me/{{ entity_username }}" class="action-btn btn-filled tg-action-btn" target="_blank" rel="noopener">
+              <span class="material-symbols-outlined">send</span>
+              <span>{{ include.action | default: '在 Telegram 中打开' }}</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 {% endif %}

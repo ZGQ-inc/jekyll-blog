@@ -8,7 +8,33 @@
 (function() {
   'use strict';
 
-  // 1. Telegram postMessage Height Resizing Listener
+  // 1. Telegram postMessage Height Resizing & Dark Theme Sync
+  function syncTelegramTheme() {
+    var isDark = document.documentElement.getAttribute('data-theme') === 'dark' ||
+                 (!document.documentElement.getAttribute('data-theme') && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+
+    var tgIframes = document.querySelectorAll('.tg-post-embed iframe, iframe[src*="t.me"]');
+    tgIframes.forEach(function(iframe) {
+      try {
+        var src = iframe.getAttribute('src');
+        if (!src || src.indexOf('t.me') === -1) return;
+        var url = new URL(src, window.location.href);
+        if (url.searchParams.get('embed') === '1') {
+          var hasDark = url.searchParams.get('dark') === '1';
+          if (isDark && !hasDark) {
+            url.searchParams.set('dark', '1');
+            iframe.src = url.toString();
+          } else if (!isDark && hasDark) {
+            url.searchParams.delete('dark');
+            iframe.src = url.toString();
+          }
+        }
+      } catch (e) {}
+    });
+  }
+
+  document.addEventListener('themechange', syncTelegramTheme);
+
   window.addEventListener('message', function(event) {
     if (event.origin !== 'https://t.me') return;
     var data = event.data;
@@ -183,11 +209,13 @@
       initCardMasks();
       initEmbeds();
       enhanceSocialEmbeds();
+      syncTelegramTheme();
     });
   } else {
     initImageMasks();
     initCardMasks();
     initEmbeds();
     enhanceSocialEmbeds();
+    syncTelegramTheme();
   }
 })();

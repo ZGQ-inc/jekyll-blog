@@ -34,6 +34,77 @@
       -webkit-line-clamp: 3;
     }
   }
+
+  /* Telegram Profile Card mode */
+  &.card-telegram-profile {
+    max-width: 520px;
+
+    .card-content {
+      flex-direction: row;
+      align-items: center;
+      padding: 16px;
+      gap: 16px;
+    }
+
+    .card-image-wrapper {
+      width: 64px;
+      height: 64px;
+      min-width: 64px;
+      aspect-ratio: 1 / 1;
+      border-radius: 50% !important;
+      border-bottom: none;
+      flex-shrink: 0;
+      border: 2px solid var(--md-sys-color-outline-variant);
+
+      .card-image {
+        border-radius: 50% !important;
+      }
+    }
+
+    .card-text {
+      padding: 0;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .card-title {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 1.05rem;
+      margin-bottom: 4px;
+
+      .verified-badge {
+        font-size: 18px;
+        color: #24A1DE;
+        font-variation-settings: 'FILL' 1;
+      }
+    }
+
+    .card-desc {
+      -webkit-line-clamp: 2;
+      margin-bottom: 6px;
+    }
+
+    .card-meta {
+      gap: 6px;
+      font-size: 0.8rem;
+
+      .card-domain {
+        text-transform: none;
+        color: var(--md-sys-color-primary);
+        font-weight: 600;
+      }
+
+      .card-meta-sep {
+        color: var(--md-sys-color-outline);
+      }
+
+      .card-extra {
+        color: var(--md-sys-color-on-surface-variant);
+      }
+    }
+  }
 }
 
 .md3-link-card:hover {
@@ -291,5 +362,35 @@
     color: #d32f2f !important;
     border: 1px solid color-mix(in srgb, #d32f2f 45%, transparent) !important;
     font-weight: 700 !important;
+  }
+
+  &.preview-badge-bot {
+    background: color-mix(in srgb, #9c27b0 18%, transparent);
+    color: #9c27b0;
+    border: 1px solid color-mix(in srgb, #9c27b0 35%, transparent);
+  }
+
+  &.preview-badge-channel {
+    background: color-mix(in srgb, #0288d1 18%, transparent);
+    color: #0288d1;
+    border: 1px solid color-mix(in srgb, #0288d1 35%, transparent);
+  }
+
+  &.preview-badge-group {
+    background: color-mix(in srgb, #00897b 18%, transparent);
+    color: #00897b;
+    border: 1px solid color-mix(in srgb, #00897b 35%, transparent);
+  }
+
+  &.preview-badge-user {
+    background: color-mix(in srgb, #5c6bc0 18%, transparent);
+    color: #5c6bc0;
+    border: 1px solid color-mix(in srgb, #5c6bc0 35%, transparent);
+  }
+
+  &.preview-badge-verified {
+    background: color-mix(in srgb, #24A1DE 20%, transparent);
+    color: #24A1DE;
+    border: 1px solid color-mix(in srgb, #24A1DE 40%, transparent);
   }
 }

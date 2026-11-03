@@ -258,6 +258,99 @@ module LinkPreview
     end
   end
 
+  def self.fetch_telegram_entity(url, username)
+    begin
+      html = URI.open(url,
+        'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36',
+        :read_timeout => 8,
+        :open_timeout => 5
+      ).read
+      parsed = Nokogiri::HTML(html)
+
+      title = parsed.at_css('meta[property="og:title"]')&.[]('content') ||
+              parsed.at_css('.tgme_page_title span')&.text ||
+              parsed.at_css('.tgme_page_title')&.text || username
+      title = title.strip
+
+      desc = parsed.at_css('meta[property="og:description"]')&.[]('content') ||
+             parsed.at_css('.tgme_page_description')&.text || ''
+      desc = desc.strip
+
+      image = parsed.at_css('meta[property="og:image"]')&.[]('content') ||
+              parsed.at_css('.tgme_page_photo_image')&.[]('src') || ''
+      image = image.strip
+
+      btn_text = parsed.at_css('a[class*="action_button"]')&.text&.strip || ''
+      extra_text = parsed.at_css('.tgme_page_extra')&.text&.strip || ''
+      is_verified = !parsed.css('.verified-icon').empty?
+
+      entity_type = 'Telegram'
+      action_label = '在 Telegram 中打开'
+      badge_type = 'telegram'
+      badge_icon = 'send'
+
+      if btn_text.downcase.include?('start bot') || username.downcase.end_with?('bot')
+        entity_type = 'Bot'
+        action_label = '启动 Bot'
+        badge_type = 'bot'
+        badge_icon = 'smart_toy'
+      elsif extra_text =~ /subscribers?|关注者|订阅/i
+        entity_type = '频道'
+        action_label = '查看频道'
+        badge_type = 'channel'
+        badge_icon = 'campaign'
+      elsif extra_text =~ /members?|online|成员|在线/i
+        entity_type = '群组'
+        action_label = '加入群组'
+        badge_type = 'group'
+        badge_icon = 'groups'
+      elsif btn_text.downcase.include?('send message') || extra_text.start_with?('@')
+        entity_type = '用户'
+        action_label = '发起私聊'
+        badge_type = 'user'
+        badge_icon = 'person'
+      end
+
+      badges = [
+        { 'type' => badge_type, 'label' => entity_type, 'icon' => badge_icon }
+      ]
+      if is_verified
+        badges.unshift({ 'type' => 'verified', 'label' => '认证', 'icon' => 'verified' })
+      end
+
+      {
+        'title' => title,
+        'description' => desc,
+        'image' => image,
+        'domain' => 't.me',
+        'is_r18' => false,
+        'is_telegram_entity' => true,
+        'entity_type' => entity_type,
+        'username' => username,
+        'extra' => extra_text,
+        'action' => action_label,
+        'verified' => is_verified,
+        'badges' => badges
+      }
+    rescue => e
+      Jekyll.logger.warn "LinkPreview:", "Failed to fetch Telegram entity #{url}: #{e.message}"
+      {
+        'title' => "@#{username}",
+        'description' => '',
+        'image' => 'https://telegram.org/img/t_logo_2x.png',
+        'domain' => 't.me',
+        'is_r18' => false,
+        'is_telegram_entity' => true,
+        'entity_type' => 'Telegram',
+        'username' => username,
+        'extra' => '',
+        'action' => '在 Telegram 中打开',
+        'verified' => false,
+        'badges' => [{ 'type' => 'telegram', 'label' => 'Telegram', 'icon' => 'send' }]
+      }
+    end
+  end
+
   def self.fetch(url)
     return @cache[url] if @cache.key?(url)
     
@@ -268,7 +361,14 @@ module LinkPreview
       data = fetch_pixiv(url, $1)
     elsif url =~ %r{e621\.net/posts/(\d+)}
       data = fetch_e621(url, $1)
-    else
+    elsif url =~ %r{^https?://(?:www\.)?t\.me/([a-zA-Z0-9_]{3,})/?(?:\?.*)?$}
+      username = $1
+      if !%w[iv s share c joinchat addstickers invoice proxy].include?(username.downcase)
+        data = fetch_telegram_entity(url, username)
+      end
+    end
+
+    if data.nil?
       begin
         html = URI.open(url, 
           'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36',
@@ -313,11 +413,68 @@ Jekyll::Hooks.register :site, :post_write do |site|
 end
 
 Jekyll::Hooks.register [:pages, :documents], :post_convert do |doc|
-  next if doc.content.nil? || (!doc.content.include?('class="preview"') && !doc.content.include?("class='preview'"))
+  next if doc.content.nil? || (!doc.content.include?('class="preview"') && !doc.content.include?("class='preview'") && !doc.content.include?('data-telegram-entity'))
   
   html = Nokogiri::HTML::DocumentFragment.parse(doc.content)
   modified = false
   site = doc.site
+
+  # Populate .tg-entity-embed components
+  html.css('.tg-entity-embed[data-telegram-entity]').each do |embed|
+    username = embed['data-telegram-entity']
+    next if username.nil? || username.empty?
+    url = "https://t.me/#{username}"
+    data = LinkPreview.fetch(url)
+    next unless data && data['is_telegram_entity']
+
+    title_el = embed.at_css('.tg-profile-title')
+    title_el.content = data['title'] if title_el && !data['title'].to_s.empty?
+
+    if data['verified'] && !embed.at_css('.verified-badge')
+      badge_span = Nokogiri::XML::Node.new('span', html)
+      badge_span['class'] = 'material-symbols-outlined verified-badge'
+      badge_span['title'] = '官方认证'
+      badge_span.content = 'verified'
+      title_el&.add_next_sibling(badge_span)
+    end
+
+    badge_el = embed.at_css('.tg-profile-badge')
+    badge_el.content = data['entity_type'] if badge_el && !data['entity_type'].to_s.empty?
+
+    extra_el = embed.at_css('.tg-extra-info')
+    if extra_el && !data['extra'].to_s.empty?
+      extra_el.content = data['extra']
+    elsif !data['extra'].to_s.empty? && embed.at_css('.tg-profile-meta')
+      sep = Nokogiri::XML::Node.new('span', html)
+      sep['class'] = 'tg-meta-sep'
+      sep.content = '•'
+      extra = Nokogiri::XML::Node.new('span', html)
+      extra['class'] = 'tg-extra-info'
+      extra.content = data['extra']
+      embed.at_css('.tg-profile-meta').add_child(sep)
+      embed.at_css('.tg-profile-meta').add_child(extra)
+    end
+
+    desc_el = embed.at_css('.tg-profile-desc')
+    if desc_el && !data['description'].to_s.empty?
+      desc_el.content = data['description']
+    elsif !data['description'].to_s.empty? && embed.at_css('.tg-profile-main')
+      new_desc = Nokogiri::XML::Node.new('div', html)
+      new_desc['class'] = 'tg-profile-desc'
+      new_desc.content = data['description']
+      embed.at_css('.tg-profile-action-row')&.add_previous_sibling(new_desc)
+    end
+
+    avatar_el = embed.at_css('.tg-profile-avatar')
+    if avatar_el && !data['image'].to_s.empty?
+      avatar_el['src'] = data['image']
+    end
+
+    action_btn_text = embed.at_css('.tg-action-btn span:not(.material-symbols-outlined)')
+    action_btn_text.content = data['action'] if action_btn_text && !data['action'].to_s.empty?
+
+    modified = true
+  end
 
   html.css('a.preview').each do |a|
     url = a['href']
@@ -409,6 +566,7 @@ Jekyll::Hooks.register [:pages, :documents], :post_convert do |doc|
         
         wrapper_classes = ["card-image-wrapper"]
         wrapper_classes << "is-adaptive" if is_artwork
+        wrapper_classes << "is-avatar-circle" if data['is_telegram_entity']
         
         if data['is_r18']
           wrapper_classes << "is-r18-masked"
@@ -448,18 +606,23 @@ Jekyll::Hooks.register [:pages, :documents], :post_convert do |doc|
 
       card_classes = ["md3-link-card"]
       card_classes << "card-artwork" if is_artwork
+      card_classes << "card-telegram-profile" if data['is_telegram_entity']
 
       card_html = %Q{
         <a href="#{url}" class="#{card_classes.join(' ')}" target="#{is_internal ? '_self' : '_blank'}" rel="noopener">
           <span class="card-content">
             #{image_html}
             <span class="card-text">
-              <span class="card-title">#{title_safe.empty? ? url : title_safe}</span>
+              <span class="card-title">
+                #{title_safe.empty? ? url : title_safe}
+                #{data['is_telegram_entity'] && data['verified'] ? %Q{ <span class="material-symbols-outlined verified-badge" title="官方认证">verified</span>} : ''}
+              </span>
               #{badges_html}
               #{desc_trunc.empty? ? '' : %Q{<span class="card-desc">#{desc_trunc}</span>}}
               <span class="card-meta">
                 #{favicon_html}
-                <span class="card-domain">#{domain_safe}</span>
+                <span class="card-domain">#{data['is_telegram_entity'] ? "@#{data['username']}" : domain_safe}</span>
+                #{data['is_telegram_entity'] && !data['extra'].to_s.empty? ? %Q{<span class="card-meta-sep">•</span><span class="card-extra">#{CGI.escapeHTML(data['extra'])}</span>} : ''}
               </span>
             </span>
           </span>

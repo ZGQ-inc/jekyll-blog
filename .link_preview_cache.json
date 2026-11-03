@@ -122,5 +122,70 @@
     "image": "https://github.githubassets.com/assets/campaign-social-031d61680d67.png",
     "domain": "github.com",
     "is_r18": false
+  },
+  "https://t.me/CopyRightZGQInc": {
+    "title": "𝐙𝐆𝐐 ɪɴᴄ.的唠嗑频道",
+    "description": "个人主页： domain.zgqinc.gq\n博客： blog.zgqinc.gq\nTelegram： @ZGQinc",
+    "image": "https://cdn5.telesco.pe/file/pOjiGHN-A2jVt-spX4Nf6wgLyd1BLGFa8lM3wK8K4FzVjK1sL0qg_Yf55P5z2s4wYQp5r8Y23.jpg",
+    "domain": "t.me",
+    "is_r18": false,
+    "is_telegram_entity": true,
+    "entity_type": "频道",
+    "username": "CopyRightZGQInc",
+    "extra": "8 705 subscribers",
+    "action": "查看频道",
+    "verified": false,
+    "badges": [
+      {
+        "type": "channel",
+        "label": "频道",
+        "icon": "campaign"
+      }
+    ]
+  },
+  "https://t.me/ZGQinc": {
+    "title": "𝐙𝐆𝐐 ɪɴᴄ.",
+    "description": "是北极狐 | 无法PM请使用bot @ZGQ_PMbot | @CopyRightZGQInc | domain.zgqinc.gq",
+    "image": "https://cdn5.telesco.pe/file/CBULKkIbKNHv_vmaIqvZUr4We1K0YXDj7xNl84.jpg",
+    "domain": "t.me",
+    "is_r18": false,
+    "is_telegram_entity": true,
+    "entity_type": "用户",
+    "username": "ZGQinc",
+    "extra": "@ZGQinc",
+    "action": "发起私聊",
+    "verified": false,
+    "badges": [
+      {
+        "type": "user",
+        "label": "用户",
+        "icon": "person"
+      }
+    ]
+  },
+  "https://t.me/Stickers": {
+    "title": "Stickers Bot",
+    "description": "Create Telegram Stickers and get usage stats for your sticker packs with this bot.",
+    "image": "https://cdn4.telesco.pe/file/Vmvx-Eo6JxX84DDBWrflgy3iVZ4Lg1dc9F8N.jpg",
+    "domain": "t.me",
+    "is_r18": false,
+    "is_telegram_entity": true,
+    "entity_type": "Bot",
+    "username": "Stickers",
+    "extra": "@Stickers",
+    "action": "启动 Bot",
+    "verified": true,
+    "badges": [
+      {
+        "type": "verified",
+        "label": "认证",
+        "icon": "verified"
+      },
+      {
+        "type": "bot",
+        "label": "Bot",
+        "icon": "smart_toy"
+      }
+    ]
   }
 }

@@ -52,6 +52,11 @@
   box-shadow: var(--elev-1);
   transition: box-shadow var(--dur-short4) var(--motion-standard);
 
+  html[data-theme="dark"] & {
+    background-color: #18222d;
+    border-color: rgba(255, 255, 255, 0.08);
+  }
+
   &:hover {
     box-shadow: var(--elev-2);
   }
@@ -109,6 +114,153 @@
     gap: 0.375rem;
     text-decoration: none;
     font-size: 0.875rem;
+  }
+}
+
+/* Telegram Entity / Profile Card */
+.tg-entity-embed {
+  margin: 1.5rem auto;
+  width: 100%;
+  max-width: 550px;
+
+  .tg-profile-card {
+    border-radius: var(--shape-large, 16px);
+    background-color: var(--md-sys-color-surface-container);
+    border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 50%, transparent);
+    box-shadow: var(--elev-1);
+    padding: 1.25rem 1.5rem;
+    box-sizing: border-box;
+    transition: box-shadow var(--dur-short4) var(--motion-standard), transform var(--dur-short4) var(--motion-standard);
+
+    &:hover {
+      box-shadow: var(--elev-2);
+    }
+  }
+
+  .tg-profile-card-inner {
+    display: flex;
+    gap: 1.25rem;
+    align-items: flex-start;
+  }
+
+  .tg-avatar-col {
+    flex-shrink: 0;
+  }
+
+  .tg-avatar-wrapper {
+    width: 68px;
+    height: 68px;
+    border-radius: 50%;
+    overflow: hidden;
+    background-color: var(--md-sys-color-surface-container-high);
+    border: 2px solid var(--md-sys-color-outline-variant);
+
+    .tg-profile-avatar {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      margin: 0 !important;
+    }
+  }
+
+  .tg-profile-main {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .tg-profile-topline {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 0.25rem;
+
+    .tg-profile-title {
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: var(--md-sys-color-on-surface);
+      line-height: 1.3;
+    }
+
+    .verified-badge {
+      font-size: 1.125rem;
+      color: #24A1DE;
+      display: inline-flex;
+      vertical-align: middle;
+      font-variation-settings: 'FILL' 1;
+    }
+
+    .tg-profile-badge {
+      font-size: 0.75rem;
+      font-weight: 500;
+      padding: 0.15rem 0.5rem;
+      border-radius: 12px;
+      background-color: var(--md-sys-color-secondary-container);
+      color: var(--md-sys-color-on-secondary-container);
+    }
+  }
+
+  .tg-profile-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    font-size: 0.875rem;
+    color: var(--md-sys-color-primary);
+    margin-bottom: 0.5rem;
+
+    .tg-username {
+      font-weight: 500;
+    }
+
+    .tg-meta-sep {
+      color: var(--md-sys-color-outline);
+    }
+
+    .tg-extra-info {
+      color: var(--md-sys-color-on-surface-variant);
+    }
+  }
+
+  .tg-profile-desc {
+    font-size: 0.875rem;
+    line-height: 1.5;
+    color: var(--md-sys-color-on-surface-variant);
+    margin-bottom: 1rem;
+    white-space: pre-line;
+    word-break: break-word;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .tg-profile-action-row {
+    display: flex;
+    justify-content: flex-start;
+
+    .tg-action-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.45rem 1.25rem;
+      border-radius: 20px;
+      background-color: var(--md-sys-color-primary);
+      color: var(--md-sys-color-on-primary) !important;
+      text-decoration: none !important;
+      font-size: 0.875rem;
+      font-weight: 500;
+      transition: background-color var(--dur-short4) var(--motion-standard), box-shadow var(--dur-short4) var(--motion-standard);
+
+      &:hover {
+        background-color: color-mix(in srgb, var(--md-sys-color-primary) 85%, #fff);
+        box-shadow: var(--elev-1);
+      }
+
+      .material-symbols-outlined {
+        font-size: 1.125rem;
+      }
+    }
   }
 }
 
