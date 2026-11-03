@@ -160,43 +160,14 @@
     background-color: var(--md-sys-color-surface-container-high);
     border: 2px solid var(--md-sys-color-outline-variant);
 
-    .post-img-container {
-      width: 100% !important;
-      height: 100% !important;
-      min-height: unset !important;
-      margin: 0 !important;
-      padding: 0 !important;
-      border-radius: 50% !important;
-      box-shadow: none !important;
-      background: none !important;
-      animation: none !important;
-      display: flex !important;
-      align-items: center !important;
-      justify-content: center !important;
-
-      .slanted-beam-runner {
-        display: none !important;
-      }
-    }
-
-    img,
     .tg-profile-avatar {
-      width: 100% !important;
-      height: 100% !important;
-      max-width: 100% !important;
-      max-height: 100% !important;
-      min-width: 100% !important;
-      min-height: 100% !important;
-      object-fit: cover !important;
-      display: block !important;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
       margin: 0 !important;
-      padding: 0 !important;
-      border: none !important;
       border-radius: 50% !important;
       box-shadow: none !important;
-      transform: none !important;
-      filter: none !important;
-      opacity: 1 !important;
     }
   }
 
@@ -412,6 +383,8 @@
     max-width: 100%;
     height: auto;
     border-radius: var(--shape-large, 16px);
+    margin: 0 !important;
+    box-shadow: none !important;
     filter: blur(28px) brightness(0.8);
     transform: scale(1.05);
     transition: filter 0.45s cubic-bezier(0.2, 0, 0, 1), transform 0.45s cubic-bezier(0.2, 0, 0, 1);

@@ -310,7 +310,7 @@ function initTelegramSpoilers() {
 // ==============================================================================
 function initArticleImages() {
   const articleImgs = document.querySelectorAll(
-    '.article-content img:not([src*=".svg"]):not([src*="badge"]):not([src*="shields.io"]):not([src*="min-tuijian"]):not([src*="min-oss"]):not(.tg-profile-avatar):not(.card-image):not(.card-favicon)'
+    '.article-content img:not([src*=".svg"]):not([src*="badge"]):not([src*="shields.io"]):not([src*="min-tuijian"]):not([src*="min-oss"])'
   );
 
   articleImgs.forEach(img => {
@@ -319,11 +319,13 @@ function initArticleImages() {
       return;
     }
 
-    // Skip if avatar or inside cards, embeds, heading, code, gallery carousels or lightboxes
-    if (img.classList.contains('tg-profile-avatar') ||
-        img.classList.contains('card-image') ||
-        img.classList.contains('card-favicon') ||
-        img.closest('.tg-avatar-wrapper, .tg-profile-card, .tg-entity-embed, .md3-link-card, .card-image-wrapper, .file-download-card, h1, h2, h3, h4, h5, h6, pre, code, .md3-gallery, .gallery-thumbnails, .gallery-thumbnail-item, .lightbox-overlay, .lightbox-content-wrapper')) {
+    // Skip all masked images (blur, spoiler, nsfw) - managed by embed-enhancer.js with frosted glass mask & scale transitions
+    if (img.classList.contains('blur') || img.classList.contains('spoiler') || img.classList.contains('nsfw') || img.hasAttribute('data-blur')) {
+      return;
+    }
+
+    // Skip if inside media components, gallery carousels, audio players, telegram embeds, link cards, download cards, lightboxes or headings
+    if (img.closest('.md3-image-mask-wrapper, .md3-media-player, .audio-cover, .md3-gallery, .gallery-main-view, .gallery-thumbnails, .gallery-thumbnail-item, .lightbox-overlay, .lightbox-content-wrapper, .tg-avatar-wrapper, .tg-profile-card, .tg-entity-embed, .md3-link-card, .card-image-wrapper, .file-download-card, h1, h2, h3, h4, h5, h6, pre, code')) {
       return;
     }
 

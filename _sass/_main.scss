@@ -2709,7 +2709,7 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
     p:last-child { margin-bottom: 0; }
   }
 
-  img:not(.tg-profile-avatar):not(.card-image):not(.card-favicon) {
+  img {
     border-radius: var(--shape-large);
     margin: 1.5em 0;
     box-shadow: var(--elev-2);
@@ -4727,8 +4727,8 @@ md-navigation-drawer {
       height: 100%;
       object-fit: contain;
       border-radius: 0;
-      margin: 0;
-      box-shadow: none;
+      margin: 0 !important;
+      box-shadow: none !important;
       scroll-snap-align: center;
       scroll-snap-stop: always;
       transition: opacity 0.3s ease;
@@ -4763,9 +4763,9 @@ md-navigation-drawer {
         width: 100%;
         height: 100%;
         object-fit: cover;
-        margin: 0;
+        margin: 0 !important;
         border-radius: 0;
-        box-shadow: none;
+        box-shadow: none !important;
       }
 
       .play-indicator {
@@ -5290,8 +5290,9 @@ md-navigation-drawer {
         width: 100%;
         height: 100%;
         object-fit: cover;
-        margin: 0;
-        box-shadow: none;
+        display: block;
+        margin: 0 !important;
+        box-shadow: none !important;
       }
       
       .audio-cover-placeholder {
