@@ -439,7 +439,21 @@ Jekyll::Hooks.register [:pages, :documents], :post_convert do |doc|
     end
 
     badge_el = embed.at_css('.tg-profile-badge')
-    badge_el.content = data['entity_type'] if badge_el && !data['entity_type'].to_s.empty?
+    if badge_el && !data['entity_type'].to_s.empty?
+      badge_el.content = ''
+      badge_type = data['badges']&.first&.[]('type') || 'telegram'
+      badge_icon = data['badges']&.first&.[]('icon') || 'send'
+
+      icon_node = Nokogiri::XML::Node.new('span', html)
+      icon_node['class'] = 'material-symbols-outlined'
+      icon_node.content = badge_icon
+      badge_el.add_child(icon_node)
+
+      text_node = Nokogiri::XML::Text.new(" #{data['entity_type']}", html)
+      badge_el.add_child(text_node)
+
+      badge_el['class'] = "tg-profile-badge preview-badge preview-badge-#{badge_type}"
+    end
 
     extra_el = embed.at_css('.tg-extra-info')
     if extra_el && !data['extra'].to_s.empty?
@@ -608,26 +622,52 @@ Jekyll::Hooks.register [:pages, :documents], :post_convert do |doc|
       card_classes << "card-artwork" if is_artwork
       card_classes << "card-telegram-profile" if data['is_telegram_entity']
 
-      card_html = %Q{
+      if data['is_telegram_entity']
+        card_html = %Q{
+        <a href="#{url}" class="md3-link-card card-telegram-profile" target="_blank" rel="noopener">
+          <span class="card-content">
+            #{image_html}
+            <span class="card-text">
+              <span class="tg-profile-topline">
+                <span class="tg-profile-title">#{title_safe.empty? ? url : title_safe}</span>
+                #{data['verified'] ? %Q{<span class="material-symbols-outlined verified-badge" title="官方认证">verified</span>} : ''}
+                #{badges_html}
+              </span>
+              <span class="tg-profile-meta">
+                <span class="tg-username">@#{data['username']}</span>
+                #{!data['extra'].to_s.empty? ? %Q{<span class="tg-meta-sep">•</span><span class="tg-extra-info">#{CGI.escapeHTML(data['extra'])}</span>} : ''}
+              </span>
+              #{desc_trunc.empty? ? '' : %Q{<span class="tg-profile-desc">#{desc_trunc}</span>}}
+              <span class="tg-profile-action-row">
+                <span class="action-btn btn-filled tg-action-btn">
+                  <span class="material-symbols-outlined">send</span>
+                  <span>#{data['action'] || '在 Telegram 中打开'}</span>
+                </span>
+              </span>
+            </span>
+          </span>
+        </a>
+        }
+      else
+        card_html = %Q{
         <a href="#{url}" class="#{card_classes.join(' ')}" target="#{is_internal ? '_self' : '_blank'}" rel="noopener">
           <span class="card-content">
             #{image_html}
             <span class="card-text">
               <span class="card-title">
                 #{title_safe.empty? ? url : title_safe}
-                #{data['is_telegram_entity'] && data['verified'] ? %Q{ <span class="material-symbols-outlined verified-badge" title="官方认证">verified</span>} : ''}
               </span>
               #{badges_html}
               #{desc_trunc.empty? ? '' : %Q{<span class="card-desc">#{desc_trunc}</span>}}
               <span class="card-meta">
                 #{favicon_html}
-                <span class="card-domain">#{data['is_telegram_entity'] ? "@#{data['username']}" : domain_safe}</span>
-                #{data['is_telegram_entity'] && !data['extra'].to_s.empty? ? %Q{<span class="card-meta-sep">•</span><span class="card-extra">#{CGI.escapeHTML(data['extra'])}</span>} : ''}
+                <span class="card-domain">#{domain_safe}</span>
               </span>
             </span>
           </span>
         </a>
-      }
+        }
+      end
       a.replace(card_html)
       modified = true
     end

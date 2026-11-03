@@ -199,12 +199,64 @@
     }
 
     .tg-profile-badge {
-      font-size: 0.75rem;
-      font-weight: 500;
-      padding: 0.15rem 0.5rem;
-      border-radius: 12px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 3px 9px;
+      border-radius: 8px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
       background-color: var(--md-sys-color-secondary-container);
       color: var(--md-sys-color-on-secondary-container);
+
+      .material-symbols-outlined {
+        font-size: 13px !important;
+        line-height: 1;
+      }
+
+      &.preview-badge-channel {
+        background: color-mix(in srgb, #0288d1 18%, transparent) !important;
+        color: #0288d1 !important;
+        border: 1px solid color-mix(in srgb, #0288d1 35%, transparent) !important;
+      }
+      &.preview-badge-group {
+        background: color-mix(in srgb, #00897b 18%, transparent) !important;
+        color: #00897b !important;
+        border: 1px solid color-mix(in srgb, #00897b 35%, transparent) !important;
+      }
+      &.preview-badge-user {
+        background: color-mix(in srgb, #5c6bc0 18%, transparent) !important;
+        color: #5c6bc0 !important;
+        border: 1px solid color-mix(in srgb, #5c6bc0 35%, transparent) !important;
+      }
+      &.preview-badge-bot {
+        background: color-mix(in srgb, #9c27b0 18%, transparent) !important;
+        color: #9c27b0 !important;
+        border: 1px solid color-mix(in srgb, #9c27b0 35%, transparent) !important;
+      }
+
+      html[data-theme="dark"] & {
+        &.preview-badge-channel {
+          background: color-mix(in srgb, #0288d1 28%, transparent) !important;
+          color: #4fc3f7 !important;
+          border-color: color-mix(in srgb, #0288d1 45%, transparent) !important;
+        }
+        &.preview-badge-group {
+          background: color-mix(in srgb, #00897b 28%, transparent) !important;
+          color: #4db6ac !important;
+          border-color: color-mix(in srgb, #00897b 45%, transparent) !important;
+        }
+        &.preview-badge-user {
+          background: color-mix(in srgb, #5c6bc0 28%, transparent) !important;
+          color: #9fa8da !important;
+          border-color: color-mix(in srgb, #5c6bc0 45%, transparent) !important;
+        }
+        &.preview-badge-bot {
+          background: color-mix(in srgb, #9c27b0 28%, transparent) !important;
+          color: #ce93d8 !important;
+          border-color: color-mix(in srgb, #9c27b0 45%, transparent) !important;
+        }
+      }
     }
   }
 
