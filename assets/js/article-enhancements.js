@@ -310,7 +310,7 @@ function initTelegramSpoilers() {
 // ==============================================================================
 function initArticleImages() {
   const articleImgs = document.querySelectorAll(
-    '.article-content img:not([src*=".svg"]):not([src*="badge"]):not([src*="shields.io"]):not([src*="min-tuijian"]):not([src*="min-oss"])'
+    '.article-content img:not([src*=".svg"]):not([src*="badge"]):not([src*="shields.io"]):not([src*="min-tuijian"]):not([src*="min-oss"]):not(.tg-profile-avatar):not(.card-image):not(.card-favicon)'
   );
 
   articleImgs.forEach(img => {
@@ -319,8 +319,11 @@ function initArticleImages() {
       return;
     }
 
-    // Skip if inside heading, code, link cards, gallery carousels or lightboxes
-    if (img.closest('h1, h2, h3, h4, h5, h6, pre, code, .md3-link-card, .md3-gallery, .gallery-thumbnails, .gallery-thumbnail-item, .lightbox-overlay, .lightbox-content-wrapper')) {
+    // Skip if avatar or inside cards, embeds, heading, code, gallery carousels or lightboxes
+    if (img.classList.contains('tg-profile-avatar') ||
+        img.classList.contains('card-image') ||
+        img.classList.contains('card-favicon') ||
+        img.closest('.tg-avatar-wrapper, .tg-profile-card, .tg-entity-embed, .md3-link-card, .card-image-wrapper, .file-download-card, h1, h2, h3, h4, h5, h6, pre, code, .md3-gallery, .gallery-thumbnails, .gallery-thumbnail-item, .lightbox-overlay, .lightbox-content-wrapper')) {
       return;
     }
 

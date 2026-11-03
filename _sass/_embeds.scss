@@ -150,17 +150,53 @@
   .tg-avatar-wrapper {
     width: 68px;
     height: 68px;
+    min-width: 68px;
     border-radius: 50%;
     overflow: hidden;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     background-color: var(--md-sys-color-surface-container-high);
     border: 2px solid var(--md-sys-color-outline-variant);
 
-    .tg-profile-avatar {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
+    .post-img-container {
+      width: 100% !important;
+      height: 100% !important;
+      min-height: unset !important;
       margin: 0 !important;
+      padding: 0 !important;
+      border-radius: 50% !important;
+      box-shadow: none !important;
+      background: none !important;
+      animation: none !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+
+      .slanted-beam-runner {
+        display: none !important;
+      }
+    }
+
+    img,
+    .tg-profile-avatar {
+      width: 100% !important;
+      height: 100% !important;
+      max-width: 100% !important;
+      max-height: 100% !important;
+      min-width: 100% !important;
+      min-height: 100% !important;
+      object-fit: cover !important;
+      display: block !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      border: none !important;
+      border-radius: 50% !important;
+      box-shadow: none !important;
+      transform: none !important;
+      filter: none !important;
+      opacity: 1 !important;
     }
   }
 

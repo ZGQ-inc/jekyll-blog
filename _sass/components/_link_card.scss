@@ -54,10 +54,46 @@
       border-radius: 50% !important;
       border-bottom: none;
       flex-shrink: 0;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       border: 2px solid var(--md-sys-color-outline-variant);
 
-      .card-image {
+      .post-img-container {
+        width: 100% !important;
+        height: 100% !important;
+        min-height: unset !important;
+        margin: 0 !important;
+        padding: 0 !important;
         border-radius: 50% !important;
+        box-shadow: none !important;
+        background: none !important;
+        animation: none !important;
+
+        .slanted-beam-runner {
+          display: none !important;
+        }
+      }
+
+      img,
+      .card-image {
+        width: 100% !important;
+        height: 100% !important;
+        max-width: 100% !important;
+        max-height: 100% !important;
+        min-width: 100% !important;
+        min-height: 100% !important;
+        object-fit: cover !important;
+        display: block !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        border: none !important;
+        border-radius: 50% !important;
+        box-shadow: none !important;
+        transform: none !important;
+        filter: none !important;
+        opacity: 1 !important;
       }
     }
 

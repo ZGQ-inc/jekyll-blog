@@ -2709,7 +2709,7 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
     p:last-child { margin-bottom: 0; }
   }
 
-  img {
+  img:not(.tg-profile-avatar):not(.card-image):not(.card-favicon) {
     border-radius: var(--shape-large);
     margin: 1.5em 0;
     box-shadow: var(--elev-2);
