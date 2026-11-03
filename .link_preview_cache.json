@@ -125,8 +125,8 @@
   },
   "https://t.me/CopyRightZGQInc": {
     "title": "𝐙𝐆𝐐 ɪɴᴄ.的唠嗑频道",
-    "description": "个人主页： domain.zgqinc.gq\n博客： blog.zgqinc.gq\nTelegram： @ZGQinc",
-    "image": "https://cdn5.telesco.pe/file/pOjiGHN-A2jVt-spX4Nf6wgLyd1BLGFa8lM3wK8K4FzVjK1sL0qg_Yf55P5z2s4wYQp5r8Y23.jpg",
+    "description": "个人主页： domain.zgqinc.gq\t博客： blog.zgqinc.gq",
+    "image": "https://cdn5.telesco.pe/file/pOjiGHN-A2jVt-spX4Nf6wgLyd1BLGFte12QpnEn5Vxv0gLfXiamPCmTcGJKC33s24S-qFDoi6f1q4ayXZP80eun5va7wgc35L3qAcBJWT_qHYyNsEodYEgOSBndJWJygJLQ1j4ocZwPX1pDCtkV7ReLQ5kJ0JkZE7zr3oufBHTwBmqXImXPegvFdnjmE4GRcaJETSBvGLZZ41UB8hAj2cYy16j51xHNG0G6mymh4iVn80BJ4W9eDbtnx4tU_66gZGV7kX9RE7-g7qAgszVLNnRR-ykWRe_Qqv8kE3ZksBbkPDd0KfPRaZraKExEY8uWsQ-UYfFhB8CPDA8abbIyZQ.jpg",
     "domain": "t.me",
     "is_r18": false,
     "is_telegram_entity": true,
@@ -146,7 +146,7 @@
   "https://t.me/ZGQinc": {
     "title": "𝐙𝐆𝐐 ɪɴᴄ.",
     "description": "是北极狐 | 无法PM请使用bot @ZGQ_PMbot | @CopyRightZGQInc | domain.zgqinc.gq",
-    "image": "https://cdn5.telesco.pe/file/CBULKkIbKNHv_vmaIqvZUr4We1K0YXDj7xNl84.jpg",
+    "image": "https://cdn5.telesco.pe/file/CBULKkIbKNHv_vmaIqvZUr4We1K0YXDN99q96MroK5tPdaH6_2JuC0nmb8CEfuHd4mt2_010gvWfpOCJZ5qVCxuf4F9iGke2W2iaeTs86QX5qtxv6gbIbSN83pBBj8M6mkBD3RwSSBfa3mdzZ990C95J8twKutg15DKVSo0HPcieARlST36Q1Sv3mW89DarRZpSnODSNSQHwdALs31lJJ3uP9RpK1skRNudfZnhOvGj8Oes72NaF5QgP9Hc2PgByGQMSFXOf-UQcsmayKnKI_9dsPKq0hp2_-SxAGsi1XzlCKv0efrAtjqhE-X_D6xLBJKUK8xxR0DQbYUhEg1TQxQ.jpg",
     "domain": "t.me",
     "is_r18": false,
     "is_telegram_entity": true,
@@ -181,6 +181,46 @@
         "label": "认证",
         "icon": "verified"
       },
+      {
+        "type": "bot",
+        "label": "Bot",
+        "icon": "smart_toy"
+      }
+    ]
+  },
+  "https://t.me/ZGQinc_chat_room": {
+    "title": "ZGQ Inc. s'chat room",
+    "description": "You can view and join @ZGQinc_chat_room right away.",
+    "image": "https://cdn5.telesco.pe/file/AHmMnM5UoKwpWjYEJ57f5MRUH855ls0sbWDZbzwbIuqveMKL5DtqIAcMYyN0Iq9WFwnf_Vjpo7Hiz_DWZdYIoFdfte7DwirfHfVLxOOTmzAWKNAW3HzG1CgkcSmjoAO4yfWaqQ8G_tWydIpP8oZvTHF940kt_QmvqDDqNS69epRQYYUlLjpRHOzjrl3hS4CltTHjsk7fZFDulSXrGnzQzuN-MxApI-bZWV8eos_eHTH5IJaVVma25R5gMIfwDaD7GZJu3pDUqKi7HbuqGW2VUCq2u0lAxG5javdTAwdlBIJA1jNzyvOKOq30XVPoRj-xIrLpv3OzhtXUgM6ZlaLgRw.jpg",
+    "domain": "t.me",
+    "is_r18": false,
+    "is_telegram_entity": true,
+    "entity_type": "群组",
+    "username": "ZGQinc_chat_room",
+    "extra": "906 members, 28 online",
+    "action": "加入群组",
+    "verified": false,
+    "badges": [
+      {
+        "type": "group",
+        "label": "群组",
+        "icon": "groups"
+      }
+    ]
+  },
+  "https://t.me/zgqinc_blog_bot": {
+    "title": "ZGQ Inc.'s Blog 博客助手",
+    "description": "ZGQ Inc. 个人博客官方助手。\t博客地址： blog.zgqinc.gq",
+    "image": "https://telegram.org/img/t_logo_2x.png",
+    "domain": "t.me",
+    "is_r18": false,
+    "is_telegram_entity": true,
+    "entity_type": "Bot",
+    "username": "zgqinc_blog_bot",
+    "extra": "@zgqinc_blog_bot",
+    "action": "启动 Bot",
+    "verified": false,
+    "badges": [
       {
         "type": "bot",
         "label": "Bot",

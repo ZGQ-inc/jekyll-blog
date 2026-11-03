@@ -5,6 +5,15 @@
   {% endif %}
 {% endif %}
 
+{% if tg_post %}
+  {% assign tg_post = tg_post | strip %}
+  {% assign last_char = tg_post | slice: -1 %}
+  {% if last_char == "/" %}
+    {% assign tg_len = tg_post | size | minus: 1 %}
+    {% assign tg_post = tg_post | slice: 0, tg_len %}
+  {% endif %}
+{% endif %}
+
 {% if tg_post contains "c/" or tg_post contains "+" or tg_post contains "joinchat" %}
   <div class="tg-private-post-card md3-card" data-telegram-post="{{ tg_post }}">
     <div class="tg-private-post-header">
