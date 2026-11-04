@@ -179,7 +179,7 @@ Jekyll::Hooks.register [:posts, :pages, :documents], :pre_render do |doc|
                         ''
                       end
 
-    <<~HTML.strip
+    "\n\n" + <<~HTML.strip + "\n\n"
       <div class="md3-sandbox-container" id="#{box_id}" style="width: #{config['width']}; max-width: 100%;" data-initial-height="#{config['height']}" markdown="0">
         <div class="sandbox-window-bar">
           <div class="sandbox-bar-left">
@@ -204,6 +204,8 @@ Jekyll::Hooks.register [:posts, :pages, :documents], :pre_render do |doc|
         <div class="sandbox-viewport" style="height: #{config['height']};">
           <iframe class="sandbox-iframe"
                   sandbox="#{config['allow']}"
+                  allowfullscreen="true"
+                  allow="fullscreen"
                   referrerpolicy="no-referrer"
                   loading="lazy"
                   title="#{CGI.escapeHTML(config['title'])}"

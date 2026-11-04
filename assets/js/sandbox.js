@@ -1,7 +1,7 @@
 // ==============================================================================
 // Material Design 3 HTML Sandbox Controller
-// Handles iframe sandbox reload, source drawer toggle, fullscreen, drag resizing,
-// and theme synchronization.
+// Handles iframe sandbox reload, source drawer toggle, native/teleport fullscreen,
+// drag resizing, and theme synchronization.
 // ==============================================================================
 
 (function() {
@@ -24,6 +24,149 @@
       }
     });
   }
+
+  // Detect if an element is in native fullscreen
+  function isNativeFullscreen(el) {
+    const fsEl = document.fullscreenElement ||
+                 document.webkitFullscreenElement ||
+                 document.mozFullScreenElement ||
+                 document.msFullscreenElement;
+    return !!(fsEl && (fsEl === el || el.contains(fsEl)));
+  }
+
+  // Request native fullscreen with vendor fallbacks
+  function requestNativeFullscreen(el) {
+    if (el.requestFullscreen) {
+      return el.requestFullscreen();
+    } else if (el.webkitRequestFullscreen) {
+      return el.webkitRequestFullscreen();
+    } else if (el.mozRequestFullScreen) {
+      return el.mozRequestFullScreen();
+    } else if (el.msRequestFullscreen) {
+      return el.msRequestFullscreen();
+    }
+    return Promise.reject(new Error('Native fullscreen unsupported'));
+  }
+
+  // Exit native fullscreen with vendor fallbacks
+  function exitNativeFullscreen() {
+    if (document.exitFullscreen) {
+      return document.exitFullscreen();
+    } else if (document.webkitExitFullscreen) {
+      return document.webkitExitFullscreen();
+    } else if (document.mozCancelFullScreen) {
+      return document.mozCancelFullScreen();
+    } else if (document.msExitFullscreen) {
+      return document.msExitFullscreen();
+    }
+    return Promise.resolve();
+  }
+
+  function updateFullscreenButtonUI(btn, isFs) {
+    if (!btn) return;
+    const icon = btn.querySelector('.material-symbols-outlined');
+    if (isFs) {
+      if (icon) icon.textContent = 'fullscreen_exit';
+      btn.title = '退出全屏 (Esc)';
+      btn.setAttribute('aria-label', '退出全屏');
+      btn.classList.add('is-active');
+    } else {
+      if (icon) icon.textContent = 'fullscreen';
+      btn.title = '全屏独立运行';
+      btn.setAttribute('aria-label', '全屏运行');
+      btn.classList.remove('is-active');
+    }
+  }
+
+  // Teleport fallback for environments where native fullscreen is blocked or unsupported
+  // Appends container directly to document.body so ancestor CSS transforms/filters cannot trap it
+  function enterFallbackFullscreen(container, btn) {
+    if (container.dataset.isTeleported === 'true') return;
+
+    const placeholder = document.createElement('div');
+    placeholder.className = 'sandbox-teleport-placeholder';
+    placeholder.style.display = 'none';
+    container.parentNode.insertBefore(placeholder, container);
+    container._teleportPlaceholder = placeholder;
+
+    document.body.appendChild(container);
+    container.dataset.isTeleported = 'true';
+    container.classList.add('is-fullscreen');
+    document.body.classList.add('sandbox-fullscreen-active');
+
+    updateFullscreenButtonUI(btn, true);
+  }
+
+  function exitFallbackFullscreen(container, btn) {
+    if (container.dataset.isTeleported !== 'true') return;
+
+    container.classList.remove('is-fullscreen');
+    document.body.classList.remove('sandbox-fullscreen-active');
+
+    if (container._teleportPlaceholder && container._teleportPlaceholder.parentNode) {
+      container._teleportPlaceholder.parentNode.insertBefore(container, container._teleportPlaceholder);
+      container._teleportPlaceholder.remove();
+      delete container._teleportPlaceholder;
+    }
+    delete container.dataset.isTeleported;
+
+    updateFullscreenButtonUI(btn, false);
+  }
+
+  function toggleFullscreen(container, btn) {
+    const isNative = isNativeFullscreen(container);
+    const isTeleported = container.dataset.isTeleported === 'true';
+
+    if (isNative) {
+      exitNativeFullscreen().catch(() => {});
+    } else if (isTeleported) {
+      exitFallbackFullscreen(container, btn);
+    } else {
+      // Try native fullscreen first (elevates element into top layer)
+      try {
+        const promise = requestNativeFullscreen(container);
+        if (promise && typeof promise.then === 'function') {
+          promise.catch((err) => {
+            console.warn('[Sandbox] requestFullscreen rejected, falling back to portal:', err);
+            enterFallbackFullscreen(container, btn);
+          });
+        }
+      } catch (err) {
+        console.warn('[Sandbox] requestFullscreen threw error, falling back to portal:', err);
+        enterFallbackFullscreen(container, btn);
+      }
+    }
+  }
+
+  // Global fullscreen change listener keeps all sandbox buttons and classes in sync
+  function onFullscreenChange() {
+    document.querySelectorAll('.md3-sandbox-container').forEach(container => {
+      const btn = container.querySelector('.btn-fullscreen');
+      const isFs = isNativeFullscreen(container);
+      if (isFs) {
+        container.classList.add('is-fullscreen');
+        updateFullscreenButtonUI(btn, true);
+      } else if (container.dataset.isTeleported !== 'true') {
+        container.classList.remove('is-fullscreen');
+        updateFullscreenButtonUI(btn, false);
+      }
+    });
+  }
+
+  document.addEventListener('fullscreenchange', onFullscreenChange);
+  document.addEventListener('webkitfullscreenchange', onFullscreenChange);
+  document.addEventListener('mozfullscreenchange', onFullscreenChange);
+  document.addEventListener('MSFullscreenChange', onFullscreenChange);
+
+  // Esc key fallback for teleported containers
+  window.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' || e.key === 'Esc') {
+      const teleported = document.querySelector('.md3-sandbox-container[data-is-teleported="true"]');
+      if (teleported) {
+        exitFallbackFullscreen(teleported, teleported.querySelector('.btn-fullscreen'));
+      }
+    }
+  });
 
   function initSandbox(container) {
     if (container.dataset.sandboxInitialized) return;
@@ -122,41 +265,10 @@
     }
 
     // 5. Fullscreen Toggle
-    let savedHeight = null;
-    function setFullscreen(enable) {
-      if (!btnFullscreen) return;
-      const fsIcon = btnFullscreen.querySelector('.material-symbols-outlined');
-
-      if (enable) {
-        savedHeight = viewport ? viewport.style.height : null;
-        container.classList.add('is-fullscreen');
-        document.body.classList.add('sandbox-fullscreen-active');
-        if (fsIcon) fsIcon.textContent = 'fullscreen_exit';
-        btnFullscreen.title = '退出全屏 (Esc)';
-        btnFullscreen.classList.add('is-active');
-      } else {
-        container.classList.remove('is-fullscreen');
-        document.body.classList.remove('sandbox-fullscreen-active');
-        if (fsIcon) fsIcon.textContent = 'fullscreen';
-        btnFullscreen.title = '全屏独立运行';
-        btnFullscreen.classList.remove('is-active');
-        if (viewport && savedHeight) {
-          viewport.style.height = savedHeight;
-        }
-      }
-    }
-
     if (btnFullscreen) {
       btnFullscreen.addEventListener('click', (e) => {
         e.preventDefault();
-        const isFs = container.classList.contains('is-fullscreen');
-        setFullscreen(!isFs);
-      });
-
-      window.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && container.classList.contains('is-fullscreen')) {
-          setFullscreen(false);
-        }
+        toggleFullscreen(container, btnFullscreen);
       });
     }
 
@@ -167,7 +279,7 @@
       let startHeight = 0;
 
       function onPointerDown(e) {
-        if (container.classList.contains('is-fullscreen')) return;
+        if (isNativeFullscreen(container) || container.dataset.isTeleported === 'true' || container.classList.contains('is-fullscreen')) return;
         isDragging = true;
         startY = e.clientY || (e.touches && e.touches[0].clientY) || 0;
         startHeight = viewport.getBoundingClientRect().height;
