@@ -79,6 +79,17 @@ kramdown:
 # Permalink style
 permalink: /posts/:slug/
 
+# HTML Sandbox & Playground Configuration
+sandbox:
+  playground_root: "/playground/"    # 允许引用的本地静态页面根目录
+  jail: true                         # 是否默认开启目录受限（只能运行 playground 内的内容，防目录遍历）
+  allow_cookies: false               # 是否默认允许读取/写入 Cookie（为安全起见默认关闭）
+  allow_same_origin: false           # 是否默认赋予同源权限（为安全起见默认关闭）
+  allow_cross_origin: true           # 是否默认允许请求外部跨域 API / CDN 资源
+  allow_cross_path: false            # 是否允许跨路径引用其他非 playground 文件夹
+  default_height: "400px"            # 默认视口高度
+  default_profile: "strict"          # 默认安全策略 (strict | isolated | standard | loose)
+
 # Plugins
 plugins:
   - jekyll-feed

@@ -80,6 +80,102 @@
           border-color: color-mix(in srgb, #81c784 40%, transparent);
         }
       }
+
+      .sandbox-badge-warning {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+        padding: 0.15rem 0.5rem;
+        font-size: 0.72rem;
+        font-weight: 600;
+        border-radius: 12px;
+        background-color: color-mix(in srgb, #e65100 15%, transparent);
+        color: #e65100;
+        border: 1px solid color-mix(in srgb, #e65100 30%, transparent);
+        line-height: 1.3;
+
+        .material-symbols-outlined {
+          font-size: 0.85rem;
+        }
+
+        html[data-theme="dark"] & {
+          background-color: color-mix(in srgb, #ffb74d 20%, transparent);
+          color: #ffb74d;
+          border-color: color-mix(in srgb, #ffb74d 40%, transparent);
+        }
+      }
+
+      .sandbox-badge-jail {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+        padding: 0.15rem 0.5rem;
+        font-size: 0.72rem;
+        font-weight: 600;
+        border-radius: 12px;
+        background-color: color-mix(in srgb, #0288d1 15%, transparent);
+        color: #0288d1;
+        border: 1px solid color-mix(in srgb, #0288d1 30%, transparent);
+        line-height: 1.3;
+
+        .material-symbols-outlined {
+          font-size: 0.85rem;
+        }
+
+        html[data-theme="dark"] & {
+          background-color: color-mix(in srgb, #4fc3f7 20%, transparent);
+          color: #4fc3f7;
+          border-color: color-mix(in srgb, #4fc3f7 40%, transparent);
+        }
+      }
+
+      .sandbox-badge-nocors {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+        padding: 0.15rem 0.5rem;
+        font-size: 0.72rem;
+        font-weight: 600;
+        border-radius: 12px;
+        background-color: color-mix(in srgb, #7b1fa2 15%, transparent);
+        color: #7b1fa2;
+        border: 1px solid color-mix(in srgb, #7b1fa2 30%, transparent);
+        line-height: 1.3;
+
+        .material-symbols-outlined {
+          font-size: 0.85rem;
+        }
+
+        html[data-theme="dark"] & {
+          background-color: color-mix(in srgb, #ce93d8 20%, transparent);
+          color: #ce93d8;
+          border-color: color-mix(in srgb, #ce93d8 40%, transparent);
+        }
+      }
+
+      .sandbox-badge-danger {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+        padding: 0.15rem 0.5rem;
+        font-size: 0.72rem;
+        font-weight: 600;
+        border-radius: 12px;
+        background-color: color-mix(in srgb, #c62828 15%, transparent);
+        color: #c62828;
+        border: 1px solid color-mix(in srgb, #c62828 30%, transparent);
+        line-height: 1.3;
+
+        .material-symbols-outlined {
+          font-size: 0.85rem;
+        }
+
+        html[data-theme="dark"] & {
+          background-color: color-mix(in srgb, #ef5350 20%, transparent);
+          color: #ef5350;
+          border-color: color-mix(in srgb, #ef5350 40%, transparent);
+        }
+      }
     }
 
     .sandbox-bar-actions {
@@ -99,6 +195,7 @@
         background: transparent;
         color: var(--md-sys-color-on-surface-variant);
         cursor: pointer;
+        text-decoration: none;
         transition: background-color var(--dur-short2, 100ms) var(--motion-standard, ease),
                     color var(--dur-short2, 100ms) var(--motion-standard, ease),
                     transform var(--dur-short2, 100ms) var(--motion-standard, ease);
@@ -327,6 +424,43 @@
   // Fallback portal Fullscreen
   &.is-fullscreen {
     @include sandbox-fullscreen-rules;
+  }
+
+  // Security Alert State
+  &.sandbox-security-alert {
+    border-color: color-mix(in srgb, var(--md-sys-color-error, #ba1a1a) 40%, transparent);
+
+    .sandbox-error-notice {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      padding: 1.5rem;
+      background-color: color-mix(in srgb, var(--md-sys-color-error, #ba1a1a) 8%, transparent);
+      color: var(--md-sys-color-on-surface);
+
+      .error-icon {
+        font-size: 2rem;
+        color: var(--md-sys-color-error, #ba1a1a);
+        flex-shrink: 0;
+      }
+
+      .error-text {
+        font-size: 0.875rem;
+        line-height: 1.5;
+
+        strong {
+          display: block;
+          margin-bottom: 0.25rem;
+          color: var(--md-sys-color-error, #ba1a1a);
+          font-size: 0.95rem;
+        }
+
+        p {
+          margin: 0;
+          color: var(--md-sys-color-on-surface-variant);
+        }
+      }
+    }
   }
 
   // Active Resizing state

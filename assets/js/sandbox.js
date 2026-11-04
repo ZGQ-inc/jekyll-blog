@@ -212,14 +212,25 @@
         btnRefresh.classList.add('is-spinning');
         setTimeout(() => btnRefresh.classList.remove('is-spinning'), 650);
 
-        const currentSrcdoc = iframe.dataset.originalSrcdoc || iframe.getAttribute('srcdoc');
-        iframe.srcdoc = '';
-        requestAnimationFrame(() => {
-          iframe.srcdoc = currentSrcdoc;
-          if (window.showToast) {
-            window.showToast('沙盒已重新运行');
-          }
-        });
+        const currentSrc = iframe.getAttribute('src');
+        if (currentSrc) {
+          iframe.src = '';
+          requestAnimationFrame(() => {
+            iframe.src = currentSrc;
+            if (window.showToast) {
+              window.showToast('沙盒已重新运行');
+            }
+          });
+        } else {
+          const currentSrcdoc = iframe.dataset.originalSrcdoc || iframe.getAttribute('srcdoc');
+          iframe.srcdoc = '';
+          requestAnimationFrame(() => {
+            iframe.srcdoc = currentSrcdoc;
+            if (window.showToast) {
+              window.showToast('沙盒已重新运行');
+            }
+          });
+        }
       });
     }
 

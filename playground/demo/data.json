@@ -1,0 +1,8 @@
+{
+  "name": "Playground Demo Data",
+  "version": "1.0.0",
+  "environment": "Jekyll HTML Sandbox",
+  "status": "online",
+  "message": "这是存放在 /playground/demo/ 目录内的本地 JSON 数据包，验证同目录跨文件访问功能正常！",
+  "timestamp": 1793836800
+}

@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Playground Demo - 独立沙盒演示</title>
+  <style>
+    :root {
+      --bg-base: #f8fafc;
+      --card-bg: #ffffff;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --border-color: #e2e8f0;
+      --primary: #3b82f6;
+      --primary-hover: #2563eb;
+      --primary-light: #eff6ff;
+      --accent: #8b5cf6;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --code-bg: #f1f5f9;
+      --shadow: 0 4px 16px -2px rgba(15, 23, 42, 0.08);
+    }
+
+    html[data-theme="dark"] {
+      --bg-base: #0b0f19;
+      --card-bg: #151d2e;
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --border-color: #243048;
+      --primary: #60a5fa;
+      --primary-hover: #3b82f6;
+      --primary-light: rgba(59, 130, 246, 0.15);
+      --accent: #a78bfa;
+      --success: #34d399;
+      --warning: #fbbf24;
+      --danger: #f87171;
+      --code-bg: #0d1424;
+      --shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.4);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      html:not([data-theme="light"]) {
+        --bg-base: #0b0f19;
+        --card-bg: #151d2e;
+        --text-main: #f1f5f9;
+        --text-muted: #94a3b8;
+        --border-color: #243048;
+        --primary: #60a5fa;
+        --primary-hover: #3b82f6;
+        --primary-light: rgba(59, 130, 246, 0.15);
+        --accent: #a78bfa;
+        --success: #34d399;
+        --warning: #fbbf24;
+        --danger: #f87171;
+        --code-bg: #0d1424;
+        --shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.4);
+      }
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background-color: var(--bg-base);
+      color: var(--text-main);
+      padding: 1.25rem;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      transition: background-color 0.25s ease, color 0.25s ease;
+    }
+
+    .demo-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .demo-title-group {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .demo-logo {
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.15rem;
+      font-weight: 700;
+      box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3);
+    }
+
+    .demo-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .demo-badges {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+    }
+
+    .badge-chip {
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 0.2rem 0.55rem;
+      border-radius: 999px;
+      border: 1px solid var(--border-color);
+      background-color: var(--card-bg);
+      color: var(--text-muted);
+    }
+
+    .badge-chip.active {
+      border-color: var(--primary);
+      background-color: var(--primary-light);
+      color: var(--primary);
+    }
+
+    .grid-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1rem;
+    }
+
+    .card {
+      background-color: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 1.25rem;
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px -4px rgba(15, 23, 42, 0.12);
+    }
+
+    .card-title {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .card-desc {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      line-height: 1.45;
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    button {
+      padding: 0.45rem 0.85rem;
+      font-size: 0.82rem;
+      font-weight: 600;
+      border-radius: 10px;
+      border: 1px solid var(--border-color);
+      background-color: var(--card-bg);
+      color: var(--text-main);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      transition: background-color 0.15s, border-color 0.15s, transform 0.15s;
+    }
+
+    button:hover {
+      background-color: var(--primary-light);
+      border-color: var(--primary);
+      color: var(--primary);
+      transform: translateY(-1px);
+    }
+
+    button:active {
+      transform: translateY(0) scale(0.98);
+    }
+
+    button.primary {
+      background-color: var(--primary);
+      border-color: var(--primary);
+      color: white;
+    }
+
+    button.primary:hover {
+      background-color: var(--primary-hover);
+    }
+
+    .result-terminal {
+      background-color: var(--code-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 0.65rem 0.85rem;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.78rem;
+      line-height: 1.5;
+      color: var(--text-main);
+      min-height: 52px;
+      word-break: break-all;
+      white-space: pre-wrap;
+    }
+
+    .status-item {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.8rem;
+      padding: 0.3rem 0;
+      border-bottom: 1px dashed var(--border-color);
+    }
+
+    .status-item:last-child {
+      border-bottom: none;
+    }
+
+    .status-label {
+      color: var(--text-muted);
+    }
+
+    .status-value {
+      font-weight: 600;
+      font-family: monospace;
+    }
+
+    .status-value.safe { color: var(--success); }
+    .status-value.warn { color: var(--warning); }
+    .status-value.danger { color: var(--danger); }
+
+    /* Canvas visual */
+    .canvas-wrapper {
+      position: relative;
+      width: 100%;
+      height: 180px;
+      border-radius: 12px;
+      overflow: hidden;
+      background: linear-gradient(180deg, rgba(59, 130, 246, 0.05) 0%, rgba(139, 92, 246, 0.08) 100%);
+      border: 1px solid var(--border-color);
+    }
+
+    canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .canvas-overlay {
+      position: absolute;
+      bottom: 8px;
+      right: 12px;
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top bar -->
+  <header class="demo-header">
+    <div class="demo-title-group">
+      <div class="demo-logo">⚡</div>
+      <div>
+        <h1 class="demo-title">Playground 独立网页沙盒</h1>
+        <p style="font-size: 0.75rem; color: var(--text-muted);">文件路径：<code>/playground/demo/index.html</code></p>
+      </div>
+    </div>
+    <div class="demo-badges">
+      <span class="badge-chip active" id="themeChip">🌓 主题: 跟随宿主</span>
+      <span class="badge-chip" id="originChip">🌐 Origin: 检测中</span>
+    </div>
+  </header>
+
+  <!-- Content Grid -->
+  <main class="grid-container">
+
+    <!-- Card 1: 权限与环境探针 -->
+    <section class="card">
+      <h2 class="card-title">🛡️ 沙盒安全策略探针</h2>
+      <p class="card-desc">自动检测当前 iframe 的沙盒权限级别，验证 Cookie、本地存储与同源策略隔离状态。</p>
+
+      <div class="status-list">
+        <div class="status-item">
+          <span class="status-label">执行环境 Origin</span>
+          <span class="status-value" id="originVal">-</span>
+        </div>
+        <div class="status-item">
+          <span class="status-label">Cookie 权限状态</span>
+          <span class="status-value" id="cookieStatus">待测试</span>
+        </div>
+        <div class="status-item">
+          <span class="status-label">LocalStorage 权限</span>
+          <span class="status-value" id="storageStatus">待测试</span>
+        </div>
+        <div class="status-item">
+          <span class="status-label">宿主父级 DOM 访问</span>
+          <span class="status-value" id="parentStatus">待测试</span>
+        </div>
+      </div>
+
+      <div class="btn-group">
+        <button type="button" class="primary" onclick="probeSecurity()">一键安全诊断</button>
+        <button type="button" onclick="testWriteCookie()">写 Cookie 测试</button>
+      </div>
+
+      <div class="result-terminal" id="securityLog">> 点击上方按键执行沙盒环境探针...</div>
+    </section>
+
+    <!-- Card 2: 跨域与网络请求 -->
+    <section class="card">
+      <h2 class="card-title">🌐 跨域与网络请求 (CORS / CSP)</h2>
+      <p class="card-desc">测试当前沙盒配置下向外部域发起异步请求（Fetch API）的连通性与 CSP 策略拦截。</p>
+
+      <div class="btn-group">
+        <button type="button" class="primary" onclick="testFetchExternal()">测试调用公共 API</button>
+        <button type="button" onclick="testFetchLocal()">读取同目录数据</button>
+      </div>
+
+      <div class="result-terminal" id="networkLog">> 等待发起网络请求测试...</div>
+    </section>
+
+    <!-- Card 3: 交互动效画板 -->
+    <section class="card" style="grid-column: 1 / -1;">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <h2 class="card-title">🎨 Canvas 粒子动力学演示 (60 FPS)</h2>
+        <span style="font-size: 0.75rem; color: var(--text-muted);">移动鼠标或点击交互</span>
+      </div>
+      <div class="canvas-wrapper">
+        <canvas id="particleCanvas"></canvas>
+        <span class="canvas-overlay">Antigravity Interactive Wave</span>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    // 1. Theme Synchronization with Host Window
+    function applyTheme(theme) {
+      if (!theme) return;
+      document.documentElement.setAttribute('data-theme', theme);
+      const chip = document.getElementById('themeChip');
+      if (chip) chip.textContent = '🌓 主题: ' + (theme === 'dark' ? '暗色模式' : '明亮模式');
+    }
+
+    window.addEventListener('message', function(e) {
+      if (e.data && e.data.type === 'theme-change') {
+        applyTheme(e.data.theme);
+      }
+    });
+
+    // Initial theme detection
+    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      applyTheme('dark');
+    }
+
+    // 2. Security Probing
+    function probeSecurity() {
+      const log = document.getElementById('securityLog');
+      const originVal = document.getElementById('originVal');
+      const cookieStatus = document.getElementById('cookieStatus');
+      const storageStatus = document.getElementById('storageStatus');
+      const parentStatus = document.getElementById('parentStatus');
+      const originChip = document.getElementById('originChip');
+
+      const isOpaqueOrigin = window.origin === 'null' || !window.origin;
+      originVal.textContent = window.origin || 'null';
+      originVal.className = 'status-value ' + (isOpaqueOrigin ? 'safe' : 'warn');
+      originChip.textContent = '🌐 Origin: ' + (window.origin || 'null');
+
+      let messages = [];
+      messages.push('[环境] window.origin = ' + (window.origin || 'null'));
+
+      // Test Cookie Access
+      let cookieOk = false;
+      try {
+        const testVal = 'test_' + Date.now();
+        document.cookie = 'sandbox_test=' + testVal + '; path=/; SameSite=Lax';
+        const readBack = document.cookie;
+        cookieOk = readBack.indexOf(testVal) !== -1;
+        cookieStatus.textContent = cookieOk ? '✅ 允许读写' : '🔒 读写拦截';
+        cookieStatus.className = 'status-value ' + (cookieOk ? 'warn' : 'safe');
+        messages.push(cookieOk ? '[Cookie] 成功读取到 Cookie (具备同源权限)' : '[Cookie] 无法访问 Cookie (受 sandbox="allow-scripts" 隔离保护)');
+      } catch (err) {
+        cookieStatus.textContent = '🔒 严格拦截';
+        cookieStatus.className = 'status-value safe';
+        messages.push('[Cookie] 读写异常拦截: ' + err.message);
+      }
+
+      // Test LocalStorage
+      try {
+        localStorage.setItem('__sandbox_test__', '1');
+        localStorage.removeItem('__sandbox_test__');
+        storageStatus.textContent = '✅ 允许存储';
+        storageStatus.className = 'status-value warn';
+        messages.push('[Storage] LocalStorage 读写成功');
+      } catch (err) {
+        storageStatus.textContent = '🔒 严格禁用';
+        storageStatus.className = 'status-value safe';
+        messages.push('[Storage] LocalStorage 被沙盒严格禁用');
+      }
+
+      // Test Parent DOM access
+      try {
+        if (window.parent && window.parent !== window) {
+          const testParent = window.parent.document;
+          parentStatus.textContent = '⚠️ 允许越权';
+          parentStatus.className = 'status-value danger';
+          messages.push('[父级访问] 警告：能直接访问父窗口 DOM！');
+        } else {
+          parentStatus.textContent = '🔒 隔离';
+          parentStatus.className = 'status-value safe';
+          messages.push('[父级访问] 独立顶级视口');
+        }
+      } catch (err) {
+        parentStatus.textContent = '🔒 跨源阻断';
+        parentStatus.className = 'status-value safe';
+        messages.push('[父级访问] 已被浏览器同源策略阻断 (Cross-Origin Blocked)');
+      }
+
+      log.textContent = messages.join('\n');
+    }
+
+    function testWriteCookie() {
+      const log = document.getElementById('securityLog');
+      try {
+        const key = 'sandbox_key_' + Math.floor(Math.random() * 1000);
+        document.cookie = key + '=active; path=/; SameSite=Lax';
+        if (document.cookie.includes(key)) {
+          log.textContent = '> 写入 Cookie 成功：' + key + '=active\n> 当前 cookies: ' + document.cookie;
+        } else {
+          log.textContent = '> 写入操作被浏览器静默拦截（当前环境为 opaque origin "null"）';
+        }
+      } catch (e) {
+        log.textContent = '> 写入 Cookie 失败 (SecurityError): ' + e.message;
+      }
+    }
+
+    // 3. Network Fetch Testing
+    function testFetchExternal() {
+      const log = document.getElementById('networkLog');
+      log.textContent = '> 正在向外部 API 发起 GET 请求...';
+      const start = performance.now();
+
+      fetch('https://dummyjson.com/quotes/random', { mode: 'cors' })
+        .then(res => res.json())
+        .then(data => {
+          const elapsed = Math.round(performance.now() - start);
+          log.textContent = '> 跨域请求成功 (' + elapsed + 'ms)!\n' +
+            '> Quote: "' + data.quote + '"\n' +
+            '> Author: ' + data.author;
+        })
+        .catch(err => {
+          log.textContent = '> 跨域网络请求失败/被拦截：\n> ' + err.message + '\n> (如开启了 cross_origin="false"，CSP 将直接阻断外部域连接)';
+        });
+    }
+
+    function testFetchLocal() {
+      const log = document.getElementById('networkLog');
+      log.textContent = '> 正在请求同目录数据: /playground/demo/data.json...';
+
+      fetch('./data.json')
+        .then(res => {
+          if (!res.ok) throw new Error('HTTP ' + res.status);
+          return res.json();
+        })
+        .then(data => {
+          log.textContent = '> 同目录数据读取成功！\n' + JSON.stringify(data, null, 2);
+        })
+        .catch(err => {
+          log.textContent = '> 读取同目录数据失败：' + err.message;
+        });
+    }
+
+    // 4. Interactive Particle Canvas
+    const canvas = document.getElementById('particleCanvas');
+    const ctx = canvas.getContext('2d');
+    let width, height;
+    let particles = [];
+    let mouse = { x: null, y: null, radius: 100 };
+
+    function resizeCanvas() {
+      width = canvas.width = canvas.offsetWidth;
+      height = canvas.height = canvas.offsetHeight;
+      initParticles();
+    }
+
+    function initParticles() {
+      particles = [];
+      const count = Math.min(Math.floor((width * height) / 3600), 80);
+      for (let i = 0; i < count; i++) {
+        particles.push({
+          x: Math.random() * width,
+          y: Math.random() * height,
+          vx: (Math.random() - 0.5) * 1.2,
+          vy: (Math.random() - 0.5) * 1.2,
+          radius: Math.random() * 2 + 1.5
+        });
+      }
+    }
+
+    function animate() {
+      ctx.clearRect(0, 0, width, height);
+
+      // Draw connections
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const dx = particles[i].x - particles[j].x;
+          const dy = particles[i].y - particles[j].y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 90) {
+            ctx.beginPath();
+            ctx.strokeStyle = `rgba(96, 165, 250, ${0.35 * (1 - dist / 90)})`;
+            ctx.lineWidth = 1;
+            ctx.moveTo(particles[i].x, particles[i].y);
+            ctx.lineTo(particles[j].x, particles[j].y);
+            ctx.stroke();
+          }
+        }
+      }
+
+      // Update & draw particles
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      const particleColor = isDark ? '#93c5fd' : '#3b82f6';
+
+      for (let p of particles) {
+        p.x += p.vx;
+        p.y += p.vy;
+
+        if (p.x < 0 || p.x > width) p.vx *= -1;
+        if (p.y < 0 || p.y > height) p.vy *= -1;
+
+        // Mouse reaction
+        if (mouse.x !== null) {
+          const dx = p.x - mouse.x;
+          const dy = p.y - mouse.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < mouse.radius) {
+            const angle = Math.atan2(dy, dx);
+            const force = (mouse.radius - dist) / mouse.radius;
+            p.x += Math.cos(angle) * force * 3;
+            p.y += Math.sin(angle) * force * 3;
+          }
+        }
+
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+        ctx.fillStyle = particleColor;
+        ctx.fill();
+      }
+
+      requestAnimationFrame(animate);
+    }
+
+    window.addEventListener('resize', resizeCanvas);
+    canvas.addEventListener('mousemove', (e) => {
+      const rect = canvas.getBoundingClientRect();
+      mouse.x = e.clientX - rect.left;
+      mouse.y = e.clientY - rect.top;
+    });
+    canvas.addEventListener('mouseleave', () => {
+      mouse.x = null;
+      mouse.y = null;
+    });
+
+    // Auto initialize on load
+    window.addEventListener('DOMContentLoaded', () => {
+      probeSecurity();
+      resizeCanvas();
+      requestAnimationFrame(animate);
+    });
+  </script>
+</body>
+</html>
