@@ -101,3 +101,9 @@ $unsupported_iframe: $body//iframe[contains(@src, "t.me/c/") or contains(@src, "
 @replace_tag(<tg-spoiler>): $body//span[has-class("tg-spoiler")]
 @simplify: $body//tg-spoiler//span
 
+# 15. Telegram Instant View 适配：沙盒组件降级展示为原生代码块
+$sandbox_box: $body//div[has-class("md3-sandbox-container")]
+@remove: $sandbox_box//div[has-class("sandbox-resizer")]
+@remove: $sandbox_box//iframe
+@set_attr(style, "display: block;"): $sandbox_box//div[has-class("sandbox-source-drawer")]
+@remove: $sandbox_box//button

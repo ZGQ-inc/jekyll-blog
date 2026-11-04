@@ -1,0 +1,316 @@
+// ==============================================================================
+// Material Design 3 HTML Sandbox Component
+// ==============================================================================
+
+.md3-sandbox-container {
+  margin: 2rem auto;
+  width: 100%;
+  max-width: 100%;
+  background-color: var(--md-sys-color-surface-container);
+  border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 50%, transparent);
+  border-radius: var(--shape-large, 16px);
+  box-shadow: var(--elev-1);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  transition: box-shadow var(--dur-short4, 200ms) var(--motion-standard, ease),
+              border-color var(--dur-short4, 200ms) var(--motion-standard, ease);
+
+  &:hover {
+    box-shadow: var(--elev-2);
+    border-color: var(--md-sys-color-outline-variant);
+  }
+
+  // Window Top App Bar
+  .sandbox-window-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.625rem 1rem;
+    background-color: color-mix(in srgb, var(--md-sys-color-surface-container-high) 70%, transparent);
+    border-bottom: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 40%, transparent);
+    user-select: none;
+    gap: 0.75rem;
+
+    .sandbox-bar-left {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      min-width: 0;
+      flex-wrap: wrap;
+
+      .sandbox-icon {
+        font-size: 1.25rem;
+        color: var(--md-sys-color-primary);
+        display: inline-flex;
+        vertical-align: middle;
+      }
+
+      .sandbox-title {
+        font-size: 0.9375rem;
+        font-weight: 600;
+        color: var(--md-sys-color-on-surface);
+        font-family: var(--font-family-title, inherit);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .sandbox-badge-safe {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+        padding: 0.15rem 0.5rem;
+        font-size: 0.72rem;
+        font-weight: 600;
+        border-radius: 12px;
+        background-color: color-mix(in srgb, #2e7d32 15%, transparent);
+        color: #2e7d32;
+        border: 1px solid color-mix(in srgb, #2e7d32 30%, transparent);
+        line-height: 1.3;
+
+        .material-symbols-outlined {
+          font-size: 0.85rem;
+        }
+
+        html[data-theme="dark"] & {
+          background-color: color-mix(in srgb, #81c784 20%, transparent);
+          color: #81c784;
+          border-color: color-mix(in srgb, #81c784 40%, transparent);
+        }
+      }
+    }
+
+    .sandbox-bar-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+      flex-shrink: 0;
+
+      .sandbox-action-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        border: none;
+        background: transparent;
+        color: var(--md-sys-color-on-surface-variant);
+        cursor: pointer;
+        transition: background-color var(--dur-short2, 100ms) var(--motion-standard, ease),
+                    color var(--dur-short2, 100ms) var(--motion-standard, ease),
+                    transform var(--dur-short2, 100ms) var(--motion-standard, ease);
+
+        &:hover {
+          background-color: var(--md-sys-color-surface-container-highest);
+          color: var(--md-sys-color-on-surface);
+        }
+
+        &:active {
+          transform: scale(0.92);
+        }
+
+        &.is-active {
+          background-color: var(--md-sys-color-primary-container);
+          color: var(--md-sys-color-on-primary-container);
+        }
+
+        &.is-spinning .material-symbols-outlined {
+          animation: sandbox-spin 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .material-symbols-outlined {
+          font-size: 1.125rem;
+        }
+      }
+    }
+  }
+
+  // Viewport Container
+  .sandbox-viewport {
+    position: relative;
+    width: 100%;
+    min-height: 120px;
+    background-color: var(--md-sys-color-surface, #ffffff);
+    overflow: hidden;
+
+    .sandbox-iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      display: block;
+      background-color: transparent;
+    }
+
+    .sandbox-drag-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 10;
+      display: none;
+      cursor: ns-resize;
+    }
+  }
+
+  // Drag Resizer Bar
+  .sandbox-resizer {
+    height: 10px;
+    width: 100%;
+    background-color: color-mix(in srgb, var(--md-sys-color-surface-container-high) 60%, transparent);
+    border-top: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 30%, transparent);
+    cursor: ns-resize;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    user-select: none;
+    transition: background-color var(--dur-short2, 100ms) var(--motion-standard, ease);
+
+    &:hover,
+    &.is-active {
+      background-color: var(--md-sys-color-primary-container);
+
+      .sandbox-resizer-handle {
+        width: 48px;
+        background-color: var(--md-sys-color-primary);
+      }
+    }
+
+    .sandbox-resizer-handle {
+      width: 32px;
+      height: 4px;
+      border-radius: 2px;
+      background-color: var(--md-sys-color-outline);
+      transition: width var(--dur-short2, 100ms) var(--motion-standard, ease),
+                  background-color var(--dur-short2, 100ms) var(--motion-standard, ease);
+    }
+  }
+
+  // Collapsible Source Drawer
+  .sandbox-source-drawer {
+    border-top: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 40%, transparent);
+    background-color: var(--md-sys-color-surface-container-lowest, #1e1e24);
+    max-height: 400px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+
+    .sandbox-source-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.45rem 1rem;
+      background-color: color-mix(in srgb, var(--md-sys-color-surface-container-high) 40%, transparent);
+      border-bottom: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 25%, transparent);
+
+      .sandbox-source-title {
+        display: flex;
+        align-items: center;
+        gap: 0.35rem;
+        font-size: 0.78rem;
+        font-weight: 600;
+        color: var(--md-sys-color-on-surface-variant);
+
+        .material-symbols-outlined {
+          font-size: 1rem;
+        }
+      }
+
+      .sandbox-copy-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        padding: 0.2rem 0.65rem;
+        border-radius: 12px;
+        font-size: 0.72rem;
+        font-weight: 500;
+        border: 1px solid var(--md-sys-color-outline-variant);
+        background: transparent;
+        color: var(--md-sys-color-on-surface);
+        cursor: pointer;
+        transition: background-color var(--dur-short2, 100ms) var(--motion-standard, ease);
+
+        &:hover {
+          background-color: var(--md-sys-color-surface-container-highest);
+        }
+
+        &.copied {
+          color: #2e7d32;
+          border-color: #2e7d32;
+
+          html[data-theme="dark"] & {
+            color: #81c784;
+            border-color: #81c784;
+          }
+        }
+
+        .material-symbols-outlined {
+          font-size: 0.95rem;
+        }
+      }
+    }
+
+    .sandbox-source-pre {
+      margin: 0;
+      padding: 0.85rem 1rem;
+      font-family: var(--font-family-code, monospace);
+      font-size: 0.8125rem;
+      line-height: 1.5;
+      color: var(--md-sys-color-on-surface);
+      overflow-x: auto;
+      white-space: pre;
+
+      code {
+        font-family: inherit;
+        background: transparent !important;
+        padding: 0 !important;
+        border: none !important;
+        color: inherit;
+      }
+    }
+  }
+
+  // Fullscreen Mode
+  &.is-fullscreen {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    max-width: 100vw !important;
+    max-height: 100vh !important;
+    z-index: 99999 !important;
+    border-radius: 0 !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+    border: none !important;
+
+    .sandbox-viewport {
+      flex: 1 !important;
+      height: 100% !important;
+    }
+
+    .sandbox-resizer {
+      display: none !important;
+    }
+  }
+
+  // Active Resizing state
+  &.is-resizing {
+    .sandbox-drag-overlay {
+      display: block !important;
+    }
+  }
+}
+
+// Fullscreen body lock
+body.sandbox-fullscreen-active {
+  overflow: hidden !important;
+}
+
+@keyframes sandbox-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
