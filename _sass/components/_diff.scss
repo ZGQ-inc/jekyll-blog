@@ -1,0 +1,244 @@
+// ==============================================================================
+// Material Design 3 Diff & Patch Code Blocks
+// High-tech, expressive MD3 styling for diff additions, deletions, comments & hunks.
+// ==============================================================================
+
+.highlighter-rouge.language-diff,
+figure.highlight.language-diff,
+.language-diff {
+  border-color: color-mix(in srgb, var(--md-sys-color-outline-variant) 50%, transparent);
+
+  .code-block-header {
+    background: color-mix(in srgb, var(--md-sys-color-surface-container-high) 85%, transparent);
+    border-bottom: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 40%, transparent);
+
+    .code-lang-icon {
+      color: var(--md-sys-color-primary);
+    }
+
+    .diff-stats-group {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      margin-left: 6px;
+      vertical-align: middle;
+
+      .diff-stat-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 2px;
+        padding: 1px 7px;
+        border-radius: 12px;
+        font-size: 0.6875rem;
+        font-weight: 700;
+        font-family: 'JetBrains Mono', 'Fira Code', monospace;
+        line-height: 1.35;
+        letter-spacing: 0.02em;
+
+        &.add {
+          background-color: color-mix(in srgb, #2e7d32 15%, transparent);
+          color: #2e7d32;
+          border: 1px solid color-mix(in srgb, #2e7d32 30%, transparent);
+
+          html[data-theme="dark"] & {
+            background-color: color-mix(in srgb, #81c784 18%, transparent);
+            color: #81c784;
+            border-color: color-mix(in srgb, #81c784 35%, transparent);
+          }
+        }
+
+        &.del {
+          background-color: color-mix(in srgb, #c62828 15%, transparent);
+          color: #c62828;
+          border: 1px solid color-mix(in srgb, #c62828 30%, transparent);
+
+          html[data-theme="dark"] & {
+            background-color: color-mix(in srgb, #ef5350 18%, transparent);
+            color: #ef5350;
+            border-color: color-mix(in srgb, #ef5350 35%, transparent);
+          }
+        }
+
+        .diff-stat-symbol {
+          font-weight: 800;
+        }
+      }
+    }
+  }
+
+  // Code Area
+  .rouge-code pre,
+  .highlight > pre {
+    overflow-x: auto;
+  }
+}
+
+// Diff Line Formatting (Row-level MD3 highlight)
+.diff-line {
+  display: block;
+  width: 100%;
+  min-width: max-content;
+  box-sizing: border-box;
+  padding: 1.5px 14px 1.5px 12px;
+  margin: 0 -14px 0 -12px;
+  line-height: 1.6;
+  transition: background-color var(--dur-short2, 100ms) ease;
+  position: relative;
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+
+  // 1. Added Line (+)
+  &.diff-line-add {
+    background-color: color-mix(in srgb, #2e7d32 12%, transparent);
+    color: #1b5e20 !important;
+    border-left: 3px solid #2e7d32;
+
+    html[data-theme="dark"] & {
+      background-color: color-mix(in srgb, #81c784 15%, transparent);
+      color: #c8e6c9 !important;
+      border-left-color: #81c784;
+    }
+
+    &:hover {
+      background-color: color-mix(in srgb, #2e7d32 18%, transparent);
+      html[data-theme="dark"] & {
+        background-color: color-mix(in srgb, #81c784 22%, transparent);
+      }
+    }
+
+    .gi, span {
+      color: inherit !important;
+    }
+  }
+
+  // 2. Deleted Line (-)
+  &.diff-line-del {
+    background-color: color-mix(in srgb, #c62828 12%, transparent);
+    color: #b71c1c !important;
+    border-left: 3px solid #c62828;
+
+    html[data-theme="dark"] & {
+      background-color: color-mix(in srgb, #ef5350 15%, transparent);
+      color: #ffcdd2 !important;
+      border-left-color: #ef5350;
+    }
+
+    &:hover {
+      background-color: color-mix(in srgb, #c62828 18%, transparent);
+      html[data-theme="dark"] & {
+        background-color: color-mix(in srgb, #ef5350 22%, transparent);
+      }
+    }
+
+    .gd, span {
+      color: inherit !important;
+    }
+  }
+
+  // 3. Section Title / Annotation (# ...)
+  &.diff-line-comment {
+    background-color: color-mix(in srgb, var(--md-sys-color-primary) 8%, transparent);
+    color: var(--md-sys-color-primary) !important;
+    font-weight: 600;
+    border-left: 3px solid var(--md-sys-color-primary);
+    border-radius: 4px;
+    margin-top: 4px;
+    margin-bottom: 2px;
+
+    html[data-theme="dark"] & {
+      background-color: color-mix(in srgb, var(--md-sys-color-primary) 12%, transparent);
+      color: var(--md-sys-color-primary) !important;
+    }
+
+    &:hover {
+      background-color: color-mix(in srgb, var(--md-sys-color-primary) 14%, transparent);
+    }
+  }
+
+  // 4. Hunk Header (@@ -... +... @@)
+  &.diff-line-hunk {
+    background-color: color-mix(in srgb, var(--md-sys-color-tertiary) 10%, transparent);
+    color: var(--md-sys-color-tertiary) !important;
+    font-weight: 600;
+    border-left: 3px solid var(--md-sys-color-tertiary);
+  }
+}
+
+// Gutter line numbers synchrony
+.diff-lineno {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 1.5px 10px 1.5px 12px;
+  margin: 0 -10px 0 -12px;
+  line-height: 1.6;
+  text-align: right;
+  transition: background-color var(--dur-short2, 100ms) ease;
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+
+  &.diff-line-add {
+    background-color: color-mix(in srgb, #2e7d32 10%, transparent);
+    color: #2e7d32 !important;
+    font-weight: 700;
+
+    html[data-theme="dark"] & {
+      background-color: color-mix(in srgb, #81c784 14%, transparent);
+      color: #81c784 !important;
+    }
+  }
+
+  &.diff-line-del {
+    background-color: color-mix(in srgb, #c62828 10%, transparent);
+    color: #c62828 !important;
+    font-weight: 700;
+
+    html[data-theme="dark"] & {
+      background-color: color-mix(in srgb, #ef5350 14%, transparent);
+      color: #ef5350 !important;
+    }
+  }
+
+  &.diff-line-comment {
+    background-color: color-mix(in srgb, var(--md-sys-color-primary) 7%, transparent);
+    color: var(--md-sys-color-primary) !important;
+  }
+
+  &.diff-line-hunk {
+    background-color: color-mix(in srgb, var(--md-sys-color-tertiary) 8%, transparent);
+    color: var(--md-sys-color-tertiary) !important;
+  }
+}
+
+// Fallback styling for Rouge native tokens (.gi / .gd / .gh / .gu)
+.language-diff,
+.language-patch {
+  .highlight {
+    .gi {
+      color: #1b5e20 !important;
+      background-color: color-mix(in srgb, #2e7d32 12%, transparent);
+      border-radius: 2px;
+      padding: 1px 4px;
+
+      html[data-theme="dark"] & {
+        color: #c8e6c9 !important;
+        background-color: color-mix(in srgb, #81c784 15%, transparent);
+      }
+    }
+
+    .gd {
+      color: #b71c1c !important;
+      background-color: color-mix(in srgb, #c62828 12%, transparent);
+      border-radius: 2px;
+      padding: 1px 4px;
+
+      html[data-theme="dark"] & {
+        color: #ffcdd2 !important;
+        background-color: color-mix(in srgb, #ef5350 15%, transparent);
+      }
+    }
+
+    .gh, .gu {
+      color: var(--md-sys-color-tertiary) !important;
+      font-weight: 600;
+    }
+  }
+}
