@@ -96,6 +96,9 @@
             {{ post.date | date: "%Y-%m-%d" }}
           </span>
           {% assign words = post.content | number_of_words %}
+          {% if post.word_count %}
+            {% assign words = post.word_count %}
+          {% endif %}
           <span class="meta-item">
             <span class="material-symbols-outlined">schedule</span>
             {{ words | divided_by: 300 | plus: 1 }} 分钟
