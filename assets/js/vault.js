@@ -241,6 +241,104 @@
      Restricted Post Decryption & Lock Screen Flow
      ========================================================================= */
 
+  /* ==========================================================================
+     Decrypted Content Enhancements (Re-triggers Markdown & MD3 Extensions)
+     ========================================================================== */
+
+  function triggerDecryptedContentEnhancements(container) {
+    if (!container) return;
+
+    // 1. MathJax formula typesetting
+    if (window.MathJax && window.MathJax.typesetPromise) {
+      window.MathJax.typesetPromise([container]).catch(function () {});
+    }
+
+    // 2. MD3 Code Blocks & Diff Enhancer (headers, copy buttons, line highlighting, stats badges)
+    if (typeof window.initCodeBlocks === 'function') {
+      try {
+        window.initCodeBlocks();
+      } catch (err) {
+        console.warn('[Vault] initCodeBlocks error:', err);
+      }
+    }
+
+    // 3. Markdown Lazy Renderers (Mermaid diagrams, STL 3D models, GeoJSON maps)
+    if (typeof window.initMermaid === 'function') {
+      try {
+        window.initMermaid();
+      } catch (err) {
+        console.warn('[Vault] initMermaid error:', err);
+      }
+    }
+    if (typeof window.initSTL === 'function') {
+      try {
+        window.initSTL();
+      } catch (err) {
+        console.warn('[Vault] initSTL error:', err);
+      }
+    }
+    if (typeof window.initGeoJSON === 'function') {
+      try {
+        window.initGeoJSON();
+      } catch (err) {
+        console.warn('[Vault] initGeoJSON error:', err);
+      }
+    }
+
+    // 4. Dynamic Table of Contents (TOC)
+    if (typeof window.initTOC === 'function') {
+      try {
+        window.initTOC();
+      } catch (err) {
+        console.warn('[Vault] initTOC error:', err);
+      }
+    }
+
+    // 5. HTML Sandboxes
+    if (typeof window.initSandboxes === 'function') {
+      try {
+        window.initSandboxes();
+      } catch (err) {
+        console.warn('[Vault] initSandboxes error:', err);
+      }
+    }
+
+    // 6. Media Gallery & Lightbox
+    if (typeof window.initMediaGallery === 'function') {
+      try {
+        window.initMediaGallery();
+      } catch (err) {
+        console.warn('[Vault] initMediaGallery error:', err);
+      }
+    }
+
+    // 7. Article Enhancements (Keyboard shortcuts, Telegram Spoilers, Anchor headings)
+    if (typeof window.initArticleEnhancements === 'function') {
+      try {
+        window.initArticleEnhancements();
+      } catch (err) {
+        console.warn('[Vault] initArticleEnhancements error:', err);
+      }
+    }
+    if (typeof window.initTelegramSpoilers === 'function') {
+      try {
+        window.initTelegramSpoilers();
+      } catch (err) {
+        console.warn('[Vault] initTelegramSpoilers error:', err);
+      }
+    }
+    if (typeof window.initGlobalAnchorHeadings === 'function') {
+      try {
+        window.initGlobalAnchorHeadings();
+      } catch (err) {
+        console.warn('[Vault] initGlobalAnchorHeadings error:', err);
+      }
+    }
+
+    // 8. Custom Event notification
+    window.dispatchEvent(new CustomEvent('vaultDecrypted', { detail: { target: container } }));
+  }
+
   async function tryUnlockPage(keyHex) {
     var vaultDataEl = document.getElementById('vaultData');
     var lockScreenEl = document.getElementById('vaultLockScreen');
@@ -263,10 +361,11 @@
         lockScreenEl.style.display = 'none';
       }
 
-      // Re-trigger syntax highlighting / MathJax if needed
-      if (window.MathJax && window.MathJax.typesetPromise) {
-        window.MathJax.typesetPromise([decryptedEl]).catch(function () {});
-      }
+      // Re-trigger all renderers, code highlighters, TOC and enhancements on decrypted content
+      triggerDecryptedContentEnhancements(decryptedEl);
+      setTimeout(function () {
+        triggerDecryptedContentEnhancements(decryptedEl);
+      }, 80);
 
       // Show comment card and discussions
       var discussCard = document.getElementById('tgDiscussCard');

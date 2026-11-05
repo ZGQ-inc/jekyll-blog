@@ -258,6 +258,23 @@ document.addEventListener('DOMContentLoaded', () => {
     resetZoom();
   }
 
+  function scanAndRegisterMedia() {
+    const postContent = document.querySelector('#vaultDecryptedContent.vault-unlocked-content, .article-content:not([style*="display: none"]), .article-content');
+    if (!postContent) return;
+    const images = postContent.querySelectorAll('img:not([data-lightbox-index])');
+    images.forEach(media => {
+      if (media.closest('a') || media.classList.contains('anchor-icon') || media.classList.contains('code-lang-icon')) return;
+      media.style.cursor = 'zoom-in';
+      media.dataset.lightboxIndex = allMediaArray.length;
+      allMediaArray.push(media);
+      media.addEventListener('click', (e) => {
+        e.preventDefault();
+        openLightbox(parseInt(media.dataset.lightboxIndex));
+      });
+    });
+  }
+  window.initMediaGallery = scanAndRegisterMedia;
+
   window.openLightboxWithElement = function(mediaEl) {
     if (!mediaEl) return;
     currentLightboxIndex = -1;

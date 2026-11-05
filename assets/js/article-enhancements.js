@@ -120,6 +120,9 @@ function initArticleEnhancements() {
   }, 30);
 }
 
+window.initArticleEnhancements = initArticleEnhancements;
+window.initTelegramSpoilers = initTelegramSpoilers;
+
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', initArticleEnhancements);
 } else {

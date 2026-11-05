@@ -679,6 +679,10 @@ document.addEventListener('DOMContentLoaded', () => {
   initGeoJSON();
 });
 
+window.initMermaid = initMermaid;
+window.initSTL = initSTL;
+window.initGeoJSON = initGeoJSON;
+
 if (!window._renderFullscreenEscListenerAdded) {
   window._renderFullscreenEscListenerAdded = true;
   document.addEventListener('keydown', (e) => {

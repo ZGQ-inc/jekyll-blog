@@ -36,7 +36,7 @@ layout: default
         <span class="material-symbols-outlined">person</span>
         {{ site.author.name }}
       </span>
-      {% assign words = post.content | number_of_words %}
+      {% assign words = post.word_count | default: (post.content | number_of_words) %}
       <span>
         <span class="material-symbols-outlined">schedule</span>
         约 {{ words | divided_by: 300 | plus: 1 }} 分钟阅读
@@ -83,7 +83,7 @@ layout: default
         <span class="material-symbols-outlined">person</span>
         {{ site.author.name }}
       </span>
-      {% assign words = post.content | number_of_words %}
+      {% assign words = post.word_count | default: (post.content | number_of_words) %}
       <span>
         <span class="material-symbols-outlined">schedule</span>
         约 {{ words | divided_by: 300 | plus: 1 }} 分钟阅读
