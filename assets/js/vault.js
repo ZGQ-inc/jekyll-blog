@@ -353,6 +353,10 @@
 
     try {
       var html = await decryptVaultPayload(ivHex, cipher, keyHex);
+      if (!html || !html.trim()) {
+        console.warn('[Vault] Decrypted payload was empty string, aborting unlock.');
+        return false;
+      }
       decryptedEl.innerHTML = html;
       decryptedEl.style.display = 'block';
       decryptedEl.classList.add('vault-unlocked-content');

@@ -32,6 +32,15 @@ module Jekyll
       { iv: iv_hex, cipher: payload }
     end
 
+    def self.calculate_word_count(html_str)
+      return 0 if html_str.nil? || html_str.empty?
+
+      text = html_str.gsub(/<[^>]+>/, ' ')
+      cjk_chars = text.scan(/\p{Han}|\p{Katakana}|\p{Hiragana}|\p{Hangul}/).size
+      latin_words = text.gsub(/\p{Han}|\p{Katakana}|\p{Hiragana}|\p{Hangul}/, ' ').strip.split(/\s+/).reject(&:empty?).size
+      [cjk_chars + latin_words, 1].max
+    end
+
     # Fail-safe converter to ensure GitHub Alerts (> [!TIP], > [!NOTE], etc.)
     # are 100% rendered into MD3 alert boxes, even if hook ordering varied.
     def self.ensure_github_alerts(html_str)
@@ -86,8 +95,12 @@ Jekyll::Hooks.register :site, :after_init do |site|
   site.config['vault_salt'] = ENV['VAULT_SALT'] if ENV['VAULT_SALT']
 end
 
-Jekyll::Hooks.register [:posts, :documents], :post_convert, priority: :lowest do |post|
+Jekyll::Hooks.register :documents, :post_convert, priority: :lowest do |post|
   next unless post.data['restricted'] == true
+
+  # Ensure the hook is idempotent and never re-encrypts an already processed/cleared post
+  next if post.data['vault_encrypted'] == true
+  next if post.content.to_s.strip.empty?
 
   is_dev = Jekyll.env == 'development' || ENV['JEKYLL_ENV'] == 'development'
   force_encrypt = ENV['VAULT_ENCRYPT'] == 'true' || ENV['CI'] == 'true' || ENV['CF_PAGES'] == '1' || ENV['JEKYLL_ENV'] == 'production'
@@ -101,8 +114,8 @@ Jekyll::Hooks.register [:posts, :documents], :post_convert, priority: :lowest do
     # Fail-safe pass to ensure GitHub alerts are converted
     processed_html = Jekyll::VaultEncryptor.ensure_github_alerts(raw_html)
 
-    # Compute word count metadata
-    post.data['word_count'] = processed_html.gsub(/<[^>]+>/, ' ').strip.split(/\s+/).size
+    # Compute accurate word count metadata for reading time estimation
+    post.data['word_count'] = Jekyll::VaultEncryptor.calculate_word_count(processed_html)
 
     res = Jekyll::VaultEncryptor.encrypt_content(processed_html)
     post.data['vault_iv'] = res[:iv]
