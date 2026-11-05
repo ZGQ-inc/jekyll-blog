@@ -1,10 +1,71 @@
 // ==============================================================================
 // Material Design 3 Code Blocks & Diff Enhancer
 // Adds headers, language tags, copy buttons, and high-tech MD3 diff rendering.
+// Supports both pure diffs (```diff, ```txt[diff]) and syntax-highlighted diffs (```python[diff], etc.)
 // ==============================================================================
 
 (function() {
   'use strict';
+
+  // Robust HTML tokenizer & tag-preserving line splitter
+  // Prevents HTML tags (like Rouge <span> tags) from being split across lines
+  function splitHTMLIntoLines(html) {
+    if (!html) return [];
+    // Normalize newlines
+    html = html.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+    const lines = [];
+    let currentLine = '';
+    const tagStack = [];
+
+    const tokenRegex = /(<(\/?[a-zA-Z0-9]+)(?:[^>]*)>)|([^<]+)/g;
+    let match;
+
+    while ((match = tokenRegex.exec(html)) !== null) {
+      if (match[1]) {
+        const fullTag = match[1];
+        const isClosing = fullTag.startsWith('</');
+        const isSelfClosing = fullTag.endsWith('/>');
+
+        if (isClosing) {
+          tagStack.pop();
+          currentLine += fullTag;
+        } else if (isSelfClosing) {
+          currentLine += fullTag;
+        } else {
+          tagStack.push(fullTag);
+          currentLine += fullTag;
+        }
+      } else if (match[3]) {
+        const text = match[3];
+        const parts = text.split('\n');
+
+        for (let i = 0; i < parts.length; i++) {
+          if (i > 0) {
+            // Close open tags for the current line
+            for (let j = tagStack.length - 1; j >= 0; j--) {
+              currentLine += '</span>';
+            }
+            lines.push(currentLine);
+
+            // Re-open tags for the new line
+            currentLine = '';
+            for (let j = 0; j < tagStack.length; j++) {
+              currentLine += tagStack[j];
+            }
+          }
+          currentLine += parts[i];
+        }
+      }
+    }
+
+    // Close any tags remaining at the end
+    for (let j = tagStack.length - 1; j >= 0; j--) {
+      currentLine += '</span>';
+    }
+    lines.push(currentLine);
+
+    return lines;
+  }
 
   function initCodeBlocks() {
     const codeBlocks = document.querySelectorAll('div.highlighter-rouge, figure.highlight');
@@ -19,41 +80,66 @@
       const langClass = classList.find(c => c.startsWith('language-'));
       if (langClass) {
         rawLang = langClass.replace('language-', '').toLowerCase();
-        
-        const langMap = {
-          'js': 'JavaScript',
-          'ts': 'TypeScript',
-          'html': 'HTML',
-          'css': 'CSS',
-          'scss': 'SCSS',
-          'json': 'JSON',
-          'md': 'Markdown',
-          'yml': 'YAML',
-          'yaml': 'YAML',
-          'py': 'Python',
-          'sh': 'Shell',
-          'bash': 'Bash',
-          'zsh': 'Zsh',
-          'cpp': 'C++',
-          'c': 'C',
-          'cs': 'C#',
-          'java': 'Java',
-          'go': 'Go',
-          'rs': 'Rust',
-          'rb': 'Ruby',
-          'php': 'PHP',
-          'diff': 'DIFF',
-          'patch': 'DIFF',
-          'udiff': 'DIFF',
-          'sql': 'SQL',
-          'xml': 'XML'
-        };
+      }
+
+      // Check for Diff mode (either pure diff or syntax-highlighted diff like python[diff])
+      const diffLangAttr = (block.getAttribute('data-diff-lang') || (block.dataset && block.dataset.diffLang) || '').toLowerCase();
+      const isDiff = ['diff', 'patch', 'udiff'].includes(rawLang) ||
+                     block.classList.contains('code-diff-block') ||
+                     block.dataset.diffMode === 'true' ||
+                     Boolean(diffLangAttr);
+
+      const langMap = {
+        'js': 'JavaScript',
+        'ts': 'TypeScript',
+        'html': 'HTML',
+        'css': 'CSS',
+        'scss': 'SCSS',
+        'json': 'JSON',
+        'md': 'Markdown',
+        'yml': 'YAML',
+        'yaml': 'YAML',
+        'py': 'Python',
+        'python': 'Python',
+        'sh': 'Shell',
+        'bash': 'Bash',
+        'zsh': 'Zsh',
+        'cpp': 'C++',
+        'c': 'C',
+        'cs': 'C#',
+        'csharp': 'C#',
+        'java': 'Java',
+        'go': 'Go',
+        'rs': 'Rust',
+        'rust': 'Rust',
+        'rb': 'Ruby',
+        'php': 'PHP',
+        'diff': 'DIFF',
+        'patch': 'DIFF',
+        'udiff': 'DIFF',
+        'txt': 'Text',
+        'text': 'Text',
+        'sql': 'SQL',
+        'xml': 'XML'
+      };
+
+      if (isDiff) {
+        const base = diffLangAttr || (['diff', 'patch', 'udiff'].includes(rawLang) ? '' : rawLang);
+        if (base && base !== 'diff' && base !== 'txt' && base !== 'text') {
+          const baseName = (langMap[base] || base).toUpperCase();
+          lang = `${baseName} · DIFF`;
+        } else if (base === 'txt' || base === 'text') {
+          lang = 'TEXT · DIFF';
+        } else {
+          lang = 'DIFF';
+        }
+      } else if (rawLang) {
         lang = langMap[rawLang] || rawLang.toUpperCase();
       }
 
       // Determine header icon
       let iconName = 'code';
-      if (['diff', 'patch', 'udiff'].includes(rawLang)) {
+      if (isDiff) {
         iconName = 'difference';
       } else if (['sh', 'bash', 'zsh', 'shell', 'cmd', 'powershell', 'bat'].includes(rawLang)) {
         iconName = 'terminal';
@@ -61,16 +147,32 @@
 
       // Process Diff Formatting & Statistics
       let diffStatsHTML = '';
-      if (['diff', 'patch', 'udiff'].includes(rawLang)) {
+      if (isDiff) {
         const rougeCodeCell = block.querySelector('.rouge-code pre');
         const rougeGutterCell = block.querySelector('.rouge-gutter pre');
         let addCount = 0;
         let delCount = 0;
 
+        const isPureDiff = ['diff', 'patch', 'udiff', 'txt', 'text'].includes(rawLang) ||
+                           ['txt', 'text', 'diff'].includes(diffLangAttr);
+
         if (rougeCodeCell) {
           const rawHTML = rougeCodeCell.innerHTML;
-          const codeLines = rawHTML.split('\n');
-          let gutterLines = rougeGutterCell ? rougeGutterCell.innerHTML.split('\n') : [];
+          const codeLines = splitHTMLIntoLines(rawHTML);
+          
+          let gutterLines = [];
+          if (rougeGutterCell) {
+            const gutterText = (rougeGutterCell.textContent || '').replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+            gutterLines = gutterText.split('\n');
+            if (gutterLines.length > 0 && gutterLines[gutterLines.length - 1] === '') {
+              gutterLines.pop();
+            }
+          }
+
+          // If last line of code is empty and extends beyond gutter count, pop it
+          if (codeLines.length > gutterLines.length && codeLines[codeLines.length - 1].trim() === '') {
+            codeLines.pop();
+          }
 
           const newCodeLines = [];
           const newGutterLines = [];
@@ -87,37 +189,37 @@
             } else if (text.startsWith('-')) {
               type = 'del';
               delCount++;
-            } else if (text.startsWith('#')) {
-              type = 'comment';
             } else if (text.startsWith('@@')) {
               type = 'hunk';
+            } else if (text.startsWith('#') && isPureDiff) {
+              type = 'comment';
             }
 
-            if (idx === codeLines.length - 1 && text === '') {
-              newCodeLines.push('');
-              if (gutterLines[idx] !== undefined) newGutterLines.push(gutterLines[idx]);
-              return;
-            }
+            const content = (lineHTML && lineHTML.trim() !== '') ? lineHTML : '&nbsp;';
+            newCodeLines.push(`<span class="diff-line diff-line-${type}">${content}</span>`);
 
-            newCodeLines.push(`<span class="diff-line diff-line-${type}">${lineHTML || ' '}</span>`);
-            if (gutterLines[idx] !== undefined) {
-              newGutterLines.push(`<span class="diff-lineno diff-line-${type}">${gutterLines[idx]}</span>`);
-            }
+            const lineno = (gutterLines[idx] !== undefined && gutterLines[idx] !== '') ? gutterLines[idx] : (idx + 1);
+            newGutterLines.push(`<span class="diff-lineno diff-line-${type}">${lineno}</span>`);
           });
 
-          rougeCodeCell.innerHTML = newCodeLines.join('\n');
+          // Join with '' (no newlines) because each .diff-line/.diff-lineno is display: block!
+          rougeCodeCell.innerHTML = newCodeLines.join('');
           if (rougeGutterCell && newGutterLines.length > 0) {
-            rougeGutterCell.innerHTML = newGutterLines.join('\n');
+            rougeGutterCell.innerHTML = newGutterLines.join('');
           }
         } else {
+          // Fallback for code blocks without table gutter
           const targetPre = block.querySelector('.highlight > pre, pre > code, pre');
           if (targetPre) {
             const targetEl = targetPre.tagName.toLowerCase() === 'code' ? targetPre : (targetPre.querySelector('code') || targetPre);
             const rawHTML = targetEl.innerHTML;
-            const codeLines = rawHTML.split('\n');
+            const codeLines = splitHTMLIntoLines(rawHTML);
+            if (codeLines.length > 0 && codeLines[codeLines.length - 1].trim() === '') {
+              codeLines.pop();
+            }
             const newCodeLines = [];
 
-            codeLines.forEach((lineHTML, idx) => {
+            codeLines.forEach((lineHTML) => {
               const tempDiv = document.createElement('div');
               tempDiv.innerHTML = lineHTML;
               const text = (tempDiv.textContent || tempDiv.innerText || '').trim();
@@ -129,21 +231,17 @@
               } else if (text.startsWith('-')) {
                 type = 'del';
                 delCount++;
-              } else if (text.startsWith('#')) {
-                type = 'comment';
               } else if (text.startsWith('@@')) {
                 type = 'hunk';
+              } else if (text.startsWith('#') && isPureDiff) {
+                type = 'comment';
               }
 
-              if (idx === codeLines.length - 1 && text === '') {
-                newCodeLines.push('');
-                return;
-              }
-
-              newCodeLines.push(`<span class="diff-line diff-line-${type}">${lineHTML || ' '}</span>`);
+              const content = (lineHTML && lineHTML.trim() !== '') ? lineHTML : '&nbsp;';
+              newCodeLines.push(`<span class="diff-line diff-line-${type}">${content}</span>`);
             });
 
-            targetEl.innerHTML = newCodeLines.join('\n');
+            targetEl.innerHTML = newCodeLines.join('');
           }
         }
 
@@ -186,7 +284,10 @@
         
         const diffLines = block.querySelectorAll('.rouge-code .diff-line, pre code .diff-line, pre .diff-line');
         if (diffLines.length > 0) {
-          textToCopy = Array.from(diffLines).map(line => line.textContent || line.innerText).join('\n');
+          textToCopy = Array.from(diffLines).map(line => {
+            const text = line.textContent || line.innerText || '';
+            return text === '\u00A0' ? '' : text;
+          }).join('\n');
         } else {
           const rougeCodeCells = block.querySelectorAll('.rouge-code');
           if (rougeCodeCells.length > 0) {
