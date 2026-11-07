@@ -12,17 +12,13 @@
 <meta name="color-scheme" content="light dark">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 
-<!-- PWA & Mobile Status Bar / Home Indicator Immersion -->
+<!-- PWA & Mobile Status Bar / Home Indicator Immersion (Android, Windows, Linux) -->
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="{{ site.pwa.name | default: site.title }}">
 <meta name="theme-color" content="#1A1C1E" media="(prefers-color-scheme: dark)" id="themeColorDark">
 <meta name="theme-color" content="#FDFCFF" media="(prefers-color-scheme: light)" id="themeColorLight">
 <meta name="theme-color" content="#1A1C1E" id="themeColorMeta">
 
 <link rel="icon" type="image/x-icon" href="{{ '/favicon.ico' | relative_url }}">
-<link rel="apple-touch-icon" href="{{ '/assets/images/avatar.png' | relative_url }}">
 <link rel="manifest" href="{{ '/manifest.json' | relative_url }}">
 
 <!-- Instant Anti-FOUC Dark Mode & Canvas Setup -->

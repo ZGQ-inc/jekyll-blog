@@ -169,7 +169,6 @@ body {
   background-color: var(--md-sys-color-background);
   color: var(--md-sys-color-on-background);
   min-height: 100dvh;
-  padding-bottom: env(safe-area-inset-bottom, 0px);
   transition:
     background-color var(--dur-medium2) var(--motion-standard),
     color var(--dur-medium2) var(--motion-standard);
@@ -853,8 +852,8 @@ ul, ol { list-style: none; }
   top: 0;
   z-index: 100;
   transform: translateZ(0);
-  min-height: calc(64px + env(safe-area-inset-top, 0px));
-  padding-top: env(safe-area-inset-top, 0px);
+  min-height: calc(64px + max(env(safe-area-inset-top, 0px), env(titlebar-area-height, 0px)));
+  padding-top: max(env(safe-area-inset-top, 0px), env(titlebar-area-height, 0px));
   padding-left: max(4px, env(safe-area-inset-left, 0px));
   padding-right: max(4px, env(safe-area-inset-right, 0px));
   padding-bottom: 0;
