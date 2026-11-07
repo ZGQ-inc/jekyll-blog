@@ -472,11 +472,11 @@ class ThemeManager {
     const surfaceColor = palette['--md-sys-color-surface'] ?? (isDark ? '#1A1C1E' : '#FDFCFF');
     root.style.backgroundColor = surfaceColor;
 
-    let meta = document.querySelector('meta[name="theme-color"]');
-    if (meta) {
-      meta.setAttribute('content', surfaceColor);
+    const metaThemes = document.querySelectorAll('meta[name="theme-color"]');
+    if (metaThemes.length > 0) {
+      metaThemes.forEach(m => m.setAttribute('content', surfaceColor));
     } else {
-      meta = document.createElement('meta');
+      const meta = document.createElement('meta');
       meta.name = 'theme-color';
       meta.content = surfaceColor;
       document.head.appendChild(meta);

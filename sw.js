@@ -9,7 +9,13 @@ const ASSETS_TO_CACHE = [
   '/offline.html',
   '/assets/css/style.css',
   '/logo.png',
-  '/logo-monochrome.png'
+  '/logo-monochrome.png',
+  '/assets/images/icons/icon-192.png',
+  '/assets/images/icons/icon-512.png',
+  '/assets/images/icons/icon-192-maskable.png',
+  '/assets/images/icons/icon-512-maskable.png',
+  '/assets/images/icons/apple-splash-dark.png',
+  '/assets/images/icons/apple-splash-light.png'
 ];
 
 self.addEventListener('install', (event) => {

@@ -12,12 +12,14 @@ author:
   bio: "个人博客。"
   avatar: "/assets/images/avatar.png"
 
-# Splash Screen
-splash:
-  enabled: true
-  title: "ZGQ Inc."
-  subtitle: "个人博客"
-  logo: "/assets/images/avatar.png"
+# Progressive Web App (PWA) & Native OS Splash Screen
+pwa:
+  name: "ZGQ Inc."
+  short_name: "ZGQ Blog"
+  description: "ZGQ Inc. 个人博客。"
+  background_color: "#1A1C1E"
+  theme_color: "#1A1C1E"
+  display: "standalone"
 
 # Navigation
 nav_links:
