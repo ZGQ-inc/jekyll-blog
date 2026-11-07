@@ -91,6 +91,14 @@
   --glass-opacity-light: 0.65;
   --glass-opacity-dark:  0.55;
 
+  // Mobile & Performance Glass Calibration (Drastically cuts fill rate & shader overhead on mobile)
+  @media (max-width: 768px) {
+    --glass-blur:         10px;
+    --glass-saturate:     120%;
+    --glass-opacity-light: 0.82;
+    --glass-opacity-dark:  0.78;
+  }
+
   // LQIP Slanted Sweep & Harmonic Darken Settings (Calibrated)
   --lqip-sweep-speed: 2.8s;
   --lqip-beam-angle: 118deg;
@@ -152,12 +160,16 @@ html {
 
 html, body {
   width: 100%;
+  min-height: 100vh;
+  min-height: 100dvh;
+  background-color: var(--md-sys-color-background);
 }
 
 body {
   background-color: var(--md-sys-color-background);
   color: var(--md-sys-color-on-background);
   min-height: 100dvh;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
   transition:
     background-color var(--dur-medium2) var(--motion-standard),
     color var(--dur-medium2) var(--motion-standard);
@@ -840,6 +852,7 @@ ul, ol { list-style: none; }
   position: sticky;
   top: 0;
   z-index: 100;
+  transform: translateZ(0);
   min-height: calc(64px + env(safe-area-inset-top, 0px));
   padding-top: env(safe-area-inset-top, 0px);
   padding-left: max(4px, env(safe-area-inset-left, 0px));
@@ -3724,7 +3737,7 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
 
 // Footer
 .site-footer {
-  padding: 24px 24px 100px;
+  padding: 24px 24px calc(100px + env(safe-area-inset-bottom, 0px));
   text-align: center;
   font-size: 0.8125rem;
   color: var(--md-sys-color-on-surface-variant);
@@ -3732,7 +3745,7 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
   margin-top: auto;
 
   @media (max-width: 768px) {
-    padding: 20px 16px 88px;
+    padding: 20px 16px calc(88px + env(safe-area-inset-bottom, 0px));
   }
 
   a {
@@ -4405,7 +4418,7 @@ md-navigation-drawer {
   }
 
   @media (max-width: 768px) {
-    bottom: 16px;
+    bottom: calc(16px + env(safe-area-inset-bottom, 0px));
     right: 16px;
     width: 48px;
     height: 48px;
@@ -4620,6 +4633,7 @@ md-navigation-drawer {
   flex-direction: column;
   padding: 16px;
   padding-top: max(16px, env(safe-area-inset-top));
+  padding-bottom: max(16px, env(safe-area-inset-bottom, 0px));
 
   &.open {
     transform: translateX(0);
@@ -5574,7 +5588,7 @@ md-navigation-drawer {
 
   @media (max-width: 768px) {
     left: 50%;
-    bottom: 16px;
+    bottom: calc(16px + env(safe-area-inset-bottom, 0px));
     padding: 4px 8px;
     gap: 4px;
     max-width: 94vw;
@@ -5582,54 +5596,40 @@ md-navigation-drawer {
 }
 
 // ================================================================
-// Global Page Loader (MD3 Circular Progress)
+// Google Antigravity-style Splash Screen (Full Screen Immersion)
 // ================================================================
+.splash-screen-overlay,
 .page-loader-overlay {
   position: fixed;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: var(--nav-drawer-width);
-  z-index: 90;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  z-index: 99999;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  background-color: var(--md-sys-color-surface);
+  background-color: var(--md-sys-color-background, #FDFCFF);
+  color: var(--md-sys-color-on-background, #1A1C1E);
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
   opacity: 1;
   visibility: visible;
-  transition: opacity 0.22s cubic-bezier(0.2, 0, 0, 1), visibility 0.22s cubic-bezier(0.2, 0, 0, 1);
+  transform: scale(1);
+  filter: blur(0px);
+  transition: opacity 0.32s cubic-bezier(0.2, 0, 0, 1),
+              transform 0.32s cubic-bezier(0.2, 0, 0, 1),
+              filter 0.32s cubic-bezier(0.2, 0, 0, 1),
+              visibility 0.32s;
   pointer-events: auto;
-
-  @media (max-width: 1100px) and (min-width: 769px) {
-    left: var(--nav-rail-width);
-    top: 0;
-  }
-
-  @media (max-width: 768px) {
-    left: 0;
-    top: calc(64px + env(safe-area-inset-top, 0px));
-  }
 
   &.is-loaded {
     opacity: 0 !important;
     visibility: hidden !important;
+    transform: scale(1.03) !important;
+    filter: blur(4px) !important;
     pointer-events: none !important;
-  }
-
-  .page-loader-spinner {
-    width: 44px;
-    height: 44px;
-    min-width: 44px;
-    min-height: 44px;
-    max-width: 44px;
-    max-height: 44px;
-    aspect-ratio: 1 / 1;
-    box-sizing: border-box;
-    border: 4px solid color-mix(in srgb, var(--md-sys-color-primary) 18%, transparent);
-    border-top-color: var(--md-sys-color-primary);
-    border-radius: 50%;
-    transform-origin: center center;
-    animation: pageLoaderSpin 0.85s linear infinite !important;
   }
 }
 

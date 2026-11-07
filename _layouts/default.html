@@ -38,10 +38,24 @@
       </button>
     </header>
 
-    <!-- Content Area Loader (MD3 Circular Progress) -->
-    <div id="pageLoader" class="page-loader-overlay" aria-label="页面加载中" role="status">
-      <div class="page-loader-spinner" aria-hidden="true"></div>
+    <!-- Google Antigravity-style Customizable Splash Screen -->
+    {% if site.splash.enabled != false %}
+    <div id="pageLoader" class="splash-screen-overlay" aria-label="页面加载中" role="status">
+      <div class="splash-brand">
+        <div class="splash-logo-wrapper">
+          <img class="splash-logo" src="{{ site.splash.logo | default: site.author.avatar | default: '/assets/images/avatar.png' | relative_url }}" alt="{{ site.splash.title | default: site.title }}" width="76" height="76">
+        </div>
+        <div class="splash-title">{{ site.splash.title | default: site.title }}</div>
+        {% if site.splash.subtitle %}
+        <div class="splash-subtitle">{{ site.splash.subtitle }}</div>
+        {% endif %}
+        <div class="splash-progress-track" aria-hidden="true">
+          <div class="splash-progress-bar-primary"></div>
+          <div class="splash-progress-bar-secondary"></div>
+        </div>
+      </div>
     </div>
+    {% endif %}
     <script>
       (function() {
         var dismissed = false;
@@ -54,7 +68,7 @@
           el.classList.add('is-loaded');
           setTimeout(function() {
             if (el && el.parentNode) el.style.display = 'none';
-          }, 240);
+          }, 340);
         }
         if (document.readyState === 'complete' || document.readyState === 'interactive') {
           requestAnimationFrame(dismiss);
@@ -62,7 +76,7 @@
           window.addEventListener('load', function() { requestAnimationFrame(dismiss); });
           document.addEventListener('DOMContentLoaded', function() { requestAnimationFrame(dismiss); });
         }
-        setTimeout(dismiss, 1200);
+        setTimeout(dismiss, {{ site.splash.duration | default: 900 }});
         window.addEventListener('pageshow', function(e) { if (e.persisted) dismiss(); });
         window.dismissPageLoader = dismiss;
       })();

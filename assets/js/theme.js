@@ -646,16 +646,58 @@ function initSidebar() {
   }
 }
 
-// Reading Progress Bar
+// ==============================================================================
+// Optimized Unified Scroll Controller (rAF Throttled & Zero Forced Reflow)
+// ==============================================================================
+let _scrollTicking = false;
+let _cachedDocHeight = 0;
+
+function _getDocScrollHeight() {
+  if (!_cachedDocHeight) {
+    _cachedDocHeight = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+  }
+  return _cachedDocHeight;
+}
+
+window.addEventListener('resize', () => {
+  _cachedDocHeight = 0;
+}, { passive: true });
+
 function initReadingProgress() {
   const bar = document.getElementById('readingProgress');
-  if (!bar) return;
+  const topBar = document.querySelector('.top-app-bar');
+  const backToTopBtn = document.getElementById('backToTopBtn');
+
+  if (!bar && !topBar && !backToTopBtn) return;
+
+  function handleScroll() {
+    const scrollY = window.scrollY;
+
+    // 1. Reading progress
+    if (bar) {
+      const docHeight = _getDocScrollHeight();
+      const progress = docHeight > 0 ? (scrollY / docHeight) * 100 : 0;
+      bar.style.width = `${Math.min(100, Math.max(0, progress))}%`;
+    }
+
+    // 2. Top app bar scrolled state
+    if (topBar) {
+      topBar.classList.toggle('scrolled', scrollY > 8);
+    }
+
+    // 3. Back to top button
+    if (backToTopBtn) {
+      backToTopBtn.classList.toggle('visible', scrollY > 300);
+    }
+
+    _scrollTicking = false;
+  }
 
   window.addEventListener('scroll', () => {
-    const scrollTop = window.scrollY;
-    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-    const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
-    bar.style.width = `${Math.min(100, progress)}%`;
+    if (!_scrollTicking) {
+      _scrollTicking = true;
+      requestAnimationFrame(handleScroll);
+    }
   }, { passive: true });
 }
 
@@ -702,14 +744,9 @@ function initViewToggle() {
   });
 }
 
-// Top App Bar
+// Top App Bar (State handled by unified rAF scroll controller)
 function initTopAppBar() {
-  const bar = document.querySelector('.top-app-bar');
-  if (!bar) return;
-
-  window.addEventListener('scroll', () => {
-    bar.classList.toggle('scrolled', window.scrollY > 8);
-  }, { passive: true });
+  // Handled by unified rAF scroll controller
 }
 
 // Theme Dialog
@@ -925,18 +962,10 @@ function initRipples() {
 window.themeManager = new ThemeManager();
 window.themeManager.applyTheme();
 
-// Back to Top FAB
+// Back to Top FAB (Visibility handled by unified rAF scroll controller)
 function initBackToTop() {
   const btn = document.getElementById('backToTopBtn');
   if (!btn) return;
-
-  window.addEventListener('scroll', () => {
-    if (window.scrollY > 300) {
-      btn.classList.add('visible');
-    } else {
-      btn.classList.remove('visible');
-    }
-  }, { passive: true });
 
   btn.addEventListener('click', () => {
     window.scrollTo({
@@ -958,7 +987,7 @@ function initPageLoader() {
       if (loader && loader.parentNode) {
         loader.style.display = 'none';
       }
-    }, 240);
+    }, 340);
   };
 
   if (document.readyState === 'complete' || document.readyState === 'interactive') {

@@ -149,7 +149,7 @@ function initTelegramSpoilers() {
 
   // 1. Client-side progressive enhancement: scan text nodes for any unparsed ||spoiler|| syntax
   const articleContent = document.querySelector('.article-content');
-  if (articleContent) {
+  if (articleContent && articleContent.textContent.includes('||')) {
     const walker = document.createTreeWalker(
       articleContent,
       NodeFilter.SHOW_TEXT,
@@ -208,6 +208,7 @@ function initTelegramSpoilers() {
 
   // 2. Bind cyber decryption restoration animations to all .tg-spoiler elements
   const spoilers = document.querySelectorAll('.tg-spoiler');
+  if (spoilers.length === 0) return;
   spoilers.forEach(spoiler => {
     const inner = spoiler.querySelector('.tg-spoiler-inner') || spoiler;
     if (!inner) return;

@@ -3,6 +3,7 @@
   "short_name": "ZGQ Blog",
   "start_url": "/",
   "display": "standalone",
+  "display_override": ["window-controls-overlay", "standalone", "minimal-ui"],
   "background_color": "#FDFCFF",
   "theme_color": "#FDFCFF",
   "icons": [

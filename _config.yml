@@ -12,6 +12,13 @@ author:
   bio: "个人博客。"
   avatar: "/assets/images/avatar.png"
 
+# Splash Screen
+splash:
+  enabled: true
+  title: "ZGQ Inc."
+  subtitle: "个人博客"
+  logo: "/assets/images/avatar.png"
+
 # Navigation
 nav_links:
   - title: "首页"
