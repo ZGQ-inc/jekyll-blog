@@ -3396,11 +3396,29 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
     margin: 2em 0;
   }
 
-  .MathJax, mjx-container {
+  // MathJax Display (block) Formulas: $$ ... $$
+  mjx-container[display="true"],
+  .MathJax_Display {
+    display: block !important;
     max-width: 100% !important;
     overflow-x: auto !important;
     overflow-y: hidden !important;
-    display: block !important;
+    margin: 1.25em 0 !important;
+    padding: 6px 0;
+    text-align: center;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  // MathJax Inline Formulas: $ ... $
+  mjx-container:not([display="true"]),
+  .MathJax:not(.MathJax_Display):not([display="true"]) {
+    display: inline-block !important;
+    max-width: 100%;
+    overflow-x: visible !important;
+    overflow-y: visible !important;
+    margin: 0 0.15em;
+    vertical-align: -0.15em;
+    line-height: normal;
   }
 }
 
