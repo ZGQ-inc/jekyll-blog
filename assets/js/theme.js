@@ -867,6 +867,12 @@ function initPageTransitions() {
           main.style.opacity = '1';
           main.style.transform = 'translateY(0)';
           main.style.filter = 'blur(0)';
+          setTimeout(() => {
+            if (main) {
+              main.style.transform = 'none';
+              main.style.filter = 'none';
+            }
+          }, 450);
         });
       });
     } else {

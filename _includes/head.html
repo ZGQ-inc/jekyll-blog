@@ -229,7 +229,23 @@
     options: {
       skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
     },
-    svg: { fontCache: 'global' }
+    output: {
+      displayOverflow: 'linebreak',
+      linebreaks: {
+        inline: true,
+        width: '100%',
+        lineleading: 0.2
+      }
+    },
+    svg: {
+      fontCache: 'global',
+      displayOverflow: 'linebreak',
+      linebreaks: {
+        inline: true,
+        width: '100%',
+        lineleading: 0.2
+      }
+    }
   };
 </script>
-<script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+<script async src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-svg.js"></script>

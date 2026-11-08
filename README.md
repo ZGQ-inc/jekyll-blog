@@ -178,7 +178,7 @@ git push origin main
 | :--- | :--- | :--- | :--- |
 | **[@material/web](https://github.com/material-components/material-web)** | ESM CDN | [Apache-2.0](https://github.com/material-components/material-web/blob/main/LICENSE) | Google 官方 Material Design 3 Web 原生组件 |
 | **[Fuse.js](https://github.com/krisk/Fuse)** | `v7.0.0` | [Apache-2.0](https://github.com/krisk/Fuse/blob/master/LICENSE) | 客户端轻量级全文模糊搜索 |
-| **[MathJax](https://github.com/mathjax/MathJax)** | `v3` | [Apache-2.0](https://github.com/mathjax/MathJax/blob/master/LICENSE) | LaTeX 数学公式渲染引擎 |
+| **[MathJax](https://github.com/mathjax/MathJax)** | `v4` | [Apache-2.0](https://github.com/mathjax/MathJax/blob/master/LICENSE) | LaTeX 数学公式渲染引擎（支持移动端自动截断换行） |
 | **[Mermaid.js](https://github.com/mermaid-js/mermaid)** | `v10` ESM | [MIT](https://github.com/mermaid-js/mermaid/blob/develop/LICENSE) | 流程图、时序图与架构图动态渲染 |
 | **[Three.js](https://github.com/mrdoob/three.js)** | `r158` ESM | [MIT](https://github.com/mrdoob/three.js/blob/dev/LICENSE) | 3D WebGL 渲染引擎 (STL 模型在线交互查看) |
 | **[Leaflet](https://github.com/Leaflet/Leaflet)** | `v1.9.4` | [BSD-2-Clause](https://github.com/Leaflet/Leaflet/blob/main/LICENSE) | GeoJSON / TopoJSON 地图数据交互渲染 |

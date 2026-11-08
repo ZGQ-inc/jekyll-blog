@@ -163,6 +163,7 @@ html, body {
   min-height: 100vh;
   min-height: 100dvh;
   background-color: var(--md-sys-color-background);
+  overflow-x: clip;
 }
 
 body {
@@ -372,6 +373,7 @@ ul, ol { list-style: none; }
 .main-content {
   flex: 1;
   min-width: 0;
+  max-width: 100%;
   margin: 0;
   margin-left: var(--nav-drawer-width);
   padding: 0;
@@ -850,8 +852,10 @@ ul, ol { list-style: none; }
   display: none;
   position: sticky;
   top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
   z-index: 100;
-  transform: translateZ(0);
   min-height: calc(64px + max(env(safe-area-inset-top, 0px), env(titlebar-area-height, 0px)));
   padding-top: max(env(safe-area-inset-top, 0px), env(titlebar-area-height, 0px));
   padding-left: max(4px, env(safe-area-inset-left, 0px));
@@ -3397,87 +3401,56 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
   }
 }
 
-// MathJax LaTeX Responsive Typesetting (Global & Mobile Optimized)
+// MathJax LaTeX Responsive Typesetting (Global & Mobile Auto-Wrapping)
 mjx-container,
 .MathJax {
   max-width: 100% !important;
   box-sizing: border-box !important;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 // MathJax Display (block) Formulas: $$ ... $$ / \[ ... \]
 mjx-container[display="true"],
 .MathJax_Display {
-  display: flex !important;
-  justify-content: center !important;
-  justify-content: safe center !important;
-  align-items: center !important;
-  width: 100% !important;
+  display: block !important;
   max-width: 100% !important;
-  overflow-x: auto !important;
-  overflow-y: hidden !important;
-  box-sizing: border-box !important;
   margin: 1.25em 0 !important;
-  padding: 8px 4px !important;
-  touch-action: pan-x;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: thin;
-  scrollbar-color: color-mix(in srgb, var(--md-sys-color-primary) 35%, transparent) transparent;
-
-  &::-webkit-scrollbar {
-    height: 4px;
-  }
-  &::-webkit-scrollbar-track {
-    background: transparent;
-  }
-  &::-webkit-scrollbar-thumb {
-    background: color-mix(in srgb, var(--md-sys-color-primary) 35%, transparent);
-    border-radius: 4px;
-  }
+  text-align: center !important;
+  box-sizing: border-box !important;
+  overflow-x: visible !important;
+  overflow-y: visible !important;
 
   > svg {
-    margin: 0 !important;
-    max-width: none !important;
-    flex-shrink: 0 !important;
+    max-width: 100% !important;
+    height: auto !important;
+    margin: 0 auto !important;
     display: block !important;
+    overflow: visible !important;
   }
 }
 
 // MathJax Inline Formulas: $ ... $ / \( ... \)
 mjx-container:not([display="true"]),
 .MathJax:not(.MathJax_Display):not([display="true"]) {
-  display: inline-block !important;
+  display: inline !important;
   max-width: 100% !important;
-  overflow-x: auto !important;
-  overflow-y: hidden !important;
-  box-sizing: border-box !important;
-  margin: 0 0.15em;
-  vertical-align: -0.2em;
   line-height: normal;
-  touch-action: pan-x;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
-
-  &::-webkit-scrollbar {
-    display: none;
-  }
+  box-sizing: border-box !important;
 
   > svg {
-    display: inline-block !important;
+    display: inline !important;
     vertical-align: middle;
-    max-width: none !important;
+    max-width: 100% !important;
+    height: auto;
+    overflow: visible !important;
   }
 }
 
 // Global MathJax Mobile Rescaling
 @media (max-width: 768px) {
   mjx-container {
-    font-size: 94% !important;
-  }
-}
-
-@media (max-width: 480px) {
-  mjx-container {
-    font-size: 90% !important;
+    font-size: 96% !important;
   }
 }
 
