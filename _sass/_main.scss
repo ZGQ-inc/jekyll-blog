@@ -3395,30 +3395,89 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
     background: var(--md-sys-color-outline-variant);
     margin: 2em 0;
   }
+}
 
-  // MathJax Display (block) Formulas: $$ ... $$
-  mjx-container[display="true"],
-  .MathJax_Display {
-    display: block !important;
-    max-width: 100% !important;
-    overflow-x: auto !important;
-    overflow-y: hidden !important;
-    margin: 1.25em 0 !important;
-    padding: 6px 0;
-    text-align: center;
-    -webkit-overflow-scrolling: touch;
+// MathJax LaTeX Responsive Typesetting (Global & Mobile Optimized)
+mjx-container,
+.MathJax {
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+// MathJax Display (block) Formulas: $$ ... $$ / \[ ... \]
+mjx-container[display="true"],
+.MathJax_Display {
+  display: flex !important;
+  justify-content: center !important;
+  justify-content: safe center !important;
+  align-items: center !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  box-sizing: border-box !important;
+  margin: 1.25em 0 !important;
+  padding: 8px 4px !important;
+  touch-action: pan-x;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--md-sys-color-primary) 35%, transparent) transparent;
+
+  &::-webkit-scrollbar {
+    height: 4px;
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: color-mix(in srgb, var(--md-sys-color-primary) 35%, transparent);
+    border-radius: 4px;
   }
 
-  // MathJax Inline Formulas: $ ... $
-  mjx-container:not([display="true"]),
-  .MathJax:not(.MathJax_Display):not([display="true"]) {
+  > svg {
+    margin: 0 !important;
+    max-width: none !important;
+    flex-shrink: 0 !important;
+    display: block !important;
+  }
+}
+
+// MathJax Inline Formulas: $ ... $ / \( ... \)
+mjx-container:not([display="true"]),
+.MathJax:not(.MathJax_Display):not([display="true"]) {
+  display: inline-block !important;
+  max-width: 100% !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  box-sizing: border-box !important;
+  margin: 0 0.15em;
+  vertical-align: -0.2em;
+  line-height: normal;
+  touch-action: pan-x;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  > svg {
     display: inline-block !important;
-    max-width: 100%;
-    overflow-x: visible !important;
-    overflow-y: visible !important;
-    margin: 0 0.15em;
-    vertical-align: -0.15em;
-    line-height: normal;
+    vertical-align: middle;
+    max-width: none !important;
+  }
+}
+
+// Global MathJax Mobile Rescaling
+@media (max-width: 768px) {
+  mjx-container {
+    font-size: 94% !important;
+  }
+}
+
+@media (max-width: 480px) {
+  mjx-container {
+    font-size: 90% !important;
   }
 }
 
