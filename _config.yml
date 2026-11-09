@@ -105,6 +105,10 @@ plugins:
   - jekyll-sitemap
   - jekyll-seo-tag
 
+# Feed Settings
+feed:
+  excerpt_only: true
+
 # Exclude from build
 exclude:
   - Gemfile
