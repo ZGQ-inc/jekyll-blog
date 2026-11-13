@@ -267,15 +267,42 @@
         ${diffStatsHTML}
       `;
 
-      // Right: MD3 Copy Button
+      // Right: Actions Container (Run Button + Copy Button)
+      const actionsDiv = document.createElement('div');
+      actionsDiv.className = 'code-header-actions';
+
+      const isRunnable = ['python', 'py', 'python3', 'py3', 'sql', 'sqlite', 'sqlite3'].includes(rawLang) &&
+                         !isDiff &&
+                         !block.classList.contains('no-run') &&
+                         !block.hasAttribute('data-no-run');
+
+      if (isRunnable) {
+        const runBtn = document.createElement('button');
+        runBtn.className = 'code-action-btn code-run-btn';
+        runBtn.innerHTML = '<span class="material-symbols-outlined">play_arrow</span><span class="btn-text">运行</span>';
+        runBtn.title = '在浏览器中运行此代码 (WebAssembly)';
+        runBtn.setAttribute('aria-label', '运行代码');
+
+        runBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          if (window.WasmRunner && typeof window.WasmRunner.executeBlock === 'function') {
+            window.WasmRunner.executeBlock(block, rawLang, runBtn);
+          } else {
+            console.warn('WasmRunner not ready yet');
+          }
+        });
+        actionsDiv.appendChild(runBtn);
+      }
+
       const copyBtn = document.createElement('button');
-      copyBtn.className = 'code-copy-btn';
+      copyBtn.className = 'code-action-btn code-copy-btn';
       copyBtn.innerHTML = '<span class="material-symbols-outlined">content_copy</span><span class="copy-text">复制</span>';
       copyBtn.title = '复制代码';
       copyBtn.setAttribute('aria-label', '复制代码');
 
+      actionsDiv.appendChild(copyBtn);
       header.appendChild(leftDiv);
-      header.appendChild(copyBtn);
+      header.appendChild(actionsDiv);
       
       block.insertBefore(header, block.firstChild);
       

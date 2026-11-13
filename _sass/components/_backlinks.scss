@@ -1,0 +1,135 @@
+// ==============================================================================
+// Material Design 3 Bidirectional Backlinks Component
+// Cards displaying articles that reference/cite the current article.
+// ==============================================================================
+
+.post-backlinks-section {
+  margin: 2.5rem 0 1.5rem 0;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+
+  .backlinks-card {
+    background: var(--md-sys-color-surface-container-low);
+    border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 45%, transparent);
+    border-radius: var(--shape-medium, 12px);
+    padding: 18px 20px;
+    box-sizing: border-box;
+    box-shadow: var(--elev-1, 0 1px 3px rgba(0,0,0,0.1));
+
+    .backlinks-header {
+      margin-bottom: 12px;
+
+      .backlinks-title-wrap {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 4px;
+
+        .backlinks-icon {
+          font-size: 20px;
+          color: var(--md-sys-color-primary);
+        }
+
+        .backlinks-title {
+          font-size: 1rem;
+          font-weight: 700;
+          color: var(--md-sys-color-on-surface);
+        }
+
+        .backlinks-count {
+          font-size: 0.72rem;
+          font-weight: 700;
+          padding: 2px 8px;
+          border-radius: 12px;
+          background: color-mix(in srgb, var(--md-sys-color-primary-container) 80%, transparent);
+          color: var(--md-sys-color-on-primary-container);
+          letter-spacing: 0.02em;
+        }
+      }
+
+      .backlinks-subtitle {
+        font-size: 0.8125rem;
+        color: var(--md-sys-color-on-surface-variant);
+        line-height: 1.4;
+      }
+    }
+
+    .backlinks-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .backlink-card-item {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      background: var(--md-sys-color-surface-container);
+      border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 35%, transparent);
+      border-radius: var(--shape-small, 8px);
+      padding: 12px 14px;
+      text-decoration: none;
+      color: inherit;
+      transition: all var(--dur-short3, 150ms) var(--motion-standard, ease);
+      box-sizing: border-box;
+
+      &:hover {
+        background: var(--md-sys-color-surface-container-high);
+        border-color: var(--md-sys-color-primary);
+        transform: translateY(-2px);
+        box-shadow: var(--elev-2, 0 3px 8px rgba(0,0,0,0.15));
+
+        .backlink-arrow-icon {
+          color: var(--md-sys-color-primary);
+          transform: translate(2px, -2px);
+        }
+
+        .backlink-card-title {
+          color: var(--md-sys-color-primary);
+        }
+      }
+
+      .backlink-card-meta {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 6px;
+
+        .backlink-date {
+          font-size: 0.72rem;
+          color: var(--md-sys-color-on-surface-variant);
+          font-family: 'JetBrains Mono', monospace;
+        }
+
+        .backlink-arrow-icon {
+          font-size: 16px;
+          color: var(--md-sys-color-outline);
+          transition: transform var(--dur-short2, 100ms) var(--motion-standard, ease),
+                      color var(--dur-short2, 100ms) var(--motion-standard, ease);
+        }
+      }
+
+      .backlink-card-title {
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: var(--md-sys-color-on-surface);
+        line-height: 1.4;
+        margin-bottom: 6px;
+        transition: color var(--dur-short2, 100ms);
+      }
+
+      .backlink-card-excerpt {
+        font-size: 0.78125rem;
+        color: var(--md-sys-color-on-surface-variant);
+        line-height: 1.45;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    }
+  }
+}

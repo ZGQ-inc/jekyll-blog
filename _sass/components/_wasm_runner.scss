@@ -1,0 +1,431 @@
+// ==============================================================================
+// Material Design 3 WebAssembly Code Runner Styles
+// Styles for run buttons, interactive console output panel, and SQL tables.
+// ==============================================================================
+
+.code-header-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.code-action-btn {
+  background: color-mix(in srgb, var(--md-sys-color-surface-container-highest) 75%, transparent);
+  border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 50%, transparent);
+  color: var(--md-sys-color-on-surface-variant);
+  cursor: pointer;
+  padding: 4px 10px;
+  border-radius: var(--shape-small, 8px);
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.75rem;
+  font-family: inherit;
+  transition: all var(--dur-short3, 150ms) var(--motion-standard, ease);
+  user-select: none;
+
+  .material-symbols-outlined {
+    font-size: 15px;
+  }
+
+  .btn-text, .copy-text {
+    font-size: 0.725rem;
+    font-weight: 600;
+  }
+
+  &:hover {
+    background: var(--md-sys-color-secondary-container);
+    color: var(--md-sys-color-on-secondary-container);
+    border-color: transparent;
+  }
+
+  &:active {
+    transform: scale(0.96);
+  }
+}
+
+.code-run-btn {
+  background: color-mix(in srgb, var(--md-sys-color-primary-container) 85%, transparent);
+  border: 1px solid color-mix(in srgb, var(--md-sys-color-primary) 35%, transparent);
+  color: var(--md-sys-color-on-primary-container);
+  font-weight: 600;
+
+  .material-symbols-outlined {
+    color: var(--md-sys-color-primary);
+  }
+
+  &:hover {
+    background: var(--md-sys-color-primary);
+    color: var(--md-sys-color-on-primary);
+    border-color: transparent;
+
+    .material-symbols-outlined {
+      color: var(--md-sys-color-on-primary);
+    }
+  }
+
+  &.is-running {
+    opacity: 0.85;
+    cursor: wait;
+    pointer-events: none;
+    border-color: var(--md-sys-color-primary);
+  }
+}
+
+.spin {
+  animation: wasmRunnerSpin 1s linear infinite;
+  display: inline-block;
+}
+
+@keyframes wasmRunnerSpin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* ==============================================================================
+   Console Output Panel
+   ============================================================================== */
+
+.code-console-panel {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  border-top: 1px solid var(--md-sys-color-outline-variant);
+  background: var(--md-sys-color-surface-container);
+  font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+  font-size: 0.8125rem;
+  overflow: hidden;
+  transition: all var(--dur-short4, 200ms) var(--motion-standard, ease);
+  position: relative;
+
+  .code-console-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 12px;
+    background: color-mix(in srgb, var(--md-sys-color-surface-container-high) 85%, transparent);
+    border-bottom: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 35%, transparent);
+    user-select: none;
+    gap: 8px;
+
+    .code-console-title {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--md-sys-color-on-surface);
+      min-width: 0;
+
+      .code-console-icon {
+        font-size: 16px;
+        color: var(--md-sys-color-primary);
+      }
+
+      .code-console-title-text {
+        white-space: nowrap;
+      }
+
+      .code-console-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 2px 8px;
+        border-radius: 12px;
+        font-size: 0.6875rem;
+        font-weight: 600;
+        letter-spacing: 0.02em;
+        line-height: 1.35;
+        white-space: nowrap;
+
+        &.status-running {
+          background: color-mix(in srgb, var(--md-sys-color-primary) 18%, transparent);
+          color: var(--md-sys-color-primary);
+          border: 1px solid color-mix(in srgb, var(--md-sys-color-primary) 30%, transparent);
+        }
+
+        &.status-success {
+          background: color-mix(in srgb, #2e7d32 18%, transparent);
+          color: #2e7d32;
+          border: 1px solid color-mix(in srgb, #2e7d32 35%, transparent);
+
+          html[data-theme="dark"] & {
+            background: color-mix(in srgb, #81c784 18%, transparent);
+            color: #81c784;
+            border-color: color-mix(in srgb, #81c784 35%, transparent);
+          }
+        }
+
+        &.status-error {
+          background: var(--md-sys-color-error-container);
+          color: var(--md-sys-color-on-error-container);
+          border: 1px solid color-mix(in srgb, var(--md-sys-color-error) 40%, transparent);
+        }
+
+        &.status-cleared {
+          background: color-mix(in srgb, var(--md-sys-color-surface-container-highest) 60%, transparent);
+          color: var(--md-sys-color-on-surface-variant);
+        }
+      }
+    }
+
+    .code-console-actions {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+
+      .console-action-btn {
+        background: transparent;
+        border: none;
+        color: var(--md-sys-color-on-surface-variant);
+        cursor: pointer;
+        padding: 4px;
+        border-radius: 4px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        transition: background-color var(--dur-short2, 100ms), color var(--dur-short2, 100ms);
+
+        .material-symbols-outlined {
+          font-size: 16px;
+        }
+
+        &:hover {
+          background: var(--md-sys-color-surface-container-highest);
+          color: var(--md-sys-color-on-surface);
+        }
+
+        &:active {
+          transform: scale(0.92);
+        }
+      }
+    }
+  }
+
+  .code-console-body {
+    padding: 10px 14px;
+    max-height: 320px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--md-sys-color-outline-variant) transparent;
+    line-height: 1.5;
+
+    &::-webkit-scrollbar {
+      width: 5px;
+      height: 5px;
+    }
+    &::-webkit-scrollbar-thumb {
+      background-color: var(--md-sys-color-outline-variant);
+      border-radius: 4px;
+    }
+
+    &.collapsed {
+      display: none;
+    }
+
+    .console-empty {
+      color: var(--md-sys-color-outline);
+      font-style: italic;
+      font-size: 0.75rem;
+    }
+
+    .console-stdout-wrap {
+      .console-stdout {
+        margin: 0;
+        padding: 0;
+        background: transparent;
+        color: var(--md-sys-color-on-surface);
+        white-space: pre-wrap;
+        word-break: break-word;
+        font-family: inherit;
+        font-size: inherit;
+        line-height: inherit;
+      }
+    }
+
+    .console-stderr-wrap {
+      margin-top: 8px;
+      padding: 8px 10px;
+      background: color-mix(in srgb, #ed6c02 10%, transparent);
+      border: 1px solid color-mix(in srgb, #ed6c02 30%, transparent);
+      border-radius: var(--shape-small, 8px);
+
+      .console-stderr-header {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 0.72rem;
+        font-weight: 700;
+        color: #ed6c02;
+        margin-bottom: 4px;
+
+        .material-symbols-outlined {
+          font-size: 14px;
+        }
+      }
+
+      .console-stderr {
+        margin: 0;
+        padding: 0;
+        background: transparent;
+        color: var(--md-sys-color-on-surface);
+        white-space: pre-wrap;
+        word-break: break-word;
+        font-family: inherit;
+        font-size: 0.75rem;
+      }
+    }
+
+    .console-return-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 8px;
+      padding: 4px 10px;
+      background: color-mix(in srgb, var(--md-sys-color-primary) 12%, transparent);
+      border: 1px solid color-mix(in srgb, var(--md-sys-color-primary) 25%, transparent);
+      border-radius: 6px;
+      font-size: 0.75rem;
+
+      .console-return-icon {
+        color: var(--md-sys-color-primary);
+        font-size: 0.7rem;
+      }
+
+      .console-return-label {
+        color: var(--md-sys-color-on-surface-variant);
+        font-weight: 600;
+      }
+
+      .console-return-value {
+        color: var(--md-sys-color-primary);
+        font-weight: 700;
+        background: transparent;
+        padding: 0;
+      }
+    }
+
+    .console-error-card {
+      padding: 10px 12px;
+      background: color-mix(in srgb, var(--md-sys-color-error-container) 45%, transparent);
+      border: 1px solid color-mix(in srgb, var(--md-sys-color-error) 35%, transparent);
+      border-radius: var(--shape-small, 8px);
+
+      .console-error-header {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: var(--md-sys-color-error);
+        margin-bottom: 6px;
+
+        .material-symbols-outlined {
+          font-size: 16px;
+        }
+      }
+
+      .console-error-text {
+        margin: 0;
+        padding: 0;
+        background: transparent;
+        color: var(--md-sys-color-on-surface);
+        white-space: pre-wrap;
+        word-break: break-word;
+        font-family: inherit;
+        font-size: 0.75rem;
+        line-height: 1.45;
+      }
+    }
+
+    /* SQLite Table Styling */
+    .console-sql-section {
+      margin: 4px 0;
+
+      .console-sql-query-num {
+        font-size: 0.72rem;
+        font-weight: 700;
+        color: var(--md-sys-color-on-surface-variant);
+        margin-bottom: 4px;
+      }
+
+      .console-table-scroll-wrapper {
+        overflow-x: auto;
+        max-width: 100%;
+        -webkit-overflow-scrolling: touch;
+        border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 45%, transparent);
+        border-radius: var(--shape-small, 8px);
+        margin-bottom: 6px;
+        scrollbar-width: thin;
+
+        &::-webkit-scrollbar {
+          height: 4px;
+        }
+        &::-webkit-scrollbar-thumb {
+          background-color: var(--md-sys-color-outline-variant);
+          border-radius: 4px;
+        }
+      }
+
+      .console-sql-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.75rem;
+        text-align: left;
+        white-space: nowrap;
+
+        th {
+          background: color-mix(in srgb, var(--md-sys-color-surface-container-highest) 90%, transparent);
+          color: var(--md-sys-color-primary);
+          padding: 6px 12px;
+          font-weight: 700;
+          border-bottom: 1px solid var(--md-sys-color-outline-variant);
+          letter-spacing: 0.02em;
+        }
+
+        td {
+          padding: 6px 12px;
+          border-bottom: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 25%, transparent);
+          color: var(--md-sys-color-on-surface);
+
+          &.sql-null {
+            color: var(--md-sys-color-outline);
+            font-style: italic;
+          }
+        }
+
+        tr:nth-child(even) td {
+          background-color: color-mix(in srgb, var(--md-sys-color-surface-container-high) 40%, transparent);
+        }
+
+        tr:hover td {
+          background-color: color-mix(in srgb, var(--md-sys-color-primary) 10%, transparent);
+        }
+
+        tr:last-child td {
+          border-bottom: none;
+        }
+      }
+
+      .console-sql-meta {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 0.7rem;
+        color: var(--md-sys-color-on-surface-variant);
+        padding-left: 2px;
+
+        .material-symbols-outlined {
+          font-size: 14px;
+        }
+
+        &.success-meta {
+          color: #2e7d32;
+          html[data-theme="dark"] & {
+            color: #81c784;
+          }
+        }
+      }
+    }
+  }
+}

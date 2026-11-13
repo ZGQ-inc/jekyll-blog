@@ -11,6 +11,8 @@
   <script src="{{ '/assets/js/calendar.js' | relative_url }}?v={{ site.time | date: '%s' }}"></script>
   <script src="{{ '/assets/js/pagination.js' | relative_url }}?v={{ site.time | date: '%s' }}"></script>
   <script src="{{ '/assets/js/sandbox.js' | relative_url }}?v={{ site.time | date: '%s' }}"></script>
+  <script src="{{ '/assets/js/wasm-runner.js' | relative_url }}?v={{ site.time | date: '%s' }}"></script>
+  <script src="{{ '/assets/js/edge-sensor.js' | relative_url }}?v={{ site.time | date: '%s' }}"></script>
 </head>
 <body class="preload">
 
@@ -73,6 +75,7 @@
 
     <!-- Footer -->
     <footer class="site-footer" role="contentinfo">
+      {% include edge-sensor.html %}
       <p>
         © {{ site.time | date: "%Y" }} <a href="{{ '/' | relative_url }}">{{ site.author.name }}</a>
         · Built with <a href="https://jekyllrb.com" target="_blank" rel="noopener">Jekyll</a>

@@ -309,6 +309,36 @@ call qword ptr [rax+48h]</pre>请问该调用在 <code>IAudioEndpointVolume</cod
     </button>
   </div>
 
+  <!-- Backlinks (Bidirectional Inbound Links) -->
+  {% if post.backlinks and post.backlinks.size > 0 %}
+  <section class="post-backlinks-section" aria-label="反向链接">
+    <div class="backlinks-card">
+      <div class="backlinks-header">
+        <div class="backlinks-title-wrap">
+          <span class="material-symbols-outlined backlinks-icon">hub</span>
+          <span class="backlinks-title">反向链接</span>
+          <span class="backlinks-count">{{ post.backlinks.size }} 篇引用</span>
+        </div>
+        <span class="backlinks-subtitle">有以下 {{ post.backlinks.size }} 篇文章引用了本文：</span>
+      </div>
+      <div class="backlinks-grid">
+        {% for bl in post.backlinks %}
+        <a href="{{ bl.url | relative_url }}" class="backlink-card-item">
+          <div class="backlink-card-meta">
+            <span class="backlink-date">{{ bl.date | date: "%Y-%m-%d" }}</span>
+            <span class="material-symbols-outlined backlink-arrow-icon">arrow_outward</span>
+          </div>
+          <div class="backlink-card-title">{{ bl.title }}</div>
+          {% if bl.excerpt and bl.excerpt != "" %}
+          <div class="backlink-card-excerpt">{{ bl.excerpt | strip_html | truncate: 90 }}</div>
+          {% endif %}
+        </a>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+  {% endif %}
+
   <!-- Navigation -->
   <div style="display:flex;gap:12px;margin:20px 0;flex-wrap:wrap">
     {% if page.previous.url %}

@@ -1,0 +1,265 @@
+// ==============================================================================
+// Material Design 3 Terminal & Asciinema Player Frame
+// Supports .cast recordings and interactive mock terminals with CRT scanlines.
+// ==============================================================================
+
+.md3-terminal-frame {
+  background: color-mix(in srgb, #0d1117 95%, black);
+  border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 60%, transparent);
+  border-radius: var(--shape-medium, 12px);
+  overflow: hidden;
+  margin: 1.5em 0;
+  box-shadow: var(--elev-2, 0 4px 16px rgba(0,0,0,0.3));
+  position: relative;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+
+  .terminal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 12px;
+    background: color-mix(in srgb, var(--md-sys-color-surface-container-high) 90%, #161b22);
+    border-bottom: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 40%, transparent);
+    user-select: none;
+    gap: 8px;
+    flex-wrap: wrap;
+
+    .terminal-header-left {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+    }
+
+    .terminal-dots {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+
+      .terminal-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        display: inline-block;
+
+        &.dot-red { background: #ff5f56; }
+        &.dot-yellow { background: #ffbd2e; }
+        &.dot-green { background: #27c93f; }
+      }
+    }
+
+    .terminal-title-wrap {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.78125rem;
+      font-weight: 600;
+      color: var(--md-sys-color-on-surface);
+
+      .terminal-icon {
+        font-size: 16px;
+        color: var(--md-sys-color-primary);
+      }
+    }
+
+    .terminal-badge {
+      font-size: 0.65rem;
+      padding: 1px 6px;
+      border-radius: 4px;
+      background: color-mix(in srgb, var(--md-sys-color-surface-container-highest) 80%, transparent);
+      color: var(--md-sys-color-primary);
+      border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 30%, transparent);
+      font-family: 'JetBrains Mono', 'Fira Code', monospace;
+      font-weight: 700;
+    }
+
+    .terminal-actions {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .terminal-action-btn {
+      background: color-mix(in srgb, var(--md-sys-color-surface-container-highest) 75%, transparent);
+      border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 45%, transparent);
+      color: var(--md-sys-color-on-surface-variant);
+      border-radius: var(--shape-small, 6px);
+      cursor: pointer;
+      padding: 3px 8px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.72rem;
+      font-family: inherit;
+      transition: all var(--dur-short2, 100ms) var(--motion-standard, ease);
+
+      .material-symbols-outlined {
+        font-size: 14px;
+      }
+
+      &:hover {
+        background: var(--md-sys-color-secondary-container);
+        color: var(--md-sys-color-on-secondary-container);
+      }
+
+      &.active {
+        background: color-mix(in srgb, var(--md-sys-color-primary-container) 85%, transparent);
+        color: var(--md-sys-color-on-primary-container);
+        border-color: var(--md-sys-color-primary);
+      }
+    }
+  }
+
+  /* CRT Scanline Effect Overlay */
+  .terminal-crt-overlay {
+    pointer-events: none;
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: linear-gradient(
+      rgba(18, 16, 16, 0) 50%,
+      rgba(0, 0, 0, 0.35) 50%
+    ), linear-gradient(
+      90deg,
+      rgba(255, 0, 0, 0.03),
+      rgba(0, 255, 0, 0.01),
+      rgba(0, 0, 255, 0.03)
+    );
+    background-size: 100% 3px, 6px 100%;
+    z-index: 10;
+    display: none;
+
+    &.enabled {
+      display: block;
+    }
+  }
+
+  .terminal-body {
+    position: relative;
+    background: #0d1117;
+    min-height: 120px;
+    width: 100%;
+    box-sizing: border-box;
+
+    .cast-player-mount {
+      width: 100%;
+      min-height: 140px;
+
+      .asciinema-player-wrapper {
+        border-radius: 0 !important;
+      }
+    }
+  }
+
+  /* Mock Terminal Screen */
+  .mock-terminal-screen {
+    padding: 14px 16px;
+    font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+    font-size: 0.8125rem;
+    line-height: 1.55;
+    color: #c9d1d9;
+    min-height: 120px;
+    max-height: 380px;
+    overflow-y: auto;
+    white-space: pre-wrap;
+    word-break: break-word;
+    user-select: text;
+    scrollbar-width: thin;
+    scrollbar-color: #30363d transparent;
+
+    &::-webkit-scrollbar {
+      width: 5px;
+    }
+    &::-webkit-scrollbar-thumb {
+      background-color: #30363d;
+      border-radius: 4px;
+    }
+
+    .mock-prompt {
+      color: var(--md-sys-color-primary, #58a6ff);
+      font-weight: 700;
+      margin-right: 4px;
+      user-select: none;
+    }
+
+    .mock-cmd {
+      color: #f0f6fc;
+      font-weight: 600;
+    }
+
+    .mock-output {
+      color: #8b949e;
+      margin-bottom: 6px;
+    }
+
+    .mock-cursor {
+      display: inline-block;
+      width: 8px;
+      height: 15px;
+      background: var(--md-sys-color-primary, #58a6ff);
+      vertical-align: middle;
+      margin-left: 2px;
+      animation: mockCursorBlink 1s infinite;
+    }
+  }
+
+  /* Mock Terminal Controls Bar */
+  .mock-controls-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 12px;
+    background: color-mix(in srgb, var(--md-sys-color-surface-container-high) 85%, #161b22);
+    border-top: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 35%, transparent);
+    font-size: 0.75rem;
+    user-select: none;
+    gap: 8px;
+    flex-wrap: wrap;
+
+    .mock-btn-group {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+
+      .mock-ctrl-btn {
+        background: color-mix(in srgb, var(--md-sys-color-surface-container-highest) 70%, #21262d);
+        border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 40%, #30363d);
+        color: var(--md-sys-color-on-surface, #c9d1d9);
+        border-radius: var(--shape-small, 6px);
+        cursor: pointer;
+        padding: 4px 8px;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 0.72rem;
+        font-family: inherit;
+        transition: all var(--dur-short2, 100ms) var(--motion-standard, ease);
+
+        .material-symbols-outlined {
+          font-size: 15px;
+        }
+
+        &:hover {
+          background: var(--md-sys-color-secondary-container, #30363d);
+          color: var(--md-sys-color-on-secondary-container, #fff);
+        }
+
+        &:active {
+          transform: scale(0.95);
+        }
+      }
+    }
+
+    .mock-status-text {
+      color: var(--md-sys-color-on-surface-variant, #8b949e);
+      font-size: 0.7rem;
+      font-family: 'JetBrains Mono', monospace;
+    }
+  }
+}
+
+@keyframes mockCursorBlink {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}

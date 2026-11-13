@@ -161,30 +161,42 @@ async function initMermaid() {
 }
 
 async function initSTL() {
-  const blocks = getCodeBlocks('stl').map(b => ({ ...b, stlType: 'stl' })).concat(
-                 getCodeBlocks('stljs').map(b => ({ ...b, stlType: 'stljs' })));
+  const blocks = getCodeBlocks('stl').map(b => ({ ...b, modelType: 'stl' })).concat(
+                 getCodeBlocks('stljs').map(b => ({ ...b, modelType: 'stljs' }))).concat(
+                 getCodeBlocks('glb').map(b => ({ ...b, modelType: 'glb' }))).concat(
+                 getCodeBlocks('gltf').map(b => ({ ...b, modelType: 'gltf' })));
   if (blocks.length === 0) return;
 
+  function escapeHtml(str) {
+    if (!str) return '';
+    return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
   try {
-    let THREE, STLLoader, OrbitControls;
+    let THREE, STLLoader, GLTFLoader, OrbitControls;
     try {
       THREE = await import('three');
-      const loaderMod = await import('three/addons/loaders/STLLoader.js');
-      STLLoader = loaderMod.STLLoader;
+      const stlMod = await import('three/addons/loaders/STLLoader.js');
+      STLLoader = stlMod.STLLoader;
+      const gltfMod = await import('three/addons/loaders/GLTFLoader.js');
+      GLTFLoader = gltfMod.GLTFLoader;
       const controlsMod = await import('three/addons/controls/OrbitControls.js');
       OrbitControls = controlsMod.OrbitControls;
     } catch (e) {
       console.warn('Bare import failed, falling back to full jsdelivr URL:', e);
       THREE = await import('https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.module.js');
-      const loaderMod = await import('https://cdn.jsdelivr.net/npm/three@0.158.0/examples/jsm/loaders/STLLoader.js');
-      STLLoader = loaderMod.STLLoader;
+      const stlMod = await import('https://cdn.jsdelivr.net/npm/three@0.158.0/examples/jsm/loaders/STLLoader.js');
+      STLLoader = stlMod.STLLoader;
+      const gltfMod = await import('https://cdn.jsdelivr.net/npm/three@0.158.0/examples/jsm/loaders/GLTFLoader.js');
+      GLTFLoader = gltfMod.GLTFLoader;
       const controlsMod = await import('https://cdn.jsdelivr.net/npm/three@0.158.0/examples/jsm/controls/OrbitControls.js');
       OrbitControls = controlsMod.OrbitControls;
     }
 
-    const loader = new STLLoader();
+    const stlLoader = new STLLoader();
+    const gltfLoader = new GLTFLoader();
 
-    blocks.forEach(({ wrapper, codeText, stlType }) => {
+    blocks.forEach(({ wrapper, codeText, modelType }) => {
       const container = document.createElement('div');
       container.className = 'stl-viewer';
       wrapper.parentNode.replaceChild(container, wrapper);
@@ -200,7 +212,10 @@ async function initSTL() {
       
       let renderer;
       try {
-        renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        renderer.toneMappingExposure = 1.1;
+        renderer.outputColorSpace = THREE.SRGBColorSpace;
       } catch (e) {
         console.warn('WebGLRenderer failed to initialize:', e);
         container.innerHTML = `
@@ -223,14 +238,20 @@ async function initSTL() {
       controls.enabled = false; // Disable inline interaction to prevent trapping page scroll
 
       let initialCameraZ = 100;
+      let activeMixer = null;
+      const clock = new THREE.Clock();
 
-      const hemiLight = new THREE.HemisphereLight(0xffffff, 0x444444, 1.0);
+      const hemiLight = new THREE.HemisphereLight(0xffffff, 0x444444, 1.2);
       hemiLight.position.set(0, 200, 0);
       scene.add(hemiLight);
 
-      const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
-      dirLight.position.set(0, 200, 100);
+      const dirLight = new THREE.DirectionalLight(0xffffff, 1.2);
+      dirLight.position.set(100, 200, 100);
       scene.add(dirLight);
+
+      const dirLight2 = new THREE.DirectionalLight(0xffffff, 0.6);
+      dirLight2.position.set(-100, -100, -100);
+      scene.add(dirLight2);
 
       const processGeometry = (geometry, material) => {
         const mesh = new THREE.Mesh(geometry, material);
@@ -248,6 +269,34 @@ async function initSTL() {
         initialCameraZ = cameraZ;
 
         scene.add(mesh);
+      };
+
+      const processGLTF = (gltf) => {
+        const model = gltf.scene;
+        scene.add(model);
+
+        const box = new THREE.Box3().setFromObject(model);
+        const center = new THREE.Vector3();
+        box.getCenter(center);
+        model.position.sub(center);
+
+        const size = new THREE.Vector3();
+        box.getSize(size);
+        const maxDim = Math.max(size.x, size.y, size.z) || 1;
+        const fov = camera.fov * (Math.PI / 180);
+        let cameraZ = Math.abs(maxDim / 2 / Math.tan(fov / 2)) * 1.6;
+        camera.position.set(0, maxDim * 0.1, cameraZ);
+        initialCameraZ = cameraZ;
+        camera.lookAt(0, 0, 0);
+        controls.target.set(0, 0, 0);
+        controls.update();
+
+        // Skeletal animation support
+        if (gltf.animations && gltf.animations.length > 0) {
+          activeMixer = new THREE.AnimationMixer(model);
+          const action = activeMixer.clipAction(gltf.animations[0]);
+          action.play();
+        }
       };
 
       const resetCameraView = () => {
@@ -284,7 +333,7 @@ async function initSTL() {
       titleBadge.className = 'render-fullscreen-title';
       titleBadge.innerHTML = `
         <span class="material-symbols-outlined">view_in_ar</span>
-        <span>3D 模型预览</span>
+        <span>${modelType.toUpperCase()} 3D 模型预览</span>
       `;
       container.appendChild(titleBadge);
 
@@ -373,18 +422,44 @@ async function initSTL() {
           clearcoatRoughness: 0.5
         });
 
-        if (stlType === 'stljs') {
+        if (modelType === 'stljs') {
           const scriptFunc = new Function('THREE', 'scene', 'material', 'camera', 'renderer', codeText);
           scriptFunc(THREE, scene, material, camera, renderer);
-        } else {
+        } else if (modelType === 'stl') {
           const trimmedText = codeText.trim();
           if (trimmedText.startsWith('http') || trimmedText.startsWith('/')) {
-            loader.load(trimmedText, function(geometry) {
+            stlLoader.load(trimmedText, function(geometry) {
               processGeometry(geometry, material);
             });
           } else {
-            const geometry = loader.parse(codeText);
+            const geometry = stlLoader.parse(codeText);
             processGeometry(geometry, material);
+          }
+        } else if (modelType === 'glb' || modelType === 'gltf') {
+          let trimmedText = codeText.trim();
+          if (trimmedText.startsWith('{') && trimmedText.endsWith('}')) {
+            try {
+              const cfg = JSON.parse(trimmedText);
+              if (cfg.src) {
+                trimmedText = cfg.src;
+              } else {
+                gltfLoader.parse(trimmedText, '', processGLTF, (err) => console.error(err));
+                trimmedText = null;
+              }
+            } catch (e) {
+              // fallback to direct string
+            }
+          }
+          if (trimmedText) {
+            gltfLoader.load(trimmedText, processGLTF, undefined, (err) => {
+              console.error('Failed to load GLTF/GLB model:', err);
+              container.innerHTML = `
+                <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:100%; color:var(--md-sys-color-error); text-align:center; padding:16px;">
+                  <span class="material-symbols-outlined" style="font-size:2rem; margin-bottom:8px;">error</span>
+                  <span>加载 3D 模型失败: ${escapeHtml(err.message || trimmedText)}</span>
+                </div>
+              `;
+            });
           }
         }
         
@@ -395,12 +470,18 @@ async function initSTL() {
             const newPrimary = newStyles.getPropertyValue('--md-sys-color-primary').trim() || '#0061A4';
             
             scene.background.set(newSurface);
-            material.color.set(newPrimary);
+            if (modelType === 'stl' || modelType === 'stljs') {
+              material.color.set(newPrimary);
+            }
           }, 50);
         });
         
         const animate = function () {
           requestAnimationFrame(animate);
+          const delta = clock.getDelta();
+          if (activeMixer) {
+            activeMixer.update(delta);
+          }
           controls.update();
           renderer.render(scene, camera);
         };
@@ -673,15 +754,726 @@ async function initGeoJSON() {
   }
 }
 
+async function initTerminal() {
+  const castBlocks = getCodeBlocks('cast').concat(getCodeBlocks('asciinema'));
+  const mockBlocks = getCodeBlocks('terminal').concat(getCodeBlocks('console')).concat(getCodeBlocks('mock-terminal'));
+
+  if (castBlocks.length === 0 && mockBlocks.length === 0) return;
+
+  function escapeHtml(str) {
+    if (!str) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  // --- 1. Handle Asciinema .cast Blocks ---
+  if (castBlocks.length > 0) {
+    if (!document.getElementById('asciinema-player-css')) {
+      const link = document.createElement('link');
+      link.id = 'asciinema-player-css';
+      link.rel = 'stylesheet';
+      link.href = 'https://cdn.jsdelivr.net/npm/asciinema-player@3.8.1/dist/bundle/asciinema-player.css';
+      document.head.appendChild(link);
+    }
+    if (!window.AsciinemaPlayer) {
+      try {
+        await new Promise((resolve, reject) => {
+          const script = document.createElement('script');
+          script.src = 'https://cdn.jsdelivr.net/npm/asciinema-player@3.8.1/dist/bundle/asciinema-player.min.js';
+          script.onload = resolve;
+          script.onerror = () => reject(new Error('无法加载 Asciinema 播放器'));
+          document.head.appendChild(script);
+        });
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    castBlocks.forEach(({ wrapper, codeText }) => {
+      let src = codeText.trim();
+      let title = '终端录屏回放';
+      let options = {
+        cols: 80,
+        rows: 14,
+        autoPlay: false,
+        speed: 1.5,
+        theme: 'nord',
+        fit: 'width'
+      };
+
+      if (src.startsWith('{') && src.endsWith('}')) {
+        try {
+          const config = JSON.parse(src);
+          if (config.src) src = config.src;
+          if (config.title) title = config.title;
+          if (config.cols) options.cols = config.cols;
+          if (config.rows) options.rows = config.rows;
+          if (config.speed) options.speed = config.speed;
+          if (config.theme) options.theme = config.theme;
+          if (config.autoPlay !== undefined) options.autoPlay = config.autoPlay;
+        } catch (e) {
+          // not JSON, fallback
+        }
+      } else if (src.startsWith('{"version": 2')) {
+        const blob = new Blob([src], { type: 'text/plain' });
+        src = URL.createObjectURL(blob);
+      }
+
+      const frame = document.createElement('div');
+      frame.className = 'md3-terminal-frame';
+      frame.innerHTML = `
+        <div class="terminal-header">
+          <div class="terminal-header-left">
+            <div class="terminal-dots">
+              <span class="terminal-dot dot-red"></span>
+              <span class="terminal-dot dot-yellow"></span>
+              <span class="terminal-dot dot-green"></span>
+            </div>
+            <div class="terminal-title-wrap">
+              <span class="material-symbols-outlined terminal-icon">terminal</span>
+              <span class="terminal-title-text">${escapeHtml(title)}</span>
+              <span class="terminal-badge">.cast</span>
+            </div>
+          </div>
+          <div class="terminal-actions">
+            <button class="terminal-action-btn btn-crt-toggle" title="切换 CRT 显像管扫描线效果" aria-label="CRT 扫描线">
+              <span class="material-symbols-outlined">tv</span>
+              <span>CRT 扫描线</span>
+            </button>
+            <button class="terminal-action-btn btn-copy-terminal" title="复制终端文本" aria-label="复制终端文本">
+              <span class="material-symbols-outlined">content_copy</span>
+              <span>复制</span>
+            </button>
+          </div>
+        </div>
+        <div class="terminal-body">
+          <div class="terminal-crt-overlay"></div>
+          <div class="cast-player-mount"></div>
+        </div>
+      `;
+
+      wrapper.parentNode.replaceChild(frame, wrapper);
+
+      const crtBtn = frame.querySelector('.btn-crt-toggle');
+      const crtOverlay = frame.querySelector('.terminal-crt-overlay');
+      crtBtn.addEventListener('click', () => {
+        const active = crtOverlay.classList.toggle('enabled');
+        crtBtn.classList.toggle('active', active);
+      });
+
+      const copyBtn = frame.querySelector('.btn-copy-terminal');
+      copyBtn.addEventListener('click', () => {
+        const mount = frame.querySelector('.cast-player-mount');
+        const text = mount ? mount.innerText : '';
+        if (text) {
+          navigator.clipboard.writeText(text).then(() => {
+            copyBtn.querySelector('span:last-child').textContent = '已复制';
+            setTimeout(() => { copyBtn.querySelector('span:last-child').textContent = '复制'; }, 2000);
+          });
+        }
+      });
+
+      const mount = frame.querySelector('.cast-player-mount');
+      if (window.AsciinemaPlayer) {
+        try {
+          AsciinemaPlayer.create(src, mount, options);
+        } catch (err) {
+          console.error('Failed to create Asciinema player:', err);
+          mount.innerHTML = `<div style="padding:16px; color:var(--md-sys-color-error);">无法加载 Asciinema 播放器: ${escapeHtml(err.message)}</div>`;
+        }
+      }
+    });
+  }
+
+  // --- 2. Handle Mock Terminal Blocks ---
+  mockBlocks.forEach(({ wrapper, codeText }) => {
+    const lines = codeText.trim().split('\n');
+    const steps = [];
+    let currentStep = null;
+
+    for (const line of lines) {
+      if (line.startsWith('$ ') || line.startsWith('# ') || line.startsWith('> ')) {
+        if (currentStep) steps.push(currentStep);
+        currentStep = { prompt: line.slice(0, 2), cmd: line.slice(2), outputLines: [] };
+      } else {
+        if (currentStep) {
+          currentStep.outputLines.push(line);
+        } else {
+          currentStep = { prompt: '$ ', cmd: '', outputLines: [line] };
+        }
+      }
+    }
+    if (currentStep) steps.push(currentStep);
+
+    const frame = document.createElement('div');
+    frame.className = 'md3-terminal-frame';
+    frame.innerHTML = `
+      <div class="terminal-header">
+        <div class="terminal-header-left">
+          <div class="terminal-dots">
+            <span class="terminal-dot dot-red"></span>
+            <span class="terminal-dot dot-yellow"></span>
+            <span class="terminal-dot dot-green"></span>
+          </div>
+          <div class="terminal-title-wrap">
+            <span class="material-symbols-outlined terminal-icon">terminal</span>
+            <span class="terminal-title-text">交互式终端演示</span>
+            <span class="terminal-badge">Terminal</span>
+          </div>
+        </div>
+        <div class="terminal-actions">
+          <button class="terminal-action-btn btn-crt-toggle" title="切换 CRT 显像管扫描线效果" aria-label="CRT 扫描线">
+            <span class="material-symbols-outlined">tv</span>
+            <span>CRT 扫描线</span>
+          </button>
+          <button class="terminal-action-btn btn-copy-terminal" title="复制终端全部内容" aria-label="复制终端文本">
+            <span class="material-symbols-outlined">content_copy</span>
+            <span>复制</span>
+          </button>
+        </div>
+      </div>
+      <div class="terminal-body">
+        <div class="terminal-crt-overlay"></div>
+        <div class="mock-terminal-screen"></div>
+      </div>
+      <div class="mock-controls-bar">
+        <div class="mock-btn-group">
+          <button class="mock-ctrl-btn btn-play-pause" title="自动播放命令模拟输入">
+            <span class="material-symbols-outlined">play_arrow</span>
+            <span class="btn-text">播放</span>
+          </button>
+          <button class="mock-ctrl-btn btn-step" title="逐帧推进到下一条命令">
+            <span class="material-symbols-outlined">skip_next</span>
+            <span>单步</span>
+          </button>
+          <button class="mock-ctrl-btn btn-show-all" title="跳过动画直接展示全部">
+            <span class="material-symbols-outlined">fast_forward</span>
+            <span>全部</span>
+          </button>
+          <button class="mock-ctrl-btn btn-replay" title="重置回到初始状态">
+            <span class="material-symbols-outlined">replay</span>
+            <span>重置</span>
+          </button>
+        </div>
+        <div class="mock-status-text">就绪</div>
+      </div>
+    `;
+
+    wrapper.parentNode.replaceChild(frame, wrapper);
+
+    const screen = frame.querySelector('.mock-terminal-screen');
+    const btnPlay = frame.querySelector('.btn-play-pause');
+    const btnStep = frame.querySelector('.btn-step');
+    const btnShowAll = frame.querySelector('.btn-show-all');
+    const btnReplay = frame.querySelector('.btn-replay');
+    const btnCrt = frame.querySelector('.btn-crt-toggle');
+    const btnCopy = frame.querySelector('.btn-copy-terminal');
+    const crtOverlay = frame.querySelector('.terminal-crt-overlay');
+    const statusText = frame.querySelector('.mock-status-text');
+
+    let currentStepIdx = 0;
+    let isPlaying = false;
+    let timerId = null;
+
+    btnCrt.addEventListener('click', () => {
+      const active = crtOverlay.classList.toggle('enabled');
+      btnCrt.classList.toggle('active', active);
+    });
+
+    btnCopy.addEventListener('click', () => {
+      navigator.clipboard.writeText(screen.innerText).then(() => {
+        btnCopy.querySelector('span:last-child').textContent = '已复制';
+        setTimeout(() => { btnCopy.querySelector('span:last-child').textContent = '复制'; }, 2000);
+      });
+    });
+
+    function renderUpToStep(stepIdx, animateTyping = false, onDone) {
+      if (stepIdx >= steps.length) {
+        statusText.textContent = `播放完毕 (${steps.length}/${steps.length})`;
+        btnPlay.querySelector('.material-symbols-outlined').textContent = 'replay';
+        btnPlay.querySelector('.btn-text').textContent = '重播';
+        if (onDone) onDone();
+        return;
+      }
+
+      statusText.textContent = `步骤 ${stepIdx + 1} / ${steps.length}`;
+
+      let html = '';
+      for (let i = 0; i < stepIdx; i++) {
+        const s = steps[i];
+        if (s.cmd) html += `<div><span class="mock-prompt">${escapeHtml(s.prompt)}</span><span class="mock-cmd">${escapeHtml(s.cmd)}</span></div>`;
+        if (s.outputLines.length > 0) html += `<div class="mock-output">${escapeHtml(s.outputLines.join('\n'))}</div>`;
+      }
+
+      const current = steps[stepIdx];
+      if (!animateTyping) {
+        if (current.cmd) html += `<div><span class="mock-prompt">${escapeHtml(current.prompt)}</span><span class="mock-cmd">${escapeHtml(current.cmd)}</span></div>`;
+        if (current.outputLines.length > 0) html += `<div class="mock-output">${escapeHtml(current.outputLines.join('\n'))}</div>`;
+        screen.innerHTML = html;
+        screen.scrollTop = screen.scrollHeight;
+        if (onDone) onDone();
+      } else {
+        screen.innerHTML = html + `<div><span class="mock-prompt">${escapeHtml(current.prompt)}</span><span class="mock-cmd" id="typing-cmd"></span><span class="mock-cursor"></span></div>`;
+        const typingEl = screen.querySelector('#typing-cmd');
+        const cmdText = current.cmd;
+        let charIdx = 0;
+
+        const typeInterval = setInterval(() => {
+          if (!isPlaying && isPlaying !== undefined) {
+            clearInterval(typeInterval);
+            return;
+          }
+          if (charIdx < cmdText.length) {
+            typingEl.textContent += cmdText[charIdx];
+            charIdx++;
+            screen.scrollTop = screen.scrollHeight;
+          } else {
+            clearInterval(typeInterval);
+            setTimeout(() => {
+              const cursor = screen.querySelector('.mock-cursor');
+              if (cursor) cursor.remove();
+              if (current.outputLines.length > 0) {
+                const outDiv = document.createElement('div');
+                outDiv.className = 'mock-output';
+                outDiv.textContent = current.outputLines.join('\n');
+                screen.appendChild(outDiv);
+                screen.scrollTop = screen.scrollHeight;
+              }
+              if (onDone) onDone();
+            }, 200);
+          }
+        }, 30);
+      }
+    }
+
+    function playNext() {
+      if (currentStepIdx >= steps.length) {
+        isPlaying = false;
+        return;
+      }
+      renderUpToStep(currentStepIdx, true, () => {
+        currentStepIdx++;
+        if (isPlaying && currentStepIdx < steps.length) {
+          timerId = setTimeout(playNext, 600);
+        } else if (currentStepIdx >= steps.length) {
+          isPlaying = false;
+        }
+      });
+    }
+
+    btnPlay.addEventListener('click', () => {
+      if (currentStepIdx >= steps.length) {
+        currentStepIdx = 0;
+        screen.innerHTML = '';
+      }
+      if (isPlaying) {
+        isPlaying = false;
+        clearTimeout(timerId);
+        btnPlay.querySelector('.material-symbols-outlined').textContent = 'play_arrow';
+        btnPlay.querySelector('.btn-text').textContent = '播放';
+      } else {
+        isPlaying = true;
+        btnPlay.querySelector('.material-symbols-outlined').textContent = 'pause';
+        btnPlay.querySelector('.btn-text').textContent = '暂停';
+        playNext();
+      }
+    });
+
+    btnStep.addEventListener('click', () => {
+      isPlaying = false;
+      clearTimeout(timerId);
+      btnPlay.querySelector('.material-symbols-outlined').textContent = 'play_arrow';
+      btnPlay.querySelector('.btn-text').textContent = '播放';
+      if (currentStepIdx < steps.length) {
+        renderUpToStep(currentStepIdx, false);
+        currentStepIdx++;
+      }
+    });
+
+    btnShowAll.addEventListener('click', () => {
+      isPlaying = false;
+      clearTimeout(timerId);
+      for (let i = 0; i < steps.length; i++) {
+        renderUpToStep(i, false);
+      }
+      currentStepIdx = steps.length;
+      renderUpToStep(steps.length);
+    });
+
+    btnReplay.addEventListener('click', () => {
+      isPlaying = false;
+      clearTimeout(timerId);
+      currentStepIdx = 0;
+      screen.innerHTML = '<span class="mock-prompt">$ </span><span class="mock-cursor"></span>';
+      statusText.textContent = '已重置';
+      btnPlay.querySelector('.material-symbols-outlined').textContent = 'play_arrow';
+      btnPlay.querySelector('.btn-text').textContent = '播放';
+    });
+
+    // Initial state: show prompt
+    screen.innerHTML = '<span class="mock-prompt">$ </span><span class="mock-cursor"></span>';
+  });
+}
+
+async function initShaders() {
+  const shaderBlocks = getCodeBlocks('shader')
+    .concat(getCodeBlocks('glsl'))
+    .concat(getCodeBlocks('frag'))
+    .concat(getCodeBlocks('fragment'));
+
+  if (shaderBlocks.length === 0) return;
+
+  function escapeHtml(str) {
+    if (!str) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  shaderBlocks.forEach(({ wrapper, codeText }) => {
+    const rawCode = codeText.trim();
+    const card = document.createElement('div');
+    card.className = 'md3-shader-card';
+    card.innerHTML = `
+      <div class="shader-header">
+        <div class="shader-header-left">
+          <div class="shader-title-wrap">
+            <span class="material-symbols-outlined shader-icon">gradient</span>
+            <span class="shader-title-text">GLSL 实时着色器</span>
+            <span class="shader-badge">Shader</span>
+          </div>
+        </div>
+        <div class="shader-actions">
+          <span class="shader-fps">60 FPS</span>
+          <button class="shader-btn btn-play" title="播放 / 暂停着色器" aria-label="播放暂停">
+            <span class="material-symbols-outlined">pause</span>
+          </button>
+          <button class="shader-btn btn-reset" title="重置时间与动画" aria-label="重置">
+            <span class="material-symbols-outlined">replay</span>
+          </button>
+          <button class="shader-btn btn-code" title="编辑着色器代码并实时查看效果" aria-label="编辑代码">
+            <span class="material-symbols-outlined">code</span>
+            <span>代码</span>
+          </button>
+          <button class="shader-btn btn-fullscreen" title="全屏查看" aria-label="全屏">
+            <span class="material-symbols-outlined">fullscreen</span>
+          </button>
+        </div>
+      </div>
+      <div class="shader-canvas-wrap">
+        <canvas class="shader-canvas"></canvas>
+        <div class="shader-error-banner"></div>
+      </div>
+      <div class="shader-editor-drawer">
+        <textarea class="shader-textarea" spellcheck="false"></textarea>
+        <div class="shader-editor-bar">
+          <button class="shader-btn btn-apply">
+            <span class="material-symbols-outlined">play_arrow</span>
+            <span>编译并应用</span>
+          </button>
+        </div>
+      </div>
+    `;
+
+    wrapper.parentNode.replaceChild(card, wrapper);
+
+    const canvas = card.querySelector('.shader-canvas');
+    const errorBanner = card.querySelector('.shader-error-banner');
+    const editorDrawer = card.querySelector('.shader-editor-drawer');
+    const textarea = card.querySelector('.shader-textarea');
+    const fpsLabel = card.querySelector('.shader-fps');
+    const btnPlay = card.querySelector('.btn-play');
+    const btnReset = card.querySelector('.btn-reset');
+    const btnCode = card.querySelector('.btn-code');
+    const btnFullscreen = card.querySelector('.btn-fullscreen');
+    const btnApply = card.querySelector('.btn-apply');
+
+    textarea.value = rawCode;
+
+    // WebGL setup
+    let gl = null;
+    try {
+      gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+    } catch (e) {
+      console.warn('WebGL init failed:', e);
+    }
+
+    if (!gl) {
+      errorBanner.textContent = '当前浏览器或设备无法启用 WebGL 硬件加速。';
+      errorBanner.style.display = 'block';
+      return;
+    }
+
+    const vertices = new Float32Array([
+      -1, -1,
+       1, -1,
+      -1,  1,
+      -1,  1,
+       1, -1,
+       1,  1
+    ]);
+    const vertexBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
+
+    let program = null;
+    let aPosition = -1;
+    let uResolution = null;
+    let uTime = null;
+    let uTimeDelta = null;
+    let uFrame = null;
+    let uMouse = null;
+
+    function wrapFragmentShader(code) {
+      if (code.includes('mainImage')) {
+        return `
+          precision highp float;
+          uniform vec2 iResolution;
+          uniform float iTime;
+          uniform float iTimeDelta;
+          uniform int iFrame;
+          uniform vec4 iMouse;
+
+          ${code}
+
+          void main() {
+            vec4 color = vec4(0.0);
+            mainImage(color, gl_FragCoord.xy);
+            gl_FragColor = color;
+          }
+        `;
+      }
+      let full = code;
+      if (!full.includes('precision ')) {
+        full = 'precision highp float;\n' + full;
+      }
+      const uniforms = [];
+      if (!full.includes('iResolution')) uniforms.push('uniform vec2 iResolution;');
+      if (!full.includes('iTime')) uniforms.push('uniform float iTime;');
+      if (!full.includes('iTimeDelta')) uniforms.push('uniform float iTimeDelta;');
+      if (!full.includes('iFrame')) uniforms.push('uniform int iFrame;');
+      if (!full.includes('iMouse')) uniforms.push('uniform vec4 iMouse;');
+
+      return uniforms.join('\n') + '\n' + full;
+    }
+
+    function compileShader(fragCode) {
+      const vertSource = `
+        attribute vec2 aPosition;
+        void main() {
+          gl_Position = vec4(aPosition, 0.0, 1.0);
+        }
+      `;
+
+      const vertShader = gl.createShader(gl.VERTEX_SHADER);
+      gl.shaderSource(vertShader, vertSource);
+      gl.compileShader(vertShader);
+
+      const fullFragSource = wrapFragmentShader(fragCode);
+      const fragShader = gl.createShader(gl.FRAGMENT_SHADER);
+      gl.shaderSource(fragShader, fullFragSource);
+      gl.compileShader(fragShader);
+
+      if (!gl.getShaderParameter(fragShader, gl.COMPILE_STATUS)) {
+        const info = gl.getShaderInfoLog(fragShader);
+        errorBanner.textContent = '着色器编译失败:\n' + info;
+        errorBanner.style.display = 'block';
+        gl.deleteShader(vertShader);
+        gl.deleteShader(fragShader);
+        return false;
+      }
+
+      const newProgram = gl.createProgram();
+      gl.attachShader(newProgram, vertShader);
+      gl.attachShader(newProgram, fragShader);
+      gl.linkProgram(newProgram);
+
+      if (!gl.getProgramParameter(newProgram, gl.LINK_STATUS)) {
+        errorBanner.textContent = '程序链接错误:\n' + gl.getProgramInfoLog(newProgram);
+        errorBanner.style.display = 'block';
+        gl.deleteShader(vertShader);
+        gl.deleteShader(fragShader);
+        gl.deleteProgram(newProgram);
+        return false;
+      }
+
+      if (program) gl.deleteProgram(program);
+      program = newProgram;
+
+      aPosition = gl.getAttribLocation(program, 'aPosition');
+      uResolution = gl.getUniformLocation(program, 'iResolution');
+      uTime = gl.getUniformLocation(program, 'iTime');
+      uTimeDelta = gl.getUniformLocation(program, 'iTimeDelta');
+      uFrame = gl.getUniformLocation(program, 'iFrame');
+      uMouse = gl.getUniformLocation(program, 'iMouse');
+
+      errorBanner.style.display = 'none';
+      return true;
+    }
+
+    compileShader(rawCode);
+
+    // Animation state
+    let isPlaying = true;
+    let isVisible = true;
+    let startTime = performance.now();
+    let pauseTime = 0;
+    let lastFrameTime = performance.now();
+    let frameCount = 0;
+    let mouse = [0, 0, 0, 0];
+    let isMouseDown = false;
+    let fpsCount = 0;
+    let fpsLast = performance.now();
+
+    // Mouse / Touch
+    const getPos = (e) => {
+      const rect = canvas.getBoundingClientRect();
+      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+      const x = (clientX - rect.left) * (canvas.width / rect.width);
+      const y = (rect.bottom - clientY) * (canvas.height / rect.height);
+      return [x, y];
+    };
+
+    canvas.addEventListener('pointerdown', (e) => {
+      isMouseDown = true;
+      const [x, y] = getPos(e);
+      mouse = [x, y, x, y];
+    });
+    canvas.addEventListener('pointermove', (e) => {
+      if (isMouseDown) {
+        const [x, y] = getPos(e);
+        mouse[0] = x;
+        mouse[1] = y;
+      }
+    });
+    window.addEventListener('pointerup', () => {
+      isMouseDown = false;
+      mouse[2] = 0;
+      mouse[3] = 0;
+    });
+
+    btnPlay.addEventListener('click', () => {
+      isPlaying = !isPlaying;
+      btnPlay.querySelector('.material-symbols-outlined').textContent = isPlaying ? 'pause' : 'play_arrow';
+      if (!isPlaying) {
+        pauseTime = (performance.now() - startTime) / 1000;
+      } else {
+        startTime = performance.now() - pauseTime * 1000;
+      }
+    });
+
+    btnReset.addEventListener('click', () => {
+      startTime = performance.now();
+      pauseTime = 0;
+      frameCount = 0;
+    });
+
+    btnCode.addEventListener('click', () => {
+      const open = editorDrawer.classList.toggle('open');
+      btnCode.classList.toggle('active', open);
+    });
+
+    btnApply.addEventListener('click', () => {
+      if (compileShader(textarea.value)) {
+        startTime = performance.now();
+        pauseTime = 0;
+        frameCount = 0;
+      }
+    });
+
+    // Fullscreen toggle
+    btnFullscreen.addEventListener('click', () => {
+      const isFs = card.classList.toggle('is-fullscreen');
+      btnFullscreen.querySelector('.material-symbols-outlined').textContent = isFs ? 'fullscreen_exit' : 'fullscreen';
+      btnFullscreen.title = isFs ? '退出全屏 (Esc)' : '全屏查看';
+    });
+
+    card._exitFullscreen = () => {
+      if (card.classList.contains('is-fullscreen')) {
+        card.classList.remove('is-fullscreen');
+        btnFullscreen.querySelector('.material-symbols-outlined').textContent = 'fullscreen';
+        btnFullscreen.title = '全屏查看';
+      }
+    };
+
+    // IntersectionObserver to save GPU/CPU when off-screen
+    if ('IntersectionObserver' in window) {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          isVisible = entry.isIntersecting;
+        });
+      }, { threshold: 0.05 });
+      observer.observe(card);
+    }
+
+    // Render loop
+    function render() {
+      if (isVisible && isPlaying && gl && program) {
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        const displayWidth = Math.floor(canvas.clientWidth * dpr);
+        const displayHeight = Math.floor(canvas.clientHeight * dpr);
+
+        if (canvas.width !== displayWidth || canvas.height !== displayHeight) {
+          canvas.width = displayWidth;
+          canvas.height = displayHeight;
+          gl.viewport(0, 0, canvas.width, canvas.height);
+        }
+
+        const now = performance.now();
+        const timeDelta = (now - lastFrameTime) / 1000;
+        lastFrameTime = now;
+        frameCount++;
+
+        fpsCount++;
+        if (now - fpsLast >= 1000) {
+          const currentFps = Math.round((fpsCount * 1000) / (now - fpsLast));
+          fpsLabel.textContent = `${currentFps} FPS`;
+          fpsCount = 0;
+          fpsLast = now;
+        }
+
+        const elapsed = (now - startTime) / 1000;
+
+        gl.useProgram(program);
+        gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+        gl.enableVertexAttribArray(aPosition);
+        gl.vertexAttribPointer(aPosition, 2, gl.FLOAT, false, 0, 0);
+
+        if (uResolution) gl.uniform2f(uResolution, canvas.width, canvas.height);
+        if (uTime) gl.uniform1f(uTime, elapsed);
+        if (uTimeDelta) gl.uniform1f(uTimeDelta, timeDelta);
+        if (uFrame) gl.uniform1i(uFrame, frameCount);
+        if (uMouse) gl.uniform4f(uMouse, mouse[0], mouse[1], mouse[2], mouse[3]);
+
+        gl.drawArrays(gl.TRIANGLES, 0, 6);
+      }
+      requestAnimationFrame(render);
+    }
+
+    requestAnimationFrame(render);
+  });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   initMermaid();
   initSTL();
   initGeoJSON();
+  initTerminal();
+  initShaders();
 });
 
 window.initMermaid = initMermaid;
 window.initSTL = initSTL;
 window.initGeoJSON = initGeoJSON;
+window.initTerminal = initTerminal;
+window.initShaders = initShaders;
 
 if (!window._renderFullscreenEscListenerAdded) {
   window._renderFullscreenEscListenerAdded = true;

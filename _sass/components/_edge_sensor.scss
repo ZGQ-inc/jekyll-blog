@@ -1,0 +1,193 @@
+// ==============================================================================
+// Material Design 3 Cloudflare Edge Sensor Micro-Badge & Modal
+// Displays live edge data center (Colo), HTTP/3 protocol, TLS, and RTT.
+// ==============================================================================
+
+.edge-sensor-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.edge-sensor-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 14px;
+  border-radius: 20px;
+  background: color-mix(in srgb, var(--md-sys-color-surface-container-high) 85%, transparent);
+  border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 45%, transparent);
+  font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+  font-size: 0.72rem;
+  color: var(--md-sys-color-on-surface-variant);
+  cursor: pointer;
+  user-select: none;
+  transition: all var(--dur-short3, 150ms) var(--motion-standard, ease);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+
+  &:hover {
+    background: var(--md-sys-color-surface-container-highest);
+    border-color: var(--md-sys-color-primary);
+    color: var(--md-sys-color-on-surface);
+    transform: translateY(-1px);
+    box-shadow: var(--elev-1);
+  }
+
+  &:active {
+    transform: scale(0.97);
+  }
+
+  .edge-sensor-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #27c93f;
+    display: inline-block;
+    box-shadow: 0 0 6px rgba(39, 201, 63, 0.6);
+    animation: edgeDotPulse 2s infinite ease-in-out;
+  }
+
+  .edge-colo {
+    font-weight: 700;
+    color: var(--md-sys-color-primary);
+  }
+
+  .edge-sep {
+    opacity: 0.4;
+  }
+
+  .edge-rtt {
+    color: #2e7d32;
+    font-weight: 600;
+
+    html[data-theme="dark"] & {
+      color: #75fbc0;
+    }
+  }
+}
+
+@keyframes edgeDotPulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.45;
+    transform: scale(0.85);
+  }
+}
+
+/* Edge Details Modal */
+.edge-sensor-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  align-items: center;
+  justify-content: center;
+
+  &.open {
+    display: flex;
+  }
+
+  .edge-sensor-modal-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+  }
+
+  .edge-sensor-modal-content {
+    position: relative;
+    background: var(--md-sys-color-surface-container);
+    border: 1px solid var(--md-sys-color-outline-variant);
+    border-radius: var(--shape-large, 16px);
+    width: 90%;
+    max-width: 360px;
+    padding: 20px;
+    box-shadow: var(--elev-4, 0 12px 36px rgba(0,0,0,0.5));
+    animation: edgeModalFadeIn 0.2s cubic-bezier(0.2, 0, 0, 1);
+    box-sizing: border-box;
+
+    .edge-sensor-modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 40%, transparent);
+
+      .edge-sensor-modal-title {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-weight: 700;
+        font-size: 0.9375rem;
+        color: var(--md-sys-color-primary);
+
+        .material-symbols-outlined {
+          font-size: 20px;
+        }
+      }
+
+      .edge-sensor-close-btn {
+        background: transparent;
+        border: none;
+        color: var(--md-sys-color-on-surface-variant);
+        cursor: pointer;
+        padding: 4px;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        &:hover {
+          background: var(--md-sys-color-surface-container-highest);
+          color: var(--md-sys-color-on-surface);
+        }
+      }
+    }
+
+    .edge-sensor-details-body {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+
+      .edge-detail-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-size: 0.8125rem;
+        padding: 4px 0;
+        border-bottom: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 25%, transparent);
+
+        &:last-child {
+          border-bottom: none;
+        }
+
+        .edge-detail-label {
+          color: var(--md-sys-color-on-surface-variant);
+        }
+
+        .edge-detail-val {
+          font-family: 'JetBrains Mono', monospace;
+          color: var(--md-sys-color-on-surface);
+          font-weight: 600;
+        }
+      }
+    }
+  }
+}
+
+@keyframes edgeModalFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}

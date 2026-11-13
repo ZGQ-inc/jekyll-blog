@@ -16,6 +16,12 @@
   - **Workers**：提供无服务器后端 API 服务。
   - **D1 数据库**：持久化存储文章数据、评论与动态。
   - **R2 对象存储**：分布式存储媒体资源（图片、附件等）。
+  - **Edge Sensor 边缘感知微徽章**：页脚智能感知读者当前接入的 Cloudflare 边缘节点代码（Colo，如 HKG、NRT、SJC、LAX）、HTTP 传输协议版本（HTTP/3 QUIC）、TLS 密码套件与往返通信延迟（RTT），点击可呼出节点拓扑详情模态框。
+- **WebAssembly 客户端即时算力（Pyodide & SQL.js）**：在浏览器本地零后端成本运行 Python 算法脚本与 SQLite 关系型数据库，配备 MD3 交互控制台，支持标准输入输出流与结构化表格渲染。
+- **终端会话录屏回放与交互终端（Asciinema & Mock Terminal）**：轻量级 Asciinema `.cast` 播放器与高度仿真的 MD3 / CRT 扫描线交互终端，支持单步调试、纯文本复制与动态打字机效果。
+- **GLSL Fragment Shader 实时着色器演示**：嵌入式轻量片元着色器渲染引擎，注入 `iTime`、`iResolution`、`iMouse`，支持文章内实时修改参数与代码并即时热重载。
+- **三维模型全格式扩展（STL & GLTF / GLB）**：依托 Three.js 升级支持包含 PBR 真实感物理材质、多光源阴影与骨骼动画（Skeletal Animation）的工业级 `.glb` / `.gltf` 3D 模型在线交互查看。
+- **双向反向链接网状图谱（Backlinks）**：编译期全站扫描文章内链与引用关系，在文章底部自动呈现网状双向反向链接卡片。
 - **Telegram 深度集成**：通过 Bot Webhook，支持从 Telegram 快捷管理博客，支持 Markdown 图文推送、实时接收评论通知等。
 - **Telegram Instant View (即时预览)**：内置专属定制的 Instant View 2.0 模板（`instantview/rules.xpath`），支持在 Telegram 内毫秒级秒开原生排版文章，并在频道推送与文章分享时自动挂载即时预览。
 - **自动化 CI/CD**：依托 GitHub Actions 实现自动化部署，代码 Push 即可触发全站自动生成和更新。
@@ -165,6 +171,7 @@ git push origin main
 | **[kramdown-parser-gfm](https://github.com/kramdown/parser-gfm)** | 默认 | [MIT](https://github.com/kramdown/parser-gfm/blob/master/COPYING) | GitHub 风格 Markdown (GFM) 语法解析器 |
 | **[nokogiri](https://github.com/sparklemotion/nokogiri)** | 默认 | [MIT](https://github.com/sparklemotion/nokogiri/blob/main/LICENSE.md) | HTML/XML DOM 解析与自定义 AST 语法转换 |
 | **[tzinfo](https://github.com/tzinfo/tzinfo)** | `>= 1, < 3` | [MIT](https://github.com/tzinfo/tzinfo/blob/master/LICENSE) | IANA 时区数据库支持 |
+| **[Backlinks Generator](_plugins/backlinks.rb)** | 本地插件 | [MIT](LICENSE) | 静态编译期双向反向链接网状拓扑生成器 |
 
 ### 2. 服务端与云原生 (Cloudflare Worker & Node.js)
 | 软件包 (Package) | 版本约束 | 开源协议 | 用途说明 |
@@ -180,7 +187,10 @@ git push origin main
 | **[Fuse.js](https://github.com/krisk/Fuse)** | `v7.0.0` | [Apache-2.0](https://github.com/krisk/Fuse/blob/master/LICENSE) | 客户端轻量级全文模糊搜索 |
 | **[MathJax](https://github.com/mathjax/MathJax)** | `v4` | [Apache-2.0](https://github.com/mathjax/MathJax/blob/master/LICENSE) | LaTeX 数学公式渲染引擎（支持移动端自动截断换行） |
 | **[Mermaid.js](https://github.com/mermaid-js/mermaid)** | `v10` ESM | [MIT](https://github.com/mermaid-js/mermaid/blob/develop/LICENSE) | 流程图、时序图与架构图动态渲染 |
-| **[Three.js](https://github.com/mrdoob/three.js)** | `r158` ESM | [MIT](https://github.com/mrdoob/three.js/blob/dev/LICENSE) | 3D WebGL 渲染引擎 (STL 模型在线交互查看) |
+| **[Three.js](https://github.com/mrdoob/three.js)** | `r158` ESM | [MIT](https://github.com/mrdoob/three.js/blob/dev/LICENSE) | 3D WebGL 渲染引擎 (STL, GLTF & GLB 模型在线交互查看) |
+| **[Pyodide](https://github.com/pyodide/pyodide)** | `v0.26.4` WASM | [MPL-2.0](https://github.com/pyodide/pyodide/blob/main/LICENSE) | 浏览器端 Python WebAssembly 运行时（零后端即时代码执行） |
+| **[SQL.js](https://github.com/sql-js/sql.js)** | `v1.12.0` WASM | [MIT](https://github.com/sql-js/sql.js/blob/master/LICENSE) | 浏览器端 SQLite 关系型数据库 WebAssembly 运行时 |
+| **[Asciinema Player](https://github.com/asciinema/asciinema-player)** | `v3.8.0` ESM | [Apache-2.0](https://github.com/asciinema/asciinema-player/blob/develop/LICENSE) | 终端会话 `.cast` 高保真录屏播放器 |
 | **[Leaflet](https://github.com/Leaflet/Leaflet)** | `v1.9.4` | [BSD-2-Clause](https://github.com/Leaflet/Leaflet/blob/main/LICENSE) | GeoJSON / TopoJSON 地图数据交互渲染 |
 
 ### 4. 字体与图标资产 (Typography & Icons)
@@ -204,6 +214,20 @@ git push origin main
 | **[Pixiv Embed Proxy](https://embed.pixiv.net/)** | `embed.pixiv.net` / `phixiv` | 突破 Pixiv 403 跨域防盗链，提取画作元数据并展示 MD3 画师徽标 |
 | **[e621 JSON API](https://e621.net/help/api)** | 官方 REST API | 抓取艺术插画元数据，生成 Safe / Questionable / Explicit 分级徽标与评分 |
 | **MD3 毛玻璃媒体遮罩** | CSS `backdrop-filter` + JS 交互 | 为剧透与敏感图片提供深度景深高斯模糊、安全提示及「点击确认显示」交互 |
+| **Cloudflare Edge Sensor** | `/cdn-cgi/trace` + Web Perf API | 实时感知边缘 PoP 节点代码、HTTP/3 协议、TLS 加密套件与往返网络 RTT 延迟 |
+
+### 6. Cloudflare Edge 边缘感知微徽章 (Edge Sensor Micro-Badge)
+
+为了直观展示 Cloudflare 全球边缘网络的低延迟分发与现代传输协议优势，博客页脚原生集成了 **Cloudflare Edge 边缘感知微徽章**。
+
+#### 工作原理与技术细节
+* **轻量端点请求**：页面加载时异步向 Cloudflare 官方边缘探针端点 `/cdn-cgi/trace` 发起轻量无损请求；
+* **参数智能提取与映射**：
+  * **Colo (数据中心三字代码)**：捕获当前接入节点代码（例如 `HKG`、`NRT`、`SJC`、`LAX`、`SIN` 等），并自动映射为城市全称（例如 `香港 (HKG)`、`东京 (NRT)`、`圣何塞 (SJC)`）；
+  * **HTTP 传输协议**：检测客户端与 CDN 协商的协议版本，优先标识 `HTTP/3` (QUIC) 或 `HTTP/2`；
+  * **TLS 密码套件**：识别 `TLSv1.3` 及现代强加密密码套件；
+  * **往返通信延迟 (RTT)**：借助高精度 Web Performance API 计算从客户端发起握手到首包返回的毫秒级往返网络延迟；
+* **MD3 交互胶囊与弹层**：展示为自带呼吸状态灯的胶囊微徽章，点击可呼出弹层展示包含客户端 IP 协议、数据中心区域与加密详情的完整拓扑卡片。
 
 
 ---
