@@ -11,26 +11,32 @@
 
 .code-action-btn {
   background: color-mix(in srgb, var(--md-sys-color-surface-container-highest) 75%, transparent);
-  border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 50%, transparent);
+  border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 45%, transparent);
   color: var(--md-sys-color-on-surface-variant);
   cursor: pointer;
-  padding: 4px 10px;
-  border-radius: var(--shape-small, 8px);
+  padding: 2px 8px;
+  height: 24px;
+  box-sizing: border-box;
+  border-radius: var(--shape-small, 6px);
   display: inline-flex;
   align-items: center;
-  gap: 5px;
-  font-size: 0.75rem;
+  gap: 4px;
+  font-size: 0.72rem;
   font-family: inherit;
-  transition: all var(--dur-short3, 150ms) var(--motion-standard, ease);
+  transition: all var(--dur-short2, 100ms) var(--motion-standard, ease);
   user-select: none;
+  line-height: 1;
 
   .material-symbols-outlined {
-    font-size: 15px;
+    font-size: 14px;
   }
 
-  .btn-text, .copy-text {
-    font-size: 0.725rem;
-    font-weight: 600;
+  .code-btn-text, .copy-text, .btn-text {
+    font-size: 0.72rem;
+    font-weight: 500;
+    line-height: 1;
+    padding: 0 !important;
+    margin: 0 !important;
   }
 
   &:hover {
@@ -45,10 +51,9 @@
 }
 
 .code-run-btn {
-  background: color-mix(in srgb, var(--md-sys-color-primary-container) 85%, transparent);
+  background: color-mix(in srgb, var(--md-sys-color-primary) 12%, transparent);
   border: 1px solid color-mix(in srgb, var(--md-sys-color-primary) 35%, transparent);
-  color: var(--md-sys-color-on-primary-container);
-  font-weight: 600;
+  color: var(--md-sys-color-primary);
 
   .material-symbols-outlined {
     color: var(--md-sys-color-primary);
@@ -339,91 +344,104 @@
     }
 
     /* SQLite Table Styling */
-    .console-sql-section {
-      margin: 4px 0;
+    .console-sql-query-num {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--md-sys-color-on-surface-variant);
+      margin-bottom: 4px;
+    }
 
-      .console-sql-query-num {
-        font-size: 0.72rem;
+    .console-table-wrap,
+    .console-table-scroll-wrapper {
+      overflow-x: auto;
+      max-width: 100%;
+      -webkit-overflow-scrolling: touch;
+      margin: 4px 0 6px;
+      border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 40%, transparent);
+      border-radius: var(--shape-small, 8px);
+      scrollbar-width: thin;
+
+      &::-webkit-scrollbar {
+        height: 4px;
+      }
+      &::-webkit-scrollbar-thumb {
+        background-color: var(--md-sys-color-outline-variant);
+        border-radius: 4px;
+      }
+    }
+
+    .console-sql-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      font-size: 0.75rem;
+      text-align: left;
+      white-space: nowrap;
+
+      th {
+        background: color-mix(in srgb, var(--md-sys-color-surface-container-highest) 90%, transparent);
+        color: var(--md-sys-color-primary);
+        padding: 6px 12px;
         font-weight: 700;
-        color: var(--md-sys-color-on-surface-variant);
-        margin-bottom: 4px;
-      }
+        border-bottom: 1px solid var(--md-sys-color-outline-variant);
+        letter-spacing: 0.02em;
 
-      .console-table-scroll-wrapper {
-        overflow-x: auto;
-        max-width: 100%;
-        -webkit-overflow-scrolling: touch;
-        border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 45%, transparent);
-        border-radius: var(--shape-small, 8px);
-        margin-bottom: 6px;
-        scrollbar-width: thin;
-
-        &::-webkit-scrollbar {
-          height: 4px;
+        &:first-child {
+          border-top-left-radius: 7px;
         }
-        &::-webkit-scrollbar-thumb {
-          background-color: var(--md-sys-color-outline-variant);
-          border-radius: 4px;
+        &:last-child {
+          border-top-right-radius: 7px;
         }
       }
 
-      .console-sql-table {
-        width: 100%;
-        border-collapse: collapse;
-        font-size: 0.75rem;
-        text-align: left;
-        white-space: nowrap;
+      td {
+        padding: 6px 12px;
+        border-bottom: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 25%, transparent);
+        color: var(--md-sys-color-on-surface);
 
-        th {
-          background: color-mix(in srgb, var(--md-sys-color-surface-container-highest) 90%, transparent);
-          color: var(--md-sys-color-primary);
-          padding: 6px 12px;
-          font-weight: 700;
-          border-bottom: 1px solid var(--md-sys-color-outline-variant);
-          letter-spacing: 0.02em;
-        }
-
-        td {
-          padding: 6px 12px;
-          border-bottom: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 25%, transparent);
-          color: var(--md-sys-color-on-surface);
-
-          &.sql-null {
-            color: var(--md-sys-color-outline);
-            font-style: italic;
-          }
-        }
-
-        tr:nth-child(even) td {
-          background-color: color-mix(in srgb, var(--md-sys-color-surface-container-high) 40%, transparent);
-        }
-
-        tr:hover td {
-          background-color: color-mix(in srgb, var(--md-sys-color-primary) 10%, transparent);
-        }
-
-        tr:last-child td {
-          border-bottom: none;
+        &.sql-null {
+          color: var(--md-sys-color-outline);
+          font-style: italic;
         }
       }
 
-      .console-sql-meta {
-        display: flex;
-        align-items: center;
-        gap: 4px;
-        font-size: 0.7rem;
-        color: var(--md-sys-color-on-surface-variant);
-        padding-left: 2px;
+      tbody tr:last-child td {
+        border-bottom: none;
 
-        .material-symbols-outlined {
-          font-size: 14px;
+        &:first-child {
+          border-bottom-left-radius: 7px;
         }
+        &:last-child {
+          border-bottom-right-radius: 7px;
+        }
+      }
 
-        &.success-meta {
-          color: #2e7d32;
-          html[data-theme="dark"] & {
-            color: #81c784;
-          }
+      tr:nth-child(even) td {
+        background-color: color-mix(in srgb, var(--md-sys-color-surface-container-high) 40%, transparent);
+      }
+
+      tr:hover td {
+        background-color: color-mix(in srgb, var(--md-sys-color-primary) 10%, transparent);
+      }
+    }
+
+    .console-sql-meta {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.7rem;
+      color: var(--md-sys-color-on-surface-variant);
+      padding-left: 2px;
+      margin-bottom: 6px;
+
+      .material-symbols-outlined {
+        font-size: 14px;
+      }
+
+      &.success-meta {
+        color: #2e7d32;
+        html[data-theme="dark"] & {
+          color: #81c784;
         }
       }
     }

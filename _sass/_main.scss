@@ -3142,6 +3142,91 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
         display: flex !important;
       }
     }
+
+    .model-loading-overlay {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: color-mix(in srgb, var(--md-sys-color-surface-container) 92%, transparent);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      z-index: 1002;
+      transition: opacity var(--dur-medium2) var(--motion-standard);
+      padding: 16px;
+      box-sizing: border-box;
+
+      .model-loading-box {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 270px;
+        max-width: 90%;
+        gap: 10px;
+        background: color-mix(in srgb, var(--md-sys-color-surface-container-high) 88%, transparent);
+        padding: 18px 20px;
+        border-radius: var(--shape-large, 16px);
+        border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 45%, transparent);
+        box-shadow: var(--elev-2);
+      }
+
+      .model-loading-header {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.8125rem;
+        font-weight: 600;
+        color: var(--md-sys-color-on-surface);
+
+        .model-loading-icon {
+          font-size: 20px;
+          color: var(--md-sys-color-primary);
+          animation: modelIconSpin 3s linear infinite;
+        }
+      }
+
+      .model-progress-bar {
+        width: 100%;
+        height: 6px;
+        background: color-mix(in srgb, var(--md-sys-color-surface-variant) 50%, transparent);
+        border-radius: var(--shape-full);
+        overflow: hidden;
+        position: relative;
+      }
+
+      .model-progress-fill {
+        height: 100%;
+        background: var(--md-sys-color-primary);
+        border-radius: var(--shape-full);
+        transition: width 0.15s ease-out;
+
+        &.is-indeterminate {
+          width: 40% !important;
+          animation: modelProgressIndeterminate 1.5s infinite ease-in-out;
+        }
+      }
+
+      .model-loading-stats {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.72rem;
+        color: var(--md-sys-color-on-surface-variant);
+        font-family: 'JetBrains Mono', monospace;
+      }
+    }
+  }
+
+  @keyframes modelIconSpin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  @keyframes modelProgressIndeterminate {
+    0% { transform: translateX(-100%); }
+    50% { transform: translateX(100%); }
+    100% { transform: translateX(300%); }
   }
 
   .render-preview-overlay {

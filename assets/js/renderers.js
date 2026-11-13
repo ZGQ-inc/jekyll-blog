@@ -5,13 +5,8 @@ function getCodeBlocks(language) {
     const codeEl = el.tagName === 'CODE' ? el : el.querySelector('code');
     if (!codeEl) return;
     
-    let wrapper = el;
-    if (codeEl.parentElement && codeEl.parentElement.tagName === 'PRE') {
-      wrapper = codeEl.parentElement;
-      if (wrapper.parentElement && wrapper.parentElement.classList.contains('highlighter-rouge')) {
-        wrapper = wrapper.parentElement;
-      }
-    }
+    // Capture the outermost syntax highlighter container (to prevent leaving rogue headers or line numbers behind)
+    let wrapper = el.closest('.highlighter-rouge') || el.closest('figure.highlight') || el.closest('pre') || el;
     blocks.push({ wrapper, codeText: codeEl.textContent });
   });
   
@@ -253,7 +248,57 @@ async function initSTL() {
       dirLight2.position.set(-100, -100, -100);
       scene.add(dirLight2);
 
+      // Loading Progress Overlay
+      const loadingOverlay = document.createElement('div');
+      loadingOverlay.className = 'model-loading-overlay';
+      loadingOverlay.innerHTML = `
+        <div class="model-loading-box">
+          <div class="model-loading-header">
+            <span class="material-symbols-outlined model-loading-icon">view_in_ar</span>
+            <span class="model-loading-title">正在加载 3D 模型...</span>
+          </div>
+          <div class="model-progress-bar">
+            <div class="model-progress-fill" style="width: 0%;"></div>
+          </div>
+          <div class="model-loading-stats">
+            <span class="model-loading-pct">0%</span>
+            <span class="model-loading-bytes">准备加载...</span>
+          </div>
+        </div>
+      `;
+      container.appendChild(loadingOverlay);
+
+      const progressFill = loadingOverlay.querySelector('.model-progress-fill');
+      const progressPct = loadingOverlay.querySelector('.model-loading-pct');
+      const progressBytes = loadingOverlay.querySelector('.model-loading-bytes');
+
+      const onProgress = (xhr) => {
+        if (xhr.lengthComputable && xhr.total > 0) {
+          const pct = Math.min(100, Math.round((xhr.loaded / xhr.total) * 100));
+          progressFill.classList.remove('is-indeterminate');
+          progressFill.style.width = `${pct}%`;
+          progressPct.textContent = `${pct}%`;
+          const loadedMb = (xhr.loaded / (1024 * 1024)).toFixed(1);
+          const totalMb = (xhr.total / (1024 * 1024)).toFixed(1);
+          progressBytes.textContent = `${loadedMb} / ${totalMb} MB`;
+        } else if (xhr.loaded > 0) {
+          const loadedMb = (xhr.loaded / (1024 * 1024)).toFixed(1);
+          progressFill.classList.add('is-indeterminate');
+          progressPct.textContent = '下载中...';
+          progressBytes.textContent = `${loadedMb} MB`;
+        }
+      };
+
+      const hideLoading = () => {
+        loadingOverlay.style.opacity = '0';
+        loadingOverlay.style.pointerEvents = 'none';
+        setTimeout(() => {
+          if (loadingOverlay.parentNode) loadingOverlay.remove();
+        }, 300);
+      };
+
       const processGeometry = (geometry, material) => {
+        hideLoading();
         const mesh = new THREE.Mesh(geometry, material);
         geometry.computeBoundingBox();
         const center = new THREE.Vector3();
@@ -272,6 +317,7 @@ async function initSTL() {
       };
 
       const processGLTF = (gltf) => {
+        hideLoading();
         const model = gltf.scene;
         scene.add(model);
 
@@ -423,6 +469,7 @@ async function initSTL() {
         });
 
         if (modelType === 'stljs') {
+          hideLoading();
           const scriptFunc = new Function('THREE', 'scene', 'material', 'camera', 'renderer', codeText);
           scriptFunc(THREE, scene, material, camera, renderer);
         } else if (modelType === 'stl') {
@@ -430,8 +477,12 @@ async function initSTL() {
           if (trimmedText.startsWith('http') || trimmedText.startsWith('/')) {
             stlLoader.load(trimmedText, function(geometry) {
               processGeometry(geometry, material);
+            }, onProgress, function(err) {
+              hideLoading();
+              console.error('Failed to load STL model:', err);
             });
           } else {
+            hideLoading();
             const geometry = stlLoader.parse(codeText);
             processGeometry(geometry, material);
           }
@@ -443,7 +494,10 @@ async function initSTL() {
               if (cfg.src) {
                 trimmedText = cfg.src;
               } else {
-                gltfLoader.parse(trimmedText, '', processGLTF, (err) => console.error(err));
+                gltfLoader.parse(trimmedText, '', processGLTF, (err) => {
+                  hideLoading();
+                  console.error(err);
+                });
                 trimmedText = null;
               }
             } catch (e) {
@@ -451,7 +505,8 @@ async function initSTL() {
             }
           }
           if (trimmedText) {
-            gltfLoader.load(trimmedText, processGLTF, undefined, (err) => {
+            gltfLoader.load(trimmedText, processGLTF, onProgress, (err) => {
+              hideLoading();
               console.error('Failed to load GLTF/GLB model:', err);
               container.innerHTML = `
                 <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:100%; color:var(--md-sys-color-error); text-align:center; padding:16px;">
@@ -826,18 +881,14 @@ async function initTerminal() {
       const frame = document.createElement('div');
       frame.className = 'md3-terminal-frame';
       frame.innerHTML = `
-        <div class="terminal-header">
+        <div class="terminal-header win-terminal-header">
           <div class="terminal-header-left">
-            <div class="terminal-dots">
-              <span class="terminal-dot dot-red"></span>
-              <span class="terminal-dot dot-yellow"></span>
-              <span class="terminal-dot dot-green"></span>
+            <div class="win-terminal-tab active">
+              <span class="material-symbols-outlined win-terminal-tab-icon">terminal</span>
+              <span class="win-terminal-tab-title">${escapeHtml(title)}</span>
+              <span class="win-terminal-tab-close"><span class="material-symbols-outlined">close</span></span>
             </div>
-            <div class="terminal-title-wrap">
-              <span class="material-symbols-outlined terminal-icon">terminal</span>
-              <span class="terminal-title-text">${escapeHtml(title)}</span>
-              <span class="terminal-badge">.cast</span>
-            </div>
+            <div class="win-terminal-tab-add" title="新建标签页"><span class="material-symbols-outlined">add</span></div>
           </div>
           <div class="terminal-actions">
             <button class="terminal-action-btn btn-crt-toggle" title="切换 CRT 显像管扫描线效果" aria-label="CRT 扫描线">
@@ -848,6 +899,11 @@ async function initTerminal() {
               <span class="material-symbols-outlined">content_copy</span>
               <span>复制</span>
             </button>
+          </div>
+          <div class="win-window-controls" aria-hidden="true">
+            <span class="win-btn win-min" title="最小化"><span class="win-icon-min"></span></span>
+            <span class="win-btn win-max" title="最大化"><span class="win-icon-max"></span></span>
+            <span class="win-btn win-close" title="关闭"><span class="win-icon-close"></span></span>
           </div>
         </div>
         <div class="terminal-body">
@@ -912,18 +968,14 @@ async function initTerminal() {
     const frame = document.createElement('div');
     frame.className = 'md3-terminal-frame';
     frame.innerHTML = `
-      <div class="terminal-header">
+      <div class="terminal-header win-terminal-header">
         <div class="terminal-header-left">
-          <div class="terminal-dots">
-            <span class="terminal-dot dot-red"></span>
-            <span class="terminal-dot dot-yellow"></span>
-            <span class="terminal-dot dot-green"></span>
+          <div class="win-terminal-tab active">
+            <span class="material-symbols-outlined win-terminal-tab-icon">terminal</span>
+            <span class="win-terminal-tab-title">PowerShell</span>
+            <span class="win-terminal-tab-close"><span class="material-symbols-outlined">close</span></span>
           </div>
-          <div class="terminal-title-wrap">
-            <span class="material-symbols-outlined terminal-icon">terminal</span>
-            <span class="terminal-title-text">交互式终端演示</span>
-            <span class="terminal-badge">Terminal</span>
-          </div>
+          <div class="win-terminal-tab-add" title="新建标签页"><span class="material-symbols-outlined">add</span></div>
         </div>
         <div class="terminal-actions">
           <button class="terminal-action-btn btn-crt-toggle" title="切换 CRT 显像管扫描线效果" aria-label="CRT 扫描线">
@@ -934,6 +986,11 @@ async function initTerminal() {
             <span class="material-symbols-outlined">content_copy</span>
             <span>复制</span>
           </button>
+        </div>
+        <div class="win-window-controls" aria-hidden="true">
+          <span class="win-btn win-min" title="最小化"><span class="win-icon-min"></span></span>
+          <span class="win-btn win-max" title="最大化"><span class="win-icon-max"></span></span>
+          <span class="win-btn win-close" title="关闭"><span class="win-icon-close"></span></span>
         </div>
       </div>
       <div class="terminal-body">
@@ -1388,20 +1445,67 @@ async function initShaders() {
       }
     });
 
-    // Fullscreen toggle
+    // Fullscreen toggle with DOM portaling (escapes ancestor clipping & container bounds)
+    const enterFullscreen = () => {
+      if (card.classList.contains('is-fullscreen-lightbox')) return;
+
+      const placeholder = document.createElement('div');
+      placeholder.className = 'shader-placeholder';
+      placeholder.style.height = `${card.offsetHeight}px`;
+      card.parentNode.insertBefore(placeholder, card);
+      card._placeholder = placeholder;
+
+      // Portal to document.body to escape any transform/overflow clipping
+      document.body.appendChild(card);
+      card.classList.add('is-fullscreen-lightbox', 'is-fullscreen');
+      document.body.style.overflow = 'hidden';
+
+      btnFullscreen.querySelector('.material-symbols-outlined').textContent = 'fullscreen_exit';
+      btnFullscreen.title = '退出全屏 (Esc)';
+      isVisible = true;
+
+      requestAnimationFrame(() => {
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        canvas.width = Math.floor(window.innerWidth * dpr);
+        canvas.height = Math.floor(canvasWrap.clientHeight * dpr);
+        if (gl) gl.viewport(0, 0, canvas.width, canvas.height);
+      });
+    };
+
+    const exitFullscreen = () => {
+      if (!card.classList.contains('is-fullscreen-lightbox')) return;
+
+      card.classList.remove('is-fullscreen-lightbox', 'is-fullscreen');
+      document.body.style.overflow = '';
+
+      btnFullscreen.querySelector('.material-symbols-outlined').textContent = 'fullscreen';
+      btnFullscreen.title = '全屏查看';
+
+      if (card._placeholder && card._placeholder.parentNode) {
+        card._placeholder.parentNode.insertBefore(card, card._placeholder);
+        card._placeholder.remove();
+        delete card._placeholder;
+      }
+
+      requestAnimationFrame(() => {
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        const displayW = canvasWrap.clientWidth || 600;
+        const displayH = canvasWrap.clientHeight || 360;
+        canvas.width = Math.floor(displayW * dpr);
+        canvas.height = Math.floor(displayH * dpr);
+        if (gl) gl.viewport(0, 0, canvas.width, canvas.height);
+      });
+    };
+
     btnFullscreen.addEventListener('click', () => {
-      const isFs = card.classList.toggle('is-fullscreen');
-      btnFullscreen.querySelector('.material-symbols-outlined').textContent = isFs ? 'fullscreen_exit' : 'fullscreen';
-      btnFullscreen.title = isFs ? '退出全屏 (Esc)' : '全屏查看';
+      if (card.classList.contains('is-fullscreen-lightbox')) {
+        exitFullscreen();
+      } else {
+        enterFullscreen();
+      }
     });
 
-    card._exitFullscreen = () => {
-      if (card.classList.contains('is-fullscreen')) {
-        card.classList.remove('is-fullscreen');
-        btnFullscreen.querySelector('.material-symbols-outlined').textContent = 'fullscreen';
-        btnFullscreen.title = '全屏查看';
-      }
-    };
+    card._exitFullscreen = exitFullscreen;
 
     // IntersectionObserver to save GPU/CPU when off-screen
     if ('IntersectionObserver' in window) {

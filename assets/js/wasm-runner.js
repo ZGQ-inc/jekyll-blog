@@ -365,31 +365,29 @@
             if (res.results && res.results.length > 0) {
               res.results.forEach((tableData, idx) => {
                 html += `
-                  <div class="console-sql-section">
-                    ${res.results.length > 1 ? `<div class="console-sql-query-num">结果集 #${idx + 1}</div>` : ''}
-                    <div class="console-table-scroll-wrapper">
-                      <table class="console-sql-table">
-                        <thead>
+                  ${res.results.length > 1 ? `<div class="console-sql-query-num">结果集 #${idx + 1}</div>` : ''}
+                  <div class="console-table-wrap">
+                    <table class="console-sql-table">
+                      <thead>
+                        <tr>
+                          ${tableData.columns.map(c => `<th>${escapeHtml(c)}</th>`).join('')}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        ${tableData.values.map(row => `
                           <tr>
-                            ${tableData.columns.map(c => `<th>${escapeHtml(c)}</th>`).join('')}
+                            ${row.map(val => {
+                              if (val === null) return '<td class="sql-null">NULL</td>';
+                              return `<td>${escapeHtml(String(val))}</td>`;
+                            }).join('')}
                           </tr>
-                        </thead>
-                        <tbody>
-                          ${tableData.values.map(row => `
-                            <tr>
-                              ${row.map(val => {
-                                if (val === null) return '<td class="sql-null">NULL</td>';
-                                return `<td>${escapeHtml(String(val))}</td>`;
-                              }).join('')}
-                            </tr>
-                          `).join('')}
-                        </tbody>
-                      </table>
-                    </div>
-                    <div class="console-sql-meta">
-                      <span class="material-symbols-outlined">table_rows</span>
-                      <span>共 ${tableData.values.length} 行数据</span>
-                    </div>
+                        `).join('')}
+                      </tbody>
+                    </table>
+                  </div>
+                  <div class="console-sql-meta">
+                    <span class="material-symbols-outlined">table_rows</span>
+                    <span>共 ${tableData.values.length} 行数据</span>
                   </div>
                 `;
               });

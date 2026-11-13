@@ -82,6 +82,12 @@
         rawLang = langClass.replace('language-', '').toLowerCase();
       }
 
+      // Skip custom-rendered blocks (terminal, mock-terminal, cast, asciinema, stl, glb, gltf, shader, mermaid, geojson)
+      const customWidgetLangs = ['terminal', 'console', 'mock-terminal', 'cast', 'asciinema', 'stl', 'stljs', 'glb', 'gltf', 'shader', 'mermaid', 'geojson'];
+      if (customWidgetLangs.includes(rawLang)) {
+        return;
+      }
+
       // Check for Diff mode (either pure diff or syntax-highlighted diff like python[diff])
       const diffLangAttr = (block.getAttribute('data-diff-lang') || (block.dataset && block.dataset.diffLang) || '').toLowerCase();
       const isDiff = ['diff', 'patch', 'udiff'].includes(rawLang) ||
@@ -279,7 +285,7 @@
       if (isRunnable) {
         const runBtn = document.createElement('button');
         runBtn.className = 'code-action-btn code-run-btn';
-        runBtn.innerHTML = '<span class="material-symbols-outlined">play_arrow</span><span class="btn-text">运行</span>';
+        runBtn.innerHTML = '<span class="material-symbols-outlined">play_arrow</span><span class="code-btn-text">运行</span>';
         runBtn.title = '在浏览器中运行此代码 (WebAssembly)';
         runBtn.setAttribute('aria-label', '运行代码');
 
@@ -296,7 +302,7 @@
 
       const copyBtn = document.createElement('button');
       copyBtn.className = 'code-action-btn code-copy-btn';
-      copyBtn.innerHTML = '<span class="material-symbols-outlined">content_copy</span><span class="copy-text">复制</span>';
+      copyBtn.innerHTML = '<span class="material-symbols-outlined">content_copy</span><span class="code-btn-text">复制</span>';
       copyBtn.title = '复制代码';
       copyBtn.setAttribute('aria-label', '复制代码');
 
@@ -331,10 +337,10 @@
           textToCopy = textToCopy.replace(/\n$/, '');
           
           navigator.clipboard.writeText(textToCopy).then(() => {
-            copyBtn.innerHTML = '<span class="material-symbols-outlined">check</span><span class="copy-text">已复制</span>';
+            copyBtn.innerHTML = '<span class="material-symbols-outlined">check</span><span class="code-btn-text">已复制</span>';
             copyBtn.classList.add('copied');
             setTimeout(() => {
-              copyBtn.innerHTML = '<span class="material-symbols-outlined">content_copy</span><span class="copy-text">复制</span>';
+              copyBtn.innerHTML = '<span class="material-symbols-outlined">content_copy</span><span class="code-btn-text">复制</span>';
               copyBtn.classList.remove('copied');
             }, 2000);
           }).catch(err => {
