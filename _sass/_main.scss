@@ -2730,6 +2730,35 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
     margin: 1.5em 0;
     box-shadow: var(--elev-2);
 
+    &.inline-emoji,
+    &[src*="emoji"],
+    &[src*="githubassets.com/images/icons/emoji/"] {
+      display: inline-block !important;
+      vertical-align: -0.22em !important;
+      height: 1.25em !important;
+      width: 1.25em !important;
+      max-width: 1.25em !important;
+      max-height: 1.25em !important;
+      margin: 0 0.15em !important;
+      border-radius: 0 !important;
+      box-shadow: none !important;
+      object-fit: contain !important;
+    }
+
+    &.inline-icon {
+      display: inline-flex !important;
+      vertical-align: -0.18em !important;
+      height: 1.15em !important;
+      width: 1.15em !important;
+      max-width: 1.15em !important;
+      max-height: 1.15em !important;
+      margin: 0 0.1em !important;
+      border-radius: 0 !important;
+      box-shadow: none !important;
+      object-fit: contain !important;
+    }
+
+    &.inline-badge-img,
     &[src*="shields.io"],
     &[src*="badge"],
     &[src*="min-tuijian"],

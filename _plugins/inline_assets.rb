@@ -2,6 +2,7 @@
 
 require 'cgi'
 require 'uri'
+require 'nokogiri'
 
 module Jekyll
   module InlineAssets
@@ -118,20 +119,17 @@ module Jekyll
       end
 
       # Check local assets
-      local_paths = ["/assets/icons/#{clean}.svg", "/assets/icons/#{clean}.png", "/assets/icons/#{clean}.webp"]
-      local_paths.each do |lp|
-        if File.exist?(File.join(Dir.pwd, lp))
-          return lp
+      ['svg', 'png', 'webp', 'ico'].each do |ext|
+        if File.exist?(File.join(Dir.pwd, 'assets', 'icons', "#{clean}.#{ext}"))
+          return "/assets/icons/#{clean}.#{ext}"
         end
       end
 
       # Use GitHub / Twemoji unicode CDN
       if COMMON_UNICODE_EMOJIS.key?(clean)
         hex = COMMON_UNICODE_EMOJIS[clean]
-        # Prefer GitHub's high-res asset
         "https://github.githubassets.com/images/icons/emoji/unicode/#{hex}.png"
       else
-        # Fallback to Twemoji search
         nil
       end
     end
@@ -153,7 +151,6 @@ module Jekyll
     # Helper to parse key-value attributes from tag markup
     def self.parse_params(markup)
       params = {}
-      # Match key="value" or key='value' or key=value
       markup.scan(/(\w+)=(?:["']([^"']*)["']|(\S+))/) do |key, val1, val2|
         params[key.downcase] = val1 || val2
       end
@@ -168,7 +165,7 @@ module Jekyll
   #   {% icon material:rocket_launch %}
   #   {% icon simple:python %}
   #   {% icon simple:docker color="#2496ED" %}
-  #   {% icon local:antigravity %}
+  #   {% icon local:favicon %}
   #   {% icon url="https://example.com/icon.svg" %}
   # ============================================================================
   class IconTag < Liquid::Tag
@@ -202,11 +199,11 @@ module Jekyll
       end
 
       color = params['color']
-      size = params['size']
+      size = params['size'] || '1.15em'
       title = params['title'] || name
       extra_class = params['class']
 
-      size_style = size ? "font-size: #{size}; width: #{size}; height: #{size};" : ""
+      size_style = "font-size: #{size}; width: #{size}; height: #{size}; max-width: #{size}; max-height: #{size};"
       color_style = color ? "color: #{color};" : ""
 
       case source
@@ -217,24 +214,36 @@ module Jekyll
 
       when 'simple', 'si', 'brand'
         icon_url = InlineAssets.resolve_simple_icon(name, color)
-        style_attr = [size ? "width: #{size}; height: #{size};" : ""].reject(&:empty?).join(' ')
-        style_str = style_attr.empty? ? '' : " style=\"#{style_attr}\""
-        %(<img class="inline-icon inline-icon-simple #{extra_class}" src="#{icon_url}" alt="#{CGI.escapeHTML(name)}" title="#{CGI.escapeHTML(title)}" loading="lazy"#{style_str} />)
+        icon_style = "height: #{size} !important; width: #{size} !important; max-width: #{size} !important; max-height: #{size} !important; vertical-align: -0.18em !important; display: inline-flex !important; object-fit: contain !important; margin: 0 0.1em !important; box-shadow: none !important;"
+        %(<img class="inline-icon inline-icon-simple #{extra_class}" src="#{icon_url}" alt="#{CGI.escapeHTML(name)}" title="#{CGI.escapeHTML(title)}" loading="lazy" style="#{icon_style}" />)
 
       when 'local'
-        local_path = name.start_with?('/') ? name : "/assets/icons/#{name}"
-        local_path += '.svg' unless local_path.include?('.')
-        style_attr = [size ? "width: #{size}; height: #{size};" : ""].reject(&:empty?).join(' ')
-        style_str = style_attr.empty? ? '' : " style=\"#{style_attr}\""
-        %(<img class="inline-icon inline-icon-local #{extra_class}" src="#{local_path}" alt="#{CGI.escapeHTML(name)}" title="#{CGI.escapeHTML(title)}" loading="lazy"#{style_str} />)
+        clean_name = name.sub(/^\//, '').sub(/^assets\/icons\//, '')
+        ext = ''
+        unless clean_name.include?('.')
+          if File.exist?(File.join(Dir.pwd, 'assets', 'icons', "#{clean_name}.svg"))
+            ext = '.svg'
+          elsif File.exist?(File.join(Dir.pwd, 'assets', 'icons', "#{clean_name}.ico"))
+            ext = '.ico'
+          elsif File.exist?(File.join(Dir.pwd, 'assets', 'icons', "#{clean_name}.png"))
+            ext = '.png'
+          elsif File.exist?(File.join(Dir.pwd, 'assets', 'icons', "#{clean_name}.webp"))
+            ext = '.webp'
+          elsif clean_name == 'favicon'
+            ext = '.ico'
+          else
+            ext = '.svg'
+          end
+        end
+        local_path = "/assets/icons/#{clean_name}#{ext}"
+        local_style = "height: #{size} !important; width: #{size} !important; max-width: #{size} !important; max-height: #{size} !important; vertical-align: -0.18em !important; display: inline-flex !important; object-fit: contain !important; margin: 0 0.1em !important; box-shadow: none !important;"
+        %(<img class="inline-icon inline-icon-local #{extra_class}" src="#{local_path}" alt="#{CGI.escapeHTML(name)}" title="#{CGI.escapeHTML(title)}" loading="lazy" style="#{local_style}" />)
 
       when 'url'
-        style_attr = [size ? "width: #{size}; height: #{size};" : ""].reject(&:empty?).join(' ')
-        style_str = style_attr.empty? ? '' : " style=\"#{style_attr}\""
-        %(<img class="inline-icon inline-icon-ext #{extra_class}" src="#{name}" alt="icon" title="#{CGI.escapeHTML(title)}" loading="lazy"#{style_str} />)
+        url_style = "height: #{size} !important; width: #{size} !important; max-width: #{size} !important; max-height: #{size} !important; vertical-align: -0.18em !important; display: inline-flex !important; object-fit: contain !important; margin: 0 0.1em !important; box-shadow: none !important;"
+        %(<img class="inline-icon inline-icon-ext #{extra_class}" src="#{name}" alt="icon" title="#{CGI.escapeHTML(title)}" loading="lazy" style="#{url_style}" />)
 
       else
-        # Default fallback to Material Symbols
         %(<span class="inline-icon material-symbols-outlined #{extra_class}" title="#{CGI.escapeHTML(title)}" aria-hidden="true">#{CGI.escapeHTML(name)}</span>)
       end
     end
@@ -259,8 +268,6 @@ module Jekyll
     def render(context)
       params = InlineAssets.parse_params(@markup)
       
-      # Extract primary text or spec
-      # Matches string inside quotes or first token
       quoted_match = @markup.match(/^(?:shields\s+)?["']([^"']+)["']/)
       first_token = quoted_match ? quoted_match[1] : @markup.split(/\s+/).first.to_s.strip
 
@@ -272,11 +279,12 @@ module Jekyll
       title = params['title']
       extra_class = params['class']
 
+      badge_img_style = 'height: 1.35em !important; max-height: 20px !important; width: auto !important; vertical-align: -0.22em !important; display: inline-block !important; margin: 0 3px !important; box-shadow: none !important;'
+
       # 1. External URL Badge (e.g. Shields.io, Badge.io)
       if url || @markup.start_with?('shields') || first_token.start_with?('http') || first_token.include?('shields.io')
         badge_url = url || first_token
         if @markup.start_with?('shields') && !first_token.start_with?('http')
-          # Convert "Label|Message|Color" to shields.io badge
           parts = first_token.split('|')
           label = URI.encode_www_form_component(parts[0] || '')
           message = URI.encode_www_form_component(parts[1] || '')
@@ -284,7 +292,7 @@ module Jekyll
           badge_url = "https://img.shields.io/badge/#{label}-#{message}-#{c}"
         end
 
-        img_html = %(<img class="inline-badge-img #{extra_class}" src="#{badge_url}" alt="#{CGI.escapeHTML(title || 'badge')}" loading="lazy" />)
+        img_html = %(<img class="inline-badge-img #{extra_class}" src="#{badge_url}" alt="#{CGI.escapeHTML(title || 'badge')}" loading="lazy" style="#{badge_img_style}" />)
         if link
           %(<a href="#{link}" target="_blank" rel="noopener noreferrer" class="inline-badge-link">#{img_html}</a>)
         else
@@ -294,9 +302,10 @@ module Jekyll
       # 2. Local Badge Asset
       elsif first_token.start_with?('local:')
         name = first_token.sub(/^local:/, '')
-        local_path = name.start_with?('/') ? name : "/assets/icons/#{name}"
-        local_path += '.svg' unless local_path.include?('.')
-        img_html = %(<img class="inline-badge-img inline-badge-local #{extra_class}" src="#{local_path}" alt="#{CGI.escapeHTML(title || name)}" loading="lazy" />)
+        clean_name = name.sub(/^\//, '').sub(/^assets\/icons\//, '')
+        ext = clean_name.include?('.') ? '' : '.svg'
+        local_path = "/assets/icons/#{clean_name}#{ext}"
+        img_html = %(<img class="inline-badge-img inline-badge-local #{extra_class}" src="#{local_path}" alt="#{CGI.escapeHTML(title || name)}" loading="lazy" style="#{badge_img_style}" />)
         if link
           %(<a href="#{link}" target="_blank" rel="noopener noreferrer" class="inline-badge-link">#{img_html}</a>)
         else
@@ -349,15 +358,30 @@ module Jekyll
       first_token = @markup.split(/\s+/).first.to_s.strip
       clean_name = first_token.sub(/^:(.*):$/, '\1')
 
-      size = params['size']
+      size = params['size'] || '1.25em'
       title = params['title'] || ":#{clean_name}:"
       extra_class = params['class']
-      style_str = size ? " style=\"width: #{size}; height: #{size};\"" : ""
+      emoji_style = "height: #{size} !important; width: #{size} !important; max-width: #{size} !important; max-height: #{size} !important; vertical-align: -0.22em !important; display: inline-block !important; object-fit: contain !important; margin: 0 0.15em !important; box-shadow: none !important; border-radius: 0 !important;"
+      style_str = " style=\"#{emoji_style}\""
 
       if first_token.start_with?('local:')
         name = first_token.sub(/^local:/, '')
-        local_path = name.start_with?('/') ? name : "/assets/icons/#{name}"
-        local_path += '.svg' unless local_path.include?('.')
+        clean_name = name.sub(/^\//, '').sub(/^assets\/icons\//, '')
+        ext = ''
+        unless clean_name.include?('.')
+          if File.exist?(File.join(Dir.pwd, 'assets', 'icons', "#{clean_name}.svg"))
+            ext = '.svg'
+          elsif File.exist?(File.join(Dir.pwd, 'assets', 'icons', "#{clean_name}.png"))
+            ext = '.png'
+          elsif File.exist?(File.join(Dir.pwd, 'assets', 'icons', "#{clean_name}.webp"))
+            ext = '.webp'
+          elsif File.exist?(File.join(Dir.pwd, 'assets', 'icons', "#{clean_name}.ico"))
+            ext = '.ico'
+          else
+            ext = '.svg'
+          end
+        end
+        local_path = "/assets/icons/#{clean_name}#{ext}"
         return %(<img class="inline-emoji emoji-local #{extra_class}" src="#{local_path}" alt="#{CGI.escapeHTML(title)}" title="#{CGI.escapeHTML(title)}" loading="lazy"#{style_str} />)
       end
 
@@ -375,7 +399,6 @@ module Jekyll
       if url
         %(<img class="inline-emoji emoji-github #{extra_class}" src="#{url}" alt=":#{CGI.escapeHTML(clean_name)}:" title="#{CGI.escapeHTML(title)}" loading="lazy"#{style_str} />)
       else
-        # Fallback to plain shortcode text if unknown
         ":#{clean_name}:"
       end
     end
@@ -387,91 +410,18 @@ Liquid::Template.register_tag('badge', Jekyll::BadgeTag)
 Liquid::Template.register_tag('emoji', Jekyll::EmojiTag)
 
 # ==============================================================================
-# Markdown Pre-Render Hook for Emoji & Icon Shortcodes
-# Converts :octocat:, :si-python:, :icon-home:, etc. in regular prose
+# Post-Convert Hook for Emoji & Icon Shortcodes and Badge Auto-Alignment
+# Uses Nokogiri DOM parsing to safely inspect and replace only pure text nodes
+# outside <code>, <pre>, <script>, <style>, <kbd>, <textarea>, and math blocks.
+# ZERO regex placeholders, ZERO leakage risk.
 # ==============================================================================
-Jekyll::Hooks.register [:posts, :pages, :documents], :pre_render do |doc|
-  content = doc.content
-  next if content.nil? || content.empty?
-
-  content = content.dup
-
-  # 1. Protect code blocks, math expressions, Liquid tags, and HTML tags from shortcode replacement
-  placeholders = []
-  
-  # Protect fenced code blocks (``` ... ```)
-  content = content.gsub(/```[\s\S]*?```/) do |match|
-    placeholders << match
-    "__INLINE_ASSET_PROTECTED_#{placeholders.length - 1}__"
-  end
-
-  # Protect inline code (`...`)
-  content = content.gsub(/`[^`\n]+`/) do |match|
-    placeholders << match
-    "__INLINE_ASSET_PROTECTED_#{placeholders.length - 1}__"
-  end
-
-  # Protect LaTeX math ($...$ and $$...$$)
-  content = content.gsub(/\$\$[\s\S]*?\$\$|\$[^$\n]+\$/) do |match|
-    placeholders << match
-    "__INLINE_ASSET_PROTECTED_#{placeholders.length - 1}__"
-  end
-
-  # Protect Liquid tags ({% ... %} and {{ ... }})
-  content = content.gsub(/\{%[\s\S]*?%\}|\{\{[\s\S]*?\}\}/) do |match|
-    placeholders << match
-    "__INLINE_ASSET_PROTECTED_#{placeholders.length - 1}__"
-  end
-
-  # Protect HTML tags (<...>)
-  content = content.gsub(/<[^>]+>/) do |match|
-    placeholders << match
-    "__INLINE_ASSET_PROTECTED_#{placeholders.length - 1}__"
-  end
-
-  # 2. Process Simple Icons shortcodes: :si-python:, :si-docker:, :simple-github:
-  content = content.gsub(/:si-([a-zA-Z0-9_\.\-]+):|:simple-([a-zA-Z0-9_\.\-]+):/) do |_match|
-    slug = ($1 || $2).downcase
-    url = Jekyll::InlineAssets.resolve_simple_icon(slug)
-    %(<img class="inline-icon inline-icon-simple" src="#{url}" alt="#{slug}" title="#{slug}" loading="lazy" />)
-  end
-
-  # 3. Process Material Symbol shortcodes: :icon-home:, :icon-rocket_launch:
-  content = content.gsub(/:icon-([a-zA-Z0-9_]+):/) do |_match|
-    name = $1.downcase
-    %(<span class="inline-icon material-symbols-outlined" title="#{name}" aria-hidden="true">#{name}</span>)
-  end
-
-  # 4. Process GitHub & Common Emoji shortcodes: :octocat:, :shipit:, :tada:, :rocket:, etc.
-  content = content.gsub(/(?<!\{):([a-zA-Z0-9_\+\-]+):/) do |match|
-    name = $1.downcase
-    url = Jekyll::InlineAssets.resolve_emoji(name)
-    if url
-      %(<img class="inline-emoji emoji-github" src="#{url}" alt="#{match}" title="#{match}" loading="lazy" />)
-    else
-      match # Keep original text if unknown shortcode
-    end
-  end
-
-  # 5. Restore protected regions
-  content = content.gsub(/__INLINE_ASSET_PROTECTED_(\d+)__/) do |_match|
-    placeholders[$1.to_i]
-  end
-
-  doc.content = content
-end
-
-# ==============================================================================
-# Post-Convert Hook for Shields.io & Badge Images Auto-Alignment
-# ==============================================================================
-require 'nokogiri'
-
 Jekyll::Hooks.register [:posts, :pages, :documents], :post_convert do |doc|
-  next if doc.content.nil? || !doc.content.include?('img')
+  next if doc.content.nil? || doc.content.empty?
 
   html = Nokogiri::HTML::DocumentFragment.parse(doc.content)
   modified = false
 
+  # 1. Auto-tag Shields.io & external badge images with .inline-badge-img and inline dimensions
   html.css('img').each do |img|
     src = img['src'].to_s
     if src.include?('shields.io') || src.include?('badge.fury.io') || src.include?('badgen.net')
@@ -480,6 +430,52 @@ Jekyll::Hooks.register [:posts, :pages, :documents], :post_convert do |doc|
         img['class'] = [current_class, 'inline-badge-img'].reject(&:empty?).join(' ')
         modified = true
       end
+      # Guarantee strict inline badge dimensions
+      img['style'] = [img['style'].to_s.sub(/;?$/, ';'), 'height: 1.35em !important; max-height: 20px !important; width: auto !important; vertical-align: -0.22em !important; display: inline-block !important; margin: 0 3px !important; box-shadow: none !important;'].reject { |s| s == ';' }.join(' ')
+      modified = true
+    end
+  end
+
+  # 2. Process shortcodes ONLY in pure text nodes outside of code blocks, math, and scripts
+  text_nodes = html.xpath('.//text()[not(ancestor::pre or ancestor::code or ancestor::script or ancestor::style or ancestor::kbd or ancestor::textarea or ancestor::*[contains(@class, "katex")])]')
+
+  emoji_style = 'height: 1.25em !important; width: 1.25em !important; max-width: 1.25em !important; max-height: 1.25em !important; vertical-align: -0.22em !important; display: inline-block !important; object-fit: contain !important; margin: 0 0.15em !important; box-shadow: none !important; border-radius: 0 !important;'
+  icon_style = 'height: 1.15em !important; width: 1.15em !important; max-width: 1.15em !important; max-height: 1.15em !important; vertical-align: -0.18em !important; display: inline-flex !important; object-fit: contain !important; margin: 0 0.1em !important; box-shadow: none !important;'
+
+  text_nodes.each do |node|
+    text = node.content
+    next unless text.include?(':')
+
+    escaped = CGI.escapeHTML(text)
+    replaced = escaped.dup
+
+    # A. Simple Icons shortcodes: :si-python:, :si-docker:, :simple-github:
+    replaced = replaced.gsub(/:si-([a-zA-Z0-9_\.\-]+):|:simple-([a-zA-Z0-9_\.\-]+):/) do |_m|
+      slug = ($1 || $2).downcase
+      url = Jekyll::InlineAssets.resolve_simple_icon(slug)
+      %(<img class="inline-icon inline-icon-simple" src="#{url}" alt="#{slug}" title="#{slug}" loading="lazy" style="#{icon_style}" />)
+    end
+
+    # B. Material Symbol shortcodes: :icon-settings:, :icon-check_circle:, :icon-bolt:
+    replaced = replaced.gsub(/:icon-([a-zA-Z0-9_]+):/) do |_m|
+      name = $1.downcase
+      %(<span class="inline-icon material-symbols-outlined" title="#{name}" aria-hidden="true">#{name}</span>)
+    end
+
+    # C. GitHub & Common Emoji shortcodes: :octocat:, :shipit:, :tada:, :rocket:, etc.
+    replaced = replaced.gsub(/(?<!\{):([a-zA-Z0-9_\+\-]+):/) do |match|
+      name = $1.downcase
+      url = Jekyll::InlineAssets.resolve_emoji(name)
+      if url
+        %(<img class="inline-emoji emoji-github" src="#{url}" alt="#{match}" title="#{match}" loading="lazy" style="#{emoji_style}" />)
+      else
+        match
+      end
+    end
+
+    if replaced != escaped
+      node.replace(replaced)
+      modified = true
     end
   end
 

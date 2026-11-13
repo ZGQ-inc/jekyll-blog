@@ -5,41 +5,59 @@
 
 // 1. Inline Icons (Material Symbols, Simple Icons, Local SVGs)
 .inline-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  vertical-align: -0.2em;
-  line-height: 1;
-  font-size: 1.15em;
-  width: 1.15em;
-  height: 1.15em;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  vertical-align: -0.2em !important;
+  line-height: 1 !important;
+  font-size: 1.15em !important;
+  width: 1.15em !important;
+  height: 1.15em !important;
+  max-width: 1.15em !important;
+  max-height: 1.15em !important;
+  margin: 0 0.1em !important;
+  padding: 0 !important;
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
   user-select: none;
   box-sizing: content-box;
 
   &.material-symbols-outlined {
-    font-size: 1.15em;
-    width: 1.15em;
-    height: 1.15em;
+    font-size: 1.15em !important;
+    width: 1.15em !important;
+    height: 1.15em !important;
     overflow: hidden;
   }
 
   &.inline-icon-simple,
   &.inline-icon-local,
   &.inline-icon-ext {
-    object-fit: contain;
-    vertical-align: -0.18em;
+    object-fit: contain !important;
+    vertical-align: -0.18em !important;
   }
 }
 
 // 2. Inline Emojis (GitHub Emojis, Twemoji, Fluent, Local)
-.inline-emoji {
-  display: inline-block;
-  vertical-align: -0.22em;
-  height: 1.25em;
-  width: 1.25em;
-  margin: 0 0.15em;
-  object-fit: contain;
-  line-height: 1;
+img.inline-emoji,
+.inline-emoji,
+article img.inline-emoji,
+.post-content img.inline-emoji,
+.entry-content img.inline-emoji,
+.markdown-body img.inline-emoji {
+  display: inline-block !important;
+  vertical-align: -0.22em !important;
+  height: 1.25em !important;
+  width: 1.25em !important;
+  max-width: 1.25em !important;
+  max-height: 1.25em !important;
+  margin: 0 0.15em !important;
+  padding: 0 !important;
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  object-fit: contain !important;
+  line-height: 1 !important;
   user-select: none;
 
   &.emoji-github {
@@ -49,15 +67,15 @@
 
 // 3. Inline Badges (MD3 Native Text Pills)
 .inline-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  vertical-align: 0.08em;
-  font-size: 0.72rem;
-  font-weight: 600;
-  line-height: 1.2;
-  padding: 1px 7px;
-  border-radius: 9999px;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  vertical-align: 0.08em !important;
+  font-size: 0.72rem !important;
+  font-weight: 600 !important;
+  line-height: 1.2 !important;
+  padding: 1px 7px !important;
+  border-radius: 9999px !important;
   letter-spacing: 0.015em;
   font-family: inherit;
   box-sizing: border-box;
@@ -66,19 +84,27 @@
   transition: all var(--dur-short2, 100ms) ease;
 
   .badge-icon {
-    font-size: 13px;
-    width: 13px;
-    height: 13px;
-    line-height: 1;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
+    font-size: 13px !important;
+    width: 13px !important;
+    height: 13px !important;
+    line-height: 1 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    margin: 0 !important;
+    padding: 0 !important;
   }
 
   .badge-icon-img {
-    width: 12px;
-    height: 12px;
-    object-fit: contain;
+    width: 12px !important;
+    height: 12px !important;
+    max-width: 12px !important;
+    max-height: 12px !important;
+    object-fit: contain !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
   }
 
   // --- Variants & Colors ---
@@ -269,23 +295,27 @@ html[data-theme="dark"] {
 }
 
 // 4. External Shields.io & Local Image Badges
+img.inline-badge-img,
 .inline-badge-img {
-  display: inline-block;
-  vertical-align: -0.22em;
-  height: 1.35em;
-  width: auto;
-  max-height: 20px;
-  margin: 0 2px;
-  border-radius: 3px;
-  box-sizing: content-box;
+  display: inline-block !important;
+  vertical-align: -0.22em !important;
+  height: 1.35em !important;
+  width: auto !important;
+  max-height: 20px !important;
+  margin: 0 3px !important;
+  padding: 0 !important;
+  border-radius: 3px !important;
+  box-shadow: none !important;
+  border: none !important;
+  box-sizing: content-box !important;
 }
 
 // Badge Link wrapper
 .inline-badge-link {
   text-decoration: none !important;
-  display: inline-flex;
-  align-items: center;
-  vertical-align: baseline;
+  display: inline-flex !important;
+  align-items: center !important;
+  vertical-align: baseline !important;
   transition: opacity 0.15s ease;
 
   &:hover {
