@@ -287,14 +287,14 @@
   .sandbox-source-drawer {
     border-top: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 40%, transparent);
     background-color: var(--md-sys-color-surface-container-lowest, #1e1e24);
-    max-height: 400px;
-    overflow-y: auto;
+    max-height: 420px;
+    overflow: hidden !important;
     display: flex;
     flex-direction: column;
 
     .sandbox-source-toolbar {
-      position: sticky;
-      top: 0;
+      flex-shrink: 0;
+      position: relative;
       z-index: 2;
       display: flex;
       align-items: center;
@@ -354,20 +354,45 @@
     }
 
     .sandbox-highlight-wrap,
-    .highlighter-rouge.sandbox-highlight-wrap {
+    .highlighter-rouge.sandbox-highlight-wrap,
+    .sandbox-source-pre {
+      flex: 1 1 auto;
+      min-height: 0;
+      max-height: 380px;
+      overflow: auto !important;
+      overscroll-behavior: contain;
+      -webkit-overflow-scrolling: touch;
       margin: 0 !important;
       border: none !important;
       border-radius: 0 !important;
       background: transparent !important;
       box-shadow: none !important;
       width: 100% !important;
-      overflow-x: auto;
+      scrollbar-width: thin;
+      scrollbar-color: var(--md-sys-color-outline-variant) transparent;
+
+      &::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+      }
+      &::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      &::-webkit-scrollbar-thumb {
+        background-color: color-mix(in srgb, var(--md-sys-color-outline-variant) 60%, transparent);
+        border-radius: 3px;
+        &:hover {
+          background-color: var(--md-sys-color-outline);
+        }
+      }
 
       .highlight {
         margin: 0 !important;
         padding: 0 !important;
         background: transparent !important;
-        overflow-x: visible;
+        overflow: visible !important;
+        width: max-content;
+        min-width: 100%;
 
         // Syntax Highlighting Tokens
         .c, .c1, .cm { color: color-mix(in srgb, var(--md-sys-color-on-surface-variant) 80%, transparent); font-style: italic; }
@@ -393,12 +418,14 @@
         border-collapse: collapse !important;
         border-spacing: 0 !important;
         background: transparent !important;
+        overflow: visible !important;
 
         tbody, tr {
           background: transparent !important;
           border: none !important;
           margin: 0 !important;
           padding: 0 !important;
+          overflow: visible !important;
         }
 
         td {
@@ -406,18 +433,22 @@
           margin: 0 !important;
           border: none !important;
           vertical-align: top !important;
+          overflow: visible !important;
         }
 
         .rouge-gutter {
           width: 1px !important;
           white-space: nowrap !important;
           border-right: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 30%, transparent) !important;
-          background: color-mix(in srgb, var(--md-sys-color-surface-container-high) 45%, transparent) !important;
+          background-color: var(--md-sys-color-surface-container, #28292e) !important;
           user-select: none !important;
           -webkit-user-select: none !important;
           text-align: right !important;
           margin: 0 !important;
           padding: 0 !important;
+          position: sticky !important;
+          left: 0 !important;
+          z-index: 1 !important;
 
           pre, .lineno {
             margin: 0 !important;
@@ -430,6 +461,7 @@
             word-break: normal !important;
             user-select: none !important;
             -webkit-user-select: none !important;
+            overflow: visible !important;
           }
         }
 
@@ -437,6 +469,7 @@
           width: auto !important;
           margin: 0 !important;
           padding: 0 !important;
+          overflow: visible !important;
 
           pre {
             margin: 0 !important;
@@ -448,7 +481,7 @@
             line-height: 1.6 !important;
             white-space: pre !important;
             word-break: normal !important;
-            overflow-x: auto;
+            overflow: visible !important;
 
             code {
               font-family: inherit;
@@ -456,6 +489,7 @@
               padding: 0 !important;
               border: none !important;
               color: inherit;
+              overflow: visible !important;
             }
           }
         }
@@ -469,7 +503,6 @@
       font-size: 0.8125rem;
       line-height: 1.6;
       color: var(--md-sys-color-on-surface);
-      overflow-x: auto;
       white-space: pre;
 
       code {
@@ -526,8 +559,14 @@
     }
 
     .sandbox-source-drawer {
-      max-height: 40vh !important;
+      max-height: 45vh !important;
       flex-shrink: 0 !important;
+
+      .sandbox-highlight-wrap,
+      .highlighter-rouge.sandbox-highlight-wrap,
+      .sandbox-source-pre {
+        max-height: calc(45vh - 36px) !important;
+      }
     }
   }
 
