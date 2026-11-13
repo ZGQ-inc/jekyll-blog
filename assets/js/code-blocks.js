@@ -298,6 +298,124 @@
           }
         });
         actionsDiv.appendChild(runBtn);
+
+        const editBtn = document.createElement('button');
+        editBtn.className = 'code-action-btn code-edit-btn';
+        editBtn.innerHTML = '<span class="material-symbols-outlined">edit</span><span class="code-btn-text">编辑</span>';
+        editBtn.title = '编辑此代码 (就地修改并在浏览器中即时运行)';
+        editBtn.setAttribute('aria-label', '编辑代码');
+
+        let editorWrap = null;
+        let originalCode = null;
+
+        editBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const isEditing = block.classList.toggle('is-editing-code');
+          editBtn.classList.toggle('active', isEditing);
+
+          const highlightCont = block.querySelector('.highlight') || block.querySelector('.rouge-table') || block.querySelector('pre');
+
+          if (isEditing) {
+            editBtn.querySelector('.material-symbols-outlined').textContent = 'edit_note';
+            editBtn.querySelector('.code-btn-text').textContent = '编辑中';
+
+            if (!editorWrap) {
+              if (originalCode === null) {
+                if (window.WasmRunner && typeof window.WasmRunner.extractCode === 'function') {
+                  originalCode = window.WasmRunner.extractCode(block);
+                } else {
+                  const rougeCodeCells = block.querySelectorAll('.rouge-code');
+                  if (rougeCodeCells.length > 0) {
+                    originalCode = Array.from(rougeCodeCells).map(cell => cell.innerText).join('\n').trim();
+                  } else {
+                    const codeEl = block.querySelector('code') || block.querySelector('pre');
+                    originalCode = codeEl ? codeEl.innerText.trim() : '';
+                  }
+                }
+                block._originalCode = originalCode;
+              }
+
+              editorWrap = document.createElement('div');
+              editorWrap.className = 'code-interactive-editor';
+              editorWrap.innerHTML = `
+                <div class="code-editor-main">
+                  <textarea class="code-editor-textarea" spellcheck="false"></textarea>
+                </div>
+                <div class="code-editor-footer">
+                  <div class="code-editor-footer-left">
+                    <span class="code-editor-hint">
+                      <span class="material-symbols-outlined">keyboard</span>
+                      <span>按 <kbd>Ctrl</kbd> + <kbd>Enter</kbd> 快速运行</span>
+                    </span>
+                  </div>
+                  <div class="code-editor-footer-right">
+                    <button class="code-editor-tool-btn btn-reset-source" title="恢复文章原始代码">
+                      <span class="material-symbols-outlined">restart_alt</span>
+                      <span>还原代码</span>
+                    </button>
+                    <button class="code-editor-run-btn" title="运行当前编辑的代码 (Ctrl + Enter)">
+                      <span class="material-symbols-outlined">play_arrow</span>
+                      <span>运行</span>
+                      <span class="code-editor-kbd"><kbd>Ctrl+↵</kbd></span>
+                    </button>
+                  </div>
+                </div>
+              `;
+
+              header.insertAdjacentElement('afterend', editorWrap);
+
+              const textarea = editorWrap.querySelector('.code-editor-textarea');
+              textarea.value = originalCode;
+
+              // Calculate height based on line count
+              const lineCount = (originalCode.match(/\n/g) || []).length + 1;
+              textarea.style.height = `${Math.max(120, Math.min(480, lineCount * 22 + 32))}px`;
+
+              // Tab indentation (2 spaces for SQL, 4 spaces for Python)
+              const indentSpaces = ['sql', 'sqlite', 'sqlite3'].includes(rawLang) ? '  ' : '    ';
+              textarea.addEventListener('keydown', (evt) => {
+                if ((evt.ctrlKey || evt.metaKey) && evt.key === 'Enter') {
+                  evt.preventDefault();
+                  runBtn.click();
+                } else if (evt.key === 'Tab') {
+                  evt.preventDefault();
+                  const start = textarea.selectionStart;
+                  const end = textarea.selectionEnd;
+                  textarea.value = textarea.value.substring(0, start) + indentSpaces + textarea.value.substring(end);
+                  textarea.selectionStart = textarea.selectionEnd = start + indentSpaces.length;
+                }
+              });
+
+              const bottomRunBtn = editorWrap.querySelector('.code-editor-run-btn');
+              bottomRunBtn.addEventListener('click', () => {
+                runBtn.click();
+              });
+
+              const bottomResetBtn = editorWrap.querySelector('.btn-reset-source');
+              bottomResetBtn.addEventListener('click', () => {
+                textarea.value = originalCode;
+                const resetLabel = bottomResetBtn.querySelector('span:last-child');
+                if (resetLabel) {
+                  resetLabel.textContent = '已还原';
+                  setTimeout(() => { resetLabel.textContent = '还原代码'; }, 1500);
+                }
+              });
+            }
+
+            editorWrap.style.display = 'flex';
+            if (highlightCont) highlightCont.style.display = 'none';
+            const textarea = editorWrap.querySelector('.code-editor-textarea');
+            if (textarea) textarea.focus();
+          } else {
+            editBtn.querySelector('.material-symbols-outlined').textContent = 'edit';
+            editBtn.querySelector('.code-btn-text').textContent = '编辑';
+
+            if (editorWrap) editorWrap.style.display = 'none';
+            if (highlightCont) highlightCont.style.display = '';
+          }
+        });
+
+        actionsDiv.appendChild(editBtn);
       }
 
       const copyBtn = document.createElement('button');
@@ -315,20 +433,25 @@
       copyBtn.addEventListener('click', () => {
         let textToCopy = '';
         
-        const diffLines = block.querySelectorAll('.rouge-code .diff-line, pre code .diff-line, pre .diff-line');
-        if (diffLines.length > 0) {
-          textToCopy = Array.from(diffLines).map(line => {
-            const text = line.textContent || line.innerText || '';
-            return text === '\u00A0' ? '' : text;
-          }).join('\n');
+        const editorTextarea = block.querySelector('.code-editor-textarea');
+        if (editorTextarea && (block.classList.contains('is-editing-code') || (block._originalCode && editorTextarea.value !== block._originalCode))) {
+          textToCopy = editorTextarea.value;
         } else {
-          const rougeCodeCells = block.querySelectorAll('.rouge-code');
-          if (rougeCodeCells.length > 0) {
-            textToCopy = Array.from(rougeCodeCells).map(cell => cell.innerText).join('\n');
+          const diffLines = block.querySelectorAll('.rouge-code .diff-line, pre code .diff-line, pre .diff-line');
+          if (diffLines.length > 0) {
+            textToCopy = Array.from(diffLines).map(line => {
+              const text = line.textContent || line.innerText || '';
+              return text === '\u00A0' ? '' : text;
+            }).join('\n');
           } else {
-            const codeEl = block.querySelector('code');
-            if (codeEl) {
-              textToCopy = codeEl.innerText;
+            const rougeCodeCells = block.querySelectorAll('.rouge-code');
+            if (rougeCodeCells.length > 0) {
+              textToCopy = Array.from(rougeCodeCells).map(cell => cell.innerText).join('\n');
+            } else {
+              const codeEl = block.querySelector('code');
+              if (codeEl) {
+                textToCopy = codeEl.innerText;
+              }
             }
           }
         }

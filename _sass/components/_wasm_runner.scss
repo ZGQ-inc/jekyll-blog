@@ -77,6 +77,177 @@
   }
 }
 
+.code-edit-btn {
+  &.active,
+  &.is-editing {
+    background: color-mix(in srgb, var(--md-sys-color-tertiary-container) 85%, transparent);
+    color: var(--md-sys-color-on-tertiary-container);
+    border-color: var(--md-sys-color-tertiary);
+
+    .material-symbols-outlined {
+      color: var(--md-sys-color-tertiary);
+    }
+  }
+}
+
+/* ==============================================================================
+   Interactive In-Browser Code Editor
+   ============================================================================== */
+
+.code-interactive-editor {
+  border-top: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 30%, transparent);
+  background: color-mix(in srgb, #0d1117 95%, black);
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  box-sizing: border-box;
+
+  .code-editor-main {
+    padding: 10px 12px 6px;
+    box-sizing: border-box;
+    width: 100%;
+  }
+
+  .code-editor-textarea {
+    width: 100%;
+    min-height: 120px;
+    max-height: 520px;
+    background: #0d1117;
+    color: #e6edf3;
+    border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 40%, transparent);
+    border-radius: var(--shape-small, 6px);
+    font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+    font-size: 0.8125rem;
+    line-height: 1.5;
+    padding: 10px 12px;
+    box-sizing: border-box;
+    resize: vertical;
+    outline: none;
+    tab-size: 4;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
+    &:focus {
+      border-color: var(--md-sys-color-primary);
+      box-shadow: 0 0 0 2px color-mix(in srgb, var(--md-sys-color-primary) 25%, transparent);
+    }
+  }
+
+  .code-editor-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 12px 10px;
+    gap: 8px;
+    flex-wrap: wrap;
+    box-sizing: border-box;
+
+    .code-editor-hint {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.72rem;
+      color: var(--md-sys-color-on-surface-variant);
+      font-family: inherit;
+
+      .material-symbols-outlined {
+        font-size: 14px;
+        opacity: 0.7;
+      }
+
+      kbd {
+        font-size: 0.68rem;
+        padding: 1px 5px;
+        border-radius: 4px;
+        background: color-mix(in srgb, var(--md-sys-color-surface-container-highest) 80%, transparent);
+        border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 40%, transparent);
+        color: var(--md-sys-color-on-surface);
+        font-family: 'JetBrains Mono', monospace;
+      }
+    }
+
+    .code-editor-footer-right {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .code-editor-tool-btn {
+      background: color-mix(in srgb, var(--md-sys-color-surface-container-highest) 75%, transparent);
+      border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 45%, transparent);
+      color: var(--md-sys-color-on-surface-variant);
+      border-radius: var(--shape-small, 6px);
+      cursor: pointer;
+      padding: 3px 8px;
+      height: 26px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.72rem;
+      font-family: inherit;
+      transition: all var(--dur-short2, 100ms) var(--motion-standard, ease);
+
+      .material-symbols-outlined {
+        font-size: 14px;
+      }
+
+      &:hover {
+        background: var(--md-sys-color-secondary-container);
+        color: var(--md-sys-color-on-secondary-container);
+      }
+
+      &:active {
+        transform: scale(0.96);
+      }
+    }
+
+    .code-editor-run-btn {
+      background: var(--md-sys-color-primary);
+      color: var(--md-sys-color-on-primary);
+      border: none;
+      border-radius: var(--shape-small, 6px);
+      cursor: pointer;
+      padding: 3px 10px 3px 8px;
+      height: 26px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      font-family: inherit;
+      box-shadow: var(--elev-1, 0 1px 3px rgba(0,0,0,0.2));
+      transition: all var(--dur-short2, 100ms) var(--motion-standard, ease);
+
+      .material-symbols-outlined {
+        font-size: 15px;
+      }
+
+      .code-editor-kbd {
+        display: inline-flex;
+        margin-left: 2px;
+
+        kbd {
+          font-size: 0.65rem;
+          padding: 0 4px;
+          border-radius: 3px;
+          background: rgba(255, 255, 255, 0.2);
+          color: inherit;
+          border: none;
+          font-family: 'JetBrains Mono', monospace;
+        }
+      }
+
+      &:hover {
+        background: color-mix(in srgb, var(--md-sys-color-primary) 88%, white);
+        box-shadow: var(--elev-2, 0 2px 6px rgba(0,0,0,0.3));
+      }
+
+      &:active {
+        transform: scale(0.97);
+      }
+    }
+  }
+}
+
 .spin {
   animation: wasmRunnerSpin 1s linear infinite;
   display: inline-block;

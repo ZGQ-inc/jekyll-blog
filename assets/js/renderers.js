@@ -355,12 +355,25 @@ async function initSTL() {
       // Preview overlay for inline viewing
       const previewOverlay = document.createElement('div');
       previewOverlay.className = 'render-preview-overlay';
-      previewOverlay.innerHTML = `
-        <div class="render-overlay-badge">
-          <span class="material-symbols-outlined">view_in_ar</span>
-          <span>点击全屏交互</span>
-        </div>
-      `;
+      if (modelType === 'stljs') {
+        previewOverlay.innerHTML = `
+          <div class="render-overlay-badge">
+            <span class="material-symbols-outlined">view_in_ar</span>
+            <span>点击全屏交互</span>
+          </div>
+          <button class="render-overlay-badge-btn edit-stljs-btn" style="pointer-events: auto; margin-top: 8px; background: color-mix(in srgb, var(--md-sys-color-surface-container-highest) 90%, black); border: 1px solid var(--md-sys-color-outline-variant); color: var(--md-sys-color-on-surface); border-radius: 20px; padding: 4px 14px; font-size: 0.75rem; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; box-shadow: var(--elev-1); transition: all 0.2s ease;">
+            <span class="material-symbols-outlined" style="font-size: 16px; color: var(--md-sys-color-primary);">code</span>
+            <span>编辑 Three.js 代码</span>
+          </button>
+        `;
+      } else {
+        previewOverlay.innerHTML = `
+          <div class="render-overlay-badge">
+            <span class="material-symbols-outlined">view_in_ar</span>
+            <span>点击全屏交互</span>
+          </div>
+        `;
+      }
       container.appendChild(previewOverlay);
 
       // Fullscreen floating toolbar
@@ -472,6 +485,132 @@ async function initSTL() {
           hideLoading();
           const scriptFunc = new Function('THREE', 'scene', 'material', 'camera', 'renderer', codeText);
           scriptFunc(THREE, scene, material, camera, renderer);
+
+          // Add interactive code editor drawer for stljs
+          const stljsDrawer = document.createElement('div');
+          stljsDrawer.className = 'shader-editor-drawer stljs-editor-drawer';
+          stljsDrawer.style.borderRadius = '0 0 var(--shape-medium, 12px) var(--shape-medium, 12px)';
+          stljsDrawer.innerHTML = `
+            <textarea class="shader-textarea stljs-textarea" spellcheck="false"></textarea>
+            <div class="shader-editor-bar">
+              <div class="shader-bar-left">
+                <span class="shader-editor-hint">
+                  <span class="material-symbols-outlined">keyboard</span>
+                  <span>按 <kbd>Ctrl</kbd> + <kbd>Enter</kbd> 重新生成</span>
+                </span>
+              </div>
+              <div class="shader-bar-right">
+                <button class="shader-tool-btn btn-reset-stljs" title="恢复初始代码">
+                  <span class="material-symbols-outlined">restart_alt</span>
+                  <span>还原代码</span>
+                </button>
+                <button class="shader-tool-btn btn-copy-stljs" title="复制代码">
+                  <span class="material-symbols-outlined">content_copy</span>
+                  <span>复制代码</span>
+                </button>
+                <button class="shader-apply-btn btn-apply-stljs" title="运行代码并更新 3D 模型 (Ctrl + Enter)">
+                  <span class="material-symbols-outlined apply-icon">play_arrow</span>
+                  <span class="apply-text">运行并更新</span>
+                  <span class="apply-kbd"><kbd>Ctrl+↵</kbd></span>
+                </button>
+              </div>
+            </div>
+          `;
+          container.parentNode.insertBefore(stljsDrawer, container.nextSibling);
+
+          const textarea = stljsDrawer.querySelector('.stljs-textarea');
+          textarea.value = codeText.trim();
+
+          const btnApplyStljs = stljsDrawer.querySelector('.btn-apply-stljs');
+          const btnResetStljs = stljsDrawer.querySelector('.btn-reset-stljs');
+          const btnCopyStljs = stljsDrawer.querySelector('.btn-copy-stljs');
+          const applyIcon = btnApplyStljs.querySelector('.apply-icon');
+          const applyText = btnApplyStljs.querySelector('.apply-text');
+
+          const runStljsCode = () => {
+            try {
+              // Remove previous custom meshes from scene (preserving lights and controls)
+              const meshes = [];
+              scene.traverse(obj => {
+                if (obj.isMesh && obj.type === 'Mesh') meshes.push(obj);
+              });
+              meshes.forEach(m => {
+                scene.remove(m);
+                if (m.geometry) m.geometry.dispose();
+              });
+
+              const fn = new Function('THREE', 'scene', 'material', 'camera', 'renderer', textarea.value);
+              fn(THREE, scene, material, camera, renderer);
+
+              btnApplyStljs.classList.remove('is-error');
+              btnApplyStljs.classList.add('is-success');
+              if (applyIcon) applyIcon.textContent = 'check_circle';
+              if (applyText) applyText.textContent = '已更新';
+              setTimeout(() => {
+                btnApplyStljs.classList.remove('is-success');
+                if (applyIcon) applyIcon.textContent = 'play_arrow';
+                if (applyText) applyText.textContent = '运行并更新';
+              }, 1400);
+            } catch (err) {
+              console.error('stljs execution error:', err);
+              btnApplyStljs.classList.remove('is-success');
+              btnApplyStljs.classList.add('is-error');
+              if (applyIcon) applyIcon.textContent = 'error';
+              if (applyText) applyText.textContent = '执行失败';
+              setTimeout(() => {
+                btnApplyStljs.classList.remove('is-error');
+                if (applyIcon) applyIcon.textContent = 'play_arrow';
+                if (applyText) applyText.textContent = '运行并更新';
+              }, 2000);
+            }
+          };
+
+          btnApplyStljs.addEventListener('click', runStljsCode);
+
+          textarea.addEventListener('keydown', (e) => {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+              e.preventDefault();
+              runStljsCode();
+            } else if (e.key === 'Tab') {
+              e.preventDefault();
+              const start = textarea.selectionStart;
+              const end = textarea.selectionEnd;
+              textarea.value = textarea.value.substring(0, start) + '  ' + textarea.value.substring(end);
+              textarea.selectionStart = textarea.selectionEnd = start + 2;
+            }
+          });
+
+          btnResetStljs.addEventListener('click', () => {
+            textarea.value = codeText.trim();
+            runStljsCode();
+            const label = btnResetStljs.querySelector('span:last-child');
+            if (label) {
+              label.textContent = '已还原';
+              setTimeout(() => { label.textContent = '还原代码'; }, 1500);
+            }
+          });
+
+          btnCopyStljs.addEventListener('click', () => {
+            navigator.clipboard.writeText(textarea.value).then(() => {
+              const label = btnCopyStljs.querySelector('span:last-child');
+              if (label) {
+                label.textContent = '已复制';
+                setTimeout(() => { label.textContent = '复制代码'; }, 1500);
+              }
+            });
+          });
+
+          const editBtn = previewOverlay.querySelector('.edit-stljs-btn');
+          if (editBtn) {
+            editBtn.addEventListener('click', (e) => {
+              e.stopPropagation();
+              const isOpen = stljsDrawer.classList.toggle('open');
+              editBtn.classList.toggle('active', isOpen);
+              if (isOpen) {
+                textarea.focus();
+              }
+            });
+          }
         } else if (modelType === 'stl') {
           const trimmedText = codeText.trim();
           if (trimmedText.startsWith('http') || trimmedText.startsWith('/')) {
@@ -1230,10 +1369,27 @@ async function initShaders() {
       <div class="shader-editor-drawer">
         <textarea class="shader-textarea" spellcheck="false"></textarea>
         <div class="shader-editor-bar">
-          <button class="shader-btn btn-apply">
-            <span class="material-symbols-outlined">play_arrow</span>
-            <span>编译并应用</span>
-          </button>
+          <div class="shader-bar-left">
+            <span class="shader-editor-hint">
+              <span class="material-symbols-outlined">keyboard</span>
+              <span>按 <kbd>Ctrl</kbd> + <kbd>Enter</kbd> 快速编译</span>
+            </span>
+          </div>
+          <div class="shader-bar-right">
+            <button class="shader-tool-btn btn-reset-shader" title="还原为着色器初始源码">
+              <span class="material-symbols-outlined">restart_alt</span>
+              <span>还原代码</span>
+            </button>
+            <button class="shader-tool-btn btn-copy-shader" title="复制着色器源码">
+              <span class="material-symbols-outlined">content_copy</span>
+              <span>复制代码</span>
+            </button>
+            <button class="shader-apply-btn btn-apply" title="编译着色器并即时应用到画布 (Ctrl + Enter)">
+              <span class="material-symbols-outlined apply-icon">play_arrow</span>
+              <span class="apply-text">编译并应用</span>
+              <span class="apply-kbd"><kbd>Ctrl+↵</kbd></span>
+            </button>
+          </div>
         </div>
       </div>
     `;
@@ -1437,13 +1593,84 @@ async function initShaders() {
       btnCode.classList.toggle('active', open);
     });
 
-    btnApply.addEventListener('click', () => {
-      if (compileShader(textarea.value)) {
+    const btnResetShader = card.querySelector('.btn-reset-shader');
+    const btnCopyShader = card.querySelector('.btn-copy-shader');
+    const applyIcon = btnApply.querySelector('.apply-icon');
+    const applyText = btnApply.querySelector('.apply-text');
+
+    let applyTimer = null;
+    const handleApply = () => {
+      const success = compileShader(textarea.value);
+      if (success) {
         startTime = performance.now();
         pauseTime = 0;
         frameCount = 0;
+
+        btnApply.classList.remove('is-error');
+        btnApply.classList.add('is-success');
+        if (applyIcon) applyIcon.textContent = 'check_circle';
+        if (applyText) applyText.textContent = '已应用';
+
+        clearTimeout(applyTimer);
+        applyTimer = setTimeout(() => {
+          btnApply.classList.remove('is-success');
+          if (applyIcon) applyIcon.textContent = 'play_arrow';
+          if (applyText) applyText.textContent = '编译并应用';
+        }, 1400);
+      } else {
+        btnApply.classList.remove('is-success');
+        btnApply.classList.add('is-error');
+        if (applyIcon) applyIcon.textContent = 'error';
+        if (applyText) applyText.textContent = '编译失败';
+
+        clearTimeout(applyTimer);
+        applyTimer = setTimeout(() => {
+          btnApply.classList.remove('is-error');
+          if (applyIcon) applyIcon.textContent = 'play_arrow';
+          if (applyText) applyText.textContent = '编译并应用';
+        }, 2000);
+      }
+    };
+
+    btnApply.addEventListener('click', handleApply);
+
+    // Keyboard shortcuts & indentation in shader textarea
+    textarea.addEventListener('keydown', (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+        e.preventDefault();
+        handleApply();
+      } else if (e.key === 'Tab') {
+        e.preventDefault();
+        const start = textarea.selectionStart;
+        const end = textarea.selectionEnd;
+        textarea.value = textarea.value.substring(0, start) + '    ' + textarea.value.substring(end);
+        textarea.selectionStart = textarea.selectionEnd = start + 4;
       }
     });
+
+    if (btnResetShader) {
+      btnResetShader.addEventListener('click', () => {
+        textarea.value = rawCode;
+        handleApply();
+        const label = btnResetShader.querySelector('span:last-child');
+        if (label) {
+          label.textContent = '已还原';
+          setTimeout(() => { label.textContent = '还原代码'; }, 1500);
+        }
+      });
+    }
+
+    if (btnCopyShader) {
+      btnCopyShader.addEventListener('click', () => {
+        navigator.clipboard.writeText(textarea.value).then(() => {
+          const label = btnCopyShader.querySelector('span:last-child');
+          if (label) {
+            label.textContent = '已复制';
+            setTimeout(() => { label.textContent = '复制代码'; }, 1500);
+          }
+        });
+      });
+    }
 
     // Fullscreen toggle with DOM portaling (escapes ancestor clipping & container bounds)
     const enterFullscreen = () => {

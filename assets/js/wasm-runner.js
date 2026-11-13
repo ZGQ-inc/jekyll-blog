@@ -235,8 +235,23 @@
       }
     }
 
-    // Extract code to execute from the code block (handles selection & Rouge tables)
+    // Extract code to execute from the code block (handles interactive editor, selection & Rouge tables)
     extractCode(block) {
+      // 0. Check if user is editing in the interactive code editor or has edited code
+      const editorTextarea = block.querySelector('.code-editor-textarea');
+      if (editorTextarea) {
+        // If user has highlighted a specific snippet in the editor, run only that snippet!
+        const selStart = editorTextarea.selectionStart;
+        const selEnd = editorTextarea.selectionEnd;
+        if (selStart !== undefined && selEnd !== undefined && selStart !== selEnd) {
+          const selected = editorTextarea.value.substring(selStart, selEnd).trim();
+          if (selected) return selected;
+        }
+        if (editorTextarea.value && editorTextarea.value.trim()) {
+          return editorTextarea.value.trim();
+        }
+      }
+
       // 1. Check if user selected a subset of text within this block
       const selection = window.getSelection();
       if (selection && selection.rangeCount > 0 && !selection.isCollapsed) {
@@ -285,7 +300,7 @@
           icon.textContent = 'progress_activity';
           icon.classList.add('spin');
         }
-        const text = runBtn.querySelector('.btn-text');
+        const text = runBtn.querySelector('.code-btn-text') || runBtn.querySelector('.btn-text');
         if (text) text.textContent = '运行中...';
       }
 
@@ -421,7 +436,7 @@
             icon.textContent = 'play_arrow';
             icon.classList.remove('spin');
           }
-          const text = runBtn.querySelector('.btn-text');
+          const text = runBtn.querySelector('.code-btn-text') || runBtn.querySelector('.btn-text');
           if (text) text.textContent = '运行';
         }
       }
