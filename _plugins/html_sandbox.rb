@@ -2,6 +2,7 @@
 
 require 'cgi'
 require 'securerandom'
+require 'rouge'
 
 # ==============================================================================
 # Material Design 3 HTML Sandbox & Playground Plugin for Jekyll
@@ -154,6 +155,51 @@ module Jekyll
           #{raw_code}
           </body>
           </html>
+        HTML
+      end
+    end
+
+    def self.highlight_html_source(code)
+      clean_code = code.to_s.strip
+      clean_code = '<!-- 暂无源码 -->' if clean_code.empty?
+
+      begin
+        lexer = Rouge::Lexer.find_fancy('html', clean_code) || Rouge::Lexers::HTML.new
+        formatter = Rouge::Formatters::HTMLTable.new(
+          Rouge::Formatters::HTML.new,
+          table_class: 'rouge-table sandbox-rouge-table',
+          gutter_class: 'rouge-gutter gl',
+          code_class: 'rouge-code',
+          line_numbers: true
+        )
+        highlighted = formatter.format(lexer.lex(clean_code))
+
+        <<~HTML.strip
+          <div class="highlighter-rouge language-html sandbox-highlight-wrap">
+            <div class="highlight">
+              #{highlighted}
+            </div>
+          </div>
+        HTML
+      rescue StandardError => _e
+        escaped = CGI.escapeHTML(clean_code)
+        lines = escaped.lines
+        line_count = [lines.size, 1].max
+        gutter_numbers = (1..line_count).to_a.join("\n")
+
+        <<~HTML.strip
+          <div class="highlighter-rouge language-html sandbox-highlight-wrap">
+            <div class="highlight">
+              <table class="rouge-table sandbox-rouge-table">
+                <tbody>
+                  <tr>
+                    <td class="rouge-gutter gl"><pre class="lineno">#{gutter_numbers}</pre></td>
+                    <td class="rouge-code"><pre><code class="language-html">#{escaped}</code></pre></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
         HTML
       end
     end
@@ -389,7 +435,7 @@ module Jekyll
                 <span class="copy-text">复制代码</span>
               </button>
             </div>
-            <pre class="sandbox-source-pre"><code class="language-html">#{escaped_code}</code></pre>
+            #{highlight_html_source(display_code)}
           </div>
         </div>
       HTML

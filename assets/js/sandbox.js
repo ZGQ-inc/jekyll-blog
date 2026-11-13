@@ -168,9 +168,50 @@
     }
   });
 
+  function formatFallbackSandboxSource(container) {
+    const drawer = container.querySelector('.sandbox-source-drawer');
+    if (!drawer) return;
+    if (drawer.querySelector('.sandbox-rouge-table')) return;
+
+    const pre = drawer.querySelector('.sandbox-source-pre');
+    if (!pre) return;
+
+    const code = pre.querySelector('code') || pre;
+    const rawText = code.textContent || '';
+    if (!rawText.trim()) return;
+
+    const lines = rawText.split(/\r?\n/);
+    if (lines.length > 0 && lines[lines.length - 1] === '') {
+      lines.pop();
+    }
+    const lineCount = Math.max(lines.length, 1);
+    const gutterNums = Array.from({ length: lineCount }, (_, i) => `<span class="lineno">${i + 1}</span>`).join('\n');
+
+    const escape = (str) => str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    const escapedCode = escape(rawText);
+
+    const wrap = document.createElement('div');
+    wrap.className = 'highlighter-rouge language-html sandbox-highlight-wrap';
+    wrap.innerHTML = `
+      <div class="highlight">
+        <table class="rouge-table sandbox-rouge-table">
+          <tbody>
+            <tr>
+              <td class="rouge-gutter gl"><pre class="lineno">${gutterNums}</pre></td>
+              <td class="rouge-code"><pre><code class="language-html">${escapedCode}</code></pre></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    `;
+    pre.replaceWith(wrap);
+  }
+
   function initSandbox(container) {
     if (container.dataset.sandboxInitialized) return;
     container.dataset.sandboxInitialized = 'true';
+
+    formatFallbackSandboxSource(container);
 
     const iframe = container.querySelector('.sandbox-iframe');
     const viewport = container.querySelector('.sandbox-viewport');
@@ -255,10 +296,21 @@
     if (btnCopy) {
       btnCopy.addEventListener('click', (e) => {
         e.preventDefault();
-        const codeEl = container.querySelector('.sandbox-source-pre code');
-        if (!codeEl) return;
+        let textToCopy = '';
+        const rougeCodeCell = container.querySelector('.sandbox-source-drawer .rouge-code');
+        if (rougeCodeCell) {
+          const preEl = rougeCodeCell.querySelector('pre') || rougeCodeCell;
+          textToCopy = preEl.textContent || preEl.innerText || '';
+        } else {
+          const fallbackEl = container.querySelector('.sandbox-source-drawer pre code') ||
+                             container.querySelector('.sandbox-source-drawer pre');
+          if (fallbackEl) {
+            textToCopy = fallbackEl.textContent || fallbackEl.innerText || '';
+          }
+        }
+        textToCopy = textToCopy.replace(/^\n+|\n+$/g, '');
+        if (!textToCopy) return;
 
-        const textToCopy = codeEl.innerText || codeEl.textContent;
         navigator.clipboard.writeText(textToCopy).then(() => {
           btnCopy.classList.add('copied');
           const originalHTML = btnCopy.innerHTML;

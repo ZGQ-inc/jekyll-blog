@@ -72,6 +72,7 @@
     
     codeBlocks.forEach(block => {
       if (block.dataset.codeBlockInit) return;
+      if (block.closest('.sandbox-source-drawer')) return;
       block.dataset.codeBlockInit = 'true';
 
       let lang = 'CODE';
