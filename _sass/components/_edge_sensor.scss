@@ -1,6 +1,6 @@
 // ==============================================================================
-// Material Design 3 Cloudflare Edge Sensor Micro-Badge & Modal
-// Displays live edge data center (Colo), HTTP/3 protocol, TLS, and RTT.
+// Material Design 3 Cloudflare Edge Sensor Micro-Badge
+// Reuses the system Theme Dialog (.theme-dialog) for edge diagnostic details.
 // ==============================================================================
 
 .edge-sensor-container {
@@ -78,116 +78,51 @@
   }
 }
 
-/* Edge Details Modal */
-.edge-sensor-modal {
-  display: none;
-  position: fixed;
-  inset: 0;
-  z-index: 9999;
-  align-items: center;
-  justify-content: center;
+// Edge Sensor Dialog Details Card (within .theme-dialog-surface)
+.edge-detail-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  background: color-mix(in srgb, var(--md-sys-color-surface-container) 80%, transparent);
+  border-radius: var(--shape-large, 16px);
+  padding: 10px 16px;
+  margin-bottom: 20px;
+  border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 40%, transparent);
 
-  &.open {
+  .edge-detail-row {
     display: flex;
-  }
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    font-size: 0.8125rem;
+    padding: 7px 0;
+    border-bottom: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 25%, transparent);
 
-  .edge-sensor-modal-backdrop {
-    position: absolute;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.6);
-    backdrop-filter: blur(4px);
-    -webkit-backdrop-filter: blur(4px);
-  }
+    &:last-child {
+      border-bottom: none;
+    }
 
-  .edge-sensor-modal-content {
-    position: relative;
-    background: var(--md-sys-color-surface-container);
-    border: 1px solid var(--md-sys-color-outline-variant);
-    border-radius: var(--shape-large, 16px);
-    width: 90%;
-    max-width: 360px;
-    padding: 20px;
-    box-shadow: var(--elev-4, 0 12px 36px rgba(0,0,0,0.5));
-    animation: edgeModalFadeIn 0.2s cubic-bezier(0.2, 0, 0, 1);
-    box-sizing: border-box;
-
-    .edge-sensor-modal-header {
-      display: flex;
+    .edge-detail-label {
+      color: var(--md-sys-color-on-surface-variant);
+      display: inline-flex;
       align-items: center;
-      justify-content: space-between;
-      margin-bottom: 16px;
-      padding-bottom: 10px;
-      border-bottom: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 40%, transparent);
+      gap: 6px;
+      white-space: nowrap;
+      flex-shrink: 0;
 
-      .edge-sensor-modal-title {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        font-weight: 700;
-        font-size: 0.9375rem;
+      .material-symbols-outlined {
+        font-size: 16px;
         color: var(--md-sys-color-primary);
-
-        .material-symbols-outlined {
-          font-size: 20px;
-        }
-      }
-
-      .edge-sensor-close-btn {
-        background: transparent;
-        border: none;
-        color: var(--md-sys-color-on-surface-variant);
-        cursor: pointer;
-        padding: 4px;
-        border-radius: 50%;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-
-        &:hover {
-          background: var(--md-sys-color-surface-container-highest);
-          color: var(--md-sys-color-on-surface);
-        }
       }
     }
 
-    .edge-sensor-details-body {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-
-      .edge-detail-row {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        font-size: 0.8125rem;
-        padding: 4px 0;
-        border-bottom: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 25%, transparent);
-
-        &:last-child {
-          border-bottom: none;
-        }
-
-        .edge-detail-label {
-          color: var(--md-sys-color-on-surface-variant);
-        }
-
-        .edge-detail-val {
-          font-family: 'JetBrains Mono', monospace;
-          color: var(--md-sys-color-on-surface);
-          font-weight: 600;
-        }
-      }
+    .edge-detail-val {
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--md-sys-color-on-surface);
+      font-weight: 600;
+      text-align: right;
+      font-size: 0.78rem;
+      word-break: break-word;
     }
-  }
-}
-
-@keyframes edgeModalFadeIn {
-  from {
-    opacity: 0;
-    transform: scale(0.92);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
   }
 }

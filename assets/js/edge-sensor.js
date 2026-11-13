@@ -1,6 +1,7 @@
 // ==============================================================================
 // Cloudflare Edge Sensor Controller
 // Queries /cdn-cgi/trace to detect edge colo, HTTP protocol, TLS cipher & RTT.
+// Reuses the MD3 Theme Dialog UI (.theme-dialog) and design tokens.
 // ==============================================================================
 
 (function() {
@@ -87,37 +88,39 @@
 
   function initEdgeSensor() {
     const badge = document.getElementById('edgeSensorBadge');
-    const modal = document.getElementById('edgeSensorModal');
-    const backdrop = document.getElementById('edgeSensorBackdrop');
-    const closeBtn = document.getElementById('edgeModalCloseBtn');
+    const dialog = document.getElementById('edgeSensorDialog');
 
-    if (!badge) return;
+    if (!badge || !dialog) return;
 
-    function openModal() {
-      if (modal) {
-        modal.classList.add('open');
-        modal.setAttribute('aria-hidden', 'false');
-      }
+    const scrim = dialog.querySelector('.theme-dialog-scrim');
+    const closeBtn = document.getElementById('edgeSensorCloseBtn');
+    const closeBtnX = document.getElementById('edgeSensorCloseBtnX');
+
+    function openDialog() {
+      dialog.classList.add('open');
+      document.body.style.overflow = 'hidden';
     }
 
-    function closeModal() {
-      if (modal) {
-        modal.classList.remove('open');
-        modal.setAttribute('aria-hidden', 'true');
-      }
+    function closeDialog() {
+      dialog.classList.remove('open');
+      document.body.style.overflow = '';
     }
+
+    window.openEdgeSensorDialog = openDialog;
+    window.closeEdgeSensorDialog = closeDialog;
 
     badge.addEventListener('click', (e) => {
       e.stopPropagation();
-      openModal();
+      openDialog();
     });
 
-    if (backdrop) backdrop.addEventListener('click', closeModal);
-    if (closeBtn) closeBtn.addEventListener('click', closeModal);
+    if (scrim) scrim.addEventListener('click', closeDialog);
+    if (closeBtn) closeBtn.addEventListener('click', closeDialog);
+    if (closeBtnX) closeBtnX.addEventListener('click', closeDialog);
 
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && modal && modal.classList.contains('open')) {
-        closeModal();
+      if (e.key === 'Escape' && dialog.classList.contains('open')) {
+        closeDialog();
       }
     });
 

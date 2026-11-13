@@ -14,40 +14,72 @@
   </button>
 </div>
 
-<!-- Edge Details Modal -->
-<div class="edge-sensor-modal" id="edgeSensorModal" aria-hidden="true">
-  <div class="edge-sensor-modal-backdrop" id="edgeSensorBackdrop"></div>
-  <div class="edge-sensor-modal-content" role="dialog" aria-modal="true" aria-labelledby="edgeModalTitle">
-    <div class="edge-sensor-modal-header">
-      <div class="edge-sensor-modal-title" id="edgeModalTitle">
-        <span class="material-symbols-outlined">cloud</span>
-        <span>Cloudflare 边缘感知详情</span>
-      </div>
-      <button class="edge-sensor-close-btn" id="edgeModalCloseBtn" type="button" aria-label="关闭详情窗口">
-        <span class="material-symbols-outlined">close</span>
+<!-- Edge Details Dialog (Reusing MD3 Theme Dialog UI & Motion Tokens) -->
+<div class="theme-dialog" id="edgeSensorDialog" role="dialog" aria-modal="true"
+     aria-labelledby="edgeSensorDialogTitle">
+
+  <!-- Scrim (click to close) -->
+  <div class="theme-dialog-scrim" aria-hidden="true"></div>
+
+  <!-- Glass Surface -->
+  <div class="theme-dialog-surface">
+
+    <!-- Title Bar -->
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px">
+      <span class="material-symbols-outlined"
+            style="color:var(--md-sys-color-primary);font-size:22px">cloud</span>
+      <h2 class="theme-dialog-title" id="edgeSensorDialogTitle">边缘节点与连接</h2>
+      <button class="icon-btn" id="edgeSensorCloseBtnX" aria-label="关闭"
+              style="margin-left:auto;width:36px;height:36px"
+              onclick="window.closeEdgeSensorDialog&&window.closeEdgeSensorDialog()">
+        <span class="material-symbols-outlined" style="font-size:20px">close</span>
       </button>
     </div>
-    <div class="edge-sensor-details-body">
+
+    <p class="theme-dialog-subtitle">Cloudflare Edge 实时网络诊断</p>
+
+    <!-- Details Card -->
+    <div class="edge-detail-list">
       <div class="edge-detail-row">
-        <span class="edge-detail-label">数据中心节点:</span>
+        <span class="edge-detail-label">
+          <span class="material-symbols-outlined">dns</span>数据中心节点
+        </span>
         <span class="edge-detail-val" id="edgeColoVal">检测中...</span>
       </div>
       <div class="edge-detail-row">
-        <span class="edge-detail-label">传输协议:</span>
+        <span class="edge-detail-label">
+          <span class="material-symbols-outlined">http</span>传输协议
+        </span>
         <span class="edge-detail-val" id="edgeProtoVal">HTTP/3 (QUIC)</span>
       </div>
       <div class="edge-detail-row">
-        <span class="edge-detail-label">安全密码套件:</span>
+        <span class="edge-detail-label">
+          <span class="material-symbols-outlined">lock</span>安全密码套件
+        </span>
         <span class="edge-detail-val" id="edgeTlsVal">TLSv1.3</span>
       </div>
       <div class="edge-detail-row">
-        <span class="edge-detail-label">往返延迟 (RTT):</span>
+        <span class="edge-detail-label">
+          <span class="material-symbols-outlined">timer</span>往返延迟 (RTT)
+        </span>
         <span class="edge-detail-val" id="edgeRttVal">-- ms</span>
       </div>
       <div class="edge-detail-row">
-        <span class="edge-detail-label">全球网络接入:</span>
+        <span class="edge-detail-label">
+          <span class="material-symbols-outlined">public</span>全球网络接入
+        </span>
         <span class="edge-detail-val">Cloudflare Anycast</span>
       </div>
     </div>
+
+    <!-- Actions -->
+    <div class="theme-dialog-actions">
+      <button class="btn-filled" id="edgeSensorCloseBtn"
+              onclick="window.closeEdgeSensorDialog&&window.closeEdgeSensorDialog()">
+        <span class="material-symbols-outlined" style="font-size:18px">check</span>
+        确定
+      </button>
+    </div>
+
   </div>
 </div>
