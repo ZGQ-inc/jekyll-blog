@@ -158,6 +158,15 @@ document.addEventListener('DOMContentLoaded', () => {
   document.querySelectorAll('.article-content img').forEach(media => {
     if (media.dataset.lightboxIndex !== undefined) return;
     if (media.closest('a')) return;
+    if (
+      media.classList.contains('inline-emoji') ||
+      media.classList.contains('inline-icon') ||
+      media.classList.contains('inline-badge-img') ||
+      (media.src && (media.src.includes('/emoji/') || media.src.includes('favicon'))) ||
+      media.closest('.inline-badge, .inline-badge-link, .inline-icon, .inline-emoji')
+    ) {
+      return;
+    }
     
     media.style.cursor = 'zoom-in';
     media.dataset.lightboxIndex = allMediaArray.length;
@@ -263,7 +272,16 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!postContent) return;
     const images = postContent.querySelectorAll('img:not([data-lightbox-index])');
     images.forEach(media => {
-      if (media.closest('a') || media.classList.contains('anchor-icon') || media.classList.contains('code-lang-icon')) return;
+      if (
+        media.closest('a') ||
+        media.classList.contains('anchor-icon') ||
+        media.classList.contains('code-lang-icon') ||
+        media.classList.contains('inline-emoji') ||
+        media.classList.contains('inline-icon') ||
+        media.classList.contains('inline-badge-img') ||
+        (media.src && (media.src.includes('/emoji/') || media.src.includes('favicon'))) ||
+        media.closest('.inline-badge, .inline-badge-link, .inline-icon, .inline-emoji')
+      ) return;
       media.style.cursor = 'zoom-in';
       media.dataset.lightboxIndex = allMediaArray.length;
       allMediaArray.push(media);

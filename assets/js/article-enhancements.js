@@ -314,12 +314,23 @@ function initTelegramSpoilers() {
 // ==============================================================================
 function initArticleImages() {
   const articleImgs = document.querySelectorAll(
-    '.article-content img:not([src*=".svg"]):not([src*="badge"]):not([src*="shields.io"]):not([src*="min-tuijian"]):not([src*="min-oss"])'
+    '.article-content img:not([src*=".svg"]):not([src*="badge"]):not([src*="shields.io"]):not([src*="min-tuijian"]):not([src*="min-oss"]):not(.inline-emoji):not(.inline-icon):not(.inline-badge-img)'
   );
 
   articleImgs.forEach(img => {
     // Skip if already wrapped
     if (img.parentElement && img.parentElement.classList.contains('post-img-container')) {
+      return;
+    }
+
+    // Skip inline assets (emojis, icons, badges, favicons)
+    if (
+      img.classList.contains('inline-emoji') ||
+      img.classList.contains('inline-icon') ||
+      img.classList.contains('inline-badge-img') ||
+      (img.src && (img.src.includes('/emoji/') || img.src.includes('favicon'))) ||
+      img.closest('.inline-badge, .inline-badge-link, .inline-icon, .inline-emoji')
+    ) {
       return;
     }
 

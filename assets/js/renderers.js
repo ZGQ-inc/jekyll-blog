@@ -7,7 +7,12 @@ function getCodeBlocks(language) {
     
     // Capture the outermost syntax highlighter container (to prevent leaving rogue headers or line numbers behind)
     let wrapper = el.closest('.highlighter-rouge') || el.closest('figure.highlight') || el.closest('pre') || el;
-    blocks.push({ wrapper, codeText: codeEl.textContent });
+    
+    // Extract code only from .rouge-code if Rouge line numbers table is present
+    const rougeCode = wrapper.querySelector('.rouge-code') || (el.querySelector && el.querySelector('.rouge-code'));
+    const codeText = rougeCode ? (rougeCode.innerText || rougeCode.textContent) : (codeEl.innerText || codeEl.textContent);
+
+    blocks.push({ wrapper, codeText });
   });
   
   const uniqueWrappers = new Set();
@@ -1086,11 +1091,12 @@ async function initTerminal() {
 
   // --- 2. Handle Mock Terminal Blocks ---
   mockBlocks.forEach(({ wrapper, codeText }) => {
-    const lines = codeText.trim().split('\n');
+    const rawLines = codeText.trim().split('\n');
     const steps = [];
     let currentStep = null;
 
-    for (const line of lines) {
+    for (const rawLine of rawLines) {
+      const line = rawLine.replace(/\r/g, '');
       if (line.startsWith('$ ') || line.startsWith('# ') || line.startsWith('> ')) {
         if (currentStep) steps.push(currentStep);
         currentStep = { prompt: line.slice(0, 2), cmd: line.slice(2), outputLines: [] };
@@ -1103,6 +1109,11 @@ async function initTerminal() {
       }
     }
     if (currentStep) steps.push(currentStep);
+
+    // Safeguard: discard any leading phantom step that has no command and only contains line numbers
+    while (steps.length > 0 && !steps[0].cmd && steps[0].outputLines.every(l => /^\s*\d+\s*$/.test(l))) {
+      steps.shift();
+    }
 
     const frame = document.createElement('div');
     frame.className = 'md3-terminal-frame';
