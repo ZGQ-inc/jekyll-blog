@@ -38,7 +38,15 @@ CREATE TABLE IF NOT EXISTS bot_subscribers (
   updated_at      DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Turnstile 人机验证与防暴力破解频率记录表
+CREATE TABLE IF NOT EXISTS turnstile_verifications (
+  id              INTEGER  PRIMARY KEY AUTOINCREMENT,
+  ip              TEXT     NOT NULL,             -- 客户端连接 IP
+  created_at      INTEGER  NOT NULL              -- 毫秒时间戳
+);
+
 -- 索引优化
 CREATE INDEX IF NOT EXISTS idx_post_tg_map_tg_message ON post_tg_map(tg_message_id);
 CREATE INDEX IF NOT EXISTS idx_media_uploads_post_id  ON media_uploads(post_id);
 CREATE INDEX IF NOT EXISTS idx_bot_subscribers_active  ON bot_subscribers(is_active);
+CREATE INDEX IF NOT EXISTS idx_turnstile_verifications_ip ON turnstile_verifications(ip, created_at);

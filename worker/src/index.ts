@@ -35,6 +35,7 @@ interface Env {
   NOTIFY_SECRET: string;
   WEBHOOK_SECRET: string;
   VAULT_KEY?: string;
+  TURNSTILE_SECRET_KEY?: string;
 }
 
 interface TgUpdate {
@@ -215,6 +216,11 @@ export default {
       const commentsQuery = path.match(/^\/api\/posts\/([^/]+)\/comments$/);
       if (commentsQuery && method === 'GET') {
         return handleGetPostComments(commentsQuery[1], request, env);
+      }
+
+      // Cloudflare Turnstile Server-Side Verification (防小人 / Anti-Bot Server-Side Validation)
+      if ((path === '/api/turnstile/verify' || path === '/api/vault/verify') && method === 'POST') {
+        return handleTurnstileVerify(request, env);
       }
 
       return jsonResponse({ error: 'Not Found' }, 404);
@@ -2501,6 +2507,128 @@ async function commitToGitHub(env: Env, slug: string, content: string, folder: s
 // ================================================================
 
 
+
+// ================================================================
+// Cloudflare Turnstile Verification Handler (防小人 / Anti-Bot)
+// ================================================================
+
+/**
+ * Cloudflare Turnstile Server-Side Verification
+ * Validates cf-turnstile-response token with Cloudflare's siteverify API using TURNSTILE_SECRET_KEY.
+ * Defends against automated script bypasses, token reuse, and brute-force attacks.
+ */
+async function handleTurnstileVerify(request: Request, env: Env): Promise<Response> {
+  const secretKey = env.TURNSTILE_SECRET_KEY;
+  if (!secretKey) {
+    console.warn('[Turnstile] TURNSTILE_SECRET_KEY is not configured on Cloudflare Worker');
+    return jsonResponse({
+      success: false,
+      error: '服务端尚未配置 TURNSTILE_SECRET_KEY，请在 GitHub Secrets 或 Cloudflare Worker 中配置密钥',
+      code: 'MISSING_SECRET_KEY'
+    }, 500);
+  }
+
+  let body: any;
+  try {
+    body = await request.json();
+  } catch {
+    return jsonResponse({ success: false, error: '请求体格式错误，需为 JSON' }, 400);
+  }
+
+  const token = body?.token || body?.response;
+  if (!token || typeof token !== 'string' || !token.trim()) {
+    return jsonResponse({ success: false, error: '缺少人机验证凭证 (token)' }, 400);
+  }
+
+  const clientIp = request.headers.get('CF-Connecting-IP') || '';
+
+  // 1. D1-based Rate Limiting & Anti-Brute-Force
+  if (env.DB && clientIp) {
+    try {
+      await env.DB.prepare(`
+        CREATE TABLE IF NOT EXISTS turnstile_verifications (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          ip TEXT NOT NULL,
+          created_at INTEGER NOT NULL
+        )
+      `).run();
+
+      const now = Date.now();
+      const tenMinutesAgo = now - 10 * 60 * 1000;
+
+      // Clean old verification records (> 10 minutes)
+      await env.DB.prepare(`DELETE FROM turnstile_verifications WHERE created_at < ?`).bind(tenMinutesAgo).run();
+
+      // Check verification count from this IP within the last 10 minutes (maximum 15 attempts)
+      const countRow: any = await env.DB.prepare(
+        `SELECT COUNT(*) as count FROM turnstile_verifications WHERE ip = ? AND created_at >= ?`
+      ).bind(clientIp, tenMinutesAgo).first();
+
+      if (countRow && countRow.count >= 15) {
+        console.warn(`[Turnstile] Rate limit triggered for IP ${clientIp}: ${countRow.count} attempts in 10m`);
+        return jsonResponse({
+          success: false,
+          error: '请求过于频繁，当前 IP 已触发防爆破保护，请 10 分钟后再试',
+          code: 'RATE_LIMIT_EXCEEDED'
+        }, 429);
+      }
+
+      // Record this verification attempt
+      await env.DB.prepare(
+        `INSERT INTO turnstile_verifications (ip, created_at) VALUES (?, ?)`
+      ).bind(clientIp, now).run();
+    } catch (dbErr) {
+      console.warn('[Turnstile] Rate limit check DB error (non-fatal):', dbErr);
+    }
+  }
+
+  // 2. Call Cloudflare's siteverify API with TURNSTILE_SECRET_KEY
+  const formData = new URLSearchParams();
+  formData.append('secret', secretKey);
+  formData.append('response', token.trim());
+  if (clientIp) {
+    formData.append('remoteip', clientIp);
+  }
+
+  try {
+    const cfRes = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: formData.toString()
+    });
+
+    const result: any = await cfRes.json();
+    if (!result.success) {
+      console.warn('[Turnstile] Cloudflare verification failed:', result['error-codes']);
+      const errorCodes = result['error-codes'] || [];
+      let humanMsg = '人机安全验证失败或凭据已失效，请重新进行验证';
+      if (errorCodes.includes('timeout-or-duplicate')) {
+        humanMsg = '人机验证凭证已过期或已被使用，请重新完成验证';
+      } else if (errorCodes.includes('invalid-input-response')) {
+        humanMsg = '人机验证凭据无效，请重新点击验证组件';
+      }
+      return jsonResponse({
+        success: false,
+        error: humanMsg,
+        error_codes: errorCodes
+      }, 403);
+    }
+
+    return jsonResponse({
+      success: true,
+      challenge_ts: result.challenge_ts,
+      hostname: result.hostname
+    });
+  } catch (err: any) {
+    console.error('[Turnstile] Communication error with Cloudflare siteverify:', err);
+    return jsonResponse({
+      success: false,
+      error: '人机验证服务器通信异常，请稍后重试'
+    }, 502);
+  }
+}
 
 // ================================================================
 // Utility Functions

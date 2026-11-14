@@ -11,6 +11,12 @@
     var el = document.getElementById('vaultData');
     return (el && el.getAttribute('data-salt')) || '';
   }
+
+  function getVaultApiUrl() {
+    var el = document.getElementById('vaultData');
+    var api = (el && el.getAttribute('data-api')) || 'https://api.zgqinc.gq';
+    return api.replace(/\/+$/, '');
+  }
   var VAULT_PBKDF2_ITERATIONS = 100000;
   var STORAGE_KEY = 'zgq_vault_auth';
   var COOKIE_NAME = 'zgq_vault_auth';
@@ -469,9 +475,50 @@
 
       submitBtn.disabled = true;
       var originalHtml = submitBtn.innerHTML;
-      submitBtn.innerHTML = '<span class="md3-circular-progress" style="width:18px;height:18px;margin-right:8px;vertical-align:middle;display:inline-block;"></span> 零知识计算中...';
+      submitBtn.innerHTML = '<span class="md3-circular-progress" style="width:18px;height:18px;margin-right:8px;vertical-align:middle;display:inline-block;"></span> 正在进行服务端安全验证...';
 
       try {
+        // Step 1: Server-side Turnstile verification (防小人 / Anti-Bot Server-Side Validation)
+        var apiBase = getVaultApiUrl();
+        var verifyEndpoint = apiBase + '/api/turnstile/verify';
+        var verifyRes = null;
+        try {
+          verifyRes = await fetch(verifyEndpoint, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ token: turnstileToken })
+          });
+        } catch (fetchErr) {
+          // If cross-origin or Worker API fails, try same-origin fallback
+          try {
+            verifyRes = await fetch('/api/turnstile/verify', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ token: turnstileToken })
+            });
+          } catch (fbErr) {
+            throw new Error('无法连接到人机安全验证服务器，请检查网络后重试。');
+          }
+        }
+
+        var verifyData = null;
+        try {
+          verifyData = await verifyRes.json();
+        } catch (je) {}
+
+        if (!verifyRes.ok || !verifyData || !verifyData.success) {
+          var errMsg = (verifyData && verifyData.error) || '人机安全验证未通过或凭据已失效，请重新进行验证。';
+          // Invalidate and reset Turnstile token on failure
+          if (window.turnstile && turnstileWidgetId !== null) {
+            try { window.turnstile.reset(turnstileWidgetId); } catch (e) {}
+            turnstileToken = null;
+          }
+          throw new Error(errMsg);
+        }
+
+        // Step 2: Turnstile token verified by Cloudflare server! Proceed with local zero-knowledge derivation
+        submitBtn.innerHTML = '<span class="md3-circular-progress" style="width:18px;height:18px;margin-right:8px;vertical-align:middle;display:inline-block;"></span> 零知识计算中...';
+
         var combinedString = answers.join(':');
         var derivedKeyHex = await deriveKeyFromAnswers(combinedString);
 
@@ -482,7 +529,7 @@
             window.showToast('挑战成功！解密密钥已派生，文章已解锁（180 天长效有效）');
           }
         } else {
-          throw new Error('Verification failed');
+          throw new Error('哈希校验不匹配，答案有误，请重新检查解答。');
         }
       } catch (err) {
         // Reset Turnstile on failed attempt to prevent rapid brute-forcing
@@ -494,7 +541,8 @@
         }
 
         if (errorBanner) {
-          errorBanner.innerHTML = '<span class="material-symbols-outlined">gpp_bad</span><span>哈希校验不匹配，答案有误，请重新检查解答。</span>';
+          var msg = err.message || '哈希校验不匹配，答案有误，请重新检查解答。';
+          errorBanner.innerHTML = '<span class="material-symbols-outlined">gpp_bad</span><span>' + msg + '</span>';
           errorBanner.style.display = 'flex';
         }
         if (card) {

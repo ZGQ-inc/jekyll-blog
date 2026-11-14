@@ -52,6 +52,8 @@ TELEGRAM_IV_RHASH = "aefab8c132338b"
 # GITHUB_TOKEN          - GitHub Personal Access Token (repo scope)
 # NOTIFY_SECRET         - Shared secret for /api/notify endpoint
 # WEBHOOK_SECRET        - Telegram Webhook secret token
+# VAULT_KEY             - 256-bit AES Vault master key for restricted post decryption
+# TURNSTILE_SECRET_KEY  - Cloudflare Turnstile Secret Key for server-side siteverify
 
 # ================================================================
 # Staging Environment (可选)

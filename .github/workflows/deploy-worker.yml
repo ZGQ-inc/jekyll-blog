@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - 'worker/**'
+      - '.github/workflows/deploy-worker.yml'
   workflow_dispatch:
 
 jobs:
@@ -30,3 +31,22 @@ jobs:
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
+
+      - name: Sync Worker Secrets
+        working-directory: ./worker
+        run: |
+          if [ -n "$TURNSTILE_SECRET_KEY" ]; then
+            echo "$TURNSTILE_SECRET_KEY" | npx wrangler secret put TURNSTILE_SECRET_KEY
+            echo "✅ Successfully synced TURNSTILE_SECRET_KEY to Cloudflare Worker"
+          else
+            echo "ℹ️ TURNSTILE_SECRET_KEY not provided in GitHub Secrets, skipping"
+          fi
+          if [ -n "$VAULT_KEY" ]; then
+            echo "$VAULT_KEY" | npx wrangler secret put VAULT_KEY
+            echo "✅ Successfully synced VAULT_KEY to Cloudflare Worker"
+          fi
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
+          TURNSTILE_SECRET_KEY: ${{ secrets.TURNSTILE_SECRET_KEY }}
+          VAULT_KEY: ${{ secrets.VAULT_KEY }}
