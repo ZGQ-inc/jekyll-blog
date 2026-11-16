@@ -3113,12 +3113,39 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
     cursor: zoom-in;
     user-select: none;
     transition: filter var(--dur-short4) var(--motion-standard);
+    font-family: 'Noto Sans SC', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+    font-size: 14px !important;
+    line-height: 1.4 !important;
 
     svg {
       max-width: 100%;
       height: auto;
       display: inline-block;
       transition: transform var(--dur-short3) var(--motion-standard);
+      overflow: visible !important;
+    }
+
+    // Force foreignObject and its text containers to allow full overflow visibility
+    foreignObject {
+      overflow: visible !important;
+
+      div {
+        font-family: inherit !important;
+        font-size: 14px !important;
+        line-height: 1.4 !important;
+        overflow: visible !important;
+        box-sizing: border-box;
+      }
+    }
+
+    .nodeLabel, .label, .cluster-label, .edgeLabel {
+      font-family: inherit !important;
+      font-size: 14px !important;
+      line-height: 1.4 !important;
+    }
+
+    .node rect, .node circle, .node ellipse, .node polygon, .node path {
+      transition: width var(--dur-short2), x var(--dur-short2);
     }
 
     &:hover {

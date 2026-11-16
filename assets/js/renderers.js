@@ -75,6 +75,143 @@ async function initMermaid() {
     let isRendering = false;
     let pendingRender = false;
 
+    const autoFitMermaidBoxes = () => {
+      document.querySelectorAll('.mermaid svg').forEach(svg => {
+        try {
+          let hasModified = false;
+
+          // 1. Auto-fit flowchart nodes
+          const nodes = svg.querySelectorAll('g.node');
+          nodes.forEach(node => {
+            const rect = node.querySelector('rect.label-container, polygon.label-container, path.label-container') || node.querySelector('rect');
+            const fo = node.querySelector('foreignObject');
+            const labelDiv = fo ? (fo.querySelector('.nodeLabel') || fo.querySelector('div') || fo.firstElementChild) : null;
+
+            if (fo && labelDiv) {
+              labelDiv.style.whiteSpace = 'nowrap';
+              labelDiv.style.display = 'inline-block';
+
+              const textWidth = Math.ceil(labelDiv.scrollWidth || labelDiv.getBoundingClientRect().width);
+              const currentFoWidth = parseFloat(fo.getAttribute('width')) || 0;
+
+              // If text width exceeds or is too close to foreignObject boundary
+              if (textWidth > currentFoWidth - 8) {
+                hasModified = true;
+                const extraWidth = Math.max(textWidth + 24 - currentFoWidth, 20);
+                const newFoWidth = currentFoWidth + extraWidth;
+                fo.setAttribute('width', newFoWidth);
+                fo.style.overflow = 'visible';
+
+                if (rect && rect.tagName.toLowerCase() === 'rect') {
+                  const currentRectWidth = parseFloat(rect.getAttribute('width'));
+                  if (!isNaN(currentRectWidth)) {
+                    const newRectWidth = currentRectWidth + extraWidth;
+                    rect.setAttribute('width', newRectWidth);
+
+                    const currentX = parseFloat(rect.getAttribute('x'));
+                    if (!isNaN(currentX)) {
+                      rect.setAttribute('x', currentX - extraWidth / 2);
+                    }
+                  }
+                }
+
+                // Adjust label container transform to keep it centered
+                const labelG = node.querySelector('g.label');
+                if (labelG) {
+                  const transform = labelG.getAttribute('transform');
+                  if (transform && transform.includes('translate')) {
+                    const match = transform.match(/translate\(([-\d.]+)(?:px)?,\s*([-\d.]+)(?:px)?\)/);
+                    if (match) {
+                      const tx = parseFloat(match[1]);
+                      const ty = parseFloat(match[2]);
+                      labelG.setAttribute('transform', `translate(${tx - extraWidth / 2}, ${ty})`);
+                    }
+                  }
+                }
+              }
+            }
+          });
+
+          // 2. Auto-fit subgraphs / clusters
+          const clusters = svg.querySelectorAll('g.cluster');
+          clusters.forEach(cluster => {
+            const clusterRect = cluster.querySelector('rect');
+            const fo = cluster.querySelector('foreignObject');
+            const labelDiv = fo ? (fo.querySelector('.cluster-label') || fo.querySelector('.nodeLabel') || fo.querySelector('div') || fo.firstElementChild) : null;
+
+            if (fo && labelDiv) {
+              labelDiv.style.whiteSpace = 'nowrap';
+              labelDiv.style.display = 'inline-block';
+
+              const titleWidth = Math.ceil(labelDiv.scrollWidth || labelDiv.getBoundingClientRect().width);
+              const currentFoWidth = parseFloat(fo.getAttribute('width')) || 0;
+
+              if (titleWidth > currentFoWidth - 8) {
+                hasModified = true;
+                const extraWidth = Math.max(titleWidth + 28 - currentFoWidth, 24);
+                fo.setAttribute('width', currentFoWidth + extraWidth);
+                fo.style.overflow = 'visible';
+
+                if (clusterRect) {
+                  const currentRectWidth = parseFloat(clusterRect.getAttribute('width'));
+                  if (!isNaN(currentRectWidth) && titleWidth + 40 > currentRectWidth) {
+                    const diff = (titleWidth + 48) - currentRectWidth;
+                    clusterRect.setAttribute('width', currentRectWidth + diff);
+                    const currentX = parseFloat(clusterRect.getAttribute('x'));
+                    if (!isNaN(currentX)) {
+                      clusterRect.setAttribute('x', currentX - diff / 2);
+                    }
+                  }
+                }
+              }
+            }
+          });
+
+          // 3. Auto-fit edge labels
+          const edgeLabels = svg.querySelectorAll('g.edgeLabel');
+          edgeLabels.forEach(edge => {
+            const fo = edge.querySelector('foreignObject');
+            const labelDiv = fo ? (fo.querySelector('div') || fo.firstElementChild) : null;
+            if (fo && labelDiv) {
+              labelDiv.style.whiteSpace = 'nowrap';
+              const textWidth = Math.ceil(labelDiv.scrollWidth || labelDiv.getBoundingClientRect().width);
+              const currentFoWidth = parseFloat(fo.getAttribute('width')) || 0;
+
+              if (textWidth > currentFoWidth - 4) {
+                hasModified = true;
+                const diff = (textWidth + 16) - currentFoWidth;
+                fo.setAttribute('width', currentFoWidth + diff);
+                fo.style.overflow = 'visible';
+
+                const labelG = edge.querySelector('g.label');
+                if (labelG) {
+                  const transform = labelG.getAttribute('transform');
+                  if (transform && transform.includes('translate')) {
+                    const match = transform.match(/translate\(([-\d.]+)(?:px)?,\s*([-\d.]+)(?:px)?\)/);
+                    if (match) {
+                      labelG.setAttribute('transform', `translate(${parseFloat(match[1]) - diff / 2}, ${match[2]})`);
+                    }
+                  }
+                }
+              }
+            }
+          });
+
+          // 4. Update SVG viewBox to prevent edge-clipping after expansion
+          if (hasModified) {
+            const bbox = svg.getBBox();
+            if (bbox && bbox.width > 0 && bbox.height > 0) {
+              const padding = 24;
+              svg.setAttribute('viewBox', `${Math.floor(bbox.x - padding)} ${Math.floor(bbox.y - padding)} ${Math.ceil(bbox.width + padding * 2)} ${Math.ceil(bbox.height + padding * 2)}`);
+              svg.style.overflow = 'visible';
+            }
+          }
+        } catch (fitErr) {
+          console.warn('[Mermaid] autoFit error:', fitErr);
+        }
+      });
+    };
+
     const renderMermaid = async () => {
       if (isRendering) {
         pendingRender = true;
@@ -83,6 +220,12 @@ async function initMermaid() {
       isRendering = true;
 
       try {
+        if (document.fonts && document.fonts.ready) {
+          try {
+            await document.fonts.ready;
+          } catch (fe) {}
+        }
+
         const computedStyles = getComputedStyle(document.documentElement);
         const primary = computedStyles.getPropertyValue('--md-sys-color-primary').trim() || '#6750A4';
         const primaryContainer = computedStyles.getPropertyValue('--md-sys-color-primary-container').trim() || '#EADDFF';
@@ -95,8 +238,18 @@ async function initMermaid() {
         mermaid.initialize({
           startOnLoad: false,
           theme: 'base',
+          securityLevel: 'loose',
+          flowchart: {
+            htmlLabels: true,
+            padding: 24,
+            nodeSpacing: 50,
+            rankSpacing: 50,
+            curve: 'basis',
+            useMaxWidth: true
+          },
           themeVariables: {
-            fontFamily: '"Inter", "Noto Sans SC", sans-serif',
+            fontFamily: '"Noto Sans SC", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+            fontSize: '14px',
             primaryColor: primaryContainer,
             primaryTextColor: onPrimaryContainer,
             primaryBorderColor: outline,
@@ -126,6 +279,7 @@ async function initMermaid() {
           console.warn('mermaid.run warning:', err);
         }
 
+        autoFitMermaidBoxes();
         bindMermaidInteraction();
       } catch (err) {
         console.error('Mermaid rendering failed:', err);
