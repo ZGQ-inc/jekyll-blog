@@ -12,6 +12,13 @@ author:
   bio: "个人博客。"
   avatar: "/assets/images/avatar.png"
 
+# Article License (Default for all posts unless specified otherwise via front matter `license: ...` or disabled with `license: false`)
+license:
+  name: "CC BY-NC-SA 4.0"
+  full_name: "知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议"
+  url: "https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh-hans"
+  commercial_note: "商业用途请事先联系原作者取得书面授权。"
+
 # Progressive Web App (PWA) & Native OS Splash Screen
 pwa:
   name: "ZGQ Inc."

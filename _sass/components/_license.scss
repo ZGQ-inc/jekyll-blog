@@ -1,0 +1,417 @@
+// ==============================================================================
+// Material Design 3 Article License Component
+// Styled referencing the official Creative Commons badge & MD3 design language.
+// ==============================================================================
+
+.post-license-section {
+  margin: 2rem 0 1.5rem 0;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+
+  .post-license-card {
+    position: relative;
+    overflow: hidden;
+    background: var(--md-sys-color-surface-container-low);
+    border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 45%, transparent);
+    border-radius: var(--shape-large, 16px);
+    padding: 20px 22px;
+    box-sizing: border-box;
+    box-shadow: var(--elev-1, 0 1px 3px rgba(0, 0, 0, 0.08));
+    transition: border-color var(--dur-short3, 150ms) ease, box-shadow var(--dur-short3, 150ms) ease;
+
+    &:hover {
+      border-color: color-mix(in srgb, var(--md-sys-color-primary) 35%, transparent);
+      box-shadow: var(--elev-2, 0 3px 8px rgba(0, 0, 0, 0.12));
+    }
+  }
+
+  // Large background emblem watermark
+  .post-license-watermark {
+    position: absolute;
+    right: -25px;
+    bottom: -25px;
+    width: 210px;
+    height: 210px;
+    pointer-events: none;
+    opacity: 0.045;
+    color: var(--md-sys-color-on-surface);
+    z-index: 0;
+
+    svg {
+      width: 100%;
+      height: 100%;
+    }
+  }
+
+  // Header
+  .post-license-header {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 14px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 30%, transparent);
+
+    .post-license-identity {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    // Official Creative Commons Button Replica
+    .cc-badge-official {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 6px 10px;
+      background: #1e1e1e;
+      color: #ffffff;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+      text-decoration: none;
+      cursor: pointer;
+      user-select: none;
+      transition: transform var(--dur-short3, 150ms) ease, box-shadow var(--dur-short3, 150ms) ease, filter var(--dur-short3, 150ms) ease;
+
+      &:hover {
+        transform: translateY(-1.5px) scale(1.02);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.45);
+        filter: brightness(1.12);
+      }
+
+      &:active {
+        transform: scale(0.98);
+      }
+
+      .cc-badge-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 19px;
+        height: 19px;
+
+        svg {
+          width: 100%;
+          height: 100%;
+          fill: #ffffff;
+        }
+      }
+
+      &.cc-badge-custom {
+        background: var(--md-sys-color-secondary-container);
+        color: var(--md-sys-color-on-secondary-container);
+        border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 40%, transparent);
+        cursor: default;
+        box-shadow: none;
+
+        span.material-symbols-outlined {
+          font-size: 20px;
+        }
+      }
+    }
+
+    .post-license-heading {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+
+      .post-license-title-row {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+
+        .post-license-title {
+          font-size: 1.05rem;
+          font-weight: 700;
+          color: var(--md-sys-color-on-surface);
+          letter-spacing: -0.01em;
+        }
+
+        .post-license-extlink {
+          color: var(--md-sys-color-primary);
+          display: inline-flex;
+          align-items: center;
+          text-decoration: none;
+          transition: transform var(--dur-short3, 150ms) ease;
+
+          span.material-symbols-outlined {
+            font-size: 17px;
+          }
+
+          &:hover {
+            transform: translate(2px, -2px);
+          }
+        }
+      }
+
+      .post-license-subtitle {
+        font-size: 0.8125rem;
+        color: var(--md-sys-color-on-surface-variant);
+        line-height: 1.35;
+      }
+    }
+
+    .post-license-tags {
+      display: flex;
+      align-items: center;
+
+      .post-license-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        padding: 4px 10px;
+        border-radius: 8px;
+        background: color-mix(in srgb, var(--md-sys-color-primary-container) 75%, transparent);
+        color: var(--md-sys-color-on-primary-container);
+        letter-spacing: 0.02em;
+
+        span.material-symbols-outlined {
+          font-size: 15px;
+        }
+      }
+    }
+  }
+
+  // Metadata Grid
+  .post-license-grid {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px 18px;
+    margin: 16px 0;
+
+    @media (max-width: 680px) {
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+
+    .license-grid-item {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      font-size: 0.875rem;
+
+      &.license-grid-link {
+        grid-column: 1 / -1;
+      }
+
+      .license-label {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 0.775rem;
+        font-weight: 600;
+        color: var(--md-sys-color-on-surface-variant);
+
+        span.material-symbols-outlined {
+          font-size: 16px;
+          color: var(--md-sys-color-primary);
+        }
+      }
+
+      .license-val {
+        color: var(--md-sys-color-on-surface);
+        font-size: 0.875rem;
+
+        .license-text-truncate {
+          display: block;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          font-weight: 600;
+        }
+
+        .license-agreement-link {
+          display: inline-flex;
+          align-items: center;
+          gap: 4px;
+          color: var(--md-sys-color-primary);
+          text-decoration: none;
+          font-weight: 600;
+
+          span.material-symbols-outlined {
+            font-size: 15px;
+          }
+
+          &:hover {
+            text-decoration: underline;
+          }
+        }
+      }
+
+      .license-link-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: var(--md-sys-color-surface-container);
+        padding: 6px 10px;
+        border-radius: var(--shape-small, 8px);
+        border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 30%, transparent);
+
+        .license-url-text {
+          flex: 1;
+          font-family: var(--font-code, monospace);
+          font-size: 0.8125rem;
+          color: var(--md-sys-color-primary);
+          text-decoration: none;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+
+          &:hover {
+            text-decoration: underline;
+          }
+        }
+
+        .license-copy-btn {
+          display: inline-flex;
+          align-items: center;
+          gap: 4px;
+          padding: 4px 10px;
+          background: var(--md-sys-color-primary);
+          color: var(--md-sys-color-on-primary);
+          border: none;
+          border-radius: 6px;
+          font-size: 0.75rem;
+          font-weight: 600;
+          cursor: pointer;
+          white-space: nowrap;
+          transition: background var(--dur-short3, 150ms) ease, transform 100ms ease;
+
+          span.material-symbols-outlined {
+            font-size: 14px;
+          }
+
+          &:hover {
+            background: color-mix(in srgb, var(--md-sys-color-primary) 85%, black);
+            transform: translateY(-1px);
+          }
+
+          &:active {
+            transform: scale(0.96);
+          }
+        }
+      }
+    }
+  }
+
+  // 3 Core Principles Grid
+  .post-license-principles {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin: 14px 0;
+
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr;
+    }
+
+    .principle-card {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      background: var(--md-sys-color-surface-container);
+      border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 35%, transparent);
+      border-radius: var(--shape-small, 10px);
+      padding: 10px 12px;
+      box-sizing: border-box;
+      transition: background var(--dur-short3, 150ms) ease, border-color var(--dur-short3, 150ms) ease, transform var(--dur-short3, 150ms) ease;
+
+      &:hover {
+        background: var(--md-sys-color-surface-container-high);
+        border-color: color-mix(in srgb, var(--md-sys-color-primary) 45%, transparent);
+        transform: translateY(-2px);
+      }
+
+      .principle-icon-wrap {
+        flex-shrink: 0;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        svg {
+          width: 17px;
+          height: 17px;
+        }
+
+        &.by-color {
+          background: color-mix(in srgb, var(--md-sys-color-primary-container) 85%, transparent);
+          color: var(--md-sys-color-primary);
+        }
+
+        &.nc-color {
+          background: color-mix(in srgb, var(--md-sys-color-error-container, #ffdad6) 80%, transparent);
+          color: var(--md-sys-color-error, #ba1a1a);
+        }
+
+        &.sa-color {
+          background: color-mix(in srgb, var(--md-sys-color-tertiary-container, #f2daff) 85%, transparent);
+          color: var(--md-sys-color-tertiary, #6b5778);
+        }
+      }
+
+      .principle-content {
+        flex: 1;
+
+        .principle-title {
+          font-size: 0.8125rem;
+          font-weight: 700;
+          color: var(--md-sys-color-on-surface);
+          margin-bottom: 2px;
+        }
+
+        .principle-desc {
+          font-size: 0.75rem;
+          line-height: 1.4;
+          color: var(--md-sys-color-on-surface-variant);
+        }
+      }
+    }
+  }
+
+  // Commercial / Extra Notice Callout
+  .post-license-notice {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-top: 12px;
+    padding: 10px 14px;
+    background: color-mix(in srgb, var(--md-sys-color-surface-container-high) 65%, transparent);
+    border-left: 3px solid var(--md-sys-color-primary);
+    border-radius: 0 var(--shape-small, 6px) var(--shape-small, 6px) 0;
+    font-size: 0.8125rem;
+    line-height: 1.45;
+    color: var(--md-sys-color-on-surface-variant);
+
+    .notice-icon {
+      font-size: 18px;
+      color: var(--md-sys-color-primary);
+      margin-top: 1px;
+      flex-shrink: 0;
+    }
+
+    .notice-text {
+      flex: 1;
+
+      strong {
+        color: var(--md-sys-color-on-surface);
+      }
+    }
+  }
+}

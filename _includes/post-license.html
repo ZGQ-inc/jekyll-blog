@@ -1,0 +1,188 @@
+{% if page.license != false and post.license != false %}
+{% assign target_post = post | default: page %}
+{% assign post_license_name = target_post.license | default: site.license.name | default: "CC BY-NC-SA 4.0" %}
+{% assign is_default_cc = false %}
+{% if post_license_name == "CC BY-NC-SA 4.0" or post_license_name == "default" or post_license_name == nil %}
+  {% assign is_default_cc = true %}
+{% endif %}
+
+<section class="post-license-section" aria-label="文章版权许可">
+  <div class="post-license-card">
+    <!-- Subtle Background CC Watermark -->
+    <div class="post-license-watermark" aria-hidden="true">
+      <svg viewBox="0 0 496 512" fill="currentColor">
+        <path d="M245.83 214.87l-33.22 17.28c-9.43-19.58-25.24-19.93-27.46-19.93-22.13 0-33.22 14.61-33.22 43.84 0 23.57 9.21 43.84 33.22 43.84 14.47 0 24.65-7.09 30.57-21.26l30.55 15.5c-6.17 11.51-25.69 38.98-65.1 38.98-22.6 0-73.96-10.32-73.96-77.05 0-58.69 43-77.06 72.63-77.06 30.72-.01 52.7 11.95 65.99 35.86zm143.05 0l-32.78 17.28c-9.5-19.77-25.72-19.93-27.9-19.93-22.14 0-33.22 14.61-33.22 43.84 0 23.55 9.23 43.84 33.22 43.84 14.45 0 24.65-7.09 30.54-21.26l31 15.5c-2.1 3.75-21.39 38.98-65.09 38.98-22.69 0-73.96-9.87-73.96-77.05 0-58.67 42.97-77.06 72.63-77.06 30.71-.01 52.58 11.95 65.56 35.86zM247.56 8.05C104.74 8.05 0 123.11 0 256.05c0 138.49 113.6 248 247.56 248 129.93 0 248.44-100.87 248.44-248 0-137.87-106.62-248-248.44-248zm.87 450.81c-112.54 0-203.7-93.04-203.7-202.81 0-105.42 85.43-203.27 203.72-203.27 112.53 0 202.82 89.46 202.82 203.26-.01 121.69-99.68 202.82-202.84 202.82z"/>
+      </svg>
+    </div>
+
+    <!-- License Header -->
+    <div class="post-license-header">
+      <div class="post-license-identity">
+        {% if is_default_cc %}
+        <!-- Official Creative Commons Style Badge Button -->
+        <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh-hans"
+           target="_blank"
+           rel="noopener noreferrer"
+           class="cc-badge-official"
+           title="前往知识共享官网查看 CC BY-NC-SA 4.0 国际许可协议完整条款"
+           aria-label="Creative Commons BY-NC-SA 4.0 徽标">
+          <span class="cc-badge-icon" title="Creative Commons">
+            <svg viewBox="0 0 496 512" fill="currentColor" aria-hidden="true"><path d="M245.83 214.87l-33.22 17.28c-9.43-19.58-25.24-19.93-27.46-19.93-22.13 0-33.22 14.61-33.22 43.84 0 23.57 9.21 43.84 33.22 43.84 14.47 0 24.65-7.09 30.57-21.26l30.55 15.5c-6.17 11.51-25.69 38.98-65.1 38.98-22.6 0-73.96-10.32-73.96-77.05 0-58.69 43-77.06 72.63-77.06 30.72-.01 52.7 11.95 65.99 35.86zm143.05 0l-32.78 17.28c-9.5-19.77-25.72-19.93-27.9-19.93-22.14 0-33.22 14.61-33.22 43.84 0 23.55 9.23 43.84 33.22 43.84 14.45 0 24.65-7.09 30.54-21.26l31 15.5c-2.1 3.75-21.39 38.98-65.09 38.98-22.69 0-73.96-9.87-73.96-77.05 0-58.67 42.97-77.06 72.63-77.06 30.71-.01 52.58 11.95 65.56 35.86zM247.56 8.05C104.74 8.05 0 123.11 0 256.05c0 138.49 113.6 248 247.56 248 129.93 0 248.44-100.87 248.44-248 0-137.87-106.62-248-248.44-248zm.87 450.81c-112.54 0-203.7-93.04-203.7-202.81 0-105.42 85.43-203.27 203.72-203.27 112.53 0 202.82 89.46 202.82 203.26-.01 121.69-99.68 202.82-202.84 202.82z"/></svg>
+          </span>
+          <span class="cc-badge-icon" title="署名 (Attribution)">
+            <svg viewBox="0 0 496 512" fill="currentColor" aria-hidden="true"><path d="M314.9 194.4v101.4h-28.3v120.5h-77.1V295.9h-28.3V194.4c0-4.4 1.6-8.2 4.6-11.3 3.1-3.1 6.9-4.7 11.3-4.7H299c4.1 0 7.8 1.6 11.1 4.7 3.1 3.2 4.8 6.9 4.8 11.3zm-101.5-63.7c0-23.3 11.5-35 34.5-35s34.5 11.7 34.5 35c0 23-11.5 34.5-34.5 34.5s-34.5-11.5-34.5-34.5zM247.6 8C389.4 8 496 118.1 496 256c0 147.1-118.5 248-248.4 248C113.6 504 0 394.5 0 256 0 123.1 104.7 8 247.6 8zm.8 44.7C130.2 52.7 44.7 150.6 44.7 256c0 109.8 91.2 202.8 203.7 202.8 103.2 0 202.8-81.1 202.8-202.8.1-113.8-90.2-203.3-202.8-203.3z"/></svg>
+          </span>
+          <span class="cc-badge-icon" title="非商业性使用 (NonCommercial)">
+            <svg viewBox="0 0 496 512" fill="currentColor" aria-hidden="true"><path d="M247.6 8C387.4 8 496 115.9 496 256c0 147.2-118.5 248-248.4 248C113.1 504 0 393.2 0 256 0 123.1 104.7 8 247.6 8zM55.8 189.1c-7.4 20.4-11.1 42.7-11.1 66.9 0 110.9 92.1 202.4 203.7 202.4 122.4 0 177.2-101.8 178.5-104.1l-93.4-41.6c-7.7 37.1-41.2 53-68.2 55.4v38.1h-28.8V368c-27.5-.3-52.6-10.2-75.3-29.7l34.1-34.5c31.7 29.4 86.4 31.8 86.4-2.2 0-6.2-2.2-11.2-6.6-15.1-14.2-6-1.8-.1-219.3-97.4zM248.4 52.3c-38.4 0-112.4 8.7-170.5 93l94.8 42.5c10-31.3 40.4-42.9 63.8-44.3v-38.1h28.8v38.1c22.7 1.2 43.4 8.9 62 23L295 199.7c-42.7-29.9-83.5-8-70 11.1 53.4 24.1 43.8 19.8 93 41.6l127.1 56.7c4.1-17.4 6.2-35.1 6.2-53.1 0-57-19.8-105-59.3-143.9-39.3-39.9-87.2-59.8-143.6-59.8z"/></svg>
+          </span>
+          <span class="cc-badge-icon" title="相同方式共享 (ShareAlike)">
+            <svg viewBox="0 0 496 512" fill="currentColor" aria-hidden="true"><path d="M247.6 8C389.4 8 496 118.1 496 256c0 147.1-118.5 248-248.4 248C113.6 504 0 394.5 0 256 0 123.1 104.7 8 247.6 8zm.8 44.7C130.2 52.7 44.7 150.6 44.7 256c0 109.8 91.2 202.8 203.7 202.8 103.2 0 202.8-81.1 202.8-202.8.1-113.8-90.2-203.3-202.8-203.3zM137.7 221c13-83.9 80.5-95.7 108.9-95.7 99.8 0 127.5 82.5 127.5 134.2 0 63.6-41 132.9-128.9 132.9-38.9 0-99.1-20-109.4-97h62.5c1.5 30.1 19.6 45.2 54.5 45.2 23.3 0 58-18.2 58-82.8 0-82.5-49.1-80.6-56.7-80.6-33.1 0-51.7 14.6-55.8 43.8h18.2l-49.2 49.2-49-49.2h19.4z"/></svg>
+          </span>
+        </a>
+        {% else %}
+        <span class="cc-badge-official cc-badge-custom">
+          <span class="material-symbols-outlined">copyright</span>
+        </span>
+        {% endif %}
+
+        <div class="post-license-heading">
+          <div class="post-license-title-row">
+            <span class="post-license-title">{{ post_license_name }}</span>
+            {% if is_default_cc %}
+            <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh-hans"
+               target="_blank"
+               rel="noopener noreferrer"
+               class="post-license-extlink"
+               title="查看官方协议 Deed"
+               aria-label="查看官方协议 Deed">
+              <span class="material-symbols-outlined">open_in_new</span>
+            </a>
+            {% endif %}
+          </div>
+          <div class="post-license-subtitle">
+            {% if is_default_cc %}
+            知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议
+            {% else %}
+            本文作者特别声明之许可协议
+            {% endif %}
+          </div>
+        </div>
+      </div>
+
+      <div class="post-license-tags">
+        <span class="post-license-chip">
+          <span class="material-symbols-outlined">verified</span>
+          {% if is_default_cc %}自由转载 · 限制商用{% else %}版权声明{% endif %}
+        </span>
+      </div>
+    </div>
+
+    <!-- Article Metadata Table / Grid -->
+    <div class="post-license-grid">
+      <div class="license-grid-item">
+        <div class="license-label">
+          <span class="material-symbols-outlined">person</span>
+          <span>本文作者</span>
+        </div>
+        <div class="license-val">
+          <strong>{{ target_post.author | default: site.author.name }}</strong>
+        </div>
+      </div>
+
+      <div class="license-grid-item">
+        <div class="license-label">
+          <span class="material-symbols-outlined">article</span>
+          <span>文章标题</span>
+        </div>
+        <div class="license-val">
+          <span class="license-text-truncate" title="{{ target_post.title }}">{{ target_post.title }}</span>
+        </div>
+      </div>
+
+      <div class="license-grid-item license-grid-link">
+        <div class="license-label">
+          <span class="material-symbols-outlined">link</span>
+          <span>本文链接</span>
+        </div>
+        <div class="license-val license-link-row">
+          <a href="{{ target_post.url | absolute_url }}" class="license-url-text" title="{{ target_post.url | absolute_url }}">
+            {{ target_post.url | absolute_url }}
+          </a>
+          <button type="button"
+                  class="license-copy-btn"
+                  onclick="navigator.clipboard.writeText(decodeURI('{{ target_post.url | absolute_url }}')).then(()=>{ if(window.showToast){ window.showToast('文章链接已复制！'); } else { alert('链接已复制！'); } });"
+                  title="复制文章原文链接"
+                  aria-label="复制文章原文链接">
+            <span class="material-symbols-outlined">content_copy</span>
+            <span>复制</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="license-grid-item">
+        <div class="license-label">
+          <span class="material-symbols-outlined">policy</span>
+          <span>许可协议</span>
+        </div>
+        <div class="license-val">
+          {% if is_default_cc %}
+          <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh-hans"
+             target="_blank"
+             rel="noopener noreferrer"
+             class="license-agreement-link">
+            <span>CC BY-NC-SA 4.0 国际协议</span>
+            <span class="material-symbols-outlined">open_in_new</span>
+          </a>
+          {% else %}
+          <span>{{ post_license_name }}</span>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    {% if is_default_cc %}
+    <!-- 3 Core CC Principles Cards -->
+    <div class="post-license-principles">
+      <div class="principle-card">
+        <div class="principle-icon-wrap by-color" title="署名 (Attribution)">
+          <svg viewBox="0 0 496 512" fill="currentColor" aria-hidden="true"><path d="M314.9 194.4v101.4h-28.3v120.5h-77.1V295.9h-28.3V194.4c0-4.4 1.6-8.2 4.6-11.3 3.1-3.1 6.9-4.7 11.3-4.7H299c4.1 0 7.8 1.6 11.1 4.7 3.1 3.2 4.8 6.9 4.8 11.3zm-101.5-63.7c0-23.3 11.5-35 34.5-35s34.5 11.7 34.5 35c0 23-11.5 34.5-34.5 34.5s-34.5-11.5-34.5-34.5zM247.6 8C389.4 8 496 118.1 496 256c0 147.1-118.5 248-248.4 248C113.6 504 0 394.5 0 256 0 123.1 104.7 8 247.6 8zm.8 44.7C130.2 52.7 44.7 150.6 44.7 256c0 109.8 91.2 202.8 203.7 202.8 103.2 0 202.8-81.1 202.8-202.8.1-113.8-90.2-203.3-202.8-203.3z"/></svg>
+        </div>
+        <div class="principle-content">
+          <div class="principle-title">署名 (BY)</div>
+          <div class="principle-desc">转载或引用须保留原作者署名及出处，并提供指向本文的原作品链接。</div>
+        </div>
+      </div>
+
+      <div class="principle-card">
+        <div class="principle-icon-wrap nc-color" title="非商业性使用 (NonCommercial)">
+          <svg viewBox="0 0 496 512" fill="currentColor" aria-hidden="true"><path d="M247.6 8C387.4 8 496 115.9 496 256c0 147.2-118.5 248-248.4 248C113.1 504 0 393.2 0 256 0 123.1 104.7 8 247.6 8zM55.8 189.1c-7.4 20.4-11.1 42.7-11.1 66.9 0 110.9 92.1 202.4 203.7 202.4 122.4 0 177.2-101.8 178.5-104.1l-93.4-41.6c-7.7 37.1-41.2 53-68.2 55.4v38.1h-28.8V368c-27.5-.3-52.6-10.2-75.3-29.7l34.1-34.5c31.7 29.4 86.4 31.8 86.4-2.2 0-6.2-2.2-11.2-6.6-15.1-14.2-6-1.8-.1-219.3-97.4zM248.4 52.3c-38.4 0-112.4 8.7-170.5 93l94.8 42.5c10-31.3 40.4-42.9 63.8-44.3v-38.1h28.8v38.1c22.7 1.2 43.4 8.9 62 23L295 199.7c-42.7-29.9-83.5-8-70 11.1 53.4 24.1 43.8 19.8 93 41.6l127.1 56.7c4.1-17.4 6.2-35.1 6.2-53.1 0-57-19.8-105-59.3-143.9-39.3-39.9-87.2-59.8-143.6-59.8z"/></svg>
+        </div>
+        <div class="principle-content">
+          <div class="principle-title">非商业性 (NC)</div>
+          <div class="principle-desc">不得将本作品用于任何商业目的（包括但不限于商业转载、出版、付费订阅等）。</div>
+        </div>
+      </div>
+
+      <div class="principle-card">
+        <div class="principle-icon-wrap sa-color" title="相同方式共享 (ShareAlike)">
+          <svg viewBox="0 0 496 512" fill="currentColor" aria-hidden="true"><path d="M247.6 8C389.4 8 496 118.1 496 256c0 147.1-118.5 248-248.4 248C113.6 504 0 394.5 0 256 0 123.1 104.7 8 247.6 8zm.8 44.7C130.2 52.7 44.7 150.6 44.7 256c0 109.8 91.2 202.8 203.7 202.8 103.2 0 202.8-81.1 202.8-202.8.1-113.8-90.2-203.3-202.8-203.3zM137.7 221c13-83.9 80.5-95.7 108.9-95.7 99.8 0 127.5 82.5 127.5 134.2 0 63.6-41 132.9-128.9 132.9-38.9 0-99.1-20-109.4-97h62.5c1.5 30.1 19.6 45.2 54.5 45.2 23.3 0 58-18.2 58-82.8 0-82.5-49.1-80.6-56.7-80.6-33.1 0-51.7 14.6-55.8 43.8h18.2l-49.2 49.2-49-49.2h19.4z"/></svg>
+        </div>
+        <div class="principle-content">
+          <div class="principle-title">相同方式共享 (SA)</div>
+          <div class="principle-desc">若对本作品进行再创作、转换或修改，必须基于与本协议相同的协议条款分发成果。</div>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- Commercial / Extra Notice Callout -->
+    <div class="post-license-notice">
+      <span class="material-symbols-outlined notice-icon">verified_user</span>
+      <span class="notice-text">
+        <strong>版权提示：</strong>
+        如需商业用途、纸质出版或超出本许可范围的授权合作，请事先联系作者取得书面许可。转载请务必保持文章完整性并注明来源。
+      </span>
+    </div>
+  </div>
+</section>
+{% endif %}
