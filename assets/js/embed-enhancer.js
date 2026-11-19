@@ -8,11 +8,13 @@
 (function() {
   'use strict';
 
-  // 1. Telegram postMessage Height Resizing & Dark Theme Sync
-  function syncTelegramTheme() {
+  // 1. Social Embed Theme Synchronization (Telegram, Bluesky, Reddit, Twitter / X)
+  function syncSocialTheme() {
     var isDark = document.documentElement.getAttribute('data-theme') === 'dark' ||
                  (!document.documentElement.getAttribute('data-theme') && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    var colorMode = isDark ? 'dark' : 'light';
 
+    // 1.1 Sync Telegram
     var tgIframes = document.querySelectorAll('.tg-post-embed iframe, iframe[src*="t.me"]');
     tgIframes.forEach(function(iframe) {
       try {
@@ -32,8 +34,7 @@
       } catch (e) {}
     });
 
-    // Sync Bluesky Theme
-    var colorMode = isDark ? 'dark' : 'light';
+    // 1.2 Sync Bluesky
     var bskyIframes = document.querySelectorAll('.bluesky-embed iframe, iframe[src*="embed.bsky.app"]');
     bskyIframes.forEach(function(iframe) {
       try {
@@ -46,6 +47,45 @@
         }
       } catch (e) {}
     });
+
+    // 1.3 Sync Reddit
+    var redditIframes = document.querySelectorAll('.reddit-embed iframe, iframe[src*="reddit.com"]');
+    redditIframes.forEach(function(iframe) {
+      try {
+        var src = iframe.getAttribute('src');
+        if (!src || src.indexOf('reddit.com') === -1) return;
+        var url = new URL(src, window.location.href);
+        if (url.searchParams.get('theme') !== colorMode) {
+          url.searchParams.set('theme', colorMode);
+          iframe.src = url.toString();
+        }
+      } catch (e) {}
+    });
+    var redditBqs = document.querySelectorAll('.reddit-embed-bq');
+    redditBqs.forEach(function(bq) {
+      bq.setAttribute('data-embed-theme', colorMode);
+    });
+
+    // 1.4 Sync Twitter / X
+    var twWrappers = document.querySelectorAll('.twitter-embed[data-tweet-url]');
+    twWrappers.forEach(function(wrapper) {
+      var tweetUrl = wrapper.getAttribute('data-tweet-url');
+      if (!tweetUrl) return;
+
+      if (wrapper.dataset.currentTheme === colorMode) return;
+      wrapper.dataset.currentTheme = colorMode;
+
+      wrapper.innerHTML = 
+        '<blockquote class="twitter-tweet" data-dnt="true" data-theme="' + colorMode + '">' +
+          '<a href="' + tweetUrl + '">' + tweetUrl + '</a>' +
+        '</blockquote>';
+
+      if (window.twttr && window.twttr.widgets && typeof window.twttr.widgets.load === 'function') {
+        window.twttr.widgets.load(wrapper);
+      }
+    });
+
+    enhanceSocialEmbeds();
   }
 
   // 1.1 Bluesky Embed Auto-Resolution & Dynamic Scanning
@@ -104,7 +144,12 @@
     });
   }
 
-  document.addEventListener('themechange', syncTelegramTheme);
+  document.addEventListener('themechange', syncSocialTheme);
+  if (window.matchMedia) {
+    try {
+      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', syncSocialTheme);
+    } catch (e) {}
+  }
 
   window.addEventListener('message', function(event) {
     if (event.origin !== 'https://t.me') return;
@@ -242,19 +287,36 @@
     });
   }
 
-  // 5. Enhance Social Embeds (Twitter, Bluesky & Reddit) with MD3 Rounded Corners
+  // 5. Enhance Social Embeds (Twitter, Bluesky & Reddit) with MD3 Rounded Corners & Transparent Canvas
   function enhanceSocialEmbeds() {
+    var isDark = document.documentElement.getAttribute('data-theme') === 'dark' ||
+                 (!document.documentElement.getAttribute('data-theme') && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    var colorMode = isDark ? 'dark' : 'light';
+
     var targets = document.querySelectorAll(
       '.twitter-embed iframe, .twitter-embed .twitter-tweet, .twitter-embed .twitter-tweet-rendered, ' +
       '.bluesky-embed iframe, .bluesky-embed-wrapper iframe, .bluesky-embed, ' +
       '.reddit-embed iframe, .reddit-embed-bq, iframe[id^="twitter-widget-"], iframe[src*="reddit.com"]'
     );
     targets.forEach(function(el) {
-      el.style.setProperty('border-radius', '16px', 'important');
+      el.style.setProperty('background-color', 'transparent', 'important');
+      el.style.setProperty('background', 'transparent', 'important');
+      el.style.setProperty('color-scheme', colorMode, 'important');
       el.style.setProperty('overflow', 'hidden', 'important');
       el.style.setProperty('transform', 'translateZ(0)', 'important');
-      if (el.tagName === 'IFRAME' && el.closest('.reddit-embed')) {
-        el.style.setProperty('border', '1px solid var(--md-sys-color-outline-variant, rgba(120, 120, 120, 0.25))', 'important');
+
+      if (el.closest('.bluesky-embed-wrapper')) {
+        el.style.setProperty('border-radius', '32px', 'important');
+        el.style.setProperty('box-shadow', 'none', 'important');
+      } else {
+        el.style.setProperty('border-radius', '16px', 'important');
+      }
+
+      if (el.tagName === 'IFRAME') {
+        el.setAttribute('allowtransparency', 'true');
+        if (el.closest('.reddit-embed')) {
+          el.style.setProperty('border', '1px solid var(--md-sys-color-outline-variant, rgba(120, 120, 120, 0.25))', 'important');
+        }
       }
     });
   }
@@ -282,7 +344,7 @@
       initEmbeds();
       initBlueskyEmbeds();
       enhanceSocialEmbeds();
-      syncTelegramTheme();
+      syncSocialTheme();
     });
   } else {
     initImageMasks();
@@ -290,6 +352,6 @@
     initEmbeds();
     initBlueskyEmbeds();
     enhanceSocialEmbeds();
-    syncTelegramTheme();
+    syncSocialTheme();
   }
 })();

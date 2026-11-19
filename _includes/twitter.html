@@ -2,9 +2,19 @@
 {% if include.id %}
   {% assign tweet_url = "https://twitter.com/x/status/" | append: include.id %}
 {% endif %}
-<div class="twitter-embed md3-embed-container" data-embed-platform="twitter">
-  <blockquote class="twitter-tweet" data-dnt="true" data-theme="auto">
+<div class="twitter-embed md3-embed-container" data-embed-platform="twitter" data-tweet-url="{{ tweet_url }}">
+  <blockquote class="twitter-tweet" data-dnt="true">
     <a href="{{ tweet_url }}">{{ tweet_url }}</a>
   </blockquote>
+  <script>
+    (function(){
+      var bq = document.currentScript.previousElementSibling;
+      if (bq && bq.classList.contains('twitter-tweet')) {
+        var isDark = document.documentElement.getAttribute('data-theme') === 'dark' ||
+                     (!document.documentElement.getAttribute('data-theme') && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+        bq.setAttribute('data-theme', isDark ? 'dark' : 'light');
+      }
+    })();
+  </script>
   <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 </div>

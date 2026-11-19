@@ -8,7 +8,7 @@
 {% assign bsky_cid = include.cid %}
 {% assign bsky_color = include.color_mode | default: "system" %}
 
-<div class="bluesky-embed-wrapper md3-embed-container" data-embed-platform="bluesky" data-bsky-url="{{ bsky_url }}">
+<div class="bluesky-embed-wrapper md3-embed-container" data-embed-platform="bluesky" data-bsky-url="{{ bsky_url }}" style="background: transparent;">
   <blockquote class="bluesky-embed"
               {% if bsky_uri %}data-bluesky-uri="{{ bsky_uri }}"{% endif %}
               {% if bsky_cid %}data-bluesky-cid="{{ bsky_cid }}"{% endif %}
@@ -32,5 +32,15 @@
       </div>
     </div>
   </blockquote>
+  <script>
+    (function(){
+      var bq = document.currentScript.previousElementSibling;
+      if (bq && bq.classList.contains('bluesky-embed')) {
+        var isDark = document.documentElement.getAttribute('data-theme') === 'dark' ||
+                     (!document.documentElement.getAttribute('data-theme') && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+        bq.setAttribute('data-bluesky-embed-color-mode', isDark ? 'dark' : 'light');
+      }
+    })();
+  </script>
   <script async src="https://embed.bsky.app/static/embed.js" charset="utf-8"></script>
 </div>

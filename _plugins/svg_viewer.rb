@@ -151,7 +151,7 @@ module Jekyll
         highlighted = formatter.format(lexer.lex(clean_code))
 
         <<~HTML.strip
-          <div class="highlighter-rouge language-xml svg-highlight-wrap">
+          <div class="highlighter-rouge language-xml svg-highlight-wrap" data-code-block-init="true" data-no-header="true">
             <div class="highlight">
               #{highlighted}
             </div>
@@ -164,7 +164,7 @@ module Jekyll
         gutter_numbers = (1..line_count).to_a.join("\n")
 
         <<~HTML.strip
-          <div class="highlighter-rouge language-xml svg-highlight-wrap">
+          <div class="highlighter-rouge language-xml svg-highlight-wrap" data-code-block-init="true" data-no-header="true">
             <div class="highlight">
               <table class="rouge-table svg-rouge-table">
                 <tbody>

@@ -72,7 +72,7 @@
     
     codeBlocks.forEach(block => {
       if (block.dataset.codeBlockInit) return;
-      if (block.closest('.sandbox-source-drawer')) return;
+      if (block.closest('.sandbox-source-drawer') || block.closest('.svg-source-drawer') || block.classList.contains('svg-highlight-wrap')) return;
       block.dataset.codeBlockInit = 'true';
 
       let lang = 'CODE';
