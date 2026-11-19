@@ -136,6 +136,15 @@
       }
       canvas.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
 
+      // Dynamic touch-action for mobile:
+      // When scale is ~1, allow natural vertical page scrolling!
+      // When zoomed in (scale > 1.05), capture all touch events so 1-finger panning works without page scrolling!
+      if (scale > 1.05) {
+        wrapper.style.touchAction = 'none';
+      } else {
+        wrapper.style.touchAction = 'pan-y';
+      }
+
       if (indicator) {
         indicator.textContent = `${Math.round(scale * 100)}%`;
         indicator.style.opacity = '1';
@@ -260,25 +269,46 @@
       }
     });
 
-    // --- 4. Touch Pinch & Pan for Mobile ---
+    // --- 4. Touch Pinch, Pan & Double-Tap for Mobile ---
     let initialPinchDistance = null;
     let initialPinchScale = 1;
+    let lastTapTime = 0;
 
     wrapper.addEventListener('touchstart', (e) => {
       if (e.touches.length === 2) {
+        isDragging = false;
         initialPinchDistance = Math.hypot(
           e.touches[0].clientX - e.touches[1].clientX,
           e.touches[0].clientY - e.touches[1].clientY
         );
         initialPinchScale = scale;
-      } else if (e.touches.length === 1 && scale > 1) {
-        isDragging = true;
-        dragStartX = e.touches[0].clientX;
-        dragStartY = e.touches[0].clientY;
-        startTx = translateX;
-        startTy = translateY;
+      } else if (e.touches.length === 1) {
+        // Fast double-tap detection for mobile
+        const now = Date.now();
+        if (now - lastTapTime < 320) {
+          e.preventDefault();
+          lastTapTime = 0;
+          if (scale > 1.2) {
+            resetView();
+          } else {
+            const rect = wrapper.getBoundingClientRect();
+            const mouseX = e.touches[0].clientX - rect.left - rect.width / 2;
+            const mouseY = e.touches[0].clientY - rect.top - rect.height / 2;
+            zoomTo(2.2, mouseX, mouseY, true);
+          }
+          return;
+        }
+        lastTapTime = now;
+
+        if (scale > 1.05) {
+          isDragging = true;
+          dragStartX = e.touches[0].clientX;
+          dragStartY = e.touches[0].clientY;
+          startTx = translateX;
+          startTy = translateY;
+        }
       }
-    }, { passive: true });
+    }, { passive: false });
 
     wrapper.addEventListener('touchmove', (e) => {
       if (e.touches.length === 2 && initialPinchDistance) {
@@ -288,8 +318,12 @@
           e.touches[0].clientY - e.touches[1].clientY
         );
         const factor = currentDist / initialPinchDistance;
-        zoomTo(initialPinchScale * factor, 0, 0, false);
-      } else if (e.touches.length === 1 && isDragging) {
+        const rect = wrapper.getBoundingClientRect();
+        const focalX = (e.touches[0].clientX + e.touches[1].clientX) / 2 - rect.left - rect.width / 2;
+        const focalY = (e.touches[0].clientY + e.touches[1].clientY) / 2 - rect.top - rect.height / 2;
+        zoomTo(initialPinchScale * factor, focalX, focalY, false);
+      } else if (e.touches.length === 1 && isDragging && scale > 1.05) {
+        e.preventDefault();
         const dx = e.touches[0].clientX - dragStartX;
         const dy = e.touches[0].clientY - dragStartY;
         translateX = startTx + dx;
@@ -298,7 +332,16 @@
       }
     }, { passive: false });
 
-    wrapper.addEventListener('touchend', () => {
+    wrapper.addEventListener('touchend', (e) => {
+      if (e.touches.length < 2) {
+        initialPinchDistance = null;
+      }
+      if (e.touches.length === 0) {
+        isDragging = false;
+      }
+    });
+
+    wrapper.addEventListener('touchcancel', () => {
       initialPinchDistance = null;
       isDragging = false;
     });
@@ -565,7 +608,7 @@
             <button type="button" class="svg-action-btn btn-fullscreen" title="全屏" aria-label="全屏"><span class="material-symbols-outlined">fullscreen</span></button>
           </div>
         </div>
-        <div class="svg-viewport" style="height: 600px;">
+        <div class="svg-viewport" style="height: 520px;">
           <div class="svg-canvas-wrapper" tabindex="0">
             <div class="svg-canvas" data-scale="1" data-x="0" data-y="0">
               ${codeText}
@@ -580,7 +623,7 @@
             <span class="svg-source-title"><span class="material-symbols-outlined">code_blocks</span><span>SVG 源码</span></span>
             <button type="button" class="svg-copy-btn"><span class="material-symbols-outlined">content_copy</span><span class="copy-text">复制代码</span></button>
           </div>
-          <div class="highlighter-rouge language-xml svg-highlight-wrap"><pre><code>${escapedCode}</code></pre></div>
+          <div class="highlighter-rouge language-xml svg-highlight-wrap" data-code-block-init="true" data-no-header="true"><pre><code>${escapedCode}</code></pre></div>
         </div>
       `;
 
