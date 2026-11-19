@@ -203,7 +203,8 @@
       will-change: transform;
       max-width: 100%;
 
-      svg {
+      svg,
+      img.svg-canvas-img {
         max-width: 100%;
         height: auto;
         display: block;

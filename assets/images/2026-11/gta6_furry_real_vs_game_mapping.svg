@@ -1,0 +1,145 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1040 690" width="1040" height="690">
+  <defs>
+    <style>
+      .title { font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif; font-size: 21px; font-weight: 700; fill: #0F172A; }
+      .subtitle { font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif; font-size: 13px; fill: #475569; }
+      .col-hdr { font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif; font-size: 14px; font-weight: 700; fill: #FFFFFF; }
+      .box-title-rose { font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif; font-size: 13px; font-weight: 700; fill: #9F1239; }
+      .box-title-teal { font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif; font-size: 13px; font-weight: 700; fill: #115E59; }
+      .box-body { font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif; font-size: 11.8px; fill: #334155; }
+      .mid-title { font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif; font-size: 13.5px; font-weight: 700; fill: #92400E; }
+      .stat-num { font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif; font-size: 20px; font-weight: 700; fill: #0F766E; }
+      .stat-lbl { font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif; font-size: 11.5px; fill: #334155; }
+      .foot-note { font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif; font-size: 11.5px; fill: #64748B; }
+    </style>
+    <marker id="mapArrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#94A3B8" />
+    </marker>
+    <filter id="softShadow" x="-3%" y="-3%" width="106%" height="108%">
+      <feDropShadow dx="0" dy="2" stdDeviation="2.5" flood-color="#0F172A" flood-opacity="0.05" />
+    </filter>
+  </defs>
+
+  <rect x="0" y="0" width="1040" height="690" fill="#FAF8F5" />
+
+  <text x="40" y="42" class="title">美国红州现实“道德恐慌”与《GTA 6》“禁爪条款”双轨映射</text>
+  <text x="40" y="66" class="subtitle">2022–2026 保守派政客借兽迷打响“反觉醒”代理战，与雷奥奈达州（虚拟佛州）黑色幽默逐条对照</text>
+
+  <!-- Column Headers -->
+  <rect x="40" y="88" width="356" height="32" rx="8" fill="#E15B64" />
+  <text x="218" y="109" text-anchor="middle" class="col-hdr">现实轨道：2022–2026 美国保守红州立法与言论</text>
+
+  <rect x="416" y="88" width="208" height="32" rx="8" fill="#D97706" />
+  <text x="520" y="109" text-anchor="middle" class="col-hdr">映射机制：文化战争替罪羊</text>
+
+  <rect x="644" y="88" width="356" height="32" rx="8" fill="#0F766E" />
+  <text x="822" y="109" text-anchor="middle" class="col-hdr">游戏轨道：《GTA 6》雷奥奈达州反讽设定</text>
+
+  <!-- Row 1: 2022 -->
+  <g filter="url(#softShadow)">
+    <rect x="40" y="132" width="356" height="112" rx="10" fill="#FFFFFF" stroke="#FECDD3" stroke-width="1.5" />
+    <text x="54" y="154" class="box-title-rose">2022 年 · 多州议员炒作“校园猫砂盆谣言”</text>
+    <text x="54" y="175" class="box-body">右翼舆论谣传公立学校为自认动物的学生设猫砂盆</text>
+    <text x="54" y="193" class="box-body">（实为枪击封锁应急如厕包）。内布拉斯加、明尼</text>
+    <text x="54" y="211" class="box-body">苏达等至少 6 个州议员在议会辩论中严肃援引抨击。</text>
+  </g>
+  <g filter="url(#softShadow)">
+    <rect x="644" y="132" width="356" height="112" rx="10" fill="#FFFFFF" stroke="#99F6E4" stroke-width="1.5" />
+    <text x="658" y="154" class="box-title-teal">游戏映射 · 荒诞网络用语正式入刑</text>
+    <text x="658" y="175" class="box-body">雷奥奈达州当局发布《反福瑞举报特征指南》，将</text>
+    <text x="658" y="193" class="box-body">市民在网络或街头说出 “UwU”、“Rawr xD” 或</text>
+    <text x="658" y="211" class="box-body">“hewwo” 等卖萌词汇列为可依法逮捕的犯罪证据。</text>
+  </g>
+
+  <!-- Row 2: 2023 -->
+  <g filter="url(#softShadow)">
+    <rect x="40" y="256" width="356" height="112" rx="10" fill="#FFFFFF" stroke="#FECDD3" stroke-width="1.5" />
+    <text x="54" y="278" class="box-title-rose">2023 年 5 月 · 佛州签署 SB 1438 法案</text>
+    <text x="54" y="299" class="box-body">佛罗里达州长德桑蒂斯签署法案打击“成人现场表</text>
+    <text x="54" y="317" class="box-body">演”，直接迫使奥兰多大型兽迷聚会 Megaplex 为</text>
+    <text x="54" y="335" class="box-body">规避诉讼宣布限 18 岁以上入场（持续至 2025 年）。</text>
+  </g>
+  <g filter="url(#softShadow)">
+    <rect x="644" y="256" width="356" height="112" rx="10" fill="#FFFFFF" stroke="#99F6E4" stroke-width="1.5" />
+    <text x="658" y="278" class="box-title-teal">游戏映射 · 州长 Mike Jimenez“禁爪条款”</text>
+    <text x="658" y="299" class="box-body">原型正是佛州的雷奥奈达州长高调签署“禁爪条款</text>
+    <text x="658" y="317" class="box-body">（No Paws Clause）”，登上报纸头版宣称此举是</text>
+    <text x="658" y="335" class="box-body">抵御“觉醒瘟疫（woke plague）”侵蚀的伟大胜利。</text>
+  </g>
+
+  <!-- Row 3: 2024-2025 -->
+  <g filter="url(#softShadow)">
+    <rect x="40" y="380" width="356" height="118" rx="10" fill="#FFFFFF" stroke="#FECDD3" stroke-width="1.5" />
+    <text x="54" y="402" class="box-title-rose">2024–2025 · 俄州“动物管制局”与得州法案</text>
+    <text x="54" y="423" class="box-body">2024.01 俄州议员提案派“动物管制局”带走校园</text>
+    <text x="54" y="441" class="box-body">福瑞并质问要不要“绝育”；2025.03 得州议员提</text>
+    <text x="54" y="459" class="box-body">《FURRIES 法案》，拟对容忍兽装学区罚款 1 万美元。</text>
+  </g>
+  <g filter="url(#softShadow)">
+    <rect x="644" y="380" width="356" height="118" rx="10" fill="#FFFFFF" stroke="#99F6E4" stroke-width="1.5" />
+    <text x="658" y="402" class="box-title-teal">游戏映射 · 合法狩猎季与去人化执法话术</text>
+    <text x="658" y="423" class="box-body">游戏内“反福瑞协会”公益广告宣布狩猎季开启，</text>
+    <text x="658" y="441" class="box-body">持证猎人可“见之即射”；警方乱枪击毙投降狐狸</text>
+    <text x="658" y="459" class="box-body">后冷漠宣称“福瑞极度危险且携带未知疾病”。</text>
+  </g>
+
+  <!-- Row 4: 2026 -->
+  <g filter="url(#softShadow)">
+    <rect x="40" y="510" width="356" height="118" rx="10" fill="#FFFFFF" stroke="#FECDD3" stroke-width="1.5" />
+    <text x="54" y="532" class="box-title-rose">2026 年 9 月 · 联邦参议员警告“福瑞飞行员”</text>
+    <text x="54" y="553" class="box-body">在《GTA 6》已向媒体展示围捕戏码一个月后，阿</text>
+    <text x="54" y="571" class="box-body">拉巴马州参议员 Tuberville 仍在国会讲台警告“精</text>
+    <text x="54" y="589" class="box-body">神不正常的福瑞”正担任民航飞行员与空管员。</text>
+  </g>
+  <g filter="url(#softShadow)">
+    <rect x="644" y="510" width="356" height="118" rx="10" fill="#FFFFFF" stroke="#99F6E4" stroke-width="1.5" />
+    <text x="658" y="532" class="box-title-teal">游戏映射 · 地下结社与玩家主动营救分支</text>
+    <text x="658" y="553" class="box-body">兽迷转入地下成立互助社“The Furverts”；玩家</text>
+    <text x="658" y="571" class="box-body">可驾驶载具撞破警方封锁线，将受困福瑞顶着警笛</text>
+    <text x="658" y="589" class="box-body">护送至安全屋（旁观则目睹惨剧发生）。</text>
+  </g>
+
+  <!-- Center Bridge Panel -->
+  <g filter="url(#softShadow)">
+    <rect x="416" y="132" width="208" height="496" rx="12" fill="#FFFBEB" stroke="#FCD34D" stroke-width="1.8" />
+    <text x="520" y="162" text-anchor="middle" class="mid-title">为何紧盯兽迷群体？</text>
+    <text x="520" y="182" text-anchor="middle" class="box-body">FurScience 国际长期调研</text>
+
+    <rect x="432" y="200" width="176" height="78" rx="8" fill="#FFFFFF" stroke="#FDE68A" />
+    <text x="520" y="232" text-anchor="middle" class="stat-num">~75%</text>
+    <text x="520" y="253" text-anchor="middle" class="stat-lbl">同性恋/双性恋/泛性恋</text>
+    <text x="520" y="269" text-anchor="middle" class="stat-lbl">等非异性恋认同比例</text>
+
+    <rect x="432" y="292" width="176" height="78" rx="8" fill="#FFFFFF" stroke="#FDE68A" />
+    <text x="520" y="324" text-anchor="middle" class="stat-num" style="fill:#D97706;">~15%</text>
+    <text x="520" y="345" text-anchor="middle" class="stat-lbl">跨性别及非二元性别</text>
+    <text x="520" y="361" text-anchor="middle" class="stat-lbl">认同比例（远高于常模）</text>
+
+    <line x1="436" y1="390" x2="604" y2="390" stroke="#FDE68A" stroke-width="1.5" />
+
+    <text x="520" y="415" text-anchor="middle" class="mid-title">低成本“代理靶子”</text>
+    <text x="432" y="440" class="box-body">直接攻击 LGBTQ+ 易遭强</text>
+    <text x="432" y="458" class="box-body">烈民权反弹，而将大众相对</text>
+    <text x="432" y="476" class="box-body">陌生的兽迷污名化为“怪异</text>
+    <text x="432" y="494" class="box-body">癖好”，成了部分政客旁敲</text>
+    <text x="432" y="512" class="box-body">侧击性少数群体的安全借口。</text>
+
+    <rect x="432" y="534" width="176" height="76" rx="8" fill="#FEF3C7" />
+    <text x="442" y="555" class="box-body" style="font-weight:700; fill:#92400E;">游戏内彩蛋印证：</text>
+    <text x="442" y="574" class="box-body">《GTA 6》电视刚播完痛骂</text>
+    <text x="442" y="592" class="box-body">酷儿群体的动画，紧接着就</text>
+    <text x="442" y="608" class="box-body">是“反福瑞协会”广告。</text>
+  </g>
+
+  <!-- Connector Arrows -->
+  <line x1="396" y1="188" x2="414" y2="188" stroke="#94A3B8" stroke-width="2" marker-end="url(#mapArrow)" />
+  <line x1="624" y1="188" x2="642" y2="188" stroke="#94A3B8" stroke-width="2" marker-end="url(#mapArrow)" />
+  <line x1="396" y1="312" x2="414" y2="312" stroke="#94A3B8" stroke-width="2" marker-end="url(#mapArrow)" />
+  <line x1="624" y1="312" x2="642" y2="312" stroke="#94A3B8" stroke-width="2" marker-end="url(#mapArrow)" />
+  <line x1="396" y1="438" x2="414" y2="438" stroke="#94A3B8" stroke-width="2" marker-end="url(#mapArrow)" />
+  <line x1="624" y1="438" x2="642" y2="438" stroke="#94A3B8" stroke-width="2" marker-end="url(#mapArrow)" />
+  <line x1="396" y1="568" x2="414" y2="568" stroke="#94A3B8" stroke-width="2" marker-end="url(#mapArrow)" />
+  <line x1="624" y1="568" x2="642" y2="568" stroke="#94A3B8" stroke-width="2" marker-end="url(#mapArrow)" />
+
+  <text x="40" y="662" class="foot-note">信源：美国各州议会公开法案档案（SB 1438、Texas HB 4814）、滑铁卢大学 FurScience 社会学研究报告、CNET / GQ / Dot Esports《GTA 6》实机评测。</text>
+</svg>

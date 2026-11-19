@@ -322,16 +322,42 @@
       return svgEl ? svgEl.outerHTML.trim() : '';
     }
 
+    // Remote SVG image fallback enhancement: attempt inline conversion if CORS allows
+    const imgCanvasEl = canvas.querySelector('img.svg-canvas-img');
+    if (imgCanvasEl && imgCanvasEl.src) {
+      fetch(imgCanvasEl.src)
+        .then(res => {
+          if (!res.ok) throw new Error('Fetch failed: ' + res.status);
+          return res.text();
+        })
+        .then(svgText => {
+          if (svgText.includes('<svg') && svgText.includes('</svg>')) {
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = svgText.trim();
+            const newSvg = tempDiv.querySelector('svg');
+            if (newSvg) {
+              canvas.replaceChild(newSvg, imgCanvasEl);
+              let rawTextarea = container.querySelector('.svg-raw-source');
+              if (!rawTextarea) {
+                rawTextarea = document.createElement('textarea');
+                rawTextarea.className = 'svg-raw-source';
+                rawTextarea.style.display = 'none';
+                container.appendChild(rawTextarea);
+              }
+              rawTextarea.value = svgText.trim();
+            }
+          }
+        })
+        .catch(() => {
+          // CORS or offline: Keep img intact, Pan & Zoom works via CSS transforms!
+        });
+    }
+
     // --- 5. Download SVG File ---
     if (btnDownload) {
       btnDownload.addEventListener('click', (e) => {
         e.preventDefault();
         const rawCode = getRawSvgCode();
-
-        if (!rawCode) {
-          if (window.showToast) window.showToast('无法提取 SVG 内容');
-          return;
-        }
 
         // Extract filename from title
         const titleEl = container.querySelector('.svg-title');
@@ -339,6 +365,23 @@
           .replace(/[\\/:*?"<>|]/g, '_')
           .substring(0, 50);
         if (!filename.endsWith('.svg')) filename += '.svg';
+
+        if (!rawCode) {
+          const imgEl = canvas.querySelector('img.svg-canvas-img');
+          if (imgEl && imgEl.src) {
+            const a = document.createElement('a');
+            a.href = imgEl.src;
+            a.download = filename;
+            a.target = '_blank';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            if (window.showToast) window.showToast(`正在下载 (${filename})`);
+            return;
+          }
+          if (window.showToast) window.showToast('无法提取 SVG 内容');
+          return;
+        }
 
         const blob = new Blob([rawCode], { type: 'image/svg+xml;charset=utf-8' });
         const blobUrl = URL.createObjectURL(blob);

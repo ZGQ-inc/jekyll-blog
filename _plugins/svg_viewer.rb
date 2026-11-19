@@ -18,11 +18,18 @@ require 'rouge'
 #    <svg ...>...</svg>
 #    ```
 #
-# 3. External SVG file path reference:
+# 3. External SVG file path reference in code block:
 #    ```[svg src="/assets/diagrams/demo.svg" height="500px" title="架构图"]
 #    ```
 #
-# 4. Liquid Tag syntax:
+# 4. Standard Markdown image syntax (auto-upgrades standalone SVG images to interactive viewer):
+#    ![拓扑架构图](/assets/images/demo.svg)
+#    ![拓扑架构图](/assets/images/demo.svg "自定义标题")
+#    ![拓扑架构图](/assets/images/demo.svg){: height="500px" title="..." }
+#    Opt-out to standard <img>:
+#    ![普通图片](/assets/images/demo.svg){: .no-viewer }
+#
+# 5. Liquid Tag syntax:
 #    {% svg src="/assets/diagrams/demo.svg" height="500px" title="架构图" %}
 #
 # Features:
@@ -38,6 +45,8 @@ require 'rouge'
 module Jekyll
   module SvgViewer
     FENCE_PATTERN = /^(?<fence>`{3,})\s*(?:\[svg(?::|\s+)?(?<params>[^\]\r\n]*)\]|svg(?::|\s+)?(?<params2>[^\r\n]*))\s*$\r?\n(?<body>(?:(?!^\k<fence>\s*$).)*?)(?:^\k<fence>\s*$)/m
+
+    IMAGE_PATTERN = /^[ \t]*!\[(?<alt>[^\]]*)\]\([ \t]*(?<url>[^\s)]+?(?:\.svg|\.svg\?[^)\s]*|\.svg#[^)\s]*))[ \t]*(?:\s+(?:"(?<title1>[^"]*)"|'(?<title2>[^']*)'))?[ \t]*\)(?:[ \t]*\r?\n[ \t]*\{:(?<ial2>[^}]+)\}|(?:[ \t]*\{:(?<ial1>[^}]+)\}))?[ \t]*$/i
 
     def self.parse_params(params_str, global_config = {})
       config = {
@@ -171,7 +180,7 @@ module Jekyll
       end
     end
 
-    def self.render_viewer(config, raw_body, site_source, counter = 1)
+    def self.render_viewer(config, raw_body, site_source, counter = 1, doc_path = nil)
       display_svg = raw_body.to_s.strip
       is_src_mode = !config['src'].nil? && !config['src'].strip.empty?
       error_message = nil
@@ -182,20 +191,29 @@ module Jekyll
         is_local = !src_url.start_with?('http://', 'https://', '//')
         if is_local
           clean_path = src_url.split('?').first.split('#').first.sub(/^\//, '')
-          if clean_path.include?('..')
-            error_message = "SVG 安全拦截：禁止使用包含 '..' 的相对路径遍历 (#{CGI.escapeHTML(src_url)})。"
-          elsif site_source
-            full_disk_path = File.expand_path(clean_path, site_source)
-            if File.exist?(full_disk_path) && File.file?(full_disk_path)
-              begin
-                display_svg = File.read(full_disk_path, encoding: 'utf-8').strip
-              rescue StandardError => e
-                error_message = "读取 SVG 文件失败: #{CGI.escapeHTML(e.message)}"
-              end
-            else
-              error_message = "未找到 SVG 文件: #{CGI.escapeHTML(src_url)}"
-            end
+          full_disk_path = File.expand_path(clean_path, site_source)
+
+          # If not found relative to site_source, check relative to current document directory
+          if (!File.exist?(full_disk_path) || !File.file?(full_disk_path)) && doc_path
+            rel_disk_path = File.expand_path(clean_path, File.dirname(doc_path))
+            full_disk_path = rel_disk_path if File.exist?(rel_disk_path) && File.file?(rel_disk_path)
           end
+
+          site_source_expanded = File.expand_path(site_source)
+          if !full_disk_path.start_with?(site_source_expanded)
+            error_message = "SVG 安全拦截：禁止访问站点工作目录之外的路径 (#{CGI.escapeHTML(src_url)})。"
+          elsif File.exist?(full_disk_path) && File.file?(full_disk_path)
+            begin
+              display_svg = File.read(full_disk_path, encoding: 'utf-8').strip
+            rescue StandardError => e
+              error_message = "读取 SVG 文件失败: #{CGI.escapeHTML(e.message)}"
+            end
+          else
+            error_message = "未找到 SVG 文件: #{CGI.escapeHTML(src_url)}"
+          end
+        else
+          # Remote URL display fallback
+          display_svg = %(<img src="#{CGI.escapeHTML(src_url)}" alt="#{CGI.escapeHTML(config['title'] || 'SVG 矢量图')}" class="svg-canvas-img" style="max-width: 100%; max-height: 100%; object-fit: contain; display: block;" />)
         end
       end
 
@@ -219,7 +237,14 @@ module Jekyll
 
       # Metadata auto-extraction
       auto_title, auto_dims = extract_metadata(display_svg)
-      title = config['title'] || auto_title || 'SVG 矢量图形'
+      fallback_filename_title = if is_src_mode
+                                  File.basename(config['src'].split('?').first.split('#').first, '.svg')
+                                      .gsub(/[-_]+/, ' ')
+                                      .split.map(&:capitalize).join(' ')
+                                else
+                                  nil
+                                end
+      title = config['title'] || auto_title || fallback_filename_title || 'SVG 矢量图形'
       dims = auto_dims
 
       badge_dims = if dims
@@ -369,16 +394,18 @@ end
 
 Liquid::Template.register_tag('svg', Jekyll::SvgTag)
 
-# Pre-render hook for ```[svg] and ```svg code blocks
+# Pre-render hook for ```[svg], ```svg code blocks, and ![alt](path.svg) markdown images
 Jekyll::Hooks.register [:posts, :pages, :documents], :pre_render do |doc|
   content = doc.content
-  next if content.nil? || content.empty? || (!content.include?('svg') && !content.include?('[svg]'))
+  next if content.nil? || content.empty? || !content.downcase.include?('svg')
 
   content = content.dup
   global_config = (doc.site && doc.site.config['svg_viewer']) || {}
   site_source = doc.site ? doc.site.source : Dir.pwd
+  doc_path = doc.path
+  block_counter = 0
 
-  # Step 1: Temporarily protect 4+ backtick code fences that are NOT svg blocks
+  # Step 1: Temporarily protect 4+ backtick code fences (e.g. ````markdown) that are not svg fences
   protected_blocks = []
   content = content.gsub(/^(`{4,})([^\r\n]*)\r?\n.*?\r?\n^\1\s*$/m) do |block|
     if block =~ /^`{4,}\s*(?:\[svg|svg)/i
@@ -389,9 +416,7 @@ Jekyll::Hooks.register [:posts, :pages, :documents], :pre_render do |doc|
     end
   end
 
-  # Step 2: Match and transform svg code blocks
-  block_counter = 0
-
+  # Step 2: Process top-level fenced [svg ...] and ```svg blocks
   content = content.gsub(Jekyll::SvgViewer::FENCE_PATTERN) do
     fence = $~[:fence]
     params_str = $~[:params] || $~[:params2] || ''
@@ -400,22 +425,50 @@ Jekyll::Hooks.register [:posts, :pages, :documents], :pre_render do |doc|
     # Check if this should be transformed:
     # 1. Explicitly [svg ...]
     # 2. Or standard ```svg where body contains <svg
+    # 3. Or src parameter provided
     is_explicit = !$~[:params].nil?
     contains_svg = body =~ /<svg[^>]*>/i
     config = Jekyll::SvgViewer.parse_params(params_str, global_config)
 
     if !config['is_plain_code'] && (is_explicit || contains_svg || !config['src'].nil?)
       block_counter += 1
-      Jekyll::SvgViewer.render_viewer(config, body, site_source, block_counter)
+      Jekyll::SvgViewer.render_viewer(config, body, site_source, block_counter, doc_path)
     else
       # Leave as original markdown code block
       "#{fence}svg\n#{body}\n#{fence}"
     end
   end
 
-  # Step 3: Restore protected code blocks
-  content = content.gsub(/__SVG_VIEWER_PROTECTED_(\d+)__/) do
-    protected_blocks[$1.to_i]
+  # Step 3: Protect ALL remaining code blocks (fenced and inline code)
+  content = content.gsub(/(`+)(.+?)\1/m) do |match|
+    protected_blocks << match
+    "__SVG_VIEWER_PROTECTED_#{protected_blocks.length - 1}__"
+  end
+
+  # Step 4: Match standalone markdown images referencing .svg: ![alt](url.svg)
+  content = content.gsub(Jekyll::SvgViewer::IMAGE_PATTERN) do |match|
+    alt = $~[:alt].to_s.strip
+    url = $~[:url].to_s.strip
+    img_title = ($~[:title1] || $~[:title2]).to_s.strip
+    ial_str = ($~[:ial1] || $~[:ial2]).to_s.strip
+
+    # Check for opt-out class or attribute in Kramdown IAL (e.g. {: .no-viewer } or {: .plain })
+    if ial_str =~ /(?:\.no-viewer|\.plain|\.no-svg-viewer|\bno-viewer\b|\bplain\b)/i
+      match
+    else
+      config = Jekyll::SvgViewer.parse_params(ial_str, global_config)
+      config['src'] = url
+      # Title precedence: IAL title > Markdown title attribute > Alt text
+      config['title'] = config['title'] || (img_title.empty? ? nil : img_title) || (alt.empty? ? nil : alt)
+
+      block_counter += 1
+      Jekyll::SvgViewer.render_viewer(config, '', site_source, block_counter, doc_path)
+    end
+  end
+
+  # Step 5: Restore all protected code blocks in reverse order
+  (protected_blocks.length - 1).downto(0) do |i|
+    content = content.gsub("__SVG_VIEWER_PROTECTED_#{i}__", protected_blocks[i])
   end
 
   doc.content = content

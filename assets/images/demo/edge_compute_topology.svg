@@ -1,0 +1,242 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 760" width="1080" height="760" role="img" aria-labelledby="svg-title svg-desc">
+  <title id="svg-title">现代边缘计算与客户端算力拓扑架构全景</title>
+  <desc id="svg-desc">基于 Cloudflare Workers/Pages + WebAssembly + Material Design 3 的高可用现代化系统架构全景展示图。</desc>
+  <defs>
+    <style>
+      .font-sans { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif; }
+      .font-mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; }
+      .card-title { font-size: 15px; font-weight: 700; fill: #0F172A; }
+      .card-desc { font-size: 12px; fill: #475569; line-height: 1.4; }
+      .card-tag { font-size: 11px; font-weight: 600; }
+    </style>
+    <filter id="card-shadow" x="-4%" y="-4%" width="108%" height="114%">
+      <feDropShadow dx="0" dy="3" stdDeviation="4" flood-color="#0F172A" flood-opacity="0.06" />
+    </filter>
+    <linearGradient id="grad-edge" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0061A4" />
+      <stop offset="100%" stop-color="#0288D1" />
+    </linearGradient>
+    <linearGradient id="grad-worker" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F38020" />
+      <stop offset="100%" stop-color="#FAAE40" />
+    </linearGradient>
+    <linearGradient id="grad-wasm" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#6750A4" />
+      <stop offset="100%" stop-color="#7F67BE" />
+    </linearGradient>
+    <linearGradient id="grad-ui" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#006A60" />
+      <stop offset="100%" stop-color="#00897B" />
+    </linearGradient>
+  </defs>
+
+  <!-- Background Canvas -->
+  <rect width="1080" height="760" rx="16" fill="#F8FAFC" stroke="#E2E8F0" stroke-width="1.5" />
+
+  <!-- Background decorative grid dots -->
+  <g opacity="0.2" fill="#64748B">
+    <circle cx="60" cy="80" r="1.5" /><circle cx="100" cy="80" r="1.5" /><circle cx="140" cy="80" r="1.5" />
+    <circle cx="940" cy="80" r="1.5" /><circle cx="980" cy="80" r="1.5" /><circle cx="1020" cy="80" r="1.5" />
+    <circle cx="60" cy="700" r="1.5" /><circle cx="100" cy="700" r="1.5" /><circle cx="980" cy="700" r="1.5" /><circle cx="1020" cy="700" r="1.5" />
+  </g>
+
+  <!-- ==================== HEADER ==================== -->
+  <g class="font-sans" transform="translate(50, 42)">
+    <rect x="0" y="0" width="138" height="24" rx="12" fill="#EEF2FF" stroke="#C7D2FE" stroke-width="1" />
+    <text x="69" y="16" font-size="11" font-weight="700" fill="#4338CA" text-anchor="middle" letter-spacing="0.5">SYSTEM TOPOLOGY</text>
+
+    <text x="150" y="17" font-size="12" font-weight="600" fill="#64748B">架构演进 · 2026 全栈现代化拓扑</text>
+
+    <text x="0" y="54" font-size="24" font-weight="800" fill="#0F172A">现代边缘计算与客户端算力拓扑架构全景</text>
+    <text x="0" y="80" font-size="13.5" fill="#475569">基于 Cloudflare Edge + WebAssembly 即时算力 + Material Design 3 沉浸视觉的全景协同流</text>
+
+    <line x1="0" y1="100" x2="980" y2="100" stroke="#E2E8F0" stroke-width="1.5" />
+  </g>
+
+  <!-- ==================== LAYER 1: EDGE & SECURITY ==================== -->
+  <g class="font-sans" transform="translate(50, 165)">
+    <rect x="0" y="0" width="88" height="22" rx="6" fill="url(#grad-edge)" />
+    <text x="44" y="15" font-size="11" font-weight="700" fill="#FFFFFF" text-anchor="middle">LAYER 1</text>
+    <text x="98" y="16" font-size="15" font-weight="700" fill="#0F172A">边缘算力与安全防护层 (Edge Network &amp; Security Shield)</text>
+
+    <!-- Card 1.1 -->
+    <g transform="translate(0, 32)">
+      <rect width="306" height="96" rx="12" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1.2" filter="url(#card-shadow)" />
+      <rect width="5" height="96" rx="2.5" fill="#0061A4" />
+      <text x="20" y="28" class="card-title">Anycast CDN 智能分发</text>
+      <rect x="220" y="14" width="68" height="20" rx="6" fill="#E0F2FE" />
+      <text x="254" y="28" class="card-tag" fill="#0369A1" text-anchor="middle">330+ 节点</text>
+      <text x="20" y="54" class="card-desc">全球边缘节点毫秒级响应，静态资产与</text>
+      <text x="20" y="74" class="card-desc">预编译 HTML 全球分布式高速分发。</text>
+    </g>
+
+    <!-- Card 1.2 -->
+    <g transform="translate(336, 32)">
+      <rect width="306" height="96" rx="12" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1.2" filter="url(#card-shadow)" />
+      <rect width="5" height="96" rx="2.5" fill="#F38020" />
+      <text x="20" y="28" class="card-title">Cloudflare Turnstile WAF</text>
+      <rect x="214" y="14" width="74" height="20" rx="6" fill="#FFEDD5" />
+      <text x="251" y="28" class="card-tag" fill="#C2410C" text-anchor="middle">零感验证</text>
+      <text x="20" y="54" class="card-desc">智能人机安全验证，彻底防范恶意网络</text>
+      <text x="20" y="74" class="card-desc">爬虫、自动化脚本碰撞与暴力滥用。</text>
+    </g>
+
+    <!-- Card 1.3 -->
+    <g transform="translate(674, 32)">
+      <rect width="306" height="96" rx="12" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1.2" filter="url(#card-shadow)" />
+      <rect width="5" height="96" rx="2.5" fill="#7C3AED" />
+      <text x="20" y="28" class="card-title">Worker D1 分布式限流</text>
+      <rect x="218" y="14" width="70" height="20" rx="6" fill="#F3E8FF" />
+      <text x="253" y="28" class="card-tag" fill="#7E22CE" text-anchor="middle">Edge DB</text>
+      <text x="20" y="54" class="card-desc">Serverless API 动态网关，基于 D1 存储</text>
+      <text x="20" y="74" class="card-desc">实现客户端 IP 滑动窗口限频保护。</text>
+    </g>
+  </g>
+
+  <!-- Connectors 1 -> 2 -->
+  <g stroke="#CBD5E1" stroke-width="1.5" stroke-dasharray="4 3" fill="none">
+    <path d="M203 306 L203 338" />
+    <path d="M540 306 L540 338" />
+    <path d="M877 306 L877 338" />
+  </g>
+  <g fill="#94A3B8">
+    <polygon points="199,336 207,336 203,342" />
+    <polygon points="536,336 544,336 540,342" />
+    <polygon points="873,336 881,336 877,342" />
+  </g>
+
+  <!-- ==================== LAYER 2: COMPUTE & ENGINE ==================== -->
+  <g class="font-sans" transform="translate(50, 350)">
+    <rect x="0" y="0" width="88" height="22" rx="6" fill="url(#grad-wasm)" />
+    <text x="44" y="15" font-size="11" font-weight="700" fill="#FFFFFF" text-anchor="middle">LAYER 2</text>
+    <text x="98" y="16" font-size="15" font-weight="700" fill="#0F172A">核心构建引擎与端侧即时算力 (Core Pipeline &amp; Client Compute)</text>
+
+    <!-- Card 2.1 -->
+    <g transform="translate(0, 32)">
+      <rect width="306" height="96" rx="12" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1.2" filter="url(#card-shadow)" />
+      <rect width="5" height="96" rx="2.5" fill="#B91C1C" />
+      <text x="20" y="28" class="card-title">Jekyll SSG 增量编译管线</text>
+      <rect x="214" y="14" width="74" height="20" rx="6" fill="#FEE2E2" />
+      <text x="251" y="28" class="card-tag" fill="#B91C1C" text-anchor="middle">Kramdown</text>
+      <text x="20" y="54" class="card-desc">纯净静态站点生成，集成 Rouge 语法高</text>
+      <text x="20" y="74" class="card-desc">亮引擎与 Liquid 模块化宏组件系统。</text>
+    </g>
+
+    <!-- Card 2.2 -->
+    <g transform="translate(336, 32)">
+      <rect width="306" height="96" rx="12" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1.2" filter="url(#card-shadow)" />
+      <rect width="5" height="96" rx="2.5" fill="#6750A4" />
+      <text x="20" y="28" class="card-title">WASM 原生即时计算引擎</text>
+      <rect x="220" y="14" width="68" height="20" rx="6" fill="#EDE9FE" />
+      <text x="254" y="28" class="card-tag" fill="#6D28D9" text-anchor="middle">Pyodide</text>
+      <text x="20" y="54" class="card-desc">端侧无服务器运行 Python 3.12 与 SQLite</text>
+      <text x="20" y="74" class="card-desc">内存数据库，即开即用零网络延迟。</text>
+    </g>
+
+    <!-- Card 2.3 -->
+    <g transform="translate(674, 32)">
+      <rect width="306" height="96" rx="12" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1.2" filter="url(#card-shadow)" />
+      <rect width="5" height="96" rx="2.5" fill="#0D9488" />
+      <text x="20" y="28" class="card-title">WebGL &amp; GLSL 片元着色器</text>
+      <rect x="224" y="14" width="64" height="20" rx="6" fill="#CCFBF1" />
+      <text x="256" y="28" class="card-tag" fill="#0F766E" text-anchor="middle">60 FPS</text>
+      <text x="20" y="54" class="card-desc">GPU 硬件加速画板，实时片元 Shader 渲染</text>
+      <text x="20" y="74" class="card-desc">与交互式 3D STL / GLTF 模型预览。</text>
+    </g>
+  </g>
+
+  <!-- Connectors 2 -> 3 -->
+  <g stroke="#CBD5E1" stroke-width="1.5" stroke-dasharray="4 3" fill="none">
+    <path d="M203 490 L203 522" />
+    <path d="M540 490 L540 522" />
+    <path d="M877 490 L877 522" />
+  </g>
+  <g fill="#94A3B8">
+    <polygon points="199,520 207,520 203,526" />
+    <polygon points="536,520 544,520 540,526" />
+    <polygon points="873,520 881,520 877,526" />
+  </g>
+
+  <!-- ==================== LAYER 3: MD3 PRESENTATION ==================== -->
+  <g class="font-sans" transform="translate(50, 534)">
+    <rect x="0" y="0" width="88" height="22" rx="6" fill="url(#grad-ui)" />
+    <text x="44" y="15" font-size="11" font-weight="700" fill="#FFFFFF" text-anchor="middle">LAYER 3</text>
+    <text x="98" y="16" font-size="15" font-weight="700" fill="#0F172A">Material Design 3 沉浸交互视口 (Interactive MD3 Experience)</text>
+
+    <!-- Card 3.1: SVG Viewer Focus -->
+    <g transform="translate(0, 32)">
+      <rect width="232" height="88" rx="10" fill="#F0FDF4" stroke="#86EFAC" stroke-width="1.2" filter="url(#card-shadow)" />
+      <rect width="4" height="88" rx="2" fill="#16A34A" />
+      <text x="16" y="26" font-size="14" font-weight="700" fill="#166534">SVG 矢量交互画板</text>
+      <text x="16" y="48" font-size="11.5" fill="#15803D">滚轮任意缩放 · 拖拽平移</text>
+      <text x="16" y="68" font-size="11.5" fill="#15803D">一键下载文件 · 源码检视</text>
+    </g>
+
+    <!-- Card 3.2: HTML Sandbox -->
+    <g transform="translate(248, 32)">
+      <rect width="232" height="88" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1.2" filter="url(#card-shadow)" />
+      <rect width="4" height="88" rx="2" fill="#0284C7" />
+      <text x="16" y="26" font-size="14" font-weight="700" fill="#0F172A">安全隔离 HTML 沙盒</text>
+      <text x="16" y="48" font-size="11.5" fill="#475569">Zero-Trust 零信任隔离</text>
+      <text x="16" y="68" font-size="11.5" fill="#475569">视口高度拉伸 · 源码抽屉</text>
+    </g>
+
+    <!-- Card 3.3: Backlinks -->
+    <g transform="translate(496, 32)">
+      <rect width="232" height="88" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1.2" filter="url(#card-shadow)" />
+      <rect width="4" height="88" rx="2" fill="#D97706" />
+      <text x="16" y="26" font-size="14" font-weight="700" fill="#0F172A">双向反向链接网络</text>
+      <text x="16" y="48" font-size="11.5" fill="#475569">全站引用反向索引构建</text>
+      <text x="16" y="68" font-size="11.5" fill="#475569">知识卡片流 · 深度漫游</text>
+    </g>
+
+    <!-- Card 3.4: Dynamic Color Theme -->
+    <g transform="translate(744, 32)">
+      <rect width="236" height="88" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1.2" filter="url(#card-shadow)" />
+      <rect width="4" height="88" rx="2" fill="#9333EA" />
+      <text x="16" y="26" font-size="14" font-weight="700" fill="#0F172A">MD3 动态色彩体系</text>
+      <text x="16" y="48" font-size="11.5" fill="#475569">Tone-based 表面容器</text>
+      <text x="16" y="68" font-size="11.5" fill="#475569">深色模式自适应动态调色</text>
+    </g>
+  </g>
+
+  <!-- ==================== FOOTER ==================== -->
+  <g class="font-sans" transform="translate(50, 680)">
+    <line x1="0" y1="0" x2="980" y2="0" stroke="#E2E8F0" stroke-width="1" />
+
+    <text x="0" y="28" font-size="12" font-weight="600" fill="#64748B">系统指标与技术规格：</text>
+
+    <!-- Pill 1 -->
+    <g transform="translate(130, 14)">
+      <rect width="112" height="22" rx="11" fill="#DCFCE7" stroke="#86EFAC" stroke-width="1" />
+      <circle cx="12" cy="11" r="3.5" fill="#16A34A" />
+      <text x="24" y="15" font-size="11" font-weight="700" fill="#15803D">TTFB &lt; 45ms</text>
+    </g>
+
+    <!-- Pill 2 -->
+    <g transform="translate(254, 14)">
+      <rect width="138" height="22" rx="11" fill="#E0F2FE" stroke="#7DD3FC" stroke-width="1" />
+      <circle cx="12" cy="11" r="3.5" fill="#0284C7" />
+      <text x="24" y="15" font-size="11" font-weight="700" fill="#0369A1">Zero-Trust CSP</text>
+    </g>
+
+    <!-- Pill 3 -->
+    <g transform="translate(404, 14)">
+      <rect width="148" height="22" rx="11" fill="#F3E8FF" stroke="#D8B4FE" stroke-width="1" />
+      <circle cx="12" cy="11" r="3.5" fill="#9333EA" />
+      <text x="24" y="15" font-size="11" font-weight="700" fill="#7E22CE">WASM In-Browser</text>
+    </g>
+
+    <!-- Pill 4 -->
+    <g transform="translate(564, 14)">
+      <rect width="138" height="22" rx="11" fill="#FFEDD5" stroke="#FDBA74" stroke-width="1" />
+      <circle cx="12" cy="11" r="3.5" fill="#EA580C" />
+      <text x="24" y="15" font-size="11" font-weight="700" fill="#C2410C">Material You MD3</text>
+    </g>
+
+    <!-- Right-aligned Link / Credit -->
+    <text x="980" y="28" font-size="11.5" fill="#94A3B8" text-anchor="end">
+      <tspan fill="#64748B" font-weight="600">ZGQ Inc. Architecture</tspan> · 矢量拓扑由 MD3 SVG Viewer 实时驱动渲染
+    </text>
+  </g>
+</svg>

@@ -1,0 +1,94 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1040 500" width="1040" height="500">
+  <defs>
+    <style>
+      .title { font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif; font-size: 21px; font-weight: 700; fill: #0F172A; }
+      .subtitle { font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif; font-size: 13px; fill: #475569; }
+      .src-title { font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif; font-size: 15px; font-weight: 700; fill: #FFFFFF; }
+      .src-body { font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif; font-size: 12.5px; fill: #E2E8F0; }
+      .pole-badge { font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif; font-size: 11px; font-weight: 700; }
+      .pole-title { font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif; font-size: 14px; font-weight: 700; fill: #0F172A; }
+      .pole-body { font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif; font-size: 12px; fill: #334155; }
+      .audit-hdr { font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif; font-size: 13.5px; font-weight: 700; fill: #0F172A; }
+      .audit-body { font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif; font-size: 11.8px; fill: #334155; }
+    </style>
+    <marker id="flowTeal" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#0F766E" />
+    </marker>
+    <marker id="flowCoral" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#E15B64" />
+    </marker>
+    <marker id="flowAmber" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#D97706" />
+    </marker>
+    <filter id="drop" x="-3%" y="-3%" width="106%" height="108%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#0F172A" flood-opacity="0.06" />
+    </filter>
+  </defs>
+
+  <rect x="0" y="0" width="1040" height="500" fill="#FAF8F5" />
+
+  <text x="40" y="42" class="title">冷面反讽的传播学三极解码与波氏定律悖论模型</text>
+  <text x="40" y="66" class="subtitle">基于波氏定律（Poe's Law）与 2009《科尔伯特报告》动机性推理研究，解析为何同一游戏片段引发三极撕裂</text>
+
+  <!-- Top Source Box -->
+  <g filter="url(#drop)">
+    <rect x="130" y="88" width="780" height="96" rx="14" fill="#1E293B" />
+    <text x="520" y="117" text-anchor="middle" class="src-title">文本源头：《GTA 6》冷面反讽（Deadpan Satire）与不对称叙事结构</text>
+    <text x="520" y="142" text-anchor="middle" class="src-body">创作手法：不设说教旁白，用荒诞法案与警方乱枪击毙的极端夸张反讽红州道德恐慌（主炮向上）；</text>
+    <text x="520" y="164" text-anchor="middle" class="src-body">结构短板：提供撞破路障营救分支，但缺乏如《圣安地列斯》CJ 般的主线级正面兽迷主角锚点。</text>
+  </g>
+
+  <!-- Branching Connectors -->
+  <path d="M 340 184 C 340 212, 192 204, 192 230" fill="none" stroke="#0F766E" stroke-width="2.5" marker-end="url(#flowTeal)" />
+  <line x1="520" y1="184" x2="520" y2="230" stroke="#E15B64" stroke-width="2.5" marker-end="url(#flowCoral)" />
+  <path d="M 700 184 C 700 212, 848 204, 848 230" fill="none" stroke="#D97706" stroke-width="2.5" marker-end="url(#flowAmber)" />
+
+  <!-- Pole A -->
+  <g filter="url(#drop)">
+    <rect x="40" y="234" width="304" height="242" rx="12" fill="#FFFFFF" stroke="#5EEAD4" stroke-width="1.8" />
+    <rect x="56" y="248" width="142" height="22" rx="6" fill="#CCFBF1" />
+    <text x="66" y="263" class="pole-badge" fill="#115E59">路径 A · 反讽解码派 (~45%)</text>
+    <text x="56" y="290" class="pole-title">看穿反讽：R 星实质站在亲福瑞一侧</text>
+    <text x="56" y="314" class="pole-body">代表群体：熟悉 R 星反讽传统的玩家、</text>
+    <text x="56" y="332" class="pole-body">Reddit r/furry 社区及画师 @SammyTigheArt。</text>
+    <text x="56" y="356" class="pole-body">解码机制：识别出编剧把反福瑞州长与警察</text>
+    <text x="56" y="374" class="pole-body">写得如此癫狂，恰恰是在嘲讽现实红州猎</text>
+    <text x="56" y="392" class="pole-body">巫；玩家乐于在游戏里撞破路障营救兽迷，</text>
+    <text x="56" y="410" class="pole-body">甚至呼吁推出主角可穿戴兽装。</text>
+    <rect x="56" y="426" width="272" height="36" rx="6" fill="#F0FDFA" />
+    <text x="66" y="448" class="pole-body" style="fill:#0F766E; font-weight:700;">核心痛点：被嘲讽的偏见者根本看不懂反讽</text>
+  </g>
+
+  <!-- Pole B -->
+  <g filter="url(#drop)">
+    <rect x="368" y="234" width="304" height="242" rx="12" fill="#FFFFFF" stroke="#FDA4AF" stroke-width="1.8" />
+    <rect x="384" y="248" width="154" height="22" rx="6" fill="#FFE4E6" />
+    <text x="394" y="263" class="pole-badge" fill="#9F1239">路径 B · 字面吸收派 (~30%)</text>
+    <text x="384" y="290" class="pole-title">波氏定律陷阱：把反串当成同盟宣言</text>
+    <text x="384" y="314" class="pole-body">实证依据：LaMarre 等（2009）《科尔伯</text>
+    <text x="384" y="332" class="pole-body">特报告》研究证明，受“动机性推理”支配，</text>
+    <text x="384" y="350" class="pole-body">偏见受众会把冷面反讽误读为“赞同自己”。</text>
+    <text x="384" y="374" class="pole-body">现实表现：韩网 Arca.live 出现“铲除福瑞还</text>
+    <text x="384" y="392" class="pole-body">得看罪恶都市警察”叫好帖；切片平台</text>
+    <text x="384" y="410" class="pole-body">Cut.Pro 11.18 紧急警告主播勿用引战标题。</text>
+    <rect x="384" y="426" width="272" height="36" rx="6" fill="#FFF1F2" />
+    <text x="394" y="448" class="pole-body" style="fill:#9F1239; font-weight:700;">传播风险：冷面笑话客观上为歧视提供弹药</text>
+  </g>
+
+  <!-- Pole C -->
+  <g filter="url(#drop)">
+    <rect x="696" y="234" width="304" height="242" rx="12" fill="#FFFFFF" stroke="#FCD34D" stroke-width="1.8" />
+    <rect x="712" y="248" width="154" height="22" rx="6" fill="#FEF3C7" />
+    <text x="722" y="263" class="pole-badge" fill="#92400E">路径 C · 创伤担忧派 (~25%)</text>
+    <text x="712" y="290" class="pole-title">外溢警惕：虚构奇观贴近真实伤口</text>
+    <text x="712" y="314" class="pole-body">代表声音：Bluesky 用户 @scavengerfox、</text>
+    <text x="712" y="332" class="pole-body">日媒 Automaton 及部分抵制呼吁者。</text>
+    <text x="712" y="356" class="pole-body">创伤背景：2014 年 12 月美国中西部兽迷</text>
+    <text x="712" y="374" class="pole-body">大会（MFF）遭蓄意氯气袭击，致逾 40 人</text>
+    <text x="712" y="392" class="pole-body">急救、19 人住院且至今无人被起诉；线下</text>
+    <text x="712" y="410" class="pole-body">穿兽装遇袭事件亦屡有发生。</text>
+    <rect x="712" y="426" width="272" height="36" rx="6" fill="#FFFBEB" />
+    <text x="722" y="448" class="pole-body" style="fill:#92400E; font-weight:700;">伦理质疑：缺乏安全距离的“向下出拳”风险</text>
+  </g>
+
+</svg>

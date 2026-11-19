@@ -1,0 +1,342 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1896" width="1080" height="1896" role="img" aria-labelledby="svg-title svg-desc">
+  <title id="svg-title">现实荒诞照进罪恶都市：美国“反福瑞”文化战争与《GTA 6》四层讽刺架构对照</title>
+  <desc id="svg-desc">从现实中多州议员针对“校园猫砂盆”谣言的荒诞立法，到雷奥奈达州贯通政宣、媒体与开放世界交互的系统级讽刺设计。</desc>
+
+  <defs>
+    <style>
+      .font-sans { font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans SC", "Helvetica Neue", Arial, sans-serif; }
+      .font-mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; }
+      .link { fill: #2563EB; text-decoration: none; }
+      .link:hover { text-decoration: underline; }
+    </style>
+
+    <filter id="card-shadow" x="-2%" y="-4%" width="104%" height="112%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#0F172A" flood-opacity="0.04" />
+    </filter>
+
+    <clipPath id="clip-t1"><rect x="48" y="1040" width="984" height="146" rx="12" /></clipPath>
+    <clipPath id="clip-t2"><rect x="48" y="1202" width="984" height="146" rx="12" /></clipPath>
+    <clipPath id="clip-t3"><rect x="48" y="1364" width="984" height="146" rx="12" /></clipPath>
+    <clipPath id="clip-t4"><rect x="48" y="1526" width="984" height="146" rx="12" /></clipPath>
+    <clipPath id="clip-tl2"><rect x="204" y="366" width="828" height="114" rx="10" /></clipPath>
+    <clipPath id="clip-tl3"><rect x="204" y="496" width="828" height="114" rx="10" /></clipPath>
+    <clipPath id="clip-tl5"><rect x="204" y="756" width="828" height="114" rx="10" /></clipPath>
+  </defs>
+
+  <!-- Canvas Background -->
+  <rect x="0" y="0" width="1080" height="1896" fill="#F8FAFC" />
+
+  <!-- ==================== HEADER ==================== -->
+  <g class="font-sans">
+    <circle cx="54" cy="56" r="4.5" fill="#2563EB" />
+    <text x="68" y="61" font-size="13" font-weight="600" fill="#2563EB" letter-spacing="0.3">文化政治溯源与世界观架构解析 · 2022–2026</text>
+
+    <text x="48" y="102" font-size="25" font-weight="800" fill="#0F172A">现实荒诞照进罪恶都市：美国“反福瑞”文化战争与《GTA 6》四层讽刺架构对照</text>
+    <text x="48" y="134" font-size="15" fill="#475569">从现实中多州议员针对“校园猫砂盆”谣言的荒诞立法，到雷奥奈达州贯通政宣、媒体与开放世界交互的系统级讽刺设计。</text>
+
+    <line x1="48" y1="160" x2="1032" y2="160" stroke="#E2E8F0" stroke-width="1.5" />
+  </g>
+
+  <!-- ==================== PART 1 HEADER ==================== -->
+  <g class="font-sans">
+    <rect x="48" y="186" width="68" height="26" rx="6" fill="#0F172A" />
+    <text x="82" y="204" font-size="12" font-weight="700" fill="#FFFFFF" text-anchor="middle" letter-spacing="0.5">PART 1</text>
+
+    <text x="128" y="206" font-size="19" font-weight="700" fill="#0F172A">现实中的美国“反福瑞”道德恐慌演进（2022–2026）</text>
+    <text x="1032" y="204" font-size="13" fill="#64748B" text-anchor="end">蓝色标示佛州原型 · 红色标示极端言论</text>
+  </g>
+
+  <!-- ==================== PART 1 TIMELINE ==================== -->
+  <g class="font-sans">
+    <!-- Vertical Spine -->
+    <line x1="178" y1="261" x2="178" y2="781" stroke="#CBD5E1" stroke-width="2.5" />
+
+    <!-- Timeline Item 1: 2022.03–04 -->
+    <g>
+      <text x="152" y="266" class="font-mono" font-size="13.5" font-weight="600" fill="#475569" text-anchor="end">2022.03–04</text>
+      <circle cx="178" cy="261" r="6" fill="#FFFFFF" stroke="#64748B" stroke-width="3" />
+
+      <rect x="204" y="236" width="828" height="114" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1.2" filter="url(#card-shadow)" />
+      <text x="224" y="266" font-size="16" font-weight="700" fill="#0F172A">“校园猫砂盆”谣言扩散至州议会</text>
+
+      <rect x="484" y="247" width="124" height="24" rx="6" fill="#F1F5F9" stroke="#E2E8F0" stroke-width="1" />
+      <text x="546" y="263" font-size="12" font-weight="500" fill="#475569" text-anchor="middle">内布拉斯加等六州</text>
+
+      <text x="224" y="296" font-size="14" fill="#334155">
+        <tspan x="224" dy="0">内布拉斯加、明尼苏达、田纳西、俄亥俄、艾奥瓦与堪萨斯六州政客及官员在立法辩论或公开场合援引已被官方反复</tspan>
+        <tspan x="224" dy="22">证伪的“学校为兽迷学生提供猫砂盆”谣言，开启道德恐慌。</tspan>
+      </text>
+    </g>
+
+    <!-- Timeline Item 2: 2023.05 (Florida) -->
+    <g>
+      <text x="152" y="396" class="font-mono" font-size="13.5" font-weight="700" fill="#1D4ED8" text-anchor="end">2023.05</text>
+      <circle cx="178" cy="391" r="6.5" fill="#2563EB" stroke="#DBEAFE" stroke-width="3.5" />
+
+      <rect x="204" y="366" width="828" height="114" rx="10" fill="#F8FBFF" stroke="#93C5FD" stroke-width="1.2" filter="url(#card-shadow)" />
+      <rect x="204" y="366" width="4" height="114" fill="#2563EB" clip-path="url(#clip-tl2)" />
+      <text x="224" y="396" font-size="16" font-weight="700" fill="#0F172A">签署 SB 1438 反变装法案（《儿童保护法》）</text>
+
+      <rect x="558" y="377" width="198" height="24" rx="6" fill="#F1F5F9" stroke="#E2E8F0" stroke-width="1" />
+      <text x="657" y="393" font-size="12" font-weight="500" fill="#475569" text-anchor="middle">佛罗里达州 · 雷奥奈达直接原型</text>
+
+      <rect x="766" y="377" width="72" height="24" rx="6" fill="#DBEAFE" stroke="#93C5FD" stroke-width="1" />
+      <text x="802" y="393" font-size="12" font-weight="600" fill="#1D4ED8" text-anchor="middle">直接原型</text>
+
+      <text x="224" y="426" font-size="14" fill="#334155">
+        <tspan x="224" dy="0">州长德桑蒂斯签署反变装法，威胁吊销允许未成年人进入“成人现场娱乐”场所的酒牌。因条文模糊，奥兰多 Megaplex</tspan>
+        <tspan x="224" dy="22">兽展被迫自 2023 年起设为 18+ 限制，并持续至 2025 年。</tspan>
+      </text>
+    </g>
+
+    <!-- Timeline Item 3: 2024.01 (Extreme) -->
+    <g>
+      <text x="152" y="526" class="font-mono" font-size="13.5" font-weight="700" fill="#B91C1C" text-anchor="end">2024.01</text>
+      <circle cx="178" cy="521" r="6.5" fill="#DC2626" stroke="#FEE2E2" stroke-width="3.5" />
+
+      <rect x="204" y="496" width="828" height="114" rx="10" fill="#FFFBFB" stroke="#FCA5A5" stroke-width="1.2" filter="url(#card-shadow)" />
+      <rect x="204" y="496" width="4" height="114" fill="#DC2626" clip-path="url(#clip-tl3)" />
+      <text x="224" y="526" font-size="16" font-weight="700" fill="#0F172A">HB 3084 法案拟派“动物管制局”带走学生</text>
+
+      <rect x="554" y="507" width="96" height="24" rx="6" fill="#F1F5F9" stroke="#E2E8F0" stroke-width="1" />
+      <text x="602" y="523" font-size="12" font-weight="500" fill="#475569" text-anchor="middle">俄克拉荷马州</text>
+
+      <rect x="660" y="507" width="110" height="24" rx="6" fill="#FEE2E2" stroke="#FCA5A5" stroke-width="1" />
+      <text x="715" y="523" font-size="12" font-weight="600" fill="#B91C1C" text-anchor="middle">极端非人化言论</text>
+
+      <text x="224" y="556" font-size="14" fill="#334155">
+        <tspan x="224" dy="0">州众议员 Justin Humphrey 提案禁止校园兽迷行为并要求由动物管制局带离学生，并在视频中宣称“不如送去</tspan>
+        <tspan x="224" dy="22">打疫苗、绝育并关进收容所”（引发舆论哗然后改口称系讽刺）。</tspan>
+      </text>
+    </g>
+
+    <!-- Timeline Item 4: 2025.03 -->
+    <g>
+      <text x="152" y="656" class="font-mono" font-size="13.5" font-weight="600" fill="#475569" text-anchor="end">2025.03</text>
+      <circle cx="178" cy="651" r="6" fill="#FFFFFF" stroke="#64748B" stroke-width="3" />
+
+      <rect x="204" y="626" width="828" height="114" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1.2" filter="url(#card-shadow)" />
+      <text x="224" y="656" font-size="16" font-weight="700" fill="#0F172A">《FURRIES 法案》（HB 4814）拟重罚学区</text>
+
+      <rect x="540" y="637" width="84" height="24" rx="6" fill="#F1F5F9" stroke="#E2E8F0" stroke-width="1" />
+      <text x="582" y="653" font-size="12" font-weight="500" fill="#475569" text-anchor="middle">得克萨斯州</text>
+
+      <text x="224" y="686" font-size="14" fill="#334155">
+        <tspan x="224" dy="0">提案拟禁公立学校一切动物扮演及兽装、尾巴、项圈等配饰，违规学区起步罚款 1 万美元，并拟将容许行为定性为</tspan>
+        <tspan x="224" dy="22">虐待儿童；最终未通过委员会审议。</tspan>
+      </text>
+    </g>
+
+    <!-- Timeline Item 5: 2026.09 (Extreme) -->
+    <g>
+      <text x="152" y="786" class="font-mono" font-size="13.5" font-weight="700" fill="#B91C1C" text-anchor="end">2026.09</text>
+      <circle cx="178" cy="781" r="6.5" fill="#DC2626" stroke="#FEE2E2" stroke-width="3.5" />
+
+      <rect x="204" y="756" width="828" height="114" rx="10" fill="#FFFBFB" stroke="#FCA5A5" stroke-width="1.2" filter="url(#card-shadow)" />
+      <rect x="204" y="756" width="4" height="114" fill="#DC2626" clip-path="url(#clip-tl5)" />
+      <text x="224" y="786" font-size="16" font-weight="700" fill="#0F172A">参议员图伯维尔抛出“福瑞飞行员威胁论”</text>
+
+      <rect x="534" y="767" width="110" height="24" rx="6" fill="#F1F5F9" stroke="#E2E8F0" stroke-width="1" />
+      <text x="589" y="783" font-size="12" font-weight="500" fill="#475569" text-anchor="middle">美国国会参议院</text>
+
+      <rect x="654" y="767" width="110" height="24" rx="6" fill="#FEE2E2" stroke="#FCA5A5" stroke-width="1" />
+      <text x="709" y="783" font-size="12" font-weight="600" fill="#B91C1C" text-anchor="middle">国会级道德恐慌</text>
+
+      <text x="224" y="816" font-size="14" fill="#334155">
+        <tspan x="224" dy="0">阿拉巴马州参议员 Tommy Tuberville 在参议院发言中无证据宣称“许多飞行员、空乘和空管员属于精神异常</tspan>
+        <tspan x="224" dy="22">的福瑞群体”，将亚文化渲染为危及商业航空安全的恐慌议题。</tspan>
+      </text>
+    </g>
+  </g>
+
+  <!-- ==================== CENTER CONNECTOR BRIDGE ==================== -->
+  <g class="font-sans" aria-label="艺术夸张与讽刺转译">
+    <line x1="540" y1="878" x2="540" y2="904" stroke="#94A3B8" stroke-width="2" stroke-dasharray="4 3" />
+    <rect x="316" y="904" width="448" height="34" rx="17" fill="#1E293B" stroke="#334155" stroke-width="1" />
+    <text x="540" y="926" font-size="13.5" font-weight="600" fill="#F8FAFC" text-anchor="middle">现实荒诞的黑色幽默转译（雷奥奈达州 = 虚拟佛罗里达）</text>
+    <line x1="540" y1="938" x2="540" y2="964" stroke="#94A3B8" stroke-width="2" stroke-dasharray="4 3" />
+    <polygon points="533,962 547,962 540,974" fill="#64748B" />
+  </g>
+
+  <!-- ==================== PART 2 HEADER ==================== -->
+  <g class="font-sans">
+    <rect x="48" y="990" width="68" height="26" rx="6" fill="#4F46E5" />
+    <text x="82" y="1008" font-size="12" font-weight="700" fill="#FFFFFF" text-anchor="middle" letter-spacing="0.5">PART 2</text>
+
+    <text x="128" y="1010" font-size="19" font-weight="700" fill="#0F172A">《GTA 6》雷奥奈达州“反福瑞”四层系统架构</text>
+    <text x="1032" y="1008" font-size="13" fill="#64748B" text-anchor="end">贯通文本、视听与交互的整体世界观设计</text>
+  </g>
+
+  <!-- ==================== PART 2 FOUR-TIER ARCHITECTURE ==================== -->
+  <g class="font-sans">
+    <!-- Tier 1 -->
+    <g>
+      <rect x="48" y="1040" width="984" height="146" rx="12" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1.2" filter="url(#card-shadow)" />
+      <g clip-path="url(#clip-t1)">
+        <rect x="48" y="1040" width="260" height="146" fill="#EEF2FF" />
+        <rect x="48" y="1040" width="5" height="146" fill="#4F46E5" />
+      </g>
+      <line x1="308" y1="1040" x2="308" y2="1186" stroke="#E2E8F0" stroke-width="1" />
+
+      <!-- Left Column -->
+      <rect x="70" y="1058" width="58" height="22" rx="11" fill="#4F46E5" />
+      <text x="99" y="1073" font-size="11.5" font-weight="700" fill="#FFFFFF" text-anchor="middle">层级 1</text>
+      <text x="70" y="1108" font-size="18" font-weight="700" fill="#1E1B4B">立法与新闻</text>
+      <text x="70" y="1134" font-size="13" fill="#4338CA">
+        <tspan x="70" dy="0">讽刺州级“反觉醒”立法与</tspan>
+        <tspan x="70" dy="20">保守派政客话术</tspan>
+      </text>
+
+      <!-- Right Column -->
+      <text x="332" y="1072" font-size="14" fill="#334155">
+        <tspan x="332" dy="0">州长 <tspan font-weight="700" fill="#0F172A">Mike Jimenez</tspan> 颁布“禁爪条款”（No Paws Clause），将一切福瑞活动定为非法；</tspan>
+        <tspan x="332" dy="23">游戏内报纸《<tspan font-style="italic" fill="#0F172A">Vice City Horn</tspan>》头版盛赞雷奥奈达实现“无福瑞化”，州长更指责色情网站</tspan>
+        <tspan x="332" dy="23">算法腐蚀劳工、宣称立法是为抵御“觉醒瘟疫（woke plague）”。</tspan>
+      </text>
+
+      <rect x="332" y="1140" width="76" height="26" rx="13" fill="#EEF2FF" stroke="#C7D2FE" stroke-width="1" />
+      <text x="370" y="1157" font-size="12" font-weight="600" fill="#4338CA" text-anchor="middle">禁爪条款</text>
+
+      <rect x="418" y="1140" width="174" height="26" rx="13" fill="#EEF2FF" stroke="#C7D2FE" stroke-width="1" />
+      <text x="505" y="1157" font-size="12" font-weight="600" fill="#4338CA" text-anchor="middle">《Vice City Horn》头版</text>
+
+      <rect x="602" y="1140" width="120" height="26" rx="13" fill="#EEF2FF" stroke="#C7D2FE" stroke-width="1" />
+      <text x="662" y="1157" font-size="12" font-weight="600" fill="#4338CA" text-anchor="middle">“觉醒瘟疫”修辞</text>
+    </g>
+
+    <!-- Tier 2 -->
+    <g>
+      <rect x="48" y="1202" width="984" height="146" rx="12" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1.2" filter="url(#card-shadow)" />
+      <g clip-path="url(#clip-t2)">
+        <rect x="48" y="1202" width="260" height="146" fill="#FAF5FF" />
+        <rect x="48" y="1202" width="5" height="146" fill="#9333EA" />
+      </g>
+      <line x1="308" y1="1202" x2="308" y2="1348" stroke="#E2E8F0" stroke-width="1" />
+
+      <!-- Left Column -->
+      <rect x="70" y="1220" width="58" height="22" rx="11" fill="#9333EA" />
+      <text x="99" y="1235" font-size="11.5" font-weight="700" fill="#FFFFFF" text-anchor="middle">层级 2</text>
+      <text x="70" y="1270" font-size="18" font-weight="700" fill="#3B0764">电视与宣传</text>
+      <text x="70" y="1296" font-size="13" fill="#7E22CE">
+        <tspan x="70" dy="0">讽刺排外宣传机器与</tspan>
+        <tspan x="70" dy="20">右翼文化战争联动</tspan>
+      </text>
+
+      <!-- Right Column -->
+      <text x="332" y="1234" font-size="14" fill="#334155">
+        <tspan x="332" dy="0">紧随“山姆大叔”破窗痛骂酷儿群体的讽刺动画之后，“反福瑞协会”资助的公益广告上线：</tspan>
+        <tspan x="332" dy="23">打着“游览雷奥奈达”标语宣布狩猎季开启，要求民众举报说出 <tspan class="font-mono" font-weight="700" fill="#7E22CE">UwU</tspan>、<tspan class="font-mono" font-weight="700" fill="#7E22CE">Rawr xD</tspan>、<tspan class="font-mono" font-weight="700" fill="#7E22CE">hewwo</tspan> 的</tspan>
+        <tspan x="332" dy="23">可疑人员，并授权持证猎人“见之即射”。</tspan>
+      </text>
+
+      <rect x="332" y="1302" width="136" height="26" rx="13" fill="#FAF5FF" stroke="#E9D5FF" stroke-width="1" />
+      <text x="400" y="1319" font-size="12" font-weight="600" fill="#7E22CE" text-anchor="middle">山姆大叔反酷儿前导</text>
+
+      <rect x="478" y="1302" width="120" height="26" rx="13" fill="#FAF5FF" stroke="#E9D5FF" stroke-width="1" />
+      <text x="538" y="1319" font-size="12" font-weight="600" fill="#7E22CE" text-anchor="middle">反福瑞协会 PSA</text>
+
+      <rect x="608" y="1302" width="124" height="26" rx="13" fill="#FAF5FF" stroke="#E9D5FF" stroke-width="1" />
+      <text x="670" y="1319" font-size="12" font-weight="600" fill="#7E22CE" text-anchor="middle">授权猎人见之即射</text>
+    </g>
+
+    <!-- Tier 3 -->
+    <g>
+      <rect x="48" y="1364" width="984" height="146" rx="12" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1.2" filter="url(#card-shadow)" />
+      <g clip-path="url(#clip-t3)">
+        <rect x="48" y="1364" width="260" height="146" fill="#FDF2F8" />
+        <rect x="48" y="1364" width="5" height="146" fill="#DB2777" />
+      </g>
+      <line x1="308" y1="1364" x2="308" y2="1510" stroke="#E2E8F0" stroke-width="1" />
+
+      <!-- Left Column -->
+      <rect x="70" y="1382" width="58" height="22" rx="11" fill="#DB2777" />
+      <text x="99" y="1397" font-size="11.5" font-weight="700" fill="#FFFFFF" text-anchor="middle">层级 3</text>
+      <text x="70" y="1432" font-size="18" font-weight="700" fill="#500724">随机事件与交互</text>
+      <text x="70" y="1458" font-size="13" fill="#BE185D">
+        <tspan x="70" dy="0">以荒诞暴力执法对比</tspan>
+        <tspan x="70" dy="20">玩家自由抉择空间</tspan>
+      </text>
+
+      <!-- Right Column -->
+      <text x="332" y="1396" font-size="14" fill="#334155">
+        <tspan x="332" dy="0">夜间街头触发警方直升机探照灯围捕狐狸兽装者事件：若不介入，其在高喊“戴着兽头死去”后会被</tspan>
+        <tspan x="332" dy="23">乱枪击毙、血浆与毛绒四溅；若玩家介入，则可冲破路障救人并护送其同伴逃往安全屋。主角佩戴</tspan>
+        <tspan x="332" dy="23">动物面具也会触发警方敌意。</tspan>
+      </text>
+
+      <rect x="332" y="1464" width="124" height="26" rx="13" fill="#FDF2F8" stroke="#FBCFE8" stroke-width="1" />
+      <text x="394" y="1481" font-size="12" font-weight="600" fill="#BE185D" text-anchor="middle">直升机探照灯围捕</text>
+
+      <rect x="466" y="1464" width="184" height="26" rx="13" fill="#FDF2F8" stroke="#FBCFE8" stroke-width="1" />
+      <text x="558" y="1481" font-size="12" font-weight="600" fill="#BE185D" text-anchor="middle">旁观击毙 / 破障营救双分支</text>
+
+      <rect x="660" y="1464" width="124" height="26" rx="13" fill="#FDF2F8" stroke="#FBCFE8" stroke-width="1" />
+      <text x="722" y="1481" font-size="12" font-weight="600" fill="#BE185D" text-anchor="middle">动物面具招致警敌</text>
+    </g>
+
+    <!-- Tier 4 -->
+    <g>
+      <rect x="48" y="1526" width="984" height="146" rx="12" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1.2" filter="url(#card-shadow)" />
+      <g clip-path="url(#clip-t4)">
+        <rect x="48" y="1526" width="260" height="146" fill="#F0FDFA" />
+        <rect x="48" y="1526" width="5" height="146" fill="#0D9488" />
+      </g>
+      <line x1="308" y1="1526" x2="308" y2="1672" stroke="#E2E8F0" stroke-width="1" />
+
+      <!-- Left Column -->
+      <rect x="70" y="1544" width="58" height="22" rx="11" fill="#0D9488" />
+      <text x="99" y="1559" font-size="11.5" font-weight="700" fill="#FFFFFF" text-anchor="middle">层级 4</text>
+      <text x="70" y="1594" font-size="18" font-weight="700" fill="#042F2E">地下组织与街头舆论</text>
+      <text x="70" y="1620" font-size="13" fill="#0F766E">
+        <tspan x="70" dy="0">还原高压禁令催生的</tspan>
+        <tspan x="70" dy="20">亚文化地下化与民间分歧</tspan>
+      </text>
+
+      <!-- Right Column -->
+      <text x="332" y="1558" font-size="14" fill="#334155">
+        <tspan x="332" dy="0">州政府全面取缔迫使福瑞群体转入地下，秘密组建名为 <tspan font-weight="700" fill="#0F172A">“The Furverts”</tspan> 的隐蔽组织躲避搜捕；</tspan>
+        <tspan x="332" dy="23">而在日常乘车对话中，仍有出租车司机向主角杰森公开声援福瑞，主张他们应当持枪自卫，</tspan>
+        <tspan x="332" dy="23">呈现多元民间声音。</tspan>
+      </text>
+
+      <rect x="332" y="1626" width="168" height="26" rx="13" fill="#F0FDFA" stroke="#99F6E4" stroke-width="1" />
+      <text x="416" y="1643" font-size="12" font-weight="600" fill="#0F766E" text-anchor="middle">地下组织 The Furverts</text>
+
+      <rect x="510" y="1626" width="160" height="26" rx="13" fill="#F0FDFA" stroke="#99F6E4" stroke-width="1" />
+      <text x="590" y="1643" font-size="12" font-weight="600" fill="#0F766E" text-anchor="middle">出租车司机声援持枪自卫</text>
+    </g>
+  </g>
+
+  <!-- ==================== FOOTER ==================== -->
+  <g class="font-sans">
+    <line x1="48" y1="1700" x2="1032" y2="1700" stroke="#E2E8F0" stroke-width="1.5" />
+
+    <!-- Caption -->
+    <rect x="48" y="1716" width="984" height="84" rx="8" fill="#F1F5F9" stroke="#E2E8F0" stroke-width="1" />
+    <text x="68" y="1740" font-size="13" fill="#334155">
+      <tspan x="68" dy="0">《GTA 6》雷奥奈达州（原型为佛罗里达州）的“禁爪条款”并非凭空捏造，而是对 2022 至 2026 年美国多州围绕“校园猫砂盆”谣言</tspan>
+      <tspan x="68" dy="21">及反“觉醒”文化战争展开的真实政治闹剧的夸张投射；同时，该设定贯穿游戏内立法、媒体、开放世界交互与地下生态四个层级，</tspan>
+      <tspan x="68" dy="21">进一步证伪了“个人金主临时委托”的说法。</tspan>
+    </text>
+
+    <!-- Data Sources -->
+    <text x="48" y="1828" font-size="12" fill="#64748B">
+      <tspan font-weight="700" fill="#475569">数据来源：</tspan>
+      <a href="https://en.wikipedia.org/wiki/Litter_boxes_in_schools_hoax" target="_blank"><tspan class="link">Wikipedia (Litter Boxes Hoax)</tspan></a>、
+      <a href="https://www.orlandoweekly.com/news/florida-furries-convention-forced-to-add-age-restriction-by-desantis-drag-law-34304068/" target="_blank"><tspan class="link">Orlando Weekly</tspan></a>、
+      <a href="https://megaplexcon.org/news/88" target="_blank"><tspan class="link">Megaplex</tspan></a>、
+      <a href="https://www.hindustantimes.com/world-news/us-news/animal-control-to-pick-up-furries-from-schools-oklahomas-bizarre-new-proposed-bill-101705578329868.html" target="_blank"><tspan class="link">Hindustan Times</tspan></a>、
+      <a href="https://en.wikifur.com/wiki/OK_HB3084" target="_blank"><tspan class="link">WikiFur</tspan></a>、
+      <a href="https://en.wikipedia.org/wiki/FURRIES_Act" target="_blank"><tspan class="link">Wikipedia (FURRIES Act)</tspan></a>、
+    </text>
+    <text x="48" y="1850" font-size="12" fill="#64748B">
+      <a href="https://liveandletsfly.com/senator-airline-pilot-furry-animal-costume/" target="_blank"><tspan class="link">Live and Let's Fly</tspan></a>、
+      <a href="https://dotesports.com/gta/news/gta-6-furry-furries-ads-arrest-psa" target="_blank"><tspan class="link">Dot Esports</tspan></a>、
+      <a href="https://www.dexerto.com/gta/gta-6-outlaws-furries-and-lets-you-help-them-escape-the-cops-3429724/" target="_blank"><tspan class="link">Dexerto</tspan></a>、
+      <a href="https://www.shanethegamer.com/news/gta-6-furries-illegal-leonida/" target="_blank"><tspan class="link">Shane The Gamer</tspan></a>、
+      <a href="https://www.cnet.com/tech/gaming/gta-6-review/" target="_blank"><tspan class="link">CNET</tspan></a>、
+      <a href="https://esports.gg/news/grand-theft-auto-6/gta-6-eager-beaver-and-furry-psa-leave-timthetatman-cackling/" target="_blank"><tspan class="link">Esports.gg</tspan></a>、
+      <a href="https://www.windowscentral.com/gaming/gta-6-players-are-ignoring-crime-to-jet-ski-with-dogs-and-redecorate-their-bedrooms-the-funniest-clips-so-far" target="_blank"><tspan class="link">Windows Central</tspan></a>
+    </text>
+  </g>
+</svg>
