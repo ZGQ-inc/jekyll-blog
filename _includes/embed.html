@@ -7,6 +7,8 @@
   {% include telegram.html url=embed_url %}
 {% elsif embed_url contains "twitter.com" or embed_url contains "x.com" %}
   {% include twitter.html url=embed_url %}
+{% elsif embed_url contains "bsky.app" %}
+  {% include bluesky.html url=embed_url %}
 {% elsif embed_url contains "reddit.com" %}
   {% include reddit.html url=embed_url %}
 {% elsif embed_url contains "github.com" %}

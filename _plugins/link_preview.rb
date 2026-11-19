@@ -383,12 +383,18 @@ module LinkPreview
         
         uri = URI.parse(url)
         domain = uri.host
-        
+
+        badges = []
+        if domain && domain.include?('bsky.app')
+          badges << { 'type' => 'bluesky', 'label' => 'Bluesky', 'icon' => 'flutter' }
+        end
+
         data = {
           'title' => title.strip,
           'description' => desc.strip,
           'image' => image.strip,
           'domain' => domain,
+          'badges' => badges,
           'is_r18' => false
         }
       rescue => e

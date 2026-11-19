@@ -234,6 +234,11 @@
         color: #9c27b0 !important;
         border: 1px solid color-mix(in srgb, #9c27b0 35%, transparent) !important;
       }
+      &.preview-badge-bluesky {
+        background: color-mix(in srgb, #0285ff 18%, transparent) !important;
+        color: #0285ff !important;
+        border: 1px solid color-mix(in srgb, #0285ff 35%, transparent) !important;
+      }
 
       html[data-theme="dark"] & {
         &.preview-badge-channel {
@@ -255,6 +260,11 @@
           background: color-mix(in srgb, #9c27b0 28%, transparent) !important;
           color: #ce93d8 !important;
           border-color: color-mix(in srgb, #9c27b0 45%, transparent) !important;
+        }
+        &.preview-badge-bluesky {
+          background: color-mix(in srgb, #0285ff 28%, transparent) !important;
+          color: #38bdf8 !important;
+          border-color: color-mix(in srgb, #0285ff 45%, transparent) !important;
         }
       }
     }
@@ -339,6 +349,120 @@
     border: none !important;
     box-shadow: var(--elev-1);
     transform: translateZ(0) !important;
+  }
+}
+
+/* 3.1 Bluesky Embed */
+.bluesky-embed-wrapper {
+  display: flex;
+  justify-content: center;
+  margin: 1.5rem auto;
+  width: 100%;
+  max-width: 600px;
+
+  .bluesky-embed {
+    margin: 0 auto !important;
+    width: 100% !important;
+    max-width: 600px !important;
+    border-radius: var(--shape-large, 16px) !important;
+    overflow: hidden !important;
+    box-shadow: var(--elev-1);
+    transition: box-shadow var(--dur-short4) var(--motion-standard);
+
+    &:hover {
+      box-shadow: var(--elev-2);
+    }
+
+    iframe {
+      border-radius: var(--shape-large, 16px) !important;
+      overflow: hidden !important;
+      border: none !important;
+      width: 100% !important;
+      display: block !important;
+      transform: translateZ(0) !important;
+    }
+  }
+
+  /* Fallback card before JS loads or if offline */
+  .bsky-fallback-card {
+    padding: 1.25rem 1.5rem;
+    background-color: var(--md-sys-color-surface-container);
+    border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 50%, transparent);
+    border-radius: var(--shape-large, 16px);
+    box-sizing: border-box;
+
+    html[data-theme="dark"] & {
+      background-color: #161e27;
+      border-color: rgba(255, 255, 255, 0.08);
+    }
+
+    .bsky-fallback-header {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.75rem;
+
+      .bsky-logo {
+        flex-shrink: 0;
+      }
+
+      .bsky-fallback-title {
+        font-size: 0.9375rem;
+        font-weight: 600;
+        color: var(--md-sys-color-on-surface);
+      }
+
+      .bsky-fallback-badge {
+        font-size: 0.7rem;
+        font-weight: 600;
+        padding: 2px 8px;
+        border-radius: 12px;
+        background-color: color-mix(in srgb, #0285FF 15%, transparent);
+        color: #0285FF;
+        border: 1px solid color-mix(in srgb, #0285FF 30%, transparent);
+      }
+    }
+
+    .bsky-fallback-text {
+      margin: 0 0 1rem 0;
+      font-size: 0.9rem;
+      line-height: 1.5;
+      color: var(--md-sys-color-on-surface-variant);
+
+      a {
+        color: inherit;
+        text-decoration: none;
+        word-break: break-all;
+
+        &:hover {
+          text-decoration: underline;
+          color: var(--md-sys-color-primary);
+        }
+      }
+    }
+
+    .bsky-fallback-footer {
+      display: flex;
+      justify-content: flex-end;
+
+      .bsky-open-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+        font-size: 0.8125rem;
+        font-weight: 500;
+        color: #0285FF;
+        text-decoration: none;
+
+        .material-symbols-outlined {
+          font-size: 1rem;
+        }
+
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+    }
   }
 }
 

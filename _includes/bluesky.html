@@ -1,0 +1,36 @@
+{% assign bsky_url = include.url %}
+{% if include.id and include.handle %}
+  {% assign bsky_url = "https://bsky.app/profile/" | append: include.handle | append: "/post/" | append: include.id %}
+{% elsif include.id %}
+  {% assign bsky_url = "https://bsky.app/profile/bsky.app/post/" | append: include.id %}
+{% endif %}
+{% assign bsky_uri = include.uri %}
+{% assign bsky_cid = include.cid %}
+{% assign bsky_color = include.color_mode | default: "system" %}
+
+<div class="bluesky-embed-wrapper md3-embed-container" data-embed-platform="bluesky" data-bsky-url="{{ bsky_url }}">
+  <blockquote class="bluesky-embed"
+              {% if bsky_uri %}data-bluesky-uri="{{ bsky_uri }}"{% endif %}
+              {% if bsky_cid %}data-bluesky-cid="{{ bsky_cid }}"{% endif %}
+              data-bluesky-embed-color-mode="{{ bsky_color }}">
+    <div class="bsky-fallback-card">
+      <div class="bsky-fallback-header">
+        <svg class="bsky-logo" viewBox="0 0 568 501" width="22" height="22" fill="#0285FF" aria-hidden="true">
+          <path d="M123.121 33.664C188.241 82.553 258.281 181.68 284 234.873c25.719-53.192 95.759-152.32 160.879-201.21C491.866-1.611 568-28.906 568 57.947c0 17.346-9.945 145.713-15.778 166.555-20.275 72.453-94.155 90.933-159.875 79.748C507.222 323.8 536.444 388.56 473.333 453.32c-119.25 122.37-170.667-33.4-189.333-88.667-18.667 55.267-70.083 211.037-189.333 88.667-63.111-64.76-33.889-129.52 80.986-149.07-65.72 11.185-139.6-7.295-159.875-79.748C8.945 203.66 0 75.293 0 57.947 0-28.906 76.135-1.612 123.121 33.664Z"/>
+        </svg>
+        <span class="bsky-fallback-title">Bluesky 动态</span>
+        <span class="bsky-fallback-badge">AT Protocol</span>
+      </div>
+      <p class="bsky-fallback-text">
+        <a href="{{ bsky_url }}" target="_blank" rel="noopener">{{ include.text | default: "正在加载 Bluesky 动态..." }}</a>
+      </p>
+      <div class="bsky-fallback-footer">
+        <a href="{{ bsky_url }}" target="_blank" rel="noopener" class="bsky-open-link">
+          <span>在 Bluesky 中查看</span>
+          <span class="material-symbols-outlined">open_in_new</span>
+        </a>
+      </div>
+    </div>
+  </blockquote>
+  <script async src="https://embed.bsky.app/static/embed.js" charset="utf-8"></script>
+</div>

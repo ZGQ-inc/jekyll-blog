@@ -31,6 +31,77 @@
         }
       } catch (e) {}
     });
+
+    // Sync Bluesky Theme
+    var colorMode = isDark ? 'dark' : 'light';
+    var bskyIframes = document.querySelectorAll('.bluesky-embed iframe, iframe[src*="embed.bsky.app"]');
+    bskyIframes.forEach(function(iframe) {
+      try {
+        var src = iframe.getAttribute('src');
+        if (!src) return;
+        var bskyUrl = new URL(src, window.location.href);
+        if (bskyUrl.searchParams.get('colorMode') !== colorMode) {
+          bskyUrl.searchParams.set('colorMode', colorMode);
+          iframe.src = bskyUrl.toString();
+        }
+      } catch (e) {}
+    });
+  }
+
+  // 1.1 Bluesky Embed Auto-Resolution & Dynamic Scanning
+  function initBlueskyEmbeds() {
+    var wrappers = document.querySelectorAll('.bluesky-embed-wrapper[data-bsky-url]');
+    if (!wrappers.length) return;
+
+    var isDark = document.documentElement.getAttribute('data-theme') === 'dark' ||
+                 (!document.documentElement.getAttribute('data-theme') && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    var colorMode = isDark ? 'dark' : 'light';
+
+    wrappers.forEach(function(wrapper) {
+      if (wrapper.dataset.bskyLoaded === 'true') return;
+      var bq = wrapper.querySelector('blockquote.bluesky-embed');
+      var aturi = bq ? bq.getAttribute('data-bluesky-uri') : null;
+
+      // If aturi is already provided, configure colorMode and trigger scan
+      if (aturi) {
+        wrapper.dataset.bskyLoaded = 'true';
+        if (bq) bq.setAttribute('data-bluesky-embed-color-mode', colorMode);
+        if (window.bluesky && typeof window.bluesky.scan === 'function') {
+          window.bluesky.scan(wrapper);
+        }
+        return;
+      }
+
+      var postUrl = wrapper.dataset.bskyUrl;
+      if (!postUrl) return;
+
+      wrapper.dataset.bskyLoaded = 'true';
+      fetch('https://embed.bsky.app/oembed?url=' + encodeURIComponent(postUrl))
+        .then(function(res) {
+          if (!res.ok) throw new Error('oEmbed error ' + res.status);
+          return res.json();
+        })
+        .then(function(data) {
+          if (data && data.html) {
+            wrapper.innerHTML = data.html;
+            var newBq = wrapper.querySelector('blockquote.bluesky-embed');
+            if (newBq) {
+              newBq.setAttribute('data-bluesky-embed-color-mode', colorMode);
+            }
+            if (window.bluesky && typeof window.bluesky.scan === 'function') {
+              window.bluesky.scan(wrapper);
+            } else {
+              var s = document.createElement('script');
+              s.src = 'https://embed.bsky.app/static/embed.js';
+              s.async = true;
+              document.body.appendChild(s);
+            }
+          }
+        })
+        .catch(function(err) {
+          console.warn('Bluesky oEmbed notice:', err.message);
+        });
+    });
   }
 
   document.addEventListener('themechange', syncTelegramTheme);
@@ -171,10 +242,11 @@
     });
   }
 
-  // 5. Enhance Social Embeds (Twitter & Reddit) with MD3 Rounded Corners
+  // 5. Enhance Social Embeds (Twitter, Bluesky & Reddit) with MD3 Rounded Corners
   function enhanceSocialEmbeds() {
     var targets = document.querySelectorAll(
       '.twitter-embed iframe, .twitter-embed .twitter-tweet, .twitter-embed .twitter-tweet-rendered, ' +
+      '.bluesky-embed iframe, .bluesky-embed-wrapper iframe, .bluesky-embed, ' +
       '.reddit-embed iframe, .reddit-embed-bq, iframe[id^="twitter-widget-"], iframe[src*="reddit.com"]'
     );
     targets.forEach(function(el) {
@@ -187,7 +259,7 @@
     });
   }
 
-  // Observe dynamically inserted iframes (Twitter & Reddit widgets.js inject asynchronously)
+  // Observe dynamically inserted iframes (Twitter, Bluesky & Reddit widgets inject asynchronously)
   if (typeof MutationObserver !== 'undefined') {
     var observer = new MutationObserver(function() {
       enhanceSocialEmbeds();
@@ -208,6 +280,7 @@
       initImageMasks();
       initCardMasks();
       initEmbeds();
+      initBlueskyEmbeds();
       enhanceSocialEmbeds();
       syncTelegramTheme();
     });
@@ -215,6 +288,7 @@
     initImageMasks();
     initCardMasks();
     initEmbeds();
+    initBlueskyEmbeds();
     enhanceSocialEmbeds();
     syncTelegramTheme();
   }
