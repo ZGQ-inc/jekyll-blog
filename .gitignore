@@ -13,6 +13,9 @@ Gemfile.lock
 worker/.wrangler/
 worker/dist/
 worker/node_modules/
+worker-ts/.wrangler/
+worker-ts/dist/
+worker-ts/node_modules/
 
 # Environment variables (NEVER commit these)
 .env

@@ -86,7 +86,10 @@ npx wrangler secret put WEBHOOK_SECRET --name blog-worker
 > [!TIP]
 > **可选项**：因为本项目配置了 GitHub Actions 工作流，当你在第 4 步中配置好仓库的机密信息（Secrets）并推送代码到 Github 后，工作流会自动帮你部署 Worker。如果你不想配置 GitHub Actions，或者你想在本地先部署一次验证功能，可以通过以下命令手动发布：
 
-进入 Worker 目录，安装依赖并发布到 Cloudflare：
+本项目服务端位于 `worker/`，采用 **Python 原生 Cloudflare Worker** 开发（基于 Pyodide / CPython 3.12+ 架构，在 `wrangler.toml` 中通过 `python_workers` 标志驱动）。
+*(注：原有的 TypeScript 单文件版本已完整归档至 [`worker-ts/`](worker-ts/) 目录，作为备用参考与回退方案。)*
+
+进入 Worker 目录，安装 Wrangler 并发布到 Cloudflare：
 ```bash
 cd worker
 npm install
@@ -173,12 +176,12 @@ git push origin main
 | **[tzinfo](https://github.com/tzinfo/tzinfo)** | `>= 1, < 3` | [MIT](https://github.com/tzinfo/tzinfo/blob/master/LICENSE) | IANA 时区数据库支持 |
 | **[Backlinks Generator](_plugins/backlinks.rb)** | 本地插件 | [MIT](LICENSE) | 静态编译期双向反向链接网状拓扑生成器 |
 
-### 2. 服务端与云原生 (Cloudflare Worker & Node.js)
-| 软件包 (Package) | 版本约束 | 开源协议 | 用途说明 |
+### 2. 服务端与云原生 (Cloudflare Worker & Python / Node.js)
+| 软件包 / 运行时 | 版本约束 | 开源协议 | 用途说明 |
 | :--- | :--- | :--- | :--- |
-| **[Wrangler](https://github.com/cloudflare/workers-sdk)** | `^3.80.0` | [MIT / Apache-2.0](https://github.com/cloudflare/workers-sdk/blob/main/LICENSE-MIT) | Cloudflare 开发者平台与 Worker 部署 CLI |
-| **[@cloudflare/workers-types](https://github.com/cloudflare/workers-types)** | `^4.20241022.0` | [MIT / Apache-2.0](https://github.com/cloudflare/workers-types/blob/main/LICENSE) | Cloudflare Workers & D1 & R2 TypeScript 类型声明 |
-| **[TypeScript](https://github.com/microsoft/TypeScript)** | `^5.5.4` | [Apache-2.0](https://github.com/microsoft/TypeScript/blob/main/LICENSE.txt) | 服务端静态类型检查与编译 |
+| **[Cloudflare Workers (Python)](https://developers.cloudflare.com/workers/languages/python/)** | `Python >= 3.12` | [PSFL / Apache-2.0](https://docs.python.org/3/license.html) | 基于 Pyodide 的 Python 原生边缘计算运行时，支撑 API 网关与 TG 机器人 |
+| **[Wrangler](https://github.com/cloudflare/workers-sdk)** | `^3.114.0` | [MIT / Apache-2.0](https://github.com/cloudflare/workers-sdk/blob/main/LICENSE-MIT) | Cloudflare 开发者平台与 Worker 部署 CLI |
+| **[Cloudflare Worker (Legacy TS)](worker-ts/)** | `TypeScript ^5.5` | [MIT](LICENSE) | 历史 TypeScript 版本已完整归档至 `worker-ts/`，随时可作为回退参考 |
 
 ### 3. 前端组件与交互库 (Frontend & Web Modules)
 | 组件 / 库 | 分发渠道 / 版本 | 开源协议 | 用途说明 |

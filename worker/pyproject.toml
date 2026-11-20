@@ -1,0 +1,9 @@
+[project]
+name = "blog-worker"
+version = "2.0.0"
+description = "Cloudflare Worker for ZGQ Blog - Telegram Bot Webhook & API Gateway (Python)"
+requires-python = ">=3.12"
+dependencies = []
+
+[tool.pywrangler]
+compatibility_flags = ["python_workers"]

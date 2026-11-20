@@ -1,7 +1,7 @@
 name            = "blog-worker"
-main            = "src/index.ts"
+main            = "src/entry.py"
 compatibility_date = "2024-11-01"
-compatibility_flags = ["nodejs_compat"]
+compatibility_flags = ["python_workers"]
 
 # ================================================================
 # Routes - 绑定到自定义域名
@@ -15,9 +15,9 @@ routes = [
 # 运行 `npx wrangler d1 create blog-db` 后，将输出的 database_id 填入下方
 # ================================================================
 [[d1_databases]]
-binding      = "DB"
+binding       = "DB"
 database_name = "blog-db"
-database_id  = "ce699506-5992-4828-83e8-e7a6cf227e32"
+database_id   = "ce699506-5992-4828-83e8-e7a6cf227e32"
 
 # ================================================================
 # R2 Bucket Binding
@@ -32,17 +32,17 @@ bucket_name = "blog-assets"
 # Environment Variables (非敏感配置，可明文)
 # ================================================================
 [vars]
-BLOG_URL       = "https://blog.zgqinc.gq"
-ASSETS_URL     = "https://assets.zgqinc.gq"
-GITHUB_REPO    = "ZGQ-inc/jekyll-blog"
-GITHUB_BRANCH  = "main"
-GITHUB_POSTS_PATH = "_posts"
-CHANNELS_CONFIG = '[{"id": "@ZGQincLiqun", "name": "主频道", "folder": "ZGQincLiqun"}, {"id": "@CopyRightZGQInc", "name": "个人频道", "folder": "CopyRightZGQInc"}]'
+BLOG_URL            = "https://blog.zgqinc.gq"
+ASSETS_URL          = "https://assets.zgqinc.gq"
+GITHUB_REPO         = "ZGQ-inc/jekyll-blog"
+GITHUB_BRANCH       = "main"
+GITHUB_POSTS_PATH   = "_posts"
+CHANNELS_CONFIG     = '[{"id": "@ZGQincLiqun", "name": "主频道", "folder": "ZGQincLiqun"}, {"id": "@CopyRightZGQInc", "name": "个人频道", "folder": "CopyRightZGQInc"}]'
 # 管理员白名单（支持用户名如 ZGQinc 或数字用户ID 如 123456789，多个用英文逗号分隔）
-ADMIN_USERS    = "ZGQinc"
+ADMIN_USERS         = "ZGQinc"
 TELEGRAM_CHANNEL_ID = "@CopyRightZGQInc"
 # Telegram Instant View (即时预览专属 Rules Hash)
-TELEGRAM_IV_RHASH = "aefab8c132338b"
+TELEGRAM_IV_RHASH   = "aefab8c132338b"
 
 # ================================================================
 # Secrets (通过 `wrangler secret put <NAME>` 注入，不在此文件中明文)
