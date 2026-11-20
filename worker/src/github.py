@@ -5,8 +5,8 @@ import re
 from typing import Any, Dict, List, Optional
 from js import fetch, Headers, console
 
-from .config import Config
-from .d1 import Database
+from config import Config
+from d1 import Database
 
 async def commit_to_github(
     config: Config,

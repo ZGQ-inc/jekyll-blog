@@ -6,16 +6,16 @@ import re
 from typing import Any, Dict
 from js import fetch, console
 
-from .config import Config
-from .d1 import Database
-from .turnstile import handle_turnstile_verify
-from .github import wait_for_post_ready
-from .telegram.handlers import (
+from config import Config
+from d1 import Database
+from turnstile import handle_turnstile_verify
+from github import wait_for_post_ready
+from telegram.handlers import (
     handle_telegram_webhook,
     publish_to_channel,
     broadcast_new_post_to_subscribers
 )
-from .telegram.formatters import (
+from telegram.formatters import (
     build_telegram_message_url,
     parse_telegram_discussion_html
 )

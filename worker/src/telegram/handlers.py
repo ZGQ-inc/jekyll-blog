@@ -5,10 +5,10 @@ import secrets
 from typing import Any, Dict, List, Optional
 from js import console
 
-from ..config import Config
-from ..d1 import Database
-from ..vault import generate_vault_token
-from ..github import (
+from config import Config
+from d1 import Database
+from vault import generate_vault_token
+from github import (
     commit_to_github,
     fetch_post_info_from_github,
     wait_for_post_ready

@@ -11,6 +11,6 @@
     "db:init:local": "wrangler d1 execute blog-db --local --file=./schema.sql"
   },
   "devDependencies": {
-    "wrangler": "^3.114.0"
+    "wrangler": "^4.165.0"
   }
 }

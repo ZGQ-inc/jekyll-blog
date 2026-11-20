@@ -3,8 +3,8 @@ from urllib.parse import urlencode
 from typing import Any, Dict
 from js import fetch, Headers
 
-from .config import Config
-from .d1 import Database
+from config import Config
+from d1 import Database
 
 def _to_py(obj: Any) -> Any:
     if obj is None:

@@ -1,6 +1,6 @@
 from typing import Any, Dict
-from ..config import Config
-from ..d1 import Database
+from config import Config
+from d1 import Database
 from .client import call_telegram_api, send_telegram_message
 
 async def handle_callback_query(

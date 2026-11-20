@@ -2,8 +2,8 @@ from typing import Any, Dict, Optional
 from urllib.parse import unquote, quote
 from js import fetch, console
 
-from ..config import Config
-from ..d1 import Database
+from config import Config
+from d1 import Database
 from .client import call_telegram_api
 from .formatters import format_bytes, get_file_icon, get_beijing_time
 
