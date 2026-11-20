@@ -1,6 +1,8 @@
 from typing import Any, Dict, Optional
 from urllib.parse import unquote, quote
-from js import fetch, console
+from js import console, Object
+from pyodide.ffi import to_js
+from http_client import py_fetch
 
 from config import Config
 from d1 import Database
@@ -32,7 +34,7 @@ async def upload_media_to_r2(
 
     # 2. Download from Telegram
     dl_url = f"https://api.telegram.org/file/bot{config.telegram_bot_token}/{file_path}"
-    dl_res = await fetch(dl_url)
+    dl_res = await py_fetch(dl_url)
     if not dl_res.ok:
         raise ValueError(f"Failed to download file from Telegram: HTTP {dl_res.status}")
 
@@ -63,7 +65,7 @@ async def upload_media_to_r2(
             f"inline; filename*=UTF-8''{quote(file_name)}"
         )
 
-    await r2.put(r2_key, blob, metadata_options)
+    await r2.put(r2_key, blob, to_js(metadata_options, dict_converter=Object.fromEntries))
 
     # 5. Format public friendly URL
     clean_base = config.assets_url

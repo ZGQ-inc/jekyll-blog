@@ -1,18 +1,9 @@
 import json
 from typing import Any, Dict
-from js import fetch, Headers
+from js import console
+from http_client import fetch_json
 
 _bot_commands_configured = False
-
-def _to_py(obj: Any) -> Any:
-    if obj is None:
-        return None
-    if hasattr(obj, "to_py"):
-        return obj.to_py()
-    try:
-        return dict(obj)
-    except Exception:
-        return obj
 
 async def call_telegram_api(
     token: str,
@@ -20,24 +11,17 @@ async def call_telegram_api(
     params: Dict[str, Any]
 ) -> Dict[str, Any]:
     url = f"https://api.telegram.org/bot{token}/{method}"
-    headers = Headers.new()
-    headers.set("Content-Type", "application/json")
+    headers = {"Content-Type": "application/json"}
+    body = json.dumps(params)
 
     try:
-        res = await fetch(url, {
-            "method": "POST",
-            "headers": headers,
-            "body": json.dumps(params)
-        })
-        data = _to_py(await res.json())
+        data = await fetch_json(url, method="POST", headers=headers, body=body)
         if not data.get("ok"):
-            from js import console
             console.error(
                 f"[Telegram API Error] {method} failed: code={data.get('error_code')}, desc={data.get('description')}"
             )
         return data
     except Exception as e:
-        from js import console
         console.error(f"[Telegram API Fetch Error] {method}: {e}")
         return {"ok": False, "description": str(e)}
 
@@ -91,12 +75,14 @@ async def setup_bot_commands(token: str) -> None:
             )
         })
     except Exception as e:
-        from js import console
         console.warn(f"Failed to setup bot commands menu: {e}")
 
 async def ensure_bot_commands(token: str) -> None:
     global _bot_commands_configured
     if _bot_commands_configured:
         return
-    await setup_bot_commands(token)
     _bot_commands_configured = True
+    try:
+        await setup_bot_commands(token)
+    except Exception as e:
+        console.warn(f"Failed in ensure_bot_commands: {e}")

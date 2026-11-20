@@ -3,8 +3,8 @@ import base64
 import time
 import re
 from typing import Any, Dict, List, Optional
-from js import fetch, Headers, console
-
+from js import console
+from http_client import py_fetch, fetch_json
 from config import Config
 from d1 import Database
 
@@ -19,24 +19,18 @@ async def commit_to_github(
     file_path = f"{path_prefix}/{slug}.md"
     api_url = f"https://api.github.com/repos/{owner}/{repo}/contents/{file_path}"
 
-    headers = Headers.new()
-    headers.set("Authorization", f"Bearer {config.github_token}")
-    headers.set("Accept", "application/vnd.github+json")
-    headers.set("User-Agent", "ZGQ-Blog-Worker/2.0-Python")
+    headers = {
+        "Authorization": f"Bearer {config.github_token}",
+        "Accept": "application/vnd.github+json",
+        "User-Agent": "ZGQ-Blog-Worker/2.0-Python"
+    }
 
     # Check if file exists to get SHA for update
     sha = None
     try:
-        check_res = await fetch(api_url, {
-            "method": "GET",
-            "headers": headers
-        })
-        if check_res.ok:
-            existing = await check_res.json()
-            if hasattr(existing, "sha"):
-                sha = existing.sha
-            elif isinstance(existing, dict):
-                sha = existing.get("sha")
+        check_data = await fetch_json(api_url, method="GET", headers=headers)
+        if isinstance(check_data, dict) and check_data.get("sha"):
+            sha = check_data["sha"]
     except Exception:
         pass
 
@@ -49,17 +43,14 @@ async def commit_to_github(
     if sha:
         body["sha"] = sha
 
-    put_headers = Headers.new()
-    put_headers.set("Authorization", f"Bearer {config.github_token}")
-    put_headers.set("Accept", "application/vnd.github+json")
-    put_headers.set("Content-Type", "application/json")
-    put_headers.set("User-Agent", "ZGQ-Blog-Worker/2.0-Python")
+    put_headers = {
+        "Authorization": f"Bearer {config.github_token}",
+        "Accept": "application/vnd.github+json",
+        "Content-Type": "application/json",
+        "User-Agent": "ZGQ-Blog-Worker/2.0-Python"
+    }
 
-    res = await fetch(api_url, {
-        "method": "PUT",
-        "headers": put_headers,
-        "body": json.dumps(body)
-    })
+    res = await py_fetch(api_url, method="PUT", headers=put_headers, body=json.dumps(body))
     if not res.ok:
         err = await res.text()
         raise ValueError(f"GitHub API error {res.status}: {err}")
@@ -72,35 +63,33 @@ async def fetch_post_info_from_github(
         owner, repo = config.github_repo.split("/")
         api_url = f"https://api.github.com/repos/{owner}/{repo}/git/trees/{config.github_branch}?recursive=1"
 
-        headers = Headers.new()
-        headers.set("Authorization", f"Bearer {config.github_token}")
-        headers.set("Accept", "application/vnd.github+json")
-        headers.set("User-Agent", "ZGQ-Blog-Worker/2.0-Python")
+        headers = {
+            "Authorization": f"Bearer {config.github_token}",
+            "Accept": "application/vnd.github+json",
+            "User-Agent": "ZGQ-Blog-Worker/2.0-Python"
+        }
 
-        res = await fetch(api_url, {"headers": headers})
-        if not res.ok:
-            return None
-
-        tree_data = await res.json()
-        tree_list = getattr(tree_data, "tree", None) or (tree_data.get("tree") if isinstance(tree_data, dict) else [])
+        tree_data = await fetch_json(api_url, headers=headers)
+        tree_list = tree_data.get("tree", []) if isinstance(tree_data, dict) else []
 
         matched_file = None
         for f in tree_list:
-            f_type = getattr(f, "type", None) or (f.get("type") if isinstance(f, dict) else "")
-            f_path = getattr(f, "path", None) or (f.get("path") if isinstance(f, dict) else "")
-            if (
-                f_type == "blob" and
-                f_path.startswith(f"{config.github_posts_path}/") and
-                f_path.endswith(f"-{id_str}.md")
-            ):
-                matched_file = f
-                break
+            if isinstance(f, dict):
+                f_type = f.get("type", "")
+                f_path = f.get("path", "")
+                if (
+                    f_type == "blob" and
+                    f_path.startswith(f"{config.github_posts_path}/") and
+                    f_path.endswith(f"-{id_str}.md")
+                ):
+                    matched_file = f
+                    break
 
         if not matched_file:
             return None
 
-        file_path = getattr(matched_file, "path", None) or matched_file.get("path")
-        file_url = getattr(matched_file, "url", None) or matched_file.get("url")
+        file_path = matched_file.get("path", "")
+        file_url = matched_file.get("url", "")
 
         folder = ""
         prefix = f"{config.github_posts_path}/"
@@ -109,13 +98,8 @@ async def fetch_post_info_from_github(
             if len(parts) > 1:
                 folder = "/".join(parts[:-1])
 
-        file_res = await fetch(file_url, {"headers": headers})
-        if not file_res.ok:
-            return None
-
-        file_data = await file_res.json()
-        raw_b64 = getattr(file_data, "content", None) or file_data.get("content", "")
-        # Remove newlines before b64 decoding
+        file_data = await fetch_json(file_url, headers=headers)
+        raw_b64 = file_data.get("content", "") if isinstance(file_data, dict) else ""
         clean_b64 = raw_b64.replace("\n", "").replace("\r", "")
         content = base64.b64decode(clean_b64).decode("utf-8", errors="replace")
 
@@ -171,16 +155,14 @@ async def wait_for_post_ready(
         now_ts = int(time.time() * 1000)
         cache_bust_url = f"{url}&_check_t={now_ts}" if "?" in url else f"{url}?_check_t={now_ts}"
 
-        headers = Headers.new()
-        headers.set("User-Agent", "Mozilla/5.0 (compatible; ZGQBlogBot/2.0; +https://blog.zgqinc.gq)")
-        headers.set("Cache-Control", "no-cache, no-store, must-revalidate")
-        headers.set("Pragma", "no-cache")
+        headers = {
+            "User-Agent": "Mozilla/5.0 (compatible; ZGQBlogBot/2.0; +https://blog.zgqinc.gq)",
+            "Cache-Control": "no-cache, no-store, must-revalidate",
+            "Pragma": "no-cache"
+        }
 
         try:
-            res = await fetch(cache_bust_url, {
-                "method": "GET",
-                "headers": headers
-            })
+            res = await py_fetch(cache_bust_url, method="GET", headers=headers)
             final_status = res.status
             if res.status == 200:
                 elapsed_ms = int(time.time() * 1000 - start_time)

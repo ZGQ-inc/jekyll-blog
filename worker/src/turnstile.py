@@ -1,25 +1,14 @@
 import json
 from urllib.parse import urlencode
 from typing import Any, Dict
-from js import fetch, Headers
-
+from js import console
+from http_client import fetch_json
 from config import Config
 from d1 import Database
-
-def _to_py(obj: Any) -> Any:
-    if obj is None:
-        return None
-    if hasattr(obj, "to_py"):
-        return obj.to_py()
-    try:
-        return dict(obj)
-    except Exception:
-        return obj
 
 async def handle_turnstile_verify(request: Any, env: Any, db: Database, config: Config) -> tuple[Dict[str, Any], int]:
     secret_key = config.turnstile_secret_key
     if not secret_key:
-        from js import console
         console.warn("[Turnstile] TURNSTILE_SECRET_KEY is not configured on Cloudflare Worker")
         return {
             "success": False,
@@ -63,16 +52,13 @@ async def handle_turnstile_verify(request: Any, env: Any, db: Database, config: 
 
     form_body = urlencode(form_params)
 
-    req_headers = Headers.new()
-    req_headers.set("Content-Type", "application/x-www-form-urlencoded")
-
     try:
-        cf_res = await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify", {
-            "method": "POST",
-            "headers": req_headers,
-            "body": form_body
-        })
-        res_data = _to_py(await cf_res.json())
+        res_data = await fetch_json(
+            "https://challenges.cloudflare.com/turnstile/v0/siteverify",
+            method="POST",
+            headers={"Content-Type": "application/x-www-form-urlencoded"},
+            body=form_body
+        )
 
         if not res_data.get("success"):
             error_codes = res_data.get("error-codes") or []
@@ -95,7 +81,6 @@ async def handle_turnstile_verify(request: Any, env: Any, db: Database, config: 
         }, 200
 
     except Exception as e:
-        from js import console
         console.error(f"[Turnstile] Error calling Cloudflare siteverify: {e}")
         return {
             "success": False,

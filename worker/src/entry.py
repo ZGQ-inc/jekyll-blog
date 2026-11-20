@@ -1,4 +1,4 @@
-from workers import WorkerEntrypoint, Response
+from workers import Response
 from urllib.parse import urlparse, parse_qs
 from datetime import datetime
 import json
@@ -16,6 +16,7 @@ if _src_dir not in sys.path:
 _import_error = None
 try:
     from js import fetch, console
+    from http_client import py_fetch
     from config import Config
     from d1 import Database
     from turnstile import handle_turnstile_verify
@@ -43,9 +44,7 @@ def json_response(data: Any, status: int = 200, extra_headers: Dict[str, str] = 
         headers.update(extra_headers)
     return Response(json.dumps(data), status=status, headers=headers)
 
-class Default(WorkerEntrypoint):
-    async def fetch(self, request):
-        return await on_fetch(request, self.env)
+
 
 async def on_fetch(request, env):
     if _import_error:
@@ -81,11 +80,28 @@ async def handle_request(request, env):
             "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Telegram-Bot-Api-Secret-Token",
         })
 
-    # 2. Health check (lightweight, safe before DB initialization)
+    # 2. Health check
     if path == "/health" and method == "GET":
+        bot_ok = False
+        bot_info = None
+        try:
+            token = getattr(env, "TELEGRAM_BOT_TOKEN", "")
+            if token:
+                from telegram.client import call_telegram_api
+                me_res = await call_telegram_api(token, "getMe", {})
+                bot_ok = me_res.get("ok", False)
+                if bot_ok:
+                    bot_info = me_res.get("result", {}).get("username")
+                else:
+                    bot_info = me_res.get("description")
+        except Exception as e:
+            bot_info = str(e)
+
         return json_response({
             "status": "ok",
             "runtime": "python",
+            "bot_connected": bot_ok,
+            "bot_username": bot_info,
             "ts": datetime.utcnow().isoformat() + "Z"
         })
 
@@ -244,10 +260,8 @@ async def handle_request(request, env):
                 tme_url += f"&before={quote(before)}"
 
             try:
-                tme_res = await fetch(tme_url, {
-                    "headers": {
-                        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
-                    }
+                tme_res = await py_fetch(tme_url, method="GET", headers={
+                    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
                 })
                 if not tme_res.ok:
                     archived = await db.get_comments_archive(target_id)
