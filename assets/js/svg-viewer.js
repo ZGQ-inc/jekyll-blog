@@ -109,7 +109,6 @@
     const btnZoomIn = container.querySelector('.btn-zoom-in');
     const btnZoomOut = container.querySelector('.btn-zoom-out');
     const btnReset = container.querySelector('.btn-reset');
-    const btnDownload = container.querySelector('.btn-download');
     const btnCode = container.querySelector('.btn-code');
     const btnFullscreen = container.querySelector('.btn-fullscreen');
     const copyBtn = container.querySelector('.svg-copy-btn');
@@ -396,53 +395,7 @@
         });
     }
 
-    // --- 5. Download SVG File ---
-    if (btnDownload) {
-      btnDownload.addEventListener('click', (e) => {
-        e.preventDefault();
-        const rawCode = getRawSvgCode();
-
-        // Extract filename from title
-        const titleEl = container.querySelector('.svg-title');
-        let filename = (titleEl ? titleEl.textContent.trim() : 'diagram')
-          .replace(/[\\/:*?"<>|]/g, '_')
-          .substring(0, 50);
-        if (!filename.endsWith('.svg')) filename += '.svg';
-
-        if (!rawCode) {
-          const imgEl = canvas.querySelector('img.svg-canvas-img');
-          if (imgEl && imgEl.src) {
-            const a = document.createElement('a');
-            a.href = imgEl.src;
-            a.download = filename;
-            a.target = '_blank';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            if (window.showToast) window.showToast(`正在下载 (${filename})`);
-            return;
-          }
-          if (window.showToast) window.showToast('无法提取 SVG 内容');
-          return;
-        }
-
-        const blob = new Blob([rawCode], { type: 'image/svg+xml;charset=utf-8' });
-        const blobUrl = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = blobUrl;
-        a.download = filename;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(blobUrl);
-
-        if (window.showToast) {
-          window.showToast(`SVG 文件已下载 (${filename})`);
-        }
-      });
-    }
-
-    // --- 6. View Source Toggle ---
+    // --- 5. View Source Toggle ---
     if (btnCode && sourceDrawer) {
       btnCode.addEventListener('click', (e) => {
         e.preventDefault();
@@ -453,7 +406,7 @@
       });
     }
 
-    // --- 7. Copy Code Button ---
+    // --- 6. Copy Code Button ---
     if (copyBtn) {
       copyBtn.addEventListener('click', (e) => {
         e.preventDefault();
@@ -476,7 +429,7 @@
       });
     }
 
-    // --- 8. Drag Resizer Bar ---
+    // --- 7. Drag Resizer Bar ---
     if (resizer) {
       let isResizing = false;
       let startY = 0;
@@ -508,7 +461,7 @@
       });
     }
 
-    // --- 9. Fullscreen Toggle ---
+    // --- 8. Fullscreen Toggle ---
     if (btnFullscreen) {
       const toggleFullscreen = () => {
         const isFs = isNativeFullscreen(container) || container.classList.contains('is-fullscreen');
@@ -555,7 +508,7 @@
     }
   }
 
-  // --- 10. Client-Side Fallback for Standard ```svg Codeblocks ---
+  // --- 9. Client-Side Fallback for Standard ```svg Codeblocks ---
   function autoEnhancePlainSvgCodeBlocks() {
     const svgCodeBlocks = document.querySelectorAll('.language-svg, code.language-svg, code[data-lang="svg"]');
     svgCodeBlocks.forEach(el => {
@@ -603,7 +556,6 @@
             <button type="button" class="svg-action-btn btn-zoom-in" title="放大" aria-label="放大"><span class="material-symbols-outlined">zoom_in</span></button>
             <button type="button" class="svg-action-btn btn-zoom-out" title="缩小" aria-label="缩小"><span class="material-symbols-outlined">zoom_out</span></button>
             <button type="button" class="svg-action-btn btn-reset" title="适应窗口" aria-label="适应窗口"><span class="material-symbols-outlined">fit_screen</span></button>
-            <button type="button" class="svg-action-btn btn-download" title="下载 SVG" aria-label="下载 SVG"><span class="material-symbols-outlined">download</span></button>
             <button type="button" class="svg-action-btn btn-code" title="查看源码" aria-label="查看源码"><span class="material-symbols-outlined">code</span></button>
             <button type="button" class="svg-action-btn btn-fullscreen" title="全屏" aria-label="全屏"><span class="material-symbols-outlined">fullscreen</span></button>
           </div>
@@ -632,7 +584,7 @@
     });
   }
 
-  // --- 11. Global Esc Key Listener for Teleport Fullscreen ---
+  // --- 10. Global Esc Key Listener for Teleport Fullscreen ---
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
       document.querySelectorAll('.md3-svg-viewer.is-fullscreen').forEach(container => {
@@ -646,7 +598,7 @@
     }
   });
 
-  // --- 12. Main Initialization ---
+  // --- 11. Main Initialization ---
   function initAllSvgViewers() {
     document.querySelectorAll('.md3-svg-viewer').forEach(initSingleSvgViewer);
     autoEnhancePlainSvgCodeBlocks();

@@ -36,7 +36,6 @@ require 'rouge'
 # - Window bar with title, dimensions badge, format badge
 # - Interactive Pan & Zoom (Buttons, Mouse Wheel, Touch Pinch/Drag, Double-Click)
 # - Fit to screen / Reset view
-# - One-click SVG file download
 # - Syntax-highlighted collapsible source drawer with line numbers & copy button
 # - Native + Teleport Fullscreen
 # - Resizer handle for dragging to adjust viewport height
@@ -55,7 +54,6 @@ module Jekyll
         'title' => nil,
         'src' => nil,
         'zoom' => true,
-        'download' => true,
         'fullscreen' => true,
         'view_source' => true,
         'is_plain_code' => false
@@ -278,16 +276,6 @@ module Jekyll
                        ''
                      end
 
-      download_btn = if config['download']
-                       <<~HTML.strip
-                         <button type="button" class="svg-action-btn btn-download" title="下载 SVG 矢量文件" aria-label="下载 SVG">
-                           <span class="material-symbols-outlined">download</span>
-                         </button>
-                       HTML
-                     else
-                       ''
-                     end
-
       source_btn = if config['view_source']
                      <<~HTML.strip
                        <button type="button" class="svg-action-btn btn-code" title="查看 / 隐藏源码" aria-label="查看源码" aria-expanded="false">
@@ -343,7 +331,6 @@ module Jekyll
             </div>
             <div class="svg-bar-actions">
               #{zoom_buttons}
-              #{download_btn}
               #{source_btn}
               #{fullscreen_btn}
             </div>
