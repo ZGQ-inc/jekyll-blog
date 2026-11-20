@@ -3,22 +3,34 @@ from urllib.parse import urlparse, parse_qs
 from datetime import datetime
 import json
 import re
+import sys
+import os
+import traceback
 from typing import Any, Dict
-from js import fetch, console
 
-from config import Config
-from d1 import Database
-from turnstile import handle_turnstile_verify
-from github import wait_for_post_ready
-from telegram.handlers import (
-    handle_telegram_webhook,
-    publish_to_channel,
-    broadcast_new_post_to_subscribers
-)
-from telegram.formatters import (
-    build_telegram_message_url,
-    parse_telegram_discussion_html
-)
+# Ensure local modules can always be found
+_src_dir = os.path.dirname(os.path.abspath(__file__))
+if _src_dir not in sys.path:
+    sys.path.insert(0, _src_dir)
+
+_import_error = None
+try:
+    from js import fetch, console
+    from config import Config
+    from d1 import Database
+    from turnstile import handle_turnstile_verify
+    from github import wait_for_post_ready
+    from telegram.handlers import (
+        handle_telegram_webhook,
+        publish_to_channel,
+        broadcast_new_post_to_subscribers
+    )
+    from telegram.formatters import (
+        build_telegram_message_url,
+        parse_telegram_discussion_html
+    )
+except Exception as _e:
+    _import_error = traceback.format_exc()
 
 def json_response(data: Any, status: int = 200, extra_headers: Dict[str, str] = None) -> Response:
     headers = {
@@ -33,10 +45,27 @@ def json_response(data: Any, status: int = 200, extra_headers: Dict[str, str] = 
 
 class Default(WorkerEntrypoint):
     async def fetch(self, request):
-        return await handle_request(request, self.env)
+        return await on_fetch(request, self.env)
 
 async def on_fetch(request, env):
-    return await handle_request(request, env)
+    if _import_error:
+        return json_response({
+            "error": "Worker Module Import Error",
+            "detail": _import_error
+        }, status=500)
+    try:
+        return await handle_request(request, env)
+    except Exception as e:
+        tb = traceback.format_exc()
+        try:
+            console.error(f"Worker Request Exception: {tb}")
+        except Exception:
+            pass
+        return json_response({
+            "error": "Unhandled Worker Exception",
+            "message": str(e),
+            "traceback": tb
+        }, status=500)
 
 async def handle_request(request, env):
     method = request.method
@@ -52,18 +81,18 @@ async def handle_request(request, env):
             "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Telegram-Bot-Api-Secret-Token",
         })
 
-    db = Database(env.DB)
+    # 2. Health check (lightweight, safe before DB initialization)
+    if path == "/health" and method == "GET":
+        return json_response({
+            "status": "ok",
+            "runtime": "python",
+            "ts": datetime.utcnow().isoformat() + "Z"
+        })
+
+    db = Database(getattr(env, "DB", None))
     config = Config(env)
 
     try:
-        # 2. Health check
-        if path == "/health" and method == "GET":
-            return json_response({
-                "status": "ok",
-                "runtime": "python",
-                "ts": datetime.utcnow().isoformat() + "Z"
-            })
-
         # 3. Telegram Webhook
         if path == "/webhook/telegram" and method == "POST":
             data, code = await handle_telegram_webhook(request, env, db, config)
