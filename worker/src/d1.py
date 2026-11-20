@@ -16,6 +16,20 @@ def _to_dict(row: Any) -> Optional[Dict[str, Any]]:
         except Exception:
             return {}
 
+from js import JSON, console
+
+try:
+    JS_NULL = JSON.parse("[null]")[0]
+    console.log(f"JS_NULL from JSON.parse: {type(JS_NULL)} {repr(JS_NULL)}")
+except Exception as e:
+    console.warn(f"Failed to get JS_NULL: {e}")
+    JS_NULL = None
+
+def _sanitize_param(val: Any) -> Any:
+    if val is None:
+        return JS_NULL if JS_NULL is not None else ""
+    return val
+
 class Database:
     def __init__(self, d1_binding: Any):
         self.db = d1_binding
@@ -25,7 +39,7 @@ class Database:
             return None
         stmt = self.db.prepare(sql)
         if params:
-            stmt = stmt.bind(*params)
+            stmt = stmt.bind(*[_sanitize_param(p) for p in params])
         row = await stmt.first()
         return _to_dict(row)
 
@@ -34,7 +48,7 @@ class Database:
             return []
         stmt = self.db.prepare(sql)
         if params:
-            stmt = stmt.bind(*params)
+            stmt = stmt.bind(*[_sanitize_param(p) for p in params])
         res = await stmt.all()
         results = getattr(res, "results", res)
         if not results:
@@ -46,7 +60,7 @@ class Database:
             return None
         stmt = self.db.prepare(sql)
         if params:
-            stmt = stmt.bind(*params)
+            stmt = stmt.bind(*[_sanitize_param(p) for p in params])
         return await stmt.run()
 
     # ================================================================

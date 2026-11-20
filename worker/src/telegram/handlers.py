@@ -648,9 +648,11 @@ async def handle_telegram_webhook(
 
     try:
         raw_text = await request.text()
+        console.log(f"[handle_telegram_webhook] raw_text: {repr(raw_text)}")
         update = json.loads(raw_text) if raw_text else {}
-    except Exception:
-        return {"error": "Invalid JSON"}, 400
+    except Exception as e:
+        console.error(f"[handle_telegram_webhook] JSON error: {e}")
+        return {"error": f"Invalid JSON: {str(e)}"}, 400
 
     # 2. Handle callback queries
     if "callback_query" in update:
