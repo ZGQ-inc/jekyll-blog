@@ -113,6 +113,9 @@ function initArticleEnhancements() {
   // Telegram Spoiler with Cyber Glitch & Data Restoration Decryption
   initTelegramSpoilers();
 
+  // Responsive Data Table (Sticky Column + Mobile Card View Hybrid Switcher)
+  initArticleTables();
+
   // In-article images loading animation & thumbnail cache check (deferred to let gallery setup run first)
   setTimeout(() => {
     initArticleImages();
@@ -122,6 +125,7 @@ function initArticleEnhancements() {
 
 window.initArticleEnhancements = initArticleEnhancements;
 window.initTelegramSpoilers = initTelegramSpoilers;
+window.initArticleTables = initArticleTables;
 
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', initArticleEnhancements);
@@ -381,4 +385,123 @@ function initThumbnailCacheCheck() {
     }
   });
 }
+
+// ==============================================================================
+// Responsive Data Table (Sticky Column + Mobile Card View Hybrid Switcher)
+// ==============================================================================
+function initArticleTables() {
+  const tables = document.querySelectorAll(
+    '.article-content table:not(.rouge-table):not(.svg-rouge-table):not(.console-sql-table)'
+  );
+
+  tables.forEach((table, index) => {
+    // Prevent duplicate wrapping
+    if (table.closest('.responsive-table-wrapper')) return;
+
+    // 1. Extract and normalize column headers
+    const theadThs = table.querySelectorAll('thead th');
+    let headerLabels = [];
+    if (theadThs.length > 0) {
+      headerLabels = Array.from(theadThs).map(th => th.textContent.trim());
+    } else {
+      const firstRowThs = table.querySelectorAll('tr:first-child th, tr:first-child td');
+      headerLabels = Array.from(firstRowThs).map(cell => cell.textContent.trim());
+    }
+
+    // 2. Inject data-label on data cells for accessible Card View mapping
+    const bodyRows = table.querySelectorAll('tbody tr');
+    const targetRows = bodyRows.length > 0 ? bodyRows : table.querySelectorAll('tr:not(:first-child)');
+
+    targetRows.forEach(tr => {
+      const cells = tr.querySelectorAll('td');
+      cells.forEach((td, colIdx) => {
+        const label = headerLabels[colIdx] || `列 ${colIdx + 1}`;
+        td.setAttribute('data-label', label);
+        if (colIdx === 0) {
+          td.classList.add('table-col-header');
+        }
+      });
+    });
+
+    // 3. Create MD3 responsive table wrapper
+    const wrapper = document.createElement('div');
+    wrapper.className = 'responsive-table-wrapper';
+
+    // 4. Create Toolbar with status and toggle button
+    const toolbar = document.createElement('div');
+    toolbar.className = 'table-header-bar';
+
+    const colCount = headerLabels.length;
+    const isMultiCol = colCount >= 3;
+
+    toolbar.innerHTML = `
+      <div class="table-bar-left">
+        <span class="material-symbols-outlined table-icon">table_chart</span>
+        <span class="table-scroll-hint">
+          <span class="material-symbols-outlined hint-icon">swap_horiz</span>
+          <span class="hint-text">${isMultiCol ? '可横向滑动浏览' : '数据对比表'}</span>
+        </span>
+      </div>
+      <div class="table-bar-right">
+        <button class="table-view-toggle-btn" type="button" aria-label="切换表格展示模式" title="在常规横向滑动与卡片堆叠模式之间切换" aria-pressed="false">
+          <span class="material-symbols-outlined toggle-icon">view_agenda</span>
+          <span class="toggle-text">卡片视图</span>
+        </button>
+      </div>
+    `;
+
+    // 5. Create accessible keyboard-scrollable container
+    const scrollContainer = document.createElement('div');
+    scrollContainer.className = 'table-scroll-container';
+    scrollContainer.setAttribute('tabindex', '0');
+    scrollContainer.setAttribute('role', 'region');
+    const captionEl = table.querySelector('caption');
+    const accessibleName = captionEl
+      ? captionEl.textContent.trim()
+      : (headerLabels[0] ? `${headerLabels[0]}数据表` : `数据对比表 ${index + 1}`);
+    scrollContainer.setAttribute('aria-label', accessibleName);
+
+    // Replace table with wrapper in DOM
+    table.parentNode.insertBefore(wrapper, table);
+    wrapper.appendChild(toolbar);
+    wrapper.appendChild(scrollContainer);
+    scrollContainer.appendChild(table);
+
+    // 6. Horizontal Scroll Indicator & Shadow State Management
+    const updateScrollStatus = () => {
+      const scrollLeft = scrollContainer.scrollLeft;
+      const maxScroll = scrollContainer.scrollWidth - scrollContainer.clientWidth;
+
+      wrapper.classList.toggle('is-scrolled', scrollLeft > 6);
+      wrapper.classList.toggle('is-scrolled-end', maxScroll <= 6 || scrollLeft >= maxScroll - 6);
+    };
+
+    scrollContainer.addEventListener('scroll', updateScrollStatus, { passive: true });
+    requestAnimationFrame(updateScrollStatus);
+
+    // 7. Toggle between Table View & Card View
+    const toggleBtn = toolbar.querySelector('.table-view-toggle-btn');
+    const toggleIcon = toggleBtn.querySelector('.toggle-icon');
+    const toggleText = toggleBtn.querySelector('.toggle-text');
+
+    toggleBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const isCard = wrapper.classList.toggle('is-card-view');
+      toggleBtn.setAttribute('aria-pressed', isCard ? 'true' : 'false');
+
+      if (isCard) {
+        toggleIcon.textContent = 'table_chart';
+        toggleText.textContent = '表格视图';
+      } else {
+        toggleIcon.textContent = 'view_agenda';
+        toggleText.textContent = '卡片视图';
+        requestAnimationFrame(updateScrollStatus);
+      }
+    });
+
+    // Handle window resize to recheck scroll indicator
+    window.addEventListener('resize', updateScrollStatus, { passive: true });
+  });
+}
+
 

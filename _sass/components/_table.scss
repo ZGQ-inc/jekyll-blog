@@ -1,0 +1,347 @@
+// ==============================================================================
+// Material Design 3 Responsive Table Component (Hybrid Table + Card View)
+// ==============================================================================
+
+.responsive-table-wrapper {
+  margin: 1.75em 0;
+  border-radius: var(--shape-medium, 12px);
+  border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 50%, transparent);
+  background: var(--md-sys-color-surface);
+  box-shadow: var(--elev-1, 0 1px 3px rgba(0, 0, 0, 0.08));
+  overflow: hidden;
+  container-type: inline-size;
+  transition: border-color var(--dur-short2, 120ms) ease, box-shadow var(--dur-short2, 120ms) ease;
+
+  // 1. Top Header Toolbar Bar
+  .table-header-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 14px;
+    background: var(--md-sys-color-surface-container-low);
+    border-bottom: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 40%, transparent);
+    font-size: 0.8125rem;
+    color: var(--md-sys-color-on-surface-variant);
+    user-select: none;
+    gap: 8px;
+
+    .table-bar-left {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+
+      .table-icon {
+        font-size: 18px;
+        color: var(--md-sys-color-primary);
+        opacity: 0.9;
+        flex-shrink: 0;
+      }
+
+      .table-scroll-hint {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 0.75rem;
+        color: var(--md-sys-color-on-surface-variant);
+        opacity: 0.82;
+        transition: opacity 0.2s ease;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+
+        .hint-icon {
+          font-size: 15px;
+          animation: tableHintPulse 2s infinite ease-in-out;
+          color: var(--md-sys-color-primary);
+        }
+      }
+    }
+
+    .table-bar-right {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+
+      .table-view-toggle-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        background: var(--md-sys-color-surface-container-high);
+        color: var(--md-sys-color-on-surface);
+        border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 60%, transparent);
+        border-radius: 20px;
+        padding: 4px 12px 4px 8px;
+        font-size: 0.75rem;
+        font-weight: 500;
+        cursor: pointer;
+        font-family: inherit;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+        transition: all var(--dur-short2, 120ms) var(--motion-standard, ease);
+
+        .toggle-icon {
+          font-size: 16px;
+          color: var(--md-sys-color-primary);
+        }
+
+        &:hover {
+          background: color-mix(in srgb, var(--md-sys-color-primary-container) 80%, transparent);
+          color: var(--md-sys-color-on-primary-container);
+          border-color: var(--md-sys-color-primary);
+          box-shadow: var(--elev-1);
+        }
+
+        &:active {
+          transform: scale(0.96);
+        }
+      }
+    }
+  }
+
+  // 2. Scrollable Container
+  .table-scroll-container {
+    position: relative;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    width: 100%;
+    outline: none;
+
+    &:focus-visible {
+      box-shadow: 0 0 0 2px var(--md-sys-color-primary) inset;
+    }
+
+    // Gradient shadow on right to indicate more content horizontally
+    &::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: 24px;
+      pointer-events: none;
+      background: linear-gradient(to right, transparent, color-mix(in srgb, var(--md-sys-color-surface) 85%, transparent));
+      opacity: 1;
+      transition: opacity 0.25s ease;
+      z-index: 5;
+    }
+
+    // Scrollbar styling
+    &::-webkit-scrollbar {
+      height: 6px;
+    }
+    &::-webkit-scrollbar-track {
+      background: color-mix(in srgb, var(--md-sys-color-surface-container-low) 50%, transparent);
+    }
+    &::-webkit-scrollbar-thumb {
+      background: color-mix(in srgb, var(--md-sys-color-outline-variant) 70%, transparent);
+      border-radius: 3px;
+      &:hover {
+        background: var(--md-sys-color-primary);
+      }
+    }
+  }
+
+  // When scrolled to the very end, hide the right edge gradient shadow
+  &.is-scrolled-end .table-scroll-container::after {
+    opacity: 0;
+  }
+
+  // When user has scrolled horizontally, dim the hint
+  &.is-scrolled .table-scroll-hint {
+    opacity: 0.35;
+  }
+
+  // 3. The <table> Element in Standard Table Mode
+  table {
+    display: table !important;
+    width: 100%;
+    min-width: 650px; // CRUCIAL: Protects against column squishing! No more 1-character columns!
+    border-collapse: separate !important; // Required for position: sticky
+    border-spacing: 0;
+    margin: 0 !important;
+    border: none !important;
+    border-radius: 0 !important;
+    font-size: 0.90625rem;
+    line-height: 1.6;
+
+    thead {
+      tr {
+        th {
+          background: var(--md-sys-color-surface-container);
+          color: var(--md-sys-color-on-surface);
+          padding: 12px 16px;
+          font-weight: 700;
+          text-align: left;
+          border-bottom: 2px solid var(--md-sys-color-outline-variant);
+          position: sticky;
+          top: 0;
+          z-index: 2;
+          white-space: nowrap; // Keeps column header clean and un-cramped
+
+          &:first-child {
+            position: sticky;
+            left: 0;
+            z-index: 4; // Above both regular th and sticky td
+            background: var(--md-sys-color-surface-container-high);
+            min-width: 150px;
+          }
+        }
+      }
+    }
+
+    tbody {
+      tr {
+        transition: background-color 0.12s ease;
+
+        td {
+          padding: 12px 16px;
+          min-width: 140px; // Protects columns against narrow wrapping
+          border-bottom: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 40%, transparent);
+          color: var(--md-sys-color-on-surface);
+          word-break: break-word;
+
+          &:first-child {
+            position: sticky;
+            left: 0;
+            z-index: 3;
+            background: var(--md-sys-color-surface);
+            font-weight: 600;
+            color: var(--md-sys-color-on-surface);
+            min-width: 150px;
+            transition: background-color 0.12s ease;
+          }
+        }
+
+        &:last-child td {
+          border-bottom: none;
+        }
+
+        &:hover {
+          background: color-mix(in srgb, var(--md-sys-color-surface-container) 60%, transparent);
+
+          td:first-child {
+            background: color-mix(in srgb, var(--md-sys-color-surface-container) 85%, var(--md-sys-color-surface));
+          }
+        }
+      }
+    }
+  }
+
+  // Sticky First Column Divider Line and Elevation on Horizontal Scroll
+  &.is-scrolled {
+    table {
+      th:first-child,
+      td:first-child {
+        border-right: 1px solid var(--md-sys-color-outline-variant);
+        box-shadow: 4px 0 10px -2px rgba(0, 0, 0, 0.22);
+      }
+    }
+  }
+
+  // ==============================================================================
+  // 4. Card View Mode (.is-card-view) - Mobile/Desktop Toggleable Stacked Cards
+  // ==============================================================================
+  &.is-card-view {
+    .table-scroll-container {
+      overflow-x: visible;
+      &::after {
+        display: none !important;
+      }
+    }
+
+    .table-scroll-hint {
+      display: none !important;
+    }
+
+    table {
+      display: block !important;
+      width: 100% !important;
+      min-width: 0 !important;
+
+      thead {
+        display: none !important; // Hide header row cleanly in card mode
+      }
+
+      tbody {
+        display: block !important;
+        width: 100% !important;
+        padding: 10px;
+
+        tr {
+          display: block !important;
+          margin: 0 0 16px 0;
+          padding: 14px 18px;
+          background: var(--md-sys-color-surface-container-low);
+          border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 50%, transparent);
+          border-radius: var(--shape-medium, 12px);
+          box-shadow: var(--elev-1, 0 1px 3px rgba(0, 0, 0, 0.08));
+          transition: transform 0.15s ease, box-shadow 0.15s ease;
+
+          &:last-child {
+            margin-bottom: 0;
+          }
+
+          &:hover {
+            transform: translateY(-1px);
+            box-shadow: var(--elev-2, 0 3px 8px rgba(0, 0, 0, 0.14));
+            background: var(--md-sys-color-surface-container);
+            td:first-child {
+              background: transparent !important;
+            }
+          }
+
+          td {
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 4px;
+            padding: 10px 0 !important;
+            min-width: 0 !important;
+            position: static !important;
+            box-shadow: none !important;
+            background: transparent !important;
+            border-right: none !important;
+            border-bottom: 1px dashed color-mix(in srgb, var(--md-sys-color-outline-variant) 30%, transparent) !important;
+            font-size: 0.875rem;
+
+            &:last-child {
+              border-bottom: none !important;
+            }
+
+            // Injected Field Label from data-label (via modern-web-guidance: inject labels using ::before)
+            &::before {
+              content: attr(data-label);
+              font-size: 0.72rem;
+              font-weight: 700;
+              color: var(--md-sys-color-primary);
+              letter-spacing: 0.3px;
+              opacity: 0.9;
+              display: block;
+            }
+
+            // First Column acts as Card Header / Title
+            &:first-child {
+              display: block !important;
+              padding: 2px 0 12px 0 !important;
+              margin-bottom: 6px;
+              font-size: 1.05rem;
+              font-weight: 700;
+              color: var(--md-sys-color-on-surface);
+              border-bottom: 2px solid color-mix(in srgb, var(--md-sys-color-primary) 35%, transparent) !important;
+
+              &::before {
+                display: none !important; // First cell is card title itself
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+// Gentle pulsing animation for horizontal scroll indicator icon
+@keyframes tableHintPulse {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(3px); }
+}

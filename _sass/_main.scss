@@ -2928,10 +2928,12 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
     }
   }
 
-  table {
+  // Fallback table styles (enhanced by .responsive-table-wrapper via JS)
+  table:not(.rouge-table):not(.svg-rouge-table):not(.console-sql-table) {
     display: block;
     width: 100%;
     overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
     border-collapse: collapse;
     margin: 1.5em 0;
     font-size: 0.9375rem;
@@ -2944,11 +2946,14 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
       padding: 12px 16px;
       font-weight: 700;
       border-bottom: 2px solid var(--md-sys-color-outline-variant);
+      white-space: nowrap;
     }
 
     td {
       padding: 12px 16px;
+      min-width: 130px; // Protect columns against narrow wrapping
       border-bottom: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 50%, transparent);
+      word-break: break-word;
     }
 
     tr:last-child td { border-bottom: none; }
