@@ -403,9 +403,11 @@ function initArticleTables() {
     let headerLabels = [];
     if (theadThs.length > 0) {
       headerLabels = Array.from(theadThs).map(th => th.textContent.trim());
+      if (theadThs[0]) theadThs[0].classList.add('table-col-header');
     } else {
       const firstRowThs = table.querySelectorAll('tr:first-child th, tr:first-child td');
       headerLabels = Array.from(firstRowThs).map(cell => cell.textContent.trim());
+      if (firstRowThs[0]) firstRowThs[0].classList.add('table-col-header');
     }
 
     // 2. Inject data-label on data cells for accessible Card View mapping

@@ -2958,7 +2958,7 @@ a.chip-primary, a.chip-tonal, a.chip-outlined {
 
     tr:last-child td { border-bottom: none; }
 
-    tr:hover td {
+    tr:hover td:not(:first-child):not(.table-col-header) {
       background: color-mix(in srgb, var(--md-sys-color-surface-container) 50%, transparent);
     }
   }
